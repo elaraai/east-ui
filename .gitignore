@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+.package
+*.beast
+*.avro
+*.csv
+
+# Allow important config files
+!package.json
+!tsconfig.json
+!package-lock.json
