@@ -51,3 +51,11 @@ export {
     FieldType,
     type FieldStyle,
 } from "./field/index.js";
+
+export {
+    FileUpload,
+    FileUploadType,
+    FileCaptureType,
+    type FileUploadStyle,
+    type FileCaptureLiteral,
+} from "./file-upload/index.js";

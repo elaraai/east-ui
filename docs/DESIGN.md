@@ -506,7 +506,7 @@ Each component has a detailed specification document:
 - [x] [26-splitter.md](26-splitter.md) - Splitter (`src/layout/splitter/`)
 - [x] [27-separator.md](27-separator.md) - Separator (`src/layout/separator/`)
 - [x] [28-field.md](28-field.md) - Field (`src/forms/field/`)
-- [ ] [29-file-upload.md](29-file-upload.md) - FileUpload (`src/forms/file-upload/`)
+- [x] [29-file-upload.md](29-file-upload.md) - FileUpload (`src/forms/file-upload/`)
 - [ ] [30-fieldset.md](30-fieldset.md) - Fieldset (`src/forms/fieldset/`)
 - [ ] [31-textarea.md](31-textarea.md) - Textarea (`src/forms/textarea/`)
 - [ ] [32-tags-input.md](32-tags-input.md) - TagsInput (`src/forms/tags-input/`)

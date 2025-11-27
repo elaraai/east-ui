@@ -35,7 +35,7 @@ export { Box, Stack, HStack, VStack, Separator, Grid, Splitter } from "./layout/
 export { Button } from "./buttons/index.js";
 
 // Forms
-export { Input, Checkbox, Switch, Select, Slider, Field } from "./forms/index.js";
+export { Input, Checkbox, Switch, Select, Slider, Field, FileUpload } from "./forms/index.js";
 
 // Feedback
 export { Progress, Alert } from "./feedback/index.js";

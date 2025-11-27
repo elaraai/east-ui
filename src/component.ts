@@ -33,6 +33,7 @@ import { CheckboxType } from "./forms/checkbox/types.js";
 import { SwitchType } from "./forms/switch/types.js";
 import { SelectRootType } from "./forms/select/types.js";
 import { SliderType } from "./forms/slider/types.js";
+import { FileUploadType } from "./forms/file-upload/types.js";
 
 // Feedback
 import { ProgressType } from "./feedback/progress/types.js";
@@ -168,6 +169,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
     Switch: SwitchType,
     Select: SelectRootType,
     Slider: SliderType,
+    FileUpload: FileUploadType,
     Field: StructType({
         label: StringType,
         control: node,
