@@ -1,0 +1,161 @@
+/**
+ * Copyright (c) 2025 Elara AI Pty Ltd
+ * Licensed under AGPL-3.0. See LICENSE file for details.
+ */
+
+import {
+    type ExprType,
+    type SubtypeExprOrValue,
+    East,
+    FloatType,
+    StringType,
+    BooleanType,
+    variant,
+} from "@elaraai/east";
+
+import { SizeType, ColorSchemeType } from "../../style.js";
+import { UIComponentType } from "../../component.js";
+import {
+    ProgressType,
+    ProgressVariantType,
+    ProgressVariant,
+    type ProgressStyle,
+} from "./types.js";
+
+// Re-export types
+export {
+    ProgressType,
+    ProgressVariantType,
+    ProgressVariant,
+    type ProgressStyle,
+    type ProgressVariantLiteral,
+} from "./types.js";
+
+// ============================================================================
+// Progress Function
+// ============================================================================
+
+/**
+ * Creates a Progress component with value and optional styling.
+ *
+ * @param value - Current progress value (between min and max)
+ * @param style - Optional styling configuration
+ * @returns An East expression representing the progress component
+ *
+ * @remarks
+ * Progress is used to display the completion status of a task. It supports
+ * striped and animated styles for visual feedback.
+ *
+ * @example
+ * ```ts
+ * import { Progress } from "@elaraai/east-ui";
+ *
+ * // Simple progress (accepts plain numbers)
+ * const progress = Progress.Root(50.0);
+ *
+ * // Progress with custom range
+ * const ranged = Progress.Root(75.0, {
+ *   min: 0,
+ *   max: 100,
+ * });
+ *
+ * // Styled progress
+ * const styled = Progress.Root(60.0, {
+ *   colorPalette: "green",
+ *   size: "md",
+ *   variant: "subtle",
+ * });
+ *
+ * // Striped and animated
+ * const active = Progress.Root(30.0, {
+ *   striped: true,
+ *   animated: true,
+ *   colorPalette: "blue",
+ * });
+ *
+ * // With label and value text
+ * const labeled = Progress.Root(75.0, {
+ *   label: "Upload Progress",
+ *   valueText: "75%",
+ * });
+ *
+ * // Access the type
+ * const progressType = Progress.Types.Progress;
+ * ```
+ */
+function createProgress(
+    value: SubtypeExprOrValue<FloatType>,
+    style?: ProgressStyle
+): ExprType<UIComponentType> {
+    const toFloatOption = (val: SubtypeExprOrValue<FloatType> | undefined) => {
+        if (val === undefined) return variant("none", null);
+        return variant("some", val);
+    };
+
+    const toBoolOption = (val: SubtypeExprOrValue<BooleanType> | undefined) => {
+        if (val === undefined) return variant("none", null);
+        return variant("some", val);
+    };
+
+    const toStringOption = (val: SubtypeExprOrValue<StringType> | undefined) => {
+        if (val === undefined) return variant("none", null);
+        return variant("some", val);
+    };
+
+    const colorPaletteValue = style?.colorPalette
+        ? (typeof style.colorPalette === "string"
+            ? East.value(variant(style.colorPalette, null), ColorSchemeType)
+            : style.colorPalette)
+        : undefined;
+
+    const sizeValue = style?.size
+        ? (typeof style.size === "string"
+            ? East.value(variant(style.size, null), SizeType)
+            : style.size)
+        : undefined;
+
+    const variantValue = style?.variant
+        ? (typeof style.variant === "string"
+            ? East.value(variant(style.variant, null), ProgressVariantType)
+            : style.variant)
+        : undefined;
+
+    return East.value(variant("Progress", {
+        value: value,
+        min: toFloatOption(style?.min),
+        max: toFloatOption(style?.max),
+        colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
+        size: sizeValue ? variant("some", sizeValue) : variant("none", null),
+        variant: variantValue ? variant("some", variantValue) : variant("none", null),
+        striped: toBoolOption(style?.striped),
+        animated: toBoolOption(style?.animated),
+        label: toStringOption(style?.label),
+        valueText: toStringOption(style?.valueText),
+    }), UIComponentType);
+}
+
+/**
+ * Progress component for displaying task completion status.
+ *
+ * @remarks
+ * Use `Progress.Root(value, style)` to create a progress bar, or access `Progress.Types.Progress` for the East type.
+ *
+ * @example
+ * ```ts
+ * import { Progress } from "@elaraai/east-ui";
+ *
+ * // Create a progress bar
+ * const bar = Progress.Root(myValue, { colorPalette: "green" });
+ *
+ * // Access the type
+ * const progressType = Progress.Types.Progress;
+ * ```
+ */
+export const Progress = {
+    Root: createProgress,
+    Variant: ProgressVariant,
+    Types: {
+        Progress: ProgressType,
+        Variant: ProgressVariantType,
+    },
+} as const;

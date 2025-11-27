@@ -1,0 +1,109 @@
+/**
+ * Copyright (c) 2025 Elara AI Pty Ltd
+ * Licensed under AGPL-3.0. See LICENSE file for details.
+ */
+
+import {
+    type ExprType,
+    type SubtypeExprOrValue,
+    East,
+    StringType,
+    BooleanType,
+    variant,
+} from "@elaraai/east";
+
+import { SizeType, ColorSchemeType } from "../../style.js";
+import { UIComponentType } from "../../component.js";
+import { SwitchType, type SwitchStyle } from "./types.js";
+
+// Re-export types
+export { SwitchType, type SwitchStyle } from "./types.js";
+
+// ============================================================================
+// Switch Function
+// ============================================================================
+
+/**
+ * Creates a Switch component with checked state and optional styling.
+ *
+ * @param checked - Whether the switch is on
+ * @param style - Optional styling configuration
+ * @returns An East expression representing the switch component
+ *
+ * @remarks
+ * Switch is a toggle control for binary on/off states. Unlike Checkbox,
+ * it represents immediate action toggles rather than form selections.
+ *
+ * @example
+ * ```ts
+ * import { Switch } from "@elaraai/east-ui";
+ *
+ * // Simple switch
+ * const toggle = Switch.Root(true);
+ *
+ * // Switch with label
+ * const labeled = Switch.Root(false, {
+ *   label: "Enable notifications",
+ * });
+ *
+ * // Styled switch
+ * const styled = Switch.Root(true, {
+ *   label: "Dark mode",
+ *   colorPalette: "blue",
+ *   size: "md",
+ * });
+ *
+ * // Disabled switch
+ * const disabled = Switch.Root(false, {
+ *   label: "Premium feature",
+ *   disabled: true,
+ * });
+ * ```
+ */
+function createSwitch(
+    checked: SubtypeExprOrValue<BooleanType>,
+    style?: SwitchStyle
+): ExprType<UIComponentType> {
+    const toStringOption = (val: SubtypeExprOrValue<StringType> | undefined) => {
+        if (val === undefined) return variant("none", null);
+        return variant("some", val);
+    };
+
+    const toBoolOption = (val: SubtypeExprOrValue<BooleanType> | undefined) => {
+        if (val === undefined) return variant("none", null);
+        return variant("some", val);
+    };
+
+    const colorPaletteValue = style?.colorPalette
+        ? (typeof style.colorPalette === "string"
+            ? East.value(variant(style.colorPalette, null), ColorSchemeType)
+            : style.colorPalette)
+        : undefined;
+
+    const sizeValue = style?.size
+        ? (typeof style.size === "string"
+            ? East.value(variant(style.size, null), SizeType)
+            : style.size)
+        : undefined;
+
+    return East.value(variant("Switch", {
+        checked: checked,
+        label: toStringOption(style?.label),
+        disabled: toBoolOption(style?.disabled),
+        colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
+        size: sizeValue ? variant("some", sizeValue) : variant("none", null),
+    }), UIComponentType);
+}
+
+/**
+ * Switch component for boolean toggle states.
+ *
+ * @remarks
+ * Use `Switch.Root(checked, style)` to create a switch, or access `Switch.Types.Switch` for the East type.
+ */
+export const Switch = {
+    Root: createSwitch,
+    Types: {
+        Switch: SwitchType,
+    },
+} as const;

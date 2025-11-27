@@ -1,0 +1,109 @@
+/**
+ * Copyright (c) 2025 Elara AI Pty Ltd
+ * Licensed under AGPL-3.0. See LICENSE file for details.
+ */
+
+import {
+    type ExprType,
+    East,
+    variant,
+} from "@elaraai/east";
+
+import { SeparatorStyleType, SeparatorVariantType, type SeparatorStyle } from "./types.js";
+import { UIComponentType } from "../../component.js";
+import { OrientationType, SizeType } from "../../style.js";
+
+// Re-export style types
+export { SeparatorStyleType, SeparatorVariantType, type SeparatorStyle } from "./types.js";
+
+/**
+ * The concrete East type for Separator component data.
+ *
+ * @remarks
+ * Separator is a leaf component (no children) that provides a visual divider.
+ */
+export const SeparatorType = SeparatorStyleType;
+
+/**
+ * Type representing the Separator component structure.
+ */
+export type SeparatorType = typeof SeparatorType;
+
+/**
+ * Creates a Separator component for visual division between content.
+ *
+ * @param style - Optional styling configuration for the separator
+ * @returns An East expression representing the separator component
+ *
+ * @remarks
+ * Separator is a simple visual divider. By default it's horizontal.
+ * Use orientation to create vertical separators in flex row layouts.
+ *
+ * @example
+ * ```ts
+ * import { Separator, Style } from "@elaraai/east-ui";
+ *
+ * // Simple horizontal separator
+ * const hr = Separator();
+ *
+ * // Labeled separator
+ * const labeled = Separator({
+ *   label: "OR",
+ * });
+ *
+ * // Vertical separator
+ * const vertical = Separator({
+ *   orientation: Style.Orientation("vertical"),
+ * });
+ *
+ * // Styled separator
+ * const styled = Separator({
+ *   variant: variant("dashed", null),
+ *   color: "gray.300",
+ *   size: Style.Size("sm"),
+ * });
+ * ```
+ */
+function createSeparator(
+    style?: SeparatorStyle
+): ExprType<UIComponentType> {
+    const orientationValue = style?.orientation
+        ? (typeof style.orientation === "string"
+            ? East.value(variant(style.orientation, null), OrientationType)
+            : style.orientation)
+        : undefined;
+
+    const variantValue = style?.variant
+        ? (typeof style.variant === "string"
+            ? East.value(variant(style.variant, null), SeparatorVariantType)
+            : style.variant)
+        : undefined;
+
+    const sizeValue = style?.size
+        ? (typeof style.size === "string"
+            ? East.value(variant(style.size, null), SizeType)
+            : style.size)
+        : undefined;
+
+    return East.value(variant("Separator", {
+        orientation: orientationValue ? variant("some", orientationValue) : variant("none", null),
+        variant: variantValue ? variant("some", variantValue) : variant("none", null),
+        size: sizeValue ? variant("some", sizeValue) : variant("none", null),
+        color: style?.color ? variant("some", style.color) : variant("none", null),
+        label: style?.label ? variant("some", style.label) : variant("none", null),
+    }), UIComponentType);
+}
+
+/**
+ * Separator component for visual division between content.
+ *
+ * @remarks
+ * Use `Separator.Root(style)` to create a separator, or access `Separator.Types.Separator` for the East type.
+ */
+export const Separator = {
+    Root: createSeparator,
+    Types: {
+        Separator: SeparatorType,
+        Style: SeparatorStyleType,
+    },
+} as const;

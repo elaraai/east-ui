@@ -1,0 +1,136 @@
+/**
+ * Copyright (c) 2025 Elara AI Pty Ltd
+ * Licensed under AGPL-3.0. See LICENSE file for details.
+ */
+
+import {
+    type ExprType,
+    East,
+    StringType,
+    BooleanType,
+    variant,
+    type SubtypeExprOrValue,
+} from "@elaraai/east";
+
+import { SizeType, ColorSchemeType } from "../../style.js";
+import { UIComponentType } from "../../component.js";
+import {
+    ButtonType,
+    ButtonStyleType,
+    ButtonVariantType,
+    type ButtonStyle,
+} from "./types.js";
+
+// Re-export types
+export {
+    ButtonType,
+    ButtonStyleType,
+    ButtonVariantType,
+    type ButtonStyle,
+    type ButtonVariantLiteral,
+} from "./types.js";
+
+// ============================================================================
+// Button Function
+// ============================================================================
+
+/**
+ * Creates a Button component with a label and optional styling.
+ *
+ * @param label - The text to display on the button
+ * @param style - Optional styling configuration
+ * @returns An East expression representing the styled button component
+ *
+ * @remarks
+ * Button is an interactive component for triggering actions.
+ * It supports multiple variants, color schemes, and sizes.
+ *
+ * @example
+ * ```ts
+ * import { Button } from "@elaraai/east-ui";
+ *
+ * // Simple button
+ * const submitButton = Button.Root("Submit");
+ *
+ * // Button with styling
+ * const primaryButton = Button.Root("Save", {
+ *   variant: "solid",
+ *   colorPalette: "blue",
+ *   size: "md",
+ * });
+ *
+ * // Loading button
+ * const loadingButton = Button.Root("Processing...", {
+ *   variant: "solid",
+ *   colorPalette: "blue",
+ *   loading: true,
+ * });
+ *
+ * // Access the type
+ * const buttonType = Button.Types.Button;
+ * ```
+ */
+function createButton(
+    label: SubtypeExprOrValue<StringType>,
+    style?: ButtonStyle
+): ExprType<UIComponentType> {
+    const variantValue = style?.variant
+        ? (typeof style.variant === "string"
+            ? East.value(variant(style.variant, null), ButtonVariantType)
+            : style.variant)
+        : undefined;
+
+    const colorPaletteValue = style?.colorPalette
+        ? (typeof style.colorPalette === "string"
+            ? East.value(variant(style.colorPalette, null), ColorSchemeType)
+            : style.colorPalette)
+        : undefined;
+
+    const sizeValue = style?.size
+        ? (typeof style.size === "string"
+            ? East.value(variant(style.size, null), SizeType)
+            : style.size)
+        : undefined;
+
+    const toBoolOption = (value: SubtypeExprOrValue<BooleanType> | undefined) => {
+        if (value === undefined) return variant("none", null);
+        return variant("some", value);
+    };
+
+    return East.value(variant("Button", {
+        label: label,
+        style: style ? variant("some", East.value({
+            variant: variantValue ? variant("some", variantValue) : variant("none", null),
+            colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
+            size: sizeValue ? variant("some", sizeValue) : variant("none", null),
+            loading: toBoolOption(style.loading),
+            disabled: toBoolOption(style.disabled),
+        }, ButtonStyleType)) : variant("none", null),
+    }), UIComponentType);
+}
+
+/**
+ * Button component for triggering actions.
+ *
+ * @remarks
+ * Use `Button.Root(label, style)` to create a button, or access `Button.Types.Button` for the East type.
+ *
+ * @example
+ * ```ts
+ * import { Button } from "@elaraai/east-ui";
+ *
+ * // Create a button
+ * const btn = Button.Root("Click me", { variant: "solid", colorPalette: "blue" });
+ *
+ * // Access the type
+ * const buttonType = Button.Types.Button;
+ * ```
+ */
+export const Button = {
+    Root: createButton,
+    Types: {
+        Button: ButtonType,
+        Style: ButtonStyleType,
+        Variant: ButtonVariantType,
+    },
+} as const;
