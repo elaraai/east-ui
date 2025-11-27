@@ -36,6 +36,7 @@ import { SliderType } from "./forms/slider/types.js";
 import { FileUploadType } from "./forms/file-upload/types.js";
 import { FieldsetStyleType } from "./forms/fieldset/types.js";
 import { TextareaType } from "./forms/textarea/types.js";
+import { TagsInputRootType } from "./forms/tags-input/types.js";
 
 // Feedback
 import { ProgressType } from "./feedback/progress/types.js";
@@ -192,6 +193,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
         style: OptionType(FieldsetStyleType),
     }),
     Textarea: TextareaType,
+    TagsInput: TagsInputRootType,
 
     // Feedback
     Progress: ProgressType,

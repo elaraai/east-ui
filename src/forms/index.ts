@@ -73,3 +73,11 @@ export {
     type TextareaStyle,
     type TextareaResizeLiteral,
 } from "./textarea/index.js";
+
+export {
+    TagsInput,
+    TagsInputRootType,
+    TagsInputBlurBehaviorType,
+    type TagsInputStyle,
+    type TagsInputBlurBehaviorLiteral,
+} from "./tags-input/index.js";
