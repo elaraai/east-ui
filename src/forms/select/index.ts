@@ -100,8 +100,8 @@ function createSelectItem(
  * ```
  */
 function createSelectRoot(
-    value: SubtypeExprOrValue<StringType> | null,
-    items: ExprType<SelectItemType>[],
+    value: SubtypeExprOrValue<StringType>,
+    items: SubtypeExprOrValue<ArrayType<SelectItemType>>,
     style?: SelectStyle
 ): ExprType<UIComponentType> {
     const toStringOption = (val: SubtypeExprOrValue<StringType> | null | undefined) => {

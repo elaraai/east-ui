@@ -32,6 +32,7 @@ import {
     type TableColumnStyle,
     type TableStyle,
 } from "./types.js";
+import { UIComponentType } from "../../component.js";
 
 // Re-export style types
 export {
@@ -309,7 +310,7 @@ function TableRoot(
     columns: SubtypeExprOrValue<ArrayType<TableColumnType>>,
     rows: SubtypeExprOrValue<ArrayType<TableRowType>>,
     style?: TableStyle
-): ExprType<TableRootType> {
+): ExprType<UIComponentType> {
     const columnsValue = Array.isArray(columns)
         ? East.value(columns, ArrayType(TableColumnType))
         : columns;
@@ -341,7 +342,7 @@ function TableRoot(
         return variant("some", value);
     };
 
-    return East.value({
+    return East.value(variant("Table", {
         columns: columnsValue,
         rows: rowsValue,
         style: style ? variant("some", East.value({
@@ -353,7 +354,7 @@ function TableRoot(
             showColumnBorder: toBoolOption(style.showColumnBorder),
             colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
         }, TableStyleType)) : variant("none", null),
-    }, TableRootType);
+    }), UIComponentType);
 }
 
 // ============================================================================

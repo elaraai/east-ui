@@ -15,3 +15,11 @@ export {
     type AccordionStyle,
     type AccordionItemStyle,
 } from "./accordion/index.js";
+
+export {
+    Carousel,
+    CarouselItemType,
+    CarouselStyleType,
+    type CarouselStyle,
+    type OrientationLiteral,
+} from "./carousel/index.js";

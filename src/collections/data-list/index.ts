@@ -15,6 +15,7 @@ import {
 
 import { SizeType, OrientationType } from "../../style.js";
 import { DataListVariantType, type DataListStyle } from "./types.js";
+import { UIComponentType } from "../../component.js";
 
 // Re-export style types
 export { DataListVariantType, DataListVariant, type DataListStyle } from "./types.js";
@@ -153,7 +154,7 @@ function DataListItem(
 function DataListRoot(
     items: ExprType<DataListItemType>[],
     style?: DataListStyle
-): ExprType<DataListRootType> {
+): ExprType<UIComponentType>  {
     const orientationValue = style?.orientation
         ? (typeof style.orientation === "string"
             ? East.value(variant(style.orientation, null), OrientationType)
@@ -172,12 +173,12 @@ function DataListRoot(
             : style.variant)
         : undefined;
 
-    return East.value({
+    return East.value(variant("DataList", {
         items: East.value(items, ArrayType(DataListItemType)),
         orientation: orientationValue ? variant("some", orientationValue) : variant("none", null),
         size: sizeValue ? variant("some", sizeValue) : variant("none", null),
         variant: variantValue ? variant("some", variantValue) : variant("none", null),
-    }, DataListRootType);
+    }), UIComponentType);
 }
 
 // ============================================================================

@@ -176,7 +176,7 @@ function createAccordionItem(
  * ```
  */
 function createAccordionRoot(
-    items: ExprType<AccordionItemType>[],
+    items: SubtypeExprOrValue<ArrayType<AccordionItemType>>,
     style?: AccordionStyle
 ): ExprType<AccordionRootType> {
     const toBoolOption = (val: SubtypeExprOrValue<BooleanType> | undefined) => {
@@ -191,7 +191,7 @@ function createAccordionRoot(
         : undefined;
 
     return East.value({
-        items: East.value(items, ArrayType(AccordionItemType)),
+        items,
         style: style ? variant("some", East.value({
             multiple: toBoolOption(style.multiple),
             collapsible: toBoolOption(style.collapsible),

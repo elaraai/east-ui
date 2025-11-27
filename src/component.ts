@@ -10,6 +10,7 @@ import {
     OptionType,
     StructType,
     StringType,
+    IntegerType,
     FloatType,
     BooleanType,
 } from "@elaraai/east";
@@ -67,6 +68,7 @@ import { BarSegmentType } from "./charts/bar-segment/types.js";
 
 // Disclosure
 import { AccordionStyleType } from "./disclosure/accordion/types.js";
+import { CarouselStyleType } from "./disclosure/carousel/types.js";
 
 // Overlays
 import { PlacementType } from "./overlays/tooltip/types.js";
@@ -146,7 +148,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
             rowStart: OptionType(StringType),
             rowEnd: OptionType(StringType),
         })),
-        style: OptionType(GridStyleType),
+        // style: OptionType(GridStyleType),
     }),
 
     Splitter: StructType({
@@ -226,17 +228,17 @@ export const UIComponentType = RecursiveType(node => VariantType({
     BarList: BarListType,
     BarSegment: BarSegmentType,
 
-    // TreeView: StructType({
-    //     nodes: ArrayType(RecursiveType(inner => StructType({
-    //         value: StringType,
-    //         label: StringType,
-    //         children: ArrayType(inner),
-    //     }))),
-    //     label: OptionType(StringType),
-    //     defaultExpandedValue: OptionType(ArrayType(StringType)),
-    //     defaultSelectedValue: OptionType(ArrayType(StringType)),
-    //     // style: OptionType(TreeViewStyleType),
-    // }),
+    TreeView: StructType({
+        nodes: ArrayType(RecursiveType(inner => StructType({
+            value: StringType,
+            label: StringType,
+            children: ArrayType(inner),
+        }))),
+        label: OptionType(StringType),
+        defaultExpandedValue: OptionType(ArrayType(StringType)),
+        defaultSelectedValue: OptionType(ArrayType(StringType)),
+        // style: OptionType(TreeViewStyleType),
+    }),
 
     // Disclosure
     Accordion: StructType({
@@ -247,6 +249,22 @@ export const UIComponentType = RecursiveType(node => VariantType({
             disabled: OptionType(BooleanType),
         })),
         style: OptionType(AccordionStyleType),
+    }),
+
+    Carousel: StructType({
+        items: ArrayType(StructType({
+            content: node,
+        })),
+        index: OptionType(IntegerType),
+        defaultIndex: OptionType(IntegerType),
+        slidesPerView: OptionType(IntegerType),
+        slidesPerMove: OptionType(IntegerType),
+        loop: OptionType(BooleanType),
+        autoplay: OptionType(BooleanType),
+        allowMouseDrag: OptionType(BooleanType),
+        showIndicators: OptionType(BooleanType),
+        showControls: OptionType(BooleanType),
+        style: OptionType(CarouselStyleType),
     }),
 
     // Overlays
