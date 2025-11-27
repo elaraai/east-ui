@@ -65,3 +65,11 @@ export {
     FieldsetStyleType,
     type FieldsetStyle,
 } from "./fieldset/index.js";
+
+export {
+    Textarea,
+    TextareaType,
+    TextareaResizeType,
+    type TextareaStyle,
+    type TextareaResizeLiteral,
+} from "./textarea/index.js";

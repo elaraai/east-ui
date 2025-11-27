@@ -508,7 +508,7 @@ Each component has a detailed specification document:
 - [x] [28-field.md](28-field.md) - Field (`src/forms/field/`)
 - [x] [29-file-upload.md](29-file-upload.md) - FileUpload (`src/forms/file-upload/`)
 - [x] [30-fieldset.md](30-fieldset.md) - Fieldset (`src/forms/fieldset/`)
-- [ ] [31-textarea.md](31-textarea.md) - Textarea (`src/forms/textarea/`)
+- [x] [31-textarea.md](31-textarea.md) - Textarea (`src/forms/textarea/`)
 - [ ] [32-tags-input.md](32-tags-input.md) - TagsInput (`src/forms/tags-input/`)
 - [ ] [33-carousel.md](33-carousel.md) - Carousel (`src/disclosure/carousel/`)
 - [ ] [34-collapsible.md](34-collapsible.md) - Collapsible (`src/disclosure/collapsible/`)
