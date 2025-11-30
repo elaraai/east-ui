@@ -41,7 +41,7 @@ export { Input, Checkbox, Switch, Select, Slider, Field, FileUpload, Fieldset, T
 export { Progress, Alert } from "./feedback/index.js";
 
 // Display
-export { Badge, Tag, Avatar, Stat } from "./display/index.js";
+export { Badge, Tag, Avatar, Stat, Icon, type IconName } from "./display/index.js";
 
 // Containers
 export { Card } from "./container/index.js";

@@ -8,6 +8,9 @@ import {
     type SubtypeExprOrValue,
     East,
     StringType,
+    BooleanType,
+    OptionType,
+    StructType,
     variant,
 } from "@elaraai/east";
 
@@ -27,6 +30,34 @@ export {
     type TooltipStyle,
     type PlacementLiteral,
 } from "./types.js";
+
+// ============================================================================
+// Tooltip Type
+// ============================================================================
+
+/**
+ * East StructType for Tooltip component.
+ *
+ * @remarks
+ * Tooltip wraps a trigger element and displays content on hover.
+ * The trigger can be any UI component.
+ *
+ * @property trigger - The UI component that triggers the tooltip on hover
+ * @property content - The tooltip text content
+ * @property placement - Optional placement position
+ * @property hasArrow - Whether to show an arrow pointing to the trigger
+ */
+export const TooltipType = StructType({
+    trigger: UIComponentType,
+    content: StringType,
+    placement: OptionType(PlacementType),
+    hasArrow: OptionType(BooleanType),
+});
+
+/**
+ * Type alias for TooltipType.
+ */
+export type TooltipType = typeof TooltipType;
 
 // ============================================================================
 // Tooltip Function
@@ -112,6 +143,7 @@ export const Tooltip = {
     Root: createTooltip,
     Placement: Placement,
     Types: {
+        Tooltip: TooltipType,
         Style: TooltipStyleType,
         Placement: PlacementType,
     },

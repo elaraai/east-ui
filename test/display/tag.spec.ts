@@ -130,9 +130,17 @@ describeEast("Tag", (test) => {
         $(assertEast.equal(tag.unwrap("Tag").size.unwrap("some").hasTag("lg"), true));
     });
 
-    test("creates tag with Style.Size helper", $ => {
+    test("creates extra large tag", $ => {
+        const tag = $.let(Tag.Root("XL", {
+            size: "xl",
+        }));
+
+        $(assertEast.equal(tag.unwrap("Tag").size.unwrap("some").hasTag("xl"), true));
+    });
+
+    test("creates tag with string literal size", $ => {
         const tag = $.let(Tag.Root("Sized", {
-            size: Style.Size("md"),
+            size: "md",
         }));
 
         $(assertEast.equal(tag.unwrap("Tag").size.unwrap("some").hasTag("md"), true));
@@ -203,7 +211,7 @@ describeEast("Tag", (test) => {
         const tag = $.let(Tag.Root("In Progress", {
             colorPalette: "orange",
             variant: "solid",
-            size: "xs",
+            size: "sm",
         }));
 
         $(assertEast.equal(tag.unwrap("Tag").label, "In Progress"));

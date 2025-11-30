@@ -11,6 +11,8 @@ import {
     StringType,
     BooleanType,
     ArrayType,
+    OptionType,
+    StructType,
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
@@ -29,6 +31,32 @@ export {
     PlacementType,
     type PlacementLiteral,
 } from "./types.js";
+
+// ============================================================================
+// Menu Type
+// ============================================================================
+
+/**
+ * East StructType for Menu component.
+ *
+ * @remarks
+ * Menu wraps a trigger element and displays a dropdown menu on click.
+ * The trigger can be any UI component.
+ *
+ * @property trigger - The UI component that triggers the menu on click
+ * @property items - Array of menu items (Item or Separator)
+ * @property placement - Optional placement position
+ */
+export const MenuType = StructType({
+    trigger: UIComponentType,
+    items: ArrayType(MenuItemType),
+    placement: OptionType(PlacementType),
+});
+
+/**
+ * Type alias for MenuType.
+ */
+export type MenuType = typeof MenuType;
 
 // ============================================================================
 // Menu Item Factories
@@ -169,6 +197,8 @@ export const Menu = {
     Separator: createMenuSeparator,
     /** Type definitions */
     Types: {
+        /** Menu struct type */
+        Menu: MenuType,
         /** Menu item variant type */
         Item: MenuItemType,
         /** Menu style struct type */

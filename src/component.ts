@@ -50,6 +50,7 @@ import { TagType } from "./display/tag/types.js";
 import { AvatarType } from "./display/avatar/types.js";
 import { CardStyleType } from "./container/card/types.js";
 import { StatType } from "./display/stat/types.js";
+import { IconType } from "./display/icon/types.js";
 
 // Collections
 import { DataListRootType } from "./collections/data-list/index.js";
@@ -209,6 +210,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
     Tag: TagType,
     Avatar: AvatarType,
     Stat: StatType,
+    Icon: IconType,
 
     // Container
     Card: StructType({
@@ -231,10 +233,19 @@ export const UIComponentType = RecursiveType(node => VariantType({
     BarSegment: BarSegmentType,
 
     TreeView: StructType({
-        nodes: ArrayType(RecursiveType(inner => StructType({
-            value: StringType,
-            label: StringType,
-            children: ArrayType(inner),
+        nodes: ArrayType(RecursiveType(inner => VariantType({
+            Item: StructType({
+                value: StringType,
+                label: StringType,
+                indicator: OptionType(IconType),
+            }),
+            Branch: StructType({
+                value: StringType,
+                label: StringType,
+                indicator: OptionType(IconType),
+                children: ArrayType(inner),
+                disabled: OptionType(BooleanType),
+            }),
         }))),
         label: OptionType(StringType),
         defaultExpandedValue: OptionType(ArrayType(StringType)),

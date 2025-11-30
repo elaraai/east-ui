@@ -12,12 +12,12 @@ import {
     variant,
 } from "@elaraai/east";
 
-import { SizeType, ColorSchemeType, StyleVariantType } from "../../style.js";
+import { ColorSchemeType, StyleVariantType } from "../../style.js";
 import { UIComponentType } from "../../component.js";
-import { TagType, type TagStyle } from "./types.js";
+import { TagType, TagSizeType, type TagStyle } from "./types.js";
 
 // Re-export types
-export { TagType, type TagStyle } from "./types.js";
+export { TagType, TagSizeType, type TagStyle, type TagSizeLiteral } from "./types.js";
 
 // ============================================================================
 // Tag Function
@@ -80,7 +80,7 @@ function createTag(
 
     const sizeValue = style?.size
         ? (typeof style.size === "string"
-            ? East.value(variant(style.size, null), SizeType)
+            ? East.value(variant(style.size, null), TagSizeType)
             : style.size)
         : undefined;
 
@@ -114,5 +114,6 @@ export const Tag = {
     Root: createTag,
     Types: {
         Tag: TagType,
+        Size: TagSizeType,
     },
 } as const;

@@ -14,7 +14,10 @@ import {
     BooleanType,
     RecursiveType,
     variant,
+    VariantType,
 } from "@elaraai/east";
+
+import type { IconName, IconPrefix } from "@fortawesome/fontawesome-common-types";
 
 import {
     TreeViewVariantType,
@@ -24,6 +27,14 @@ import {
     type TreeViewStyle,
 } from "./types.js";
 import { UIComponentType } from "../../component.js";
+import {
+    IconType,
+    IconSizeType,
+    IconVariantType,
+    IconStyleType,
+    type IconStyle,
+} from "../../display/icon/types.js";
+import { ColorSchemeType } from "../../style.js";
 
 // Re-export style types
 export {
@@ -43,22 +54,84 @@ export {
  *
  * @remarks
  * Each node has a value (unique identifier), label (display text),
- * and optional children (array of more nodes).
+ * optional indicator icon, and children.
  *
  * @property value - Unique identifier for the node
  * @property label - Display text for the node
- * @property children - Optional array of child nodes
+ * @property indicator - Optional icon to display before the label
+ * @property children - Array of child nodes
  */
-export const TreeNodeType = RecursiveType(self => StructType({
-    value: StringType,
-    label: StringType,
-    children: ArrayType(self),
+export const TreeNodeType = RecursiveType(self => VariantType({
+    Item: StructType({
+        value: StringType,
+        label: StringType,
+        indicator: OptionType(IconType),
+    }),
+    Branch: StructType({
+        value: StringType,
+        label: StringType,
+        indicator: OptionType(IconType),
+        children: ArrayType(self),
+        disabled: OptionType(BooleanType)
+    })
 }));
 
 /**
  * Type representing the tree node structure.
  */
 export type TreeNodeType = typeof TreeNodeType;
+
+// ============================================================================
+// TreeNode Variant Types
+// ============================================================================
+
+/**
+ * East StructType for a leaf tree node (Item).
+ *
+ * @remarks
+ * Items are leaf nodes in the tree hierarchy that cannot have children.
+ * Use {@link TreeView.Item} factory function to create Item nodes.
+ *
+ * @property value - Unique identifier for the node
+ * @property label - Display text for the node
+ * @property indicator - Optional icon to display before the label
+ */
+export const TreeItemNodeType = StructType({
+    value: StringType,
+    label: StringType,
+    indicator: OptionType(IconType),
+});
+
+/**
+ * Type alias for TreeItemNodeType.
+ */
+export type TreeItemNodeType = typeof TreeItemNodeType;
+
+/**
+ * East StructType for a branch tree node (Branch).
+ *
+ * @remarks
+ * Branches are expandable nodes that can contain child nodes (Items or other Branches).
+ * Use {@link TreeView.Branch} factory function to create Branch nodes.
+ *
+ * @property value - Unique identifier for the node
+ * @property label - Display text for the node
+ * @property indicator - Optional icon to display before the label
+ * @property children - Array of child nodes (Items or Branches)
+ * @property disabled - Whether the branch is disabled
+ */
+export const TreeBranchNodeType = StructType({
+    value: StringType,
+    label: StringType,
+    indicator: OptionType(IconType),
+    children: ArrayType(TreeNodeType),
+    disabled: OptionType(BooleanType),
+});
+
+/**
+ * Type alias for TreeBranchNodeType.
+ */
+export type TreeBranchNodeType = typeof TreeBranchNodeType;
 
 // ============================================================================
 // TreeView Root Type
@@ -101,11 +174,13 @@ export type TreeViewRootType = typeof TreeViewRootType;
  *
  * @property value - Unique identifier for the node
  * @property label - Display text for the node
+ * @property indicator - Optional icon to display before the label
  * @property children - Optional array of child nodes
  */
 export interface TreeNodeInput {
     value: SubtypeExprOrValue<typeof StringType>;
     label: SubtypeExprOrValue<typeof StringType>;
+    indicator?: SubtypeExprOrValue<typeof IconType>;
     children?: TreeNodeInput[];
 }
 
@@ -114,37 +189,129 @@ export interface TreeNodeInput {
 // ============================================================================
 
 /**
- * Creates a tree node with optional children.
+ * Indicator icon configuration for tree nodes.
+ * Extends IconStyle so styling properties are at the top level.
+ */
+export interface TreeNodeIndicator extends IconStyle {
+    /** Font Awesome icon prefix (e.g., "fas", "far", "fab") */
+    prefix: IconPrefix;
+    /** Font Awesome icon name (e.g., "folder", "file", "file-code") */
+    name: IconName;
+}
+
+/**
+ * Helper to build indicator option value.
+ */
+function buildIndicatorValue(indicator?: TreeNodeIndicator) {
+    if (!indicator) return variant("none", null);
+
+    return variant("some", East.value({
+        prefix: indicator.prefix,
+        name: indicator.name,
+        style: (indicator.size || indicator.variant || indicator.color || indicator.colorPalette)
+            ? variant("some", East.value({
+                size: indicator.size
+                    ? variant("some", typeof indicator.size === "string"
+                        ? East.value(variant(indicator.size, null), IconSizeType)
+                        : indicator.size)
+                    : variant("none", null),
+                variant: indicator.variant
+                    ? variant("some", typeof indicator.variant === "string"
+                        ? East.value(variant(indicator.variant, null), IconVariantType)
+                        : indicator.variant)
+                    : variant("none", null),
+                color: indicator.color ? variant("some", indicator.color) : variant("none", null),
+                colorPalette: indicator.colorPalette
+                    ? variant("some", typeof indicator.colorPalette === "string"
+                        ? East.value(variant(indicator.colorPalette, null), ColorSchemeType)
+                        : indicator.colorPalette)
+                    : variant("none", null),
+            }, IconStyleType))
+            : variant("none", null),
+    }, IconType));
+}
+
+/**
+ * Creates a leaf tree node (Item) with no children.
  *
  * @param value - Unique identifier for the node
  * @param label - Display text for the node
- * @param children - Optional array of child nodes
- * @returns An East expression representing the tree node
+ * @param indicator - Optional indicator icon with prefix, name, and styling
+ * @returns An East expression representing the tree item
  *
  * @example
  * ```ts
  * import { TreeView } from "@elaraai/east-ui";
  *
- * // Leaf node (no children)
- * TreeView.Node("file1", "index.ts");
+ * // Simple file item
+ * TreeView.Item("file1", "index.ts");
  *
- * // Branch node with children
- * TreeView.Node("src", "src", [
- *   TreeView.Node("file1", "index.ts"),
- *   TreeView.Node("file2", "utils.ts"),
- * ]);
+ * // Item with file icon
+ * TreeView.Item("readme", "README.md", { prefix: "far", name: "file" });
+ *
+ * // Item with colored code icon
+ * TreeView.Item("index", "index.ts", { prefix: "fas", name: "file-code", color: "blue.500" });
  * ```
  */
-function TreeNode(
+function TreeItem(
     value: SubtypeExprOrValue<typeof StringType>,
     label: SubtypeExprOrValue<typeof StringType>,
-    children: SubtypeExprOrValue<ArrayType<TreeNodeType>>
+    indicator?: TreeNodeIndicator
 ): ExprType<TreeNodeType> {
-    return East.value({
+    return East.value(variant("Item", {
         value: value,
         label: label,
+        indicator: buildIndicatorValue(indicator),
+    }), TreeNodeType);
+}
+
+/**
+ * Creates a branch tree node that can contain children.
+ *
+ * @param value - Unique identifier for the node
+ * @param label - Display text for the node
+ * @param children - Array of child nodes
+ * @param indicator - Optional indicator icon with prefix, name, and styling
+ * @param disabled - Whether the branch is disabled
+ * @returns An East expression representing the tree branch
+ *
+ * @example
+ * ```ts
+ * import { TreeView } from "@elaraai/east-ui";
+ *
+ * // Simple folder branch
+ * TreeView.Branch("src", "src", [
+ *   TreeView.Item("file1", "index.ts"),
+ *   TreeView.Item("file2", "utils.ts"),
+ * ]);
+ *
+ * // Branch with folder icon
+ * TreeView.Branch("src", "src", [
+ *   TreeView.Item("index", "index.ts"),
+ * ], { prefix: "fas", name: "folder", color: "yellow.500" });
+ *
+ * // Nested branches
+ * TreeView.Branch("src", "src", [
+ *   TreeView.Branch("components", "components", [
+ *     TreeView.Item("button", "Button.tsx"),
+ *   ]),
+ * ], { prefix: "fas", name: "folder" });
+ * ```
+ */
+function TreeBranch(
+    value: SubtypeExprOrValue<typeof StringType>,
+    label: SubtypeExprOrValue<typeof StringType>,
+    children: SubtypeExprOrValue<ArrayType<TreeNodeType>>,
+    indicator?: TreeNodeIndicator,
+    disabled?: SubtypeExprOrValue<typeof BooleanType>
+): ExprType<TreeNodeType> {
+    return East.value(variant("Branch", {
+        value: value,
+        label: label,
+        indicator: buildIndicatorValue(indicator),
         children: children,
-    }, TreeNodeType);
+        disabled: disabled !== undefined ? variant("some", disabled) : variant("none", null),
+    }), TreeNodeType);
 }
 
 // ============================================================================
@@ -154,7 +321,7 @@ function TreeNode(
 /**
  * Creates a TreeView component with nodes and styling.
  *
- * @param nodes - Array of root-level tree nodes
+ * @param nodes - Array of root-level tree nodes (Item or Branch)
  * @param style - Optional styling and configuration
  * @returns An East expression representing the tree view
  *
@@ -162,34 +329,24 @@ function TreeNode(
  * ```ts
  * import { TreeView } from "@elaraai/east-ui";
  *
- * // File explorer tree
+ * // Simple file tree
  * TreeView.Root([
- *   TreeView.Node("src", "src", [
- *     TreeView.Node("index", "index.ts"),
- *     TreeView.Node("utils", "utils.ts"),
+ *   TreeView.Branch("src", "src", [
+ *     TreeView.Item("index", "index.ts"),
+ *     TreeView.Item("utils", "utils.ts"),
  *   ]),
- *   TreeView.Node("package", "package.json"),
- *   TreeView.Node("readme", "README.md"),
+ *   TreeView.Item("package", "package.json"),
  * ], {
  *   variant: "subtle",
  *   size: "sm",
- *   defaultExpandedValue: ["src"],
  * });
  *
- * // Category tree with selection
+ * // File tree with indicators
  * TreeView.Root([
- *   TreeView.Node("electronics", "Electronics", [
- *     TreeView.Node("phones", "Phones"),
- *     TreeView.Node("laptops", "Laptops"),
- *   ]),
- *   TreeView.Node("clothing", "Clothing", [
- *     TreeView.Node("mens", "Men's"),
- *     TreeView.Node("womens", "Women's"),
- *   ]),
- * ], {
- *   selectionMode: "multiple",
- *   animateContent: true,
- * });
+ *   TreeView.Branch("src", "src", [
+ *     TreeView.Item("index", "index.ts", { prefix: "fas", name: "file-code" }),
+ *   ], { prefix: "fas", name: "folder", color: "yellow.500" }),
+ * ]);
  * ```
  */
 function TreeViewRoot(
@@ -255,8 +412,7 @@ function TreeViewRoot(
  *
  * @remarks
  * TreeView displays hierarchical data structures in an expandable tree format.
- * Use TreeView.Node to create individual nodes and TreeView.Root to create
- * the complete tree.
+ * Use TreeView.Item for leaf nodes and TreeView.Branch for expandable nodes.
  *
  * @example
  * ```ts
@@ -264,32 +420,34 @@ function TreeViewRoot(
  *
  * // Simple file tree
  * const fileTree = TreeView.Root([
- *   TreeView.Node("src", "src", [
- *     TreeView.Node("components", "components", [
- *       TreeView.Node("button", "Button.tsx"),
- *       TreeView.Node("input", "Input.tsx"),
- *     ]),
- *     TreeView.Node("utils", "utils", [
- *       TreeView.Node("helpers", "helpers.ts"),
- *     ]),
- *     TreeView.Node("index", "index.ts"),
+ *   TreeView.Branch("src", "src", [
+ *     TreeView.Item("index", "index.ts"),
+ *     TreeView.Item("utils", "utils.ts"),
  *   ]),
- *   TreeView.Node("package", "package.json"),
- *   TreeView.Node("tsconfig", "tsconfig.json"),
+ *   TreeView.Item("package", "package.json"),
  * ], {
  *   label: "Project Files",
  *   variant: "subtle",
  *   size: "sm",
- *   defaultExpandedValue: ["src"],
  * });
+ *
+ * // File tree with indicators
+ * const iconTree = TreeView.Root([
+ *   TreeView.Branch("src", "src", [
+ *     TreeView.Item("index", "index.ts", { prefix: "fas", name: "file-code" }),
+ *   ], { prefix: "fas", name: "folder", color: "yellow.500" }),
+ * ]);
  * ```
  */
 export const TreeView = {
     Root: TreeViewRoot,
-    Node: TreeNode,
+    Item: TreeItem,
+    Branch: TreeBranch,
     Types: {
         Root: TreeViewRootType,
         Node: TreeNodeType,
+        ItemNode: TreeItemNodeType,
+        BranchNode: TreeBranchNodeType,
         Style: TreeViewStyleType,
         Variant: TreeViewVariantType,
         Size: TreeViewSizeType,
