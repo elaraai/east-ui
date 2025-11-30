@@ -56,7 +56,7 @@ export { Chart, Sparkline } from "./charts/index.js";
 export { Accordion, Carousel, Tabs } from "./disclosure/index.js";
 
 // Overlays
-export { Tooltip, Menu } from "./overlays/index.js";
+export { Tooltip, Menu, Dialog, Drawer, Popover, HoverCard, ActionBar, ToggleTip } from "./overlays/index.js";
 
 // Component Types
 export { UIComponentType } from "./component.js";

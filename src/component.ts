@@ -77,6 +77,12 @@ import { TabsStyleType } from "./disclosure/tabs/types.js";
 import { PlacementType } from "./overlays/tooltip/types.js";
 import { MenuItemType } from "./overlays/menu/types.js";
 import { TreeViewStyleType } from "./collections/tree-view/types.js";
+import { DialogStyleType } from "./overlays/dialog/types.js";
+import { DrawerStyleType } from "./overlays/drawer/types.js";
+import { PopoverStyleType } from "./overlays/popover/types.js";
+import { HoverCardStyleType } from "./overlays/hover-card/types.js";
+import { ActionBarItemType } from "./overlays/action-bar/types.js";
+import { ToggleTipStyleType } from "./overlays/toggle-tip/types.js";
 
 /**
  * Recursive type representing any UI component in East UI.
@@ -308,6 +314,49 @@ export const UIComponentType = RecursiveType(node => VariantType({
         trigger: node,
         items: ArrayType(MenuItemType),
         placement: OptionType(PlacementType),
+    }),
+
+    Dialog: StructType({
+        trigger: node,
+        body: ArrayType(node),
+        title: OptionType(StringType),
+        description: OptionType(StringType),
+        style: OptionType(DialogStyleType),
+    }),
+
+    Drawer: StructType({
+        trigger: node,
+        body: ArrayType(node),
+        title: OptionType(StringType),
+        description: OptionType(StringType),
+        style: OptionType(DrawerStyleType),
+    }),
+
+    Popover: StructType({
+        trigger: node,
+        body: ArrayType(node),
+        title: OptionType(StringType),
+        description: OptionType(StringType),
+        style: OptionType(PopoverStyleType),
+    }),
+
+    HoverCard: StructType({
+        trigger: node,
+        body: ArrayType(node),
+        style: OptionType(HoverCardStyleType),
+    }),
+
+    ActionBar: StructType({
+        items: ArrayType(ActionBarItemType),
+        selectionCount: OptionType(IntegerType),
+        selectionLabel: OptionType(StringType),
+        style: OptionType(StructType({})),
+    }),
+
+    ToggleTip: StructType({
+        trigger: node,
+        content: StringType,
+        style: OptionType(ToggleTipStyleType),
     }),
 }));
 
