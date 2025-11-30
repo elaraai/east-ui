@@ -87,24 +87,24 @@ describeEast("Tooltip", (test) => {
         $(assertEast.equal(tooltip.unwrap("Tooltip").placement.unwrap("some").hasTag("right"), true));
     });
 
-    test("creates tooltip with top_start placement", $ => {
+    test("creates tooltip with top-start placement", $ => {
         const tooltip = $.let(Tooltip.Root(
             Button.Root("Hover"),
             "Tooltip top start",
-            { placement: "top_start" }
+            { placement: "top-start" }
         ));
 
-        $(assertEast.equal(tooltip.unwrap("Tooltip").placement.unwrap("some").hasTag("top_start"), true));
+        $(assertEast.equal(tooltip.unwrap("Tooltip").placement.unwrap("some").hasTag("top-start"), true));
     });
 
-    test("creates tooltip with bottom_end placement", $ => {
+    test("creates tooltip with bottom-end placement", $ => {
         const tooltip = $.let(Tooltip.Root(
             Button.Root("Hover"),
             "Tooltip bottom end",
-            { placement: "bottom_end" }
+            { placement: "bottom-end" }
         ));
 
-        $(assertEast.equal(tooltip.unwrap("Tooltip").placement.unwrap("some").hasTag("bottom_end"), true));
+        $(assertEast.equal(tooltip.unwrap("Tooltip").placement.unwrap("some").hasTag("bottom-end"), true));
     });
 
     // =========================================================================
@@ -188,9 +188,9 @@ describeEast("Tooltip", (test) => {
         const tooltip = $.let(Tooltip.Root(
             Text.Root("Terms & Conditions"),
             "Click to read our full terms and conditions",
-            { placement: "bottom_start" }
+            { placement: "bottom-start" }
         ));
 
-        $(assertEast.equal(tooltip.unwrap("Tooltip").placement.unwrap("some").hasTag("bottom_start"), true));
+        $(assertEast.equal(tooltip.unwrap("Tooltip").placement.unwrap("some").hasTag("bottom-start"), true));
     });
 });

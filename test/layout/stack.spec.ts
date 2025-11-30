@@ -73,11 +73,11 @@ describeEast("Stack", (test) => {
 
     test("creates stack with justify", $ => {
         const stack = $.let(Stack.Root([], {
-            justify: Style.JustifyContent("space_between"),
+            justify: Style.JustifyContent("space-between"),
         }));
 
         $(assertEast.equal(stack.unwrap("Stack").style.unwrap("some").justify.hasTag("some"), true));
-        $(assertEast.equal(stack.unwrap("Stack").style.unwrap("some").justify.unwrap("some").hasTag("space_between"), true));
+        $(assertEast.equal(stack.unwrap("Stack").style.unwrap("some").justify.unwrap("some").hasTag("space-between"), true));
     });
 
     test("creates stack with wrap", $ => {
@@ -126,7 +126,7 @@ describeEast("Stack", (test) => {
             direction: 'row',
             gap: "4",
             align: 'center',
-            justify: 'space_between',
+            justify: 'space-between',
             padding: "2",
             background: "gray.50",
         }));
@@ -135,7 +135,7 @@ describeEast("Stack", (test) => {
         $(assertEast.equal(style.direction.unwrap("some").hasTag("row"), true));
         $(assertEast.equal(style.gap.unwrap("some"), "4"));
         $(assertEast.equal(style.align.unwrap("some").hasTag("center"), true));
-        $(assertEast.equal(style.justify.unwrap("some").hasTag("space_between"), true));
+        $(assertEast.equal(style.justify.unwrap("some").hasTag("space-between"), true));
         $(assertEast.equal(style.padding.unwrap("some"), "2"));
         $(assertEast.equal(style.background.unwrap("some"), "gray.50"));
         // Other styles should be none
@@ -150,13 +150,13 @@ describeEast("Stack", (test) => {
     test("supports all flex directions", $ => {
         const row = $.let(Stack.Root([], { direction: Style.FlexDirection("row") }));
         const column = $.let(Stack.Root([], { direction: Style.FlexDirection("column") }));
-        const rowReverse = $.let(Stack.Root([], { direction: Style.FlexDirection("row_reverse") }));
-        const columnReverse = $.let(Stack.Root([], { direction: Style.FlexDirection("column_reverse") }));
+        const rowReverse = $.let(Stack.Root([], { direction: Style.FlexDirection("row-reverse") }));
+        const columnReverse = $.let(Stack.Root([], { direction: Style.FlexDirection("column-reverse") }));
 
         $(assertEast.equal(row.unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("row"), true));
         $(assertEast.equal(column.unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("column"), true));
-        $(assertEast.equal(rowReverse.unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("row_reverse"), true));
-        $(assertEast.equal(columnReverse.unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("column_reverse"), true));
+        $(assertEast.equal(rowReverse.unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("row-reverse"), true));
+        $(assertEast.equal(columnReverse.unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("column-reverse"), true));
     });
 
     // =========================================================================
@@ -166,11 +166,11 @@ describeEast("Stack", (test) => {
     test("supports all flex wrap options", $ => {
         const nowrap = $.let(Stack.Root([], { wrap: Style.FlexWrap("nowrap") }));
         const wrap = $.let(Stack.Root([], { wrap: Style.FlexWrap("wrap") }));
-        const wrapReverse = $.let(Stack.Root([], { wrap: Style.FlexWrap("wrap_reverse") }));
+        const wrapReverse = $.let(Stack.Root([], { wrap: Style.FlexWrap("wrap-reverse") }));
 
         $(assertEast.equal(nowrap.unwrap("Stack").style.unwrap("some").wrap.unwrap("some").hasTag("nowrap"), true));
         $(assertEast.equal(wrap.unwrap("Stack").style.unwrap("some").wrap.unwrap("some").hasTag("wrap"), true));
-        $(assertEast.equal(wrapReverse.unwrap("Stack").style.unwrap("some").wrap.unwrap("some").hasTag("wrap_reverse"), true));
+        $(assertEast.equal(wrapReverse.unwrap("Stack").style.unwrap("some").wrap.unwrap("some").hasTag("wrap-reverse"), true));
     });
 
     // =========================================================================
@@ -203,7 +203,7 @@ describeEast("Stack", (test) => {
         ], {
             gap: "4",
             align: Style.AlignItems("center"),
-            justify: Style.JustifyContent("space_between"),
+            justify: Style.JustifyContent("space-between"),
         }));
 
         $(assertEast.equal(hstack.unwrap("Stack").children.size(), 2n));
@@ -211,7 +211,7 @@ describeEast("Stack", (test) => {
         $(assertEast.equal(style.direction.unwrap("some").hasTag("row"), true));
         $(assertEast.equal(style.gap.unwrap("some"), "4"));
         $(assertEast.equal(style.align.unwrap("some").hasTag("center"), true));
-        $(assertEast.equal(style.justify.unwrap("some").hasTag("space_between"), true));
+        $(assertEast.equal(style.justify.unwrap("some").hasTag("space-between"), true));
     });
 
     // =========================================================================
@@ -292,7 +292,7 @@ describeEast("Stack", (test) => {
         ], {
             gap: "4",
             align: Style.AlignItems("center"),
-            justify: Style.JustifyContent("space_between"),
+            justify: Style.JustifyContent("space-between"),
             padding: "4",
             background: "white",
         }));
@@ -300,7 +300,7 @@ describeEast("Stack", (test) => {
         $(assertEast.equal(navBar.unwrap("Stack").children.size(), 3n));
         const style = navBar.unwrap("Stack").style.unwrap("some");
         $(assertEast.equal(style.direction.unwrap("some").hasTag("row"), true));
-        $(assertEast.equal(style.justify.unwrap("some").hasTag("space_between"), true));
+        $(assertEast.equal(style.justify.unwrap("some").hasTag("space-between"), true));
     });
 
     test("creates form layout", $ => {

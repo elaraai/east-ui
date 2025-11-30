@@ -4,11 +4,7 @@
  */
 
 import {
-    type ExprType,
-    East,
-    ArrayType,
-    variant,
-    type SubtypeExprOrValue,
+    type ExprType, type SubtypeExprOrValue, ArrayType, East, variant
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
@@ -36,13 +32,22 @@ export { PieSliceType, PieChartType, type PieChartStyle } from "./types.js";
  * import { Chart } from "@elaraai/east-ui";
  *
  * // Pie chart
- * Chart.Pie([
- *   { name: "Desktop", value: 400, color: some("blue.solid") },
- *   { name: "Mobile", value: 300, color: some("orange.solid") },
- * ]);
+ * const chart = Chart.Pie(
+ *   [
+ *     { name: "Desktop", value: 400, color: variant("some", "blue.solid") },
+ *     { name: "Mobile", value: 300, color: variant("some", "orange.solid") },
+ *   ],
+ *   { legend: Chart.Legend({ show: true }) }
+ * );
  *
  * // Donut chart
- * Chart.Pie(data, { innerRadius: 60, outerRadius: 80 });
+ * const donutChart = Chart.Pie(
+ *   pieData,
+ *   {
+ *     innerRadius: 60,
+ *     outerRadius: 80,
+ *   }
+ * );
  * ```
  */
 export function createPieChart(
@@ -57,9 +62,8 @@ export function createPieChart(
         endAngle: style?.endAngle !== undefined ? variant("some", style.endAngle) : variant("none", null),
         paddingAngle: style?.paddingAngle !== undefined ? variant("some", style.paddingAngle) : variant("none", null),
         showLabels: style?.showLabels !== undefined ? variant("some", style.showLabels) : variant("none", null),
-        showLegend: style?.showLegend !== undefined ? variant("some", style.showLegend) : variant("none", null),
-        showTooltip: style?.showTooltip !== undefined ? variant("some", style.showTooltip) : variant("none", null),
-        width: style?.width !== undefined ? variant("some", style.width) : variant("none", null),
-        height: style?.height !== undefined ? variant("some", style.height) : variant("none", null),
+        tooltip: style?.tooltip !== undefined ? variant("some", style.tooltip) : variant("none", null),
+        legend: style?.legend !== undefined ? variant("some", style.legend) : variant("none", null),
+        margin: style?.margin !== undefined ? variant("some", style.margin) : variant("none", null),
     }), UIComponentType);
 }

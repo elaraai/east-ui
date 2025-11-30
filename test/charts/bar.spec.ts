@@ -3,7 +3,6 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { type ValueTypeOf, LiteralValueType, variant } from "@elaraai/east";
 import { describeEast, assertEast } from "../platforms.spec.js";
 import { Chart } from "../../src/index.js";
 
@@ -15,12 +14,12 @@ describeEast("Chart.Bar", (test) => {
     test("creates basic bar chart (vertical bars)", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "Stock")], ["allocation", variant("Float", 60)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "Crypto")], ["allocation", variant("Float", 45)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "ETF")], ["allocation", variant("Float", 12)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "Cash")], ["allocation", variant("Float", 4)]]),
+                { type: "Stock", allocation: 60 },
+                { type: "Crypto", allocation: 45 },
+                { type: "ETF", allocation: 12 },
+                { type: "Cash", allocation: 4 },
             ],
-            [{ name: "allocation", color: "teal.solid" }]
+            { allocation: { color: "teal.solid" } }
         ));
 
         $(assertEast.equal(chart.getTag(), "BarChart"));
@@ -32,10 +31,10 @@ describeEast("Chart.Bar", (test) => {
     test("creates bar chart with x-axis dataKey", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "Stock")], ["allocation", variant("Float", 60)]]),
+                { type: "Stock", allocation: 60 },
             ],
-            [{ name: "allocation", color: "teal.solid" }],
-            { xAxis: { dataKey: "type" } }
+            { allocation: { color: "teal.solid" } },
+            { xAxis: Chart.Axis({ dataKey: "type" }) }
         ));
 
         $(assertEast.equal(chart.unwrap("BarChart").xAxis.unwrap("some").dataKey.unwrap("some"), "type"));
@@ -48,15 +47,15 @@ describeEast("Chart.Bar", (test) => {
     test("creates stacked bar chart", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 186)], ["mac", variant("Float", 80)], ["linux", variant("Float", 120)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "February")], ["windows", variant("Float", 165)], ["mac", variant("Float", 95)], ["linux", variant("Float", 110)]]),
+                { month: "January", windows: 186, mac: 80, linux: 120 },
+                { month: "February", windows: 165, mac: 95, linux: 110 },
             ],
-            [
-                { name: "windows", color: "teal.solid", stackId: "a" },
-                { name: "mac", color: "purple.solid", stackId: "a" },
-                { name: "linux", color: "blue.solid", stackId: "a" },
-            ],
-            { xAxis: { dataKey: "month" } }
+            {
+                windows: { color: "teal.solid", stackId: "a" },
+                mac: { color: "purple.solid", stackId: "a" },
+                linux: { color: "blue.solid", stackId: "a" },
+            },
+            { xAxis: Chart.Axis({ dataKey: "month" }) }
         ));
 
         $(assertEast.equal(chart.unwrap("BarChart").series.size(), 3n));
@@ -68,14 +67,17 @@ describeEast("Chart.Bar", (test) => {
     test("creates 100% stacked bar chart with stackOffset expand", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 186)], ["mac", variant("Float", 80)], ["linux", variant("Float", 120)]]),
+                { month: "January", windows: 186, mac: 80, linux: 120 },
             ],
-            [
-                { name: "windows", color: "teal.solid", stackId: "a" },
-                { name: "mac", color: "purple.solid", stackId: "a" },
-                { name: "linux", color: "blue.solid", stackId: "a" },
-            ],
-            { stackOffset: "expand", yAxis: { tickFormat: "percent" } }
+            {
+                windows: { color: "teal.solid", stackId: "a" },
+                mac: { color: "purple.solid", stackId: "a" },
+                linux: { color: "blue.solid", stackId: "a" },
+            },
+            {
+                stackOffset: "expand",
+                yAxis: Chart.Axis({ tickFormat: "percent" })
+            }
         ));
 
         $(assertEast.equal(chart.unwrap("BarChart").stackOffset.unwrap("some").hasTag("expand"), true));
@@ -89,14 +91,17 @@ describeEast("Chart.Bar", (test) => {
     test("creates horizontal bar chart (layout vertical)", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 186)], ["mac", variant("Float", 80)], ["linux", variant("Float", 120)]]),
+                { month: "January", windows: 186, mac: 80, linux: 120 },
             ],
-            [
-                { name: "windows", color: "teal.solid", stackId: "a" },
-                { name: "mac", color: "purple.solid", stackId: "a" },
-                { name: "linux", color: "blue.solid", stackId: "a" },
-            ],
-            { layout: "vertical", yAxis: { dataKey: "month" } }
+            {
+                windows: { color: "teal.solid", stackId: "a" },
+                mac: { color: "purple.solid", stackId: "a" },
+                linux: { color: "blue.solid", stackId: "a" },
+            },
+            {
+                layout: "vertical",
+                yAxis: Chart.Axis({ dataKey: "month" })
+            }
         ));
 
         $(assertEast.equal(chart.unwrap("BarChart").layout.unwrap("some").hasTag("vertical"), true));
@@ -110,16 +115,16 @@ describeEast("Chart.Bar", (test) => {
     test("creates grouped bar chart (multiple bars per category)", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "mobile")], ["poor", variant("Float", 40)], ["fair", variant("Float", 100)], ["good", variant("Float", 200)], ["excellent", variant("Float", 70)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "marketing")], ["poor", variant("Float", 15)], ["fair", variant("Float", 40)], ["good", variant("Float", 120)], ["excellent", variant("Float", 90)]]),
+                { type: "mobile", poor: 40, fair: 100, good: 200, excellent: 70 },
+                { type: "marketing", poor: 15, fair: 40, good: 120, excellent: 90 },
             ],
-            [
-                { name: "poor", color: "blue.solid" },
-                { name: "fair", color: "orange.solid" },
-                { name: "good", color: "yellow.solid" },
-                { name: "excellent", color: "green.solid" },
-            ],
-            { xAxis: { dataKey: "type" } }
+            {
+                poor: { color: "blue.solid" },
+                fair: { color: "orange.solid" },
+                good: { color: "yellow.solid" },
+                excellent: { color: "green.solid" },
+            },
+            { xAxis: Chart.Axis({ dataKey: "type" }) }
         ));
 
         $(assertEast.equal(chart.unwrap("BarChart").series.size(), 4n));
@@ -134,9 +139,9 @@ describeEast("Chart.Bar", (test) => {
     test("creates bar chart with custom bar size", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "Stock")], ["allocation", variant("Float", 60)]]),
+                { type: "Stock", allocation: 60 },
             ],
-            [{ name: "allocation", color: "teal.solid" }],
+            { allocation: { color: "teal.solid" } },
             { barSize: 30n }
         ));
 
@@ -146,9 +151,9 @@ describeEast("Chart.Bar", (test) => {
     test("creates bar chart with custom bar gap", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "Stock")], ["allocation", variant("Float", 60)]]),
+                { type: "Stock", allocation: 60 },
             ],
-            [{ name: "allocation", color: "teal.solid" }],
+            { allocation: { color: "teal.solid" } },
             { barGap: 10n }
         ));
 
@@ -162,10 +167,10 @@ describeEast("Chart.Bar", (test) => {
     test("creates bar chart with percent y-axis formatter", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "Stock")], ["allocation", variant("Float", 60)]]),
+                { type: "Stock", allocation: 60 },
             ],
-            [{ name: "allocation", color: "teal.solid" }],
-            { yAxis: { tickFormat: "percent", domain: [0, 100] } }
+            { allocation: { color: "teal.solid" } },
+            { yAxis: Chart.Axis({ tickFormat: "percent", domain: [0, 100] }) }
         ));
 
         $(assertEast.equal(chart.unwrap("BarChart").yAxis.unwrap("some").tickFormat.unwrap("some").hasTag("percent"), true));
@@ -174,11 +179,14 @@ describeEast("Chart.Bar", (test) => {
     test("creates bar chart with currency y-axis formatter", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "June")], ["sales", variant("Float", 63000)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "July")], ["sales", variant("Float", 72000)]]),
+                { month: "June", sales: 63000 },
+                { month: "July", sales: 72000 },
             ],
-            [{ name: "sales", color: "teal.solid" }],
-            { xAxis: { dataKey: "month" }, yAxis: { tickFormat: "currency" } }
+            { sales: { color: "teal.solid" } },
+            {
+                xAxis: Chart.Axis({ dataKey: "month" }),
+                yAxis: Chart.Axis({ tickFormat: Chart.TickFormat.Currency({ currency: "USD" }) })
+            }
         ));
 
         $(assertEast.equal(chart.unwrap("BarChart").yAxis.unwrap("some").tickFormat.unwrap("some").hasTag("currency"), true));
@@ -187,10 +195,10 @@ describeEast("Chart.Bar", (test) => {
     test("creates bar chart with compact y-axis formatter", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "June")], ["sales", variant("Float", 63000)]]),
+                { month: "June", sales: 63000 },
             ],
-            [{ name: "sales", color: "teal.solid" }],
-            { yAxis: { tickFormat: "compact" } }
+            { sales: { color: "teal.solid" } },
+            { yAxis: Chart.Axis({ tickFormat: "compact" }) }
         ));
 
         $(assertEast.equal(chart.unwrap("BarChart").yAxis.unwrap("some").tickFormat.unwrap("some").hasTag("compact"), true));
@@ -203,54 +211,54 @@ describeEast("Chart.Bar", (test) => {
     test("creates bar chart with grid", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "Stock")], ["allocation", variant("Float", 60)]]),
+                { type: "Stock", allocation: 60 },
             ],
-            [{ name: "allocation", color: "teal.solid" }],
-            { showGrid: true }
+            { allocation: { color: "teal.solid" } },
+            { grid: Chart.Grid({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("BarChart").showGrid.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("BarChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates bar chart with legend", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "Stock")], ["allocation", variant("Float", 60)]]),
+                { type: "Stock", allocation: 60 },
             ],
-            [{ name: "allocation", color: "teal.solid" }],
-            { showLegend: true }
+            { allocation: { color: "teal.solid" } },
+            { legend: Chart.Legend({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("BarChart").showLegend.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("BarChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates bar chart with tooltip", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "Stock")], ["allocation", variant("Float", 60)]]),
+                { type: "Stock", allocation: 60 },
             ],
-            [{ name: "allocation", color: "teal.solid" }],
-            { showTooltip: true }
+            { allocation: { color: "teal.solid" } },
+            { tooltip: Chart.Tooltip({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("BarChart").showTooltip.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("BarChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
 
     // =========================================================================
-    // Dimensions
+    // Margin
     // =========================================================================
 
-    test("creates bar chart with custom dimensions", $ => {
+    test("creates bar chart with custom margin", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "Stock")], ["allocation", variant("Float", 60)]]),
+                { type: "Stock", allocation: 60 },
             ],
-            [{ name: "allocation", color: "teal.solid" }],
-            { width: 500n, height: 400n }
+            { allocation: { color: "teal.solid" } },
+            { margin: Chart.Margin({ top: 20n, right: 30n, bottom: 20n, left: 30n }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("BarChart").width.unwrap("some"), 500n));
-        $(assertEast.equal(chart.unwrap("BarChart").height.unwrap("some"), 400n));
+        $(assertEast.equal(chart.unwrap("BarChart").margin.unwrap("some").top.unwrap("some"), 20n));
+        $(assertEast.equal(chart.unwrap("BarChart").margin.unwrap("some").left.unwrap("some"), 30n));
     });
 
     // =========================================================================
@@ -260,36 +268,45 @@ describeEast("Chart.Bar", (test) => {
     test("creates complete bar chart matching Chakra BarChartBasic example", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "Stock")], ["allocation", variant("Float", 60)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "Crypto")], ["allocation", variant("Float", 45)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "ETF")], ["allocation", variant("Float", 12)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["type", variant("String", "Cash")], ["allocation", variant("Float", 4)]]),
+                { type: "Stock", allocation: 60 },
+                { type: "Crypto", allocation: 45 },
+                { type: "ETF", allocation: 12 },
+                { type: "Cash", allocation: 4 },
             ],
-            [{ name: "allocation", color: "teal.solid" }],
-            { xAxis: { dataKey: "type" }, yAxis: { domain: [0, 100] }, showGrid: true }
+            { allocation: { color: "teal.solid" } },
+            {
+                xAxis: Chart.Axis({ dataKey: "type" }),
+                yAxis: Chart.Axis({ domain: [0, 100] }),
+                grid: Chart.Grid({ show: true })
+            }
         ));
 
         $(assertEast.equal(chart.getTag(), "BarChart"));
         $(assertEast.equal(chart.unwrap("BarChart").series.get(0n).name, "allocation"));
-        $(assertEast.equal(chart.unwrap("BarChart").showGrid.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("BarChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates complete stacked bar chart matching Chakra BarChartStacked example", $ => {
         const chart = $.let(Chart.Bar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 186)], ["mac", variant("Float", 80)], ["linux", variant("Float", 120)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "February")], ["windows", variant("Float", 165)], ["mac", variant("Float", 95)], ["linux", variant("Float", 110)]]),
+                { month: "January", windows: 186, mac: 80, linux: 120 },
+                { month: "February", windows: 165, mac: 95, linux: 110 },
             ],
-            [
-                { name: "windows", color: "teal.solid", stackId: "a" },
-                { name: "mac", color: "purple.solid", stackId: "a" },
-                { name: "linux", color: "blue.solid", stackId: "a" },
-            ],
-            { xAxis: { dataKey: "month" }, showGrid: true, showTooltip: true, showLegend: true }
+            {
+                windows: { color: "teal.solid", stackId: "a" },
+                mac: { color: "purple.solid", stackId: "a" },
+                linux: { color: "blue.solid", stackId: "a" },
+            },
+            {
+                xAxis: Chart.Axis({ dataKey: "month" }),
+                grid: Chart.Grid({ show: true }),
+                tooltip: Chart.Tooltip({ show: true }),
+                legend: Chart.Legend({ show: true })
+            }
         ));
 
         $(assertEast.equal(chart.unwrap("BarChart").series.size(), 3n));
         $(assertEast.equal(chart.unwrap("BarChart").series.get(0n).stackId.unwrap("some"), "a"));
-        $(assertEast.equal(chart.unwrap("BarChart").showLegend.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("BarChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 });

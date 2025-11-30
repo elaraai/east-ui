@@ -37,15 +37,15 @@ import type {
  * @property row - Place items row by row
  * @property column - Place items column by column
  * @property dense - Fill in holes in the grid with smaller items
- * @property row_dense - Row flow with dense packing
- * @property column_dense - Column flow with dense packing
+ * @property row dense - Row flow with dense packing
+ * @property column dense - Column flow with dense packing
  */
 export const GridAutoFlowType = VariantType({
     row: NullType,
     column: NullType,
     dense: NullType,
-    row_dense: NullType,
-    column_dense: NullType,
+    "row dense": NullType,
+    "column dense": NullType,
 });
 
 /**
@@ -56,7 +56,7 @@ export type GridAutoFlowType = typeof GridAutoFlowType;
 /**
  * String literal type for grid auto flow values.
  */
-export type GridAutoFlowLiteral = "row" | "column" | "dense" | "row_dense" | "column_dense";
+export type GridAutoFlowLiteral = "row" | "column" | "dense" | "row dense" | "column dense";
 
 /**
  * Creates a grid auto flow variant expression.
@@ -72,7 +72,7 @@ export type GridAutoFlowLiteral = "row" | "column" | "dense" | "row_dense" | "co
  * GridAutoFlow("dense");
  * ```
  */
-export function GridAutoFlow(flow: "row" | "column" | "dense" | "row_dense" | "column_dense"): ExprType<GridAutoFlowType> {
+export function GridAutoFlow(flow: "row" | "column" | "dense" | "row dense" | "column dense"): ExprType<GridAutoFlowType> {
     return East.value(variant(flow, null), GridAutoFlowType);
 }
 

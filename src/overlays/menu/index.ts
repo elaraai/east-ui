@@ -102,7 +102,7 @@ function createMenuSeparator(): ExprType<MenuItemType> {
  *         Menu.Separator(),
  *         Menu.Item("delete", "Delete"),
  *     ],
- *     { placement: "bottom_start" }
+ *     { placement: "bottom-start" }
  * );
  * ```
  */
@@ -156,7 +156,7 @@ function createMenu(
  *         Menu.Item("copy", "Copy"),
  *         Menu.Item("paste", "Paste"),
  *     ],
- *     { placement: "bottom_end" }
+ *     { placement: "bottom-end" }
  * );
  * ```
  */

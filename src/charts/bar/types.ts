@@ -10,6 +10,7 @@ import {
     ArrayType,
     BooleanType,
     IntegerType,
+    FloatType,
     StringType,
     DictType,
     LiteralValueType,
@@ -18,9 +19,12 @@ import {
 import {
     ChartSeriesType,
     ChartAxisType,
+    ChartGridType,
+    ChartTooltipType,
+    ChartLegendType,
+    ChartMarginType,
     BarLayoutType,
     StackOffsetType,
-    type ChartAxis,
     type BarLayoutLiteral,
     type StackOffsetLiteral,
     type BaseChartStyle,
@@ -44,14 +48,13 @@ import {
  * @property layout - Bar direction (horizontal = vertical bars, vertical = horizontal bars)
  * @property stacked - Enable stacking of series
  * @property stackOffset - Stack offset mode
- * @property showGrid - Show grid lines
- * @property showTooltip - Show tooltip on hover
- * @property showLegend - Show legend
+ * @property grid - Grid configuration
+ * @property tooltip - Tooltip configuration
+ * @property legend - Legend configuration
+ * @property margin - Chart margin configuration
  * @property barSize - Bar width/height in pixels
  * @property barGap - Gap between bars in pixels
  * @property radius - Rounded corner radius
- * @property width - Chart width in pixels
- * @property height - Chart height in pixels
  */
 export const BarChartType = StructType({
     data: ArrayType(DictType(StringType, LiteralValueType)),
@@ -61,14 +64,13 @@ export const BarChartType = StructType({
     layout: OptionType(BarLayoutType),
     stacked: OptionType(BooleanType),
     stackOffset: OptionType(StackOffsetType),
-    showGrid: OptionType(BooleanType),
-    showTooltip: OptionType(BooleanType),
-    showLegend: OptionType(BooleanType),
+    grid: OptionType(ChartGridType),
+    tooltip: OptionType(ChartTooltipType),
+    legend: OptionType(ChartLegendType),
+    margin: OptionType(ChartMarginType),
     barSize: OptionType(IntegerType),
     barGap: OptionType(IntegerType),
     radius: OptionType(IntegerType),
-    width: OptionType(IntegerType),
-    height: OptionType(IntegerType),
 });
 
 /**
@@ -82,12 +84,15 @@ export type BarChartType = typeof BarChartType;
 
 /**
  * TypeScript interface for Bar chart style options.
+ *
+ * @remarks
+ * All properties are optional and accept either static values or East expressions.
  */
 export interface BarChartStyle extends BaseChartStyle {
     /** X-axis configuration */
-    xAxis?: ChartAxis;
+    xAxis?: SubtypeExprOrValue<ChartAxisType>;
     /** Y-axis configuration */
-    yAxis?: ChartAxis;
+    yAxis?: SubtypeExprOrValue<ChartAxisType>;
     /** Bar direction (horizontal = vertical bars, vertical = horizontal bars) */
     layout?: SubtypeExprOrValue<BarLayoutType> | BarLayoutLiteral;
     /** Enable stacking of series */
@@ -100,4 +105,28 @@ export interface BarChartStyle extends BaseChartStyle {
     barGap?: SubtypeExprOrValue<IntegerType>;
     /** Rounded corner radius */
     radius?: SubtypeExprOrValue<IntegerType>;
+    /** Chart margin configuration */
+    margin?: SubtypeExprOrValue<ChartMarginType>;
+}
+
+/**
+ * Series configuration for Bar charts (used in createBarChart).
+ */
+export interface BarChartSeriesConfig {
+    /** Chakra color token (e.g., "teal.solid", "blue.500") */
+    color?: SubtypeExprOrValue<StringType>;
+    /** Stack group ID (same stackId = stacked together) */
+    stackId?: SubtypeExprOrValue<StringType>;
+    /** Display label (defaults to name) */
+    label?: SubtypeExprOrValue<StringType>;
+    /** Stroke/line color (defaults to color) */
+    stroke?: SubtypeExprOrValue<StringType>;
+    /** Stroke/line width in pixels */
+    strokeWidth?: SubtypeExprOrValue<IntegerType>;
+    /** Fill color (defaults to color) */
+    fill?: SubtypeExprOrValue<StringType>;
+    /** Fill opacity (0-1) */
+    fillOpacity?: SubtypeExprOrValue<FloatType>;
+    /** Dash pattern for dashed lines (e.g., "5 5") */
+    strokeDasharray?: SubtypeExprOrValue<StringType>;
 }

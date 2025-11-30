@@ -23,6 +23,7 @@ import {
     TreeViewStyleType,
     type TreeViewStyle,
 } from "./types.js";
+import { UIComponentType } from "../../component.js";
 
 // Re-export style types
 export {
@@ -51,7 +52,7 @@ export {
 export const TreeNodeType = RecursiveType(self => StructType({
     value: StringType,
     label: StringType,
-    children: OptionType(ArrayType(self)),
+    children: ArrayType(self),
 }));
 
 /**
@@ -137,14 +138,12 @@ export interface TreeNodeInput {
 function TreeNode(
     value: SubtypeExprOrValue<typeof StringType>,
     label: SubtypeExprOrValue<typeof StringType>,
-    children?: ExprType<TreeNodeType>[]
+    children: SubtypeExprOrValue<ArrayType<TreeNodeType>>
 ): ExprType<TreeNodeType> {
     return East.value({
         value: value,
         label: label,
-        children: children && children.length > 0
-            ? variant("some", East.value(children, ArrayType(TreeNodeType)))
-            : variant("none", null),
+        children: children,
     }, TreeNodeType);
 }
 
@@ -195,9 +194,9 @@ function TreeNode(
  */
 function TreeViewRoot(
     nodes: SubtypeExprOrValue<ArrayType<TreeNodeType>>,
-    style?: TreeViewStyle & { label?: SubtypeExprOrValue<typeof StringType> }
-): ExprType<TreeViewRootType> {
-
+    style?: TreeViewStyle
+): ExprType<UIComponentType> {
+    const nodes_expr = East.value(nodes, ArrayType(TreeNodeType));
     const sizeValue = style?.size
         ? (typeof style.size === "string"
             ? East.value(variant(style.size, null), TreeViewSizeType)
@@ -233,8 +232,8 @@ function TreeViewRoot(
         style.animateContent !== undefined
     );
 
-    return East.value({
-        nodes: nodes,
+    return East.value(variant("TreeView", {
+        nodes: nodes_expr,
         label: style?.label ? variant("some", style.label) : variant("none", null),
         defaultExpandedValue: toArrayOption(style?.defaultExpandedValue),
         defaultSelectedValue: toArrayOption(style?.defaultSelectedValue),
@@ -244,7 +243,7 @@ function TreeViewRoot(
             selectionMode: selectionModeValue ? variant("some", selectionModeValue) : variant("none", null),
             animateContent: toBoolOption(style?.animateContent),
         }, TreeViewStyleType)) : variant("none", null),
-    }, TreeViewRootType);
+    }), UIComponentType);
 }
 
 // ============================================================================

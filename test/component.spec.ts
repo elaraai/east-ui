@@ -86,6 +86,7 @@ describeEast("UIComponentType - Nested Components", (test) => {
                                     background: variant("none", null),
                                     fontWeight: variant("none", null),
                                     fontStyle: variant("none", null),
+                                    fontSize: variant("none", null),
                                     textTransform: variant("none", null),
                                     textAlign: variant("none", null),
                                     borderWidth: variant("none", null),

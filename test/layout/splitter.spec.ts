@@ -91,9 +91,9 @@ describeEast("Splitter", (test) => {
         const panel2 = Splitter.Panel(Text.Root("Right"), { id: "right" });
         const splitter = $.let(Splitter.Root([panel1, panel2], [50, 50]));
 
-        $(assertEast.equal(splitter.panels.size(), 2n));
-        $(assertEast.equal(splitter.defaultSize.size(), 2n));
-        $(assertEast.equal(splitter.style.hasTag("none"), true));
+        $(assertEast.equal(splitter.unwrap("Splitter").panels.size(), 2n));
+        $(assertEast.equal(splitter.unwrap("Splitter").defaultSize.size(), 2n));
+        $(assertEast.equal(splitter.unwrap("Splitter").style.hasTag("none"), true));
     });
 
     test("creates splitter with unequal default sizes", $ => {
@@ -101,8 +101,8 @@ describeEast("Splitter", (test) => {
         const panel2 = Splitter.Panel(Text.Root("Main"), { id: "main" });
         const splitter = $.let(Splitter.Root([panel1, panel2], [30, 70]));
 
-        $(assertEast.equal(splitter.panels.size(), 2n));
-        $(assertEast.equal(splitter.defaultSize.size(), 2n));
+        $(assertEast.equal(splitter.unwrap("Splitter").panels.size(), 2n));
+        $(assertEast.equal(splitter.unwrap("Splitter").defaultSize.size(), 2n));
     });
 
     test("creates splitter with three panels", $ => {
@@ -111,8 +111,8 @@ describeEast("Splitter", (test) => {
         const panel3 = Splitter.Panel(Text.Root("Right"), { id: "right" });
         const splitter = $.let(Splitter.Root([panel1, panel2, panel3], [25, 50, 25]));
 
-        $(assertEast.equal(splitter.panels.size(), 3n));
-        $(assertEast.equal(splitter.defaultSize.size(), 3n));
+        $(assertEast.equal(splitter.unwrap("Splitter").panels.size(), 3n));
+        $(assertEast.equal(splitter.unwrap("Splitter").defaultSize.size(), 3n));
     });
 
     // =========================================================================
@@ -124,9 +124,9 @@ describeEast("Splitter", (test) => {
         const panel2 = Splitter.Panel(Text.Root("Right"), { id: "right" });
         const splitter = $.let(Splitter.Root([panel1, panel2], [50, 50], { orientation: Style.Orientation("horizontal") }));
 
-        $(assertEast.equal(splitter.style.hasTag("some"), true));
-        $(assertEast.equal(splitter.style.unwrap("some").orientation.hasTag("some"), true));
-        $(assertEast.equal(splitter.style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
+        $(assertEast.equal(splitter.unwrap("Splitter").style.hasTag("some"), true));
+        $(assertEast.equal(splitter.unwrap("Splitter").style.unwrap("some").orientation.hasTag("some"), true));
+        $(assertEast.equal(splitter.unwrap("Splitter").style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
     });
 
     test("creates vertical splitter", $ => {
@@ -134,7 +134,7 @@ describeEast("Splitter", (test) => {
         const panel2 = Splitter.Panel(Text.Root("Bottom"), { id: "bottom" });
         const splitter = $.let(Splitter.Root([panel1, panel2], [60, 40], { orientation: Style.Orientation("vertical") }));
 
-        $(assertEast.equal(splitter.style.unwrap("some").orientation.unwrap("some").hasTag("vertical"), true));
+        $(assertEast.equal(splitter.unwrap("Splitter").style.unwrap("some").orientation.unwrap("some").hasTag("vertical"), true));
     });
 
     test("creates splitter with string orientation", $ => {
@@ -142,7 +142,7 @@ describeEast("Splitter", (test) => {
         const panel2 = Splitter.Panel(Text.Root("Right"), { id: "right" });
         const splitter = $.let(Splitter.Root([panel1, panel2], [50, 50], { orientation: "horizontal" }));
 
-        $(assertEast.equal(splitter.style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
+        $(assertEast.equal(splitter.unwrap("Splitter").style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
     });
 
     // =========================================================================
@@ -161,10 +161,10 @@ describeEast("Splitter", (test) => {
             minSize: 50,
         });
 
-        const layout = $.let(Splitter.Root([sidebar, main], [25, 75], { orientation: "horizontal" }));
+        const splitter = $.let(Splitter.Root([sidebar, main], [25, 75], { orientation: "horizontal" }));
 
-        $(assertEast.equal(layout.panels.size(), 2n));
-        $(assertEast.equal(layout.style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
+        $(assertEast.equal(splitter.unwrap("Splitter").panels.size(), 2n));
+        $(assertEast.equal(splitter.unwrap("Splitter").style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
     });
 
     test("creates editor with terminal layout", $ => {
@@ -178,10 +178,10 @@ describeEast("Splitter", (test) => {
             collapsible: true,
         });
 
-        const layout = $.let(Splitter.Root([editor, terminal], [70, 30], { orientation: "vertical" }));
+        const splitter = $.let(Splitter.Root([editor, terminal], [70, 30], { orientation: "vertical" }));
 
-        $(assertEast.equal(layout.panels.size(), 2n));
-        $(assertEast.equal(layout.style.unwrap("some").orientation.unwrap("some").hasTag("vertical"), true));
+        $(assertEast.equal(splitter.unwrap("Splitter").panels.size(), 2n));
+        $(assertEast.equal(splitter.unwrap("Splitter").style.unwrap("some").orientation.unwrap("some").hasTag("vertical"), true));
     });
 
     test("creates three-column layout", $ => {
@@ -189,9 +189,9 @@ describeEast("Splitter", (test) => {
         const center = Splitter.Panel(Text.Root("Center"), { id: "center", minSize: 40 });
         const right = Splitter.Panel(Text.Root("Right"), { id: "right", collapsible: true });
 
-        const layout = $.let(Splitter.Root([left, center, right], [20, 60, 20], { orientation: "horizontal" }));
+        const splitter = $.let(Splitter.Root([left, center, right], [20, 60, 20], { orientation: "horizontal" }));
 
-        $(assertEast.equal(layout.panels.size(), 3n));
-        $(assertEast.equal(layout.defaultSize.size(), 3n));
+        $(assertEast.equal(splitter.unwrap("Splitter").panels.size(), 3n));
+        $(assertEast.equal(splitter.unwrap("Splitter").defaultSize.size(), 3n));
     });
 });

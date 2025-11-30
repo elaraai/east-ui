@@ -6,319 +6,186 @@
 import {
     type ExprType,
     type SubtypeExprOrValue,
+    type EastType,
     East,
-    OptionType,
+    Expr,
     StructType,
     ArrayType,
+    DictType,
     StringType,
     BooleanType,
+    OptionType,
     variant,
+    type TypeOf
 } from "@elaraai/east";
 
 import {
-    TextAlignType,
-    SizeType,
-    ColorSchemeType,
+    ColorSchemeType
 } from "../../style.js";
 
 import {
     TableVariantType,
-    TableCellStyleType,
-    TableRowStyleType,
     TableStyleType,
     TableColumnType,
-    type TableCellStyle,
-    type TableRowStyle,
-    type TableColumnStyle,
-    type TableStyle,
+    TableSizeType,
+    type TableStyle
 } from "./types.js";
 import { UIComponentType } from "../../component.js";
+import { Text } from "../../typography/index.js";
 
 // Re-export style types
 export {
     TableVariantType,
-    TableCellStyleType,
-    TableRowStyleType,
     TableStyleType,
     TableColumnType,
-    type TableCellStyle,
-    type TableRowStyle,
-    type TableColumnStyle,
+    TableSizeType,
+    type TableSizeLiteral,
     type TableStyle,
 } from "./types.js";
-
-// ============================================================================
-// Table Cell Type
-// ============================================================================
-
-/**
- * East type for a table cell.
- *
- * @remarks
- * Cells contain a string value and optional styling.
- *
- * @property value - The cell value as a string
- * @property style - Optional cell styling
- */
-export const TableCellType = StructType({
-    value: StringType,
-    style: OptionType(TableCellStyleType),
-});
-
-/**
- * Type representing the table cell structure.
- */
-export type TableCellType = typeof TableCellType;
-
-// ============================================================================
-// Table Row Type
-// ============================================================================
-
-/**
- * East type for a table row.
- *
- * @remarks
- * Rows contain an array of cells (one per column) and optional styling.
- *
- * @property cells - Array of cells in column order
- * @property key - Optional unique key for React rendering
- * @property style - Optional row styling
- */
-export const TableRowType = StructType({
-    cells: ArrayType(TableCellType),
-    key: OptionType(StringType),
-    style: OptionType(TableRowStyleType),
-});
-
-/**
- * Type representing the table row structure.
- */
-export type TableRowType = typeof TableRowType;
 
 // ============================================================================
 // Table Root Type
 // ============================================================================
 
 /**
- * East type for the complete table structure.
+ * Type for Table component data.
  *
  * @remarks
- * Contains columns, rows, and styling configuration.
+ * Table displays data in rows and columns with optional styling.
  *
+ * @property rows - Array of row data (Dict mapping column keys to UI components)
  * @property columns - Array of column definitions
- * @property rows - Array of table rows
- * @property style - Optional table styling
+ * @property style - Optional styling configuration
  */
 export const TableRootType = StructType({
+    rows: ArrayType(DictType(StringType, UIComponentType)),
     columns: ArrayType(TableColumnType),
-    rows: ArrayType(TableRowType),
     style: OptionType(TableStyleType),
 });
 
 /**
- * Type representing the table root structure.
+ * Type representing the Table structure.
  */
 export type TableRootType = typeof TableRootType;
 
 // ============================================================================
-// Table Cell Factory
+// Table (API following chart pattern)
 // ============================================================================
 
 /**
- * Creates a table cell with optional styling.
+ * Column configuration for the Table API.
  *
- * @param value - The cell value (string or East expression)
- * @param style - Optional styling for the cell
- * @returns An East expression representing the styled cell
- *
- * @example
- * ```ts
- * import { Table } from "@elaraai/east-ui";
- *
- * // Simple cell
- * Table.Cell("Hello");
- *
- * // Cell with dynamic value
- * Table.Cell(row.name);
- *
- * // Cell with styling
- * Table.Cell("$99.99", {
- *   textAlign: "right",
- *   color: "blue.500",
- * });
- * ```
- */
-function TableCell(
-    value: SubtypeExprOrValue<typeof StringType>,
-    style?: TableCellStyle
-): ExprType<TableCellType> {
-    const textAlignValue = style?.textAlign
-        ? (typeof style.textAlign === "string"
-            ? East.value(variant(style.textAlign, null), TextAlignType)
-            : style.textAlign)
-        : undefined;
-
-    return East.value({
-        value: value,
-        style: style ? variant("some", East.value({
-            textAlign: textAlignValue ? variant("some", textAlignValue) : variant("none", null),
-            color: style.color ? variant("some", style.color) : variant("none", null),
-            background: style.background ? variant("some", style.background) : variant("none", null),
-        }, TableCellStyleType)) : variant("none", null),
-    }, TableCellType);
-}
-
-// ============================================================================
-// Table Row Factory
-// ============================================================================
-
-/**
- * Creates a table row from an array of cells.
- *
- * @param cells - Array of cells in column order
- * @param style - Optional row styling including key
- * @returns An East expression representing the row
+ * @typeParam FieldType - The East type of the field being rendered
  *
  * @remarks
- * Rows should include a `key` for efficient React rendering.
+ * Defines how a column should be displayed, including header text
+ * and an optional render function to convert data to UI components.
+ *
+ * @property header - Column header text (defaults to column key)
+ * @property render - Function to render the cell content from field value
+ */
+export interface TableColumnConfig<FieldType extends EastType = EastType> {
+    /** Column header text (defaults to column key if not provided) */
+    header?: SubtypeExprOrValue<StringType>;
+    /** Optional render function - defaults to Text.Root (with auto string conversion for non-strings) */
+    render?: (value: ExprType<FieldType>) => ExprType<UIComponentType>;
+}
+
+/**
+ * Creates a Table component following the chart pattern.
+ *
+ * @typeParam T - The struct type of each data row
+ * @param data - Array of data structs
+ * @param columns - Column specification: array of field names, or object with optional config
+ * @param style - Optional table styling
+ * @returns An East expression representing the table component
+ *
+ * @remarks
+ * Columns can be specified as a simple array of field names, or an object
+ * with optional header and render configuration.
+ *
+ * When render is not provided, fields render as Text automatically:
+ * - String fields: `Text.Root(value)`
+ * - Other types: `Text.Root(East.str\`\${value}\`)` (auto string conversion)
  *
  * @example
  * ```ts
- * import { Table } from "@elaraai/east-ui";
+ * import { Table, Text, Badge } from "@elaraai/east-ui";
  *
- * // Simple row
- * Table.Row([
- *   Table.Cell("Alice"),
- *   Table.Cell("30"),
- * ]);
+ * const data = [
+ *   { name: "Alice", age: 30, role: "Admin" },
+ *   { name: "Bob", age: 25, role: "User" },
+ * ];
  *
- * // Row with key
- * Table.Row([
- *   Table.Cell(row.name),
- *   Table.Cell(row.age.toString()),
- * ], {
- *   key: row.id,
+ * // Simple: array of field names (uses field name as header)
+ * Table.Root(data, ["name", "age", "role"]);
+ *
+ * // With headers and optional custom rendering
+ * Table.Root(data, {
+ *   name: { header: "Name" },
+ *   age: { header: "Age", render: value => Text.Root(value, { textAlign: "right" }) },
+ *   role: { header: "Role", render: value => Badge.Root(value) },
  * });
  * ```
  */
-function TableRow(
-    cells: SubtypeExprOrValue<ArrayType<TableCellType>>,
-    style?: TableRowStyle
-): ExprType<TableRowType> {
-    const cellsValue = Array.isArray(cells)
-        ? East.value(cells, ArrayType(TableCellType))
-        : cells;
 
-    return East.value({
-        cells: cellsValue,
-        key: style?.key ? variant("some", style.key) : variant("none", null),
-        style: style?.background
-            ? variant("some", East.value({
-                background: variant("some", style.background),
-            }, TableRowStyleType))
-            : variant("none", null),
-    }, TableRowType);
-}
+// Helper types to extract struct fields from array data type
+type ExtractStructFields<T> = T extends ArrayType<infer S>
+    ? S extends StructType
+        ? S["fields"]
+        : never
+    : never;
 
-// ============================================================================
-// Table Column Factory
-// ============================================================================
+type DataFields<T extends SubtypeExprOrValue<ArrayType<StructType>>> = ExtractStructFields<TypeOf<T>>;
 
-/**
- * Creates a table column definition.
- *
- * @param header - Column header text
- * @param style - Optional column styling
- * @returns An East expression representing the column
- *
- * @example
- * ```ts
- * import { Table } from "@elaraai/east-ui";
- *
- * // Simple column
- * Table.Column("Name");
- *
- * // Column with styling
- * Table.Column("Price", { textAlign: "right" });
- * ```
- */
-function TableColumn(
-    header: SubtypeExprOrValue<typeof StringType>,
-    style?: Omit<TableColumnStyle, "header">
-): ExprType<TableColumnType> {
-    const textAlignValue = style?.textAlign
-        ? (typeof style.textAlign === "string"
-            ? East.value(variant(style.textAlign, null), TextAlignType)
-            : style.textAlign)
-        : undefined;
+// Column specification can be array of keys or object config
+type ColumnSpec<T extends SubtypeExprOrValue<ArrayType<StructType>>> =
+    | (keyof DataFields<NoInfer<T>>)[]
+    | { [K in keyof DataFields<NoInfer<T>>]?: TableColumnConfig<DataFields<NoInfer<T>>[K]> };
 
-    return East.value({
-        key: header, // Use header as key for simplicity
-        header: variant("some", header),
-        style: textAlignValue ? variant("some", East.value({
-            textAlign: variant("some", textAlignValue),
-            color: variant("none", null),
-            background: variant("none", null),
-        }, TableCellStyleType)) : variant("none", null),
-    }, TableColumnType);
-}
-
-// ============================================================================
-// Table Root Factory
-// ============================================================================
-
-/**
- * Creates a Table component with columns, rows, and styling.
- *
- * @param columns - Array of column definitions
- * @param rows - Array of table rows
- * @param style - Optional table styling
- * @returns An East expression representing the table
- *
- * @example
- * ```ts
- * import { Table } from "@elaraai/east-ui";
- *
- * // Simple table
- * const table = Table.Root(
- *   [
- *     Table.Column("Name"),
- *     Table.Column("Age", { textAlign: "right" }),
- *   ],
- *   [
- *     Table.Row([Table.Cell("Alice"), Table.Cell("30")]),
- *     Table.Row([Table.Cell("Bob"), Table.Cell("25")]),
- *   ],
- *   { variant: "line", striped: true }
- * );
- *
- * // Dynamic table from data
- * const dynamicTable = Table.Root(
- *   [
- *     Table.Column("Product"),
- *     Table.Column("Price", { textAlign: "right" }),
- *   ],
- *   data.map(($, item) => Table.Row([
- *     Table.Cell(item.name),
- *     Table.Cell(item.price.toString()),
- *   ], { key: item.id })),
- *   { variant: "outline", size: "md" }
- * );
- * ```
- */
-function TableRoot(
-    columns: SubtypeExprOrValue<ArrayType<TableColumnType>>,
-    rows: SubtypeExprOrValue<ArrayType<TableRowType>>,
+export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
+    data: T,
+    columns: ColumnSpec<T>,
     style?: TableStyle
 ): ExprType<UIComponentType> {
-    const columnsValue = Array.isArray(columns)
-        ? East.value(columns, ArrayType(TableColumnType))
-        : columns;
+    const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
+    const field_types = Expr.type(data_expr).value.fields;
 
-    const rowsValue = Array.isArray(rows)
-        ? East.value(rows, ArrayType(TableRowType))
-        : rows;
+    // Normalize columns to object format
+    const columns_obj: Record<string, TableColumnConfig> = Array.isArray(columns)
+        ? Object.fromEntries((columns as string[]).map(key => [key, {}]))
+        : columns as Record<string, TableColumnConfig>;
 
+    // Map each data row to a Dict<String, UIComponentType> by calling render functions
+    const rows_mapped = data_expr.map(($, datum) => {
+        const ret = $.let(new Map(), DictType(StringType, UIComponentType));
+        for (const [col_key, col_config] of Object.entries(columns_obj)) {
+            const field_value = (datum as any)[col_key];
+            const field_type = field_types[col_key];
+
+            // Use custom render if provided, otherwise default to Text
+            let cell_value: ExprType<UIComponentType>;
+            if (col_config.render) {
+                cell_value = col_config.render(field_value);
+            } else if (field_type?.type === "string") {
+                // String field - render directly as Text
+                cell_value = Text.Root(field_value);
+            } else {
+                // Non-string field - convert to string first
+                cell_value = Text.Root(East.str`${field_value}`);
+            }
+            $(ret.insert(col_key, cell_value));
+        }
+        return ret;
+    });
+
+    // Create columns array from the columns config
+    const columns_mapped = Object.entries(columns_obj).map(([key, config]) => ({
+        key: key,
+        header: config?.header !== undefined ? variant("some", config.header) : variant("some", key),
+    }));
+
+    // Build the style object
     const variantValue = style?.variant
         ? (typeof style.variant === "string"
             ? East.value(variant(style.variant, null), TableVariantType)
@@ -327,7 +194,7 @@ function TableRoot(
 
     const sizeValue = style?.size
         ? (typeof style.size === "string"
-            ? East.value(variant(style.size, null), SizeType)
+            ? East.value(variant(style.size, null), TableSizeType)
             : style.size)
         : undefined;
 
@@ -343,8 +210,8 @@ function TableRoot(
     };
 
     return East.value(variant("Table", {
-        columns: columnsValue,
-        rows: rowsValue,
+        rows: rows_mapped,
+        columns: columns_mapped,
         style: style ? variant("some", East.value({
             variant: variantValue ? variant("some", variantValue) : variant("none", null),
             size: sizeValue ? variant("some", sizeValue) : variant("none", null),
@@ -357,59 +224,40 @@ function TableRoot(
     }), UIComponentType);
 }
 
-// ============================================================================
-// Table Namespace Export
-// ============================================================================
-
 /**
- * Table compound component for data display.
+ * Table namespace following the chart pattern.
  *
  * @remarks
- * Table provides a way to create data tables with:
- * - Column definitions with headers and styling
- * - Rows with cells and optional keys
- * - Table-level styling (variant, size, striped, etc.)
+ * Pass data as an array of structs and configure columns with either
+ * an array of field names or an object with optional header/render config.
  *
  * @example
  * ```ts
- * import { Table } from "@elaraai/east-ui";
+ * import { Table, Text, Badge } from "@elaraai/east-ui";
  *
- * // Static table
- * const table = Table.Root(
- *   [
- *     Table.Column("Name"),
- *     Table.Column("Email"),
- *     Table.Column("Role"),
- *   ],
- *   [
- *     Table.Row([
- *       Table.Cell("Alice Smith"),
- *       Table.Cell("alice@example.com"),
- *       Table.Cell("Admin"),
- *     ]),
- *     Table.Row([
- *       Table.Cell("Bob Jones"),
- *       Table.Cell("bob@example.com"),
- *       Table.Cell("User"),
- *     ]),
- *   ],
- *   { variant: "line", size: "md" }
- * );
+ * const data = [
+ *   { name: "Alice", age: 30, role: "Admin" },
+ *   { name: "Bob", age: 25, role: "User" },
+ * ];
+ *
+ * // Simple: array of field names
+ * Table.Root(data, ["name", "age", "role"]);
+ *
+ * // With config
+ * Table.Root(data, {
+ *   name: { header: "Name" },
+ *   age: { header: "Age" },
+ *   role: { header: "Role", render: value => Badge.Root(value) },
+ * }, { variant: "line" });
  * ```
  */
 export const Table = {
-    Root: TableRoot,
-    Row: TableRow,
-    Cell: TableCell,
-    Column: TableColumn,
+    Root: createTable,
     Types: {
         Root: TableRootType,
-        Row: TableRowType,
-        Cell: TableCellType,
-        Column: TableColumnType,
-        CellStyle: TableCellStyleType,
-        RowStyle: TableRowStyleType,
         Style: TableStyleType,
+        Column: TableColumnType,
         Variant: TableVariantType,
+        Size: TableSizeType,
     },
 } as const;

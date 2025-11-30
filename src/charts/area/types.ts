@@ -19,9 +19,12 @@ import {
 import {
     ChartSeriesType,
     ChartAxisType,
+    ChartGridType,
+    ChartTooltipType,
+    ChartLegendType,
+    ChartMarginType,
     CurveType,
     StackOffsetType,
-    type ChartAxis,
     type CurveLiteral,
     type StackOffsetLiteral,
     type BaseChartStyle,
@@ -45,13 +48,12 @@ import {
  * @property curveType - Line curve interpolation type
  * @property stacked - Enable stacking of series
  * @property stackOffset - Stack offset mode (none, expand, etc.)
- * @property showGrid - Show grid lines
- * @property showTooltip - Show tooltip on hover
- * @property showLegend - Show legend
+ * @property grid - Grid configuration
+ * @property tooltip - Tooltip configuration
+ * @property legend - Legend configuration
+ * @property margin - Chart margin configuration
  * @property fillOpacity - Fill opacity (0-1)
  * @property connectNulls - Connect line across null data points
- * @property width - Chart width in pixels
- * @property height - Chart height in pixels
  */
 export const AreaChartType = StructType({
     data: ArrayType(DictType(StringType, LiteralValueType)),
@@ -61,13 +63,12 @@ export const AreaChartType = StructType({
     curveType: OptionType(CurveType),
     stacked: OptionType(BooleanType),
     stackOffset: OptionType(StackOffsetType),
-    showGrid: OptionType(BooleanType),
-    showTooltip: OptionType(BooleanType),
-    showLegend: OptionType(BooleanType),
+    grid: OptionType(ChartGridType),
+    tooltip: OptionType(ChartTooltipType),
+    legend: OptionType(ChartLegendType),
+    margin: OptionType(ChartMarginType),
     fillOpacity: OptionType(FloatType),
     connectNulls: OptionType(BooleanType),
-    width: OptionType(IntegerType),
-    height: OptionType(IntegerType),
 });
 
 /**
@@ -87,17 +88,41 @@ export type AreaChartType = typeof AreaChartType;
  */
 export interface AreaChartStyle extends BaseChartStyle {
     /** X-axis configuration */
-    xAxis?: ChartAxis;
+    xAxis?: SubtypeExprOrValue<ChartAxisType>;
     /** Y-axis configuration */
-    yAxis?: ChartAxis;
+    yAxis?: SubtypeExprOrValue<ChartAxisType>;
     /** Line curve interpolation type */
     curveType?: SubtypeExprOrValue<CurveType> | CurveLiteral;
     /** Enable stacking of series */
     stacked?: SubtypeExprOrValue<BooleanType>;
     /** Stack offset mode (none, expand for 100%, etc.) */
     stackOffset?: SubtypeExprOrValue<StackOffsetType> | StackOffsetLiteral;
-    /** Fill opacity (0-1) */
+    /** Fill opacity (0-1, applies to all series unless overridden per-series) */
     fillOpacity?: SubtypeExprOrValue<FloatType>;
     /** Connect line across null data points */
     connectNulls?: SubtypeExprOrValue<BooleanType>;
+    /** Chart margin configuration */
+    margin?: SubtypeExprOrValue<ChartMarginType>;
+}
+
+/**
+ * Series configuration for Area charts (used in createAreaChart).
+ */
+export interface AreaChartSeriesConfig {
+    /** Chakra color token (e.g., "teal.solid", "blue.500") */
+    color?: SubtypeExprOrValue<StringType>;
+    /** Stack group ID (same stackId = stacked together) */
+    stackId?: SubtypeExprOrValue<StringType>;
+    /** Display label (defaults to name) */
+    label?: SubtypeExprOrValue<StringType>;
+    /** Stroke/line color (defaults to color) */
+    stroke?: SubtypeExprOrValue<StringType>;
+    /** Stroke/line width in pixels */
+    strokeWidth?: SubtypeExprOrValue<IntegerType>;
+    /** Fill color (defaults to color) */
+    fill?: SubtypeExprOrValue<StringType>;
+    /** Fill opacity (0-1) */
+    fillOpacity?: SubtypeExprOrValue<FloatType>;
+    /** Dash pattern for dashed lines (e.g., "5 5") */
+    strokeDasharray?: SubtypeExprOrValue<StringType>;
 }

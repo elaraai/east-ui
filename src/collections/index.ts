@@ -4,5 +4,5 @@
  */
 
 export { DataList } from "./data-list/index.js";
-export { Table } from "./table/index.js";
+export { Table, createTable, type TableColumnConfig } from "./table/index.js";
 export { TreeView } from "./tree-view/index.js";

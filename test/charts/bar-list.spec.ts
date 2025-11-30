@@ -143,7 +143,7 @@ describeEast("Chart.BarList", (test) => {
         const chart = $.let(Chart.BarList([
             { name: "Sales", value: 50000, color: none },
         ], {
-            valueFormat: "currency",
+            valueFormat: Chart.TickFormat.Currency({ currency: "USD" }),
         }));
 
         $(assertEast.equal(chart.unwrap("BarList").valueFormat.unwrap("some").hasTag("currency"), true));

@@ -52,7 +52,7 @@ describeEast("Select", (test) => {
     // =========================================================================
 
     test("creates select with no initial value", $ => {
-        const select = $.let(Select.Root(null, [
+        const select = $.let(Select.Root("", [
             Select.Item("us", "United States"),
         ]));
 
@@ -79,7 +79,7 @@ describeEast("Select", (test) => {
     });
 
     test("creates select with multiple items", $ => {
-        const select = $.let(Select.Root(null, [
+        const select = $.let(Select.Root("", [
             Select.Item("us", "United States"),
             Select.Item("uk", "United Kingdom"),
             Select.Item("ca", "Canada"),
@@ -95,7 +95,7 @@ describeEast("Select", (test) => {
     // =========================================================================
 
     test("creates select with placeholder", $ => {
-        const select = $.let(Select.Root(null, [
+        const select = $.let(Select.Root("", [
             Select.Item("us", "United States"),
         ], {
             placeholder: "Select a country",
@@ -106,7 +106,7 @@ describeEast("Select", (test) => {
     });
 
     test("creates select without placeholder", $ => {
-        const select = $.let(Select.Root(null, [
+        const select = $.let(Select.Root("", [
             Select.Item("us", "United States"),
         ]));
 
@@ -118,7 +118,7 @@ describeEast("Select", (test) => {
     // =========================================================================
 
     test("creates multiple selection select", $ => {
-        const select = $.let(Select.Root(null, [
+        const select = $.let(Select.Root("", [
             Select.Item("red", "Red"),
             Select.Item("green", "Green"),
             Select.Item("blue", "Blue"),
@@ -131,7 +131,7 @@ describeEast("Select", (test) => {
     });
 
     test("creates single selection select explicitly", $ => {
-        const select = $.let(Select.Root(null, [
+        const select = $.let(Select.Root("", [
             Select.Item("a", "Option A"),
         ], {
             multiple: false,
@@ -145,7 +145,7 @@ describeEast("Select", (test) => {
     // =========================================================================
 
     test("creates disabled select", $ => {
-        const select = $.let(Select.Root(null, [
+        const select = $.let(Select.Root("", [
             Select.Item("us", "United States"),
         ], {
             disabled: true,
@@ -156,7 +156,7 @@ describeEast("Select", (test) => {
     });
 
     test("creates enabled select explicitly", $ => {
-        const select = $.let(Select.Root(null, [
+        const select = $.let(Select.Root("", [
             Select.Item("us", "United States"),
         ], {
             disabled: false,
@@ -170,7 +170,7 @@ describeEast("Select", (test) => {
     // =========================================================================
 
     test("creates small select", $ => {
-        const select = $.let(Select.Root(null, [
+        const select = $.let(Select.Root("", [
             Select.Item("us", "United States"),
         ], {
             size: "sm",
@@ -181,7 +181,7 @@ describeEast("Select", (test) => {
     });
 
     test("creates medium select", $ => {
-        const select = $.let(Select.Root(null, [
+        const select = $.let(Select.Root("", [
             Select.Item("us", "United States"),
         ], {
             size: "md",
@@ -191,7 +191,7 @@ describeEast("Select", (test) => {
     });
 
     test("creates large select", $ => {
-        const select = $.let(Select.Root(null, [
+        const select = $.let(Select.Root("", [
             Select.Item("us", "United States"),
         ], {
             size: "lg",
@@ -201,7 +201,7 @@ describeEast("Select", (test) => {
     });
 
     test("creates select with Style.Size helper", $ => {
-        const select = $.let(Select.Root(null, [
+        const select = $.let(Select.Root("", [
             Select.Item("us", "United States"),
         ], {
             size: Style.Size("md"),
@@ -234,7 +234,7 @@ describeEast("Select", (test) => {
     });
 
     test("creates country selector", $ => {
-        const select = $.let(Select.Root(null, [
+        const select = $.let(Select.Root("", [
             Select.Item("us", "United States"),
             Select.Item("uk", "United Kingdom"),
             Select.Item("ca", "Canada"),
@@ -250,7 +250,7 @@ describeEast("Select", (test) => {
     });
 
     test("creates color picker select", $ => {
-        const select = $.let(Select.Root(null, [
+        const select = $.let(Select.Root("", [
             Select.Item("red", "Red"),
             Select.Item("green", "Green"),
             Select.Item("blue", "Blue"),
@@ -270,7 +270,7 @@ describeEast("Select", (test) => {
         $(assertEast.equal(disabledItem.disabled.unwrap("some"), true));
 
         // Then create the select with the items
-        const select = $.let(Select.Root(null, [
+        const select = $.let(Select.Root("", [
             Select.Item("free", "Free Plan"),
             Select.Item("pro", "Pro Plan"),
             Select.Item("enterprise", "Enterprise Plan", { disabled: true }),

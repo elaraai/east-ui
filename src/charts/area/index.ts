@@ -4,69 +4,19 @@
  */
 
 import {
-    type ExprType,
-    type SubtypeExprOrValue,
-    East,
-    ArrayType,
-    DictType,
-    StringType,
-    LiteralValueType,
-    variant,
+    type ExprType, type SubtypeExprOrValue, type TypeOf, ArrayType, DictType, East, Expr, LiteralValueType, none, some, StringType, StructType, variant
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
 import {
-    ChartSeriesType,
-    ChartAxisType,
     CurveType,
     StackOffsetType,
-    TickFormatType,
-    type ChartSeries,
 } from "../types.js";
-import type { AreaChartStyle } from "./types.js";
+import type { AreaChartStyle, AreaChartSeriesConfig } from "./types.js";
 
 // Re-export types
-export { AreaChartType, type AreaChartStyle } from "./types.js";
+export { AreaChartType, type AreaChartStyle, type AreaChartSeriesConfig } from "./types.js";
 
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-/**
- * Converts a ChartSeries array to East value.
- */
-function convertSeries(series: ChartSeries[]): ExprType<ArrayType<ChartSeriesType>> {
-    return East.value(
-        series.map(s => ({
-            name: s.name,
-            color: s.color !== undefined ? variant("some", s.color) : variant("none", null),
-            stackId: s.stackId !== undefined ? variant("some", s.stackId) : variant("none", null),
-            label: s.label !== undefined ? variant("some", s.label) : variant("none", null),
-        })),
-        ArrayType(ChartSeriesType)
-    );
-}
-
-/**
- * Converts ChartAxis config to East value.
- */
-function convertAxis(axis: AreaChartStyle["xAxis"]): ExprType<typeof ChartAxisType> | undefined {
-    if (!axis) return undefined;
-
-    const tickFormatValue = axis.tickFormat
-        ? (typeof axis.tickFormat === "string"
-            ? East.value(variant(axis.tickFormat, null), TickFormatType)
-            : axis.tickFormat)
-        : undefined;
-
-    return East.value({
-        dataKey: axis.dataKey !== undefined ? variant("some", axis.dataKey) : variant("none", null),
-        label: axis.label !== undefined ? variant("some", axis.label) : variant("none", null),
-        tickFormat: tickFormatValue ? variant("some", tickFormatValue) : variant("none", null),
-        domain: axis.domain !== undefined ? variant("some", axis.domain) : variant("none", null),
-        hide: axis.hide !== undefined ? variant("some", axis.hide) : variant("none", null),
-    }, ChartAxisType);
-}
 
 // ============================================================================
 // Area Chart Function
@@ -120,12 +70,32 @@ function convertAxis(axis: AreaChartStyle["xAxis"]): ExprType<typeof ChartAxisTy
  * );
  * ```
  */
-export function createAreaChart(
-    data: SubtypeExprOrValue<ArrayType<DictType<StringType, LiteralValueType>>>,
-    series: ChartSeries[],
+export function createAreaChart<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
+    data: T,
+    series: {
+        [K in TypeOf<NoInfer<T>> extends ArrayType<StructType> ? keyof TypeOf<NoInfer<T>>["value"]["fields"] : never]?: AreaChartSeriesConfig
+    },
     style?: AreaChartStyle
 ): ExprType<UIComponentType> {
-
+    const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
+    const data_mapped = data_expr.map(($, datum) => {
+        const ret = $.let(new Map(), DictType(StringType, LiteralValueType));
+        for (const [field_name, field_type] of Object.entries(Expr.type(data_expr).value.fields)) {
+            $(ret.insert(field_name, variant(field_type.type, datum[field_name] as any)));
+        }
+        return ret
+    });
+    const series_mapped = Object.entries(series as Record<string, AreaChartSeriesConfig>).map(([name, config]) => ({
+        name: name as string,
+        color: config?.color !== undefined ? some(config.color) : none,
+        stackId: config?.stackId !== undefined ? some(config.stackId) : none,
+        label: config?.label !== undefined ? some(config.label) : none,
+        stroke: config?.stroke !== undefined ? some(config.stroke) : none,
+        strokeWidth: config?.strokeWidth !== undefined ? some(config.strokeWidth) : none,
+        fill: config?.fill !== undefined ? some(config.fill) : none,
+        fillOpacity: config?.fillOpacity !== undefined ? some(config.fillOpacity) : none,
+        strokeDasharray: config?.strokeDasharray !== undefined ? some(config.strokeDasharray) : none,
+    }));
     const curveValue = style?.curveType
         ? (typeof style.curveType === "string"
             ? East.value(variant(style.curveType, null), CurveType)
@@ -138,23 +108,19 @@ export function createAreaChart(
             : style.stackOffset)
         : undefined;
 
-    const xAxisValue = convertAxis(style?.xAxis);
-    const yAxisValue = convertAxis(style?.yAxis);
-
     return East.value(variant("AreaChart", {
-        data: data,
-        series: convertSeries(series),
-        xAxis: xAxisValue ? variant("some", xAxisValue) : variant("none", null),
-        yAxis: yAxisValue ? variant("some", yAxisValue) : variant("none", null),
+        data: data_mapped,
+        series: series_mapped,
+        xAxis: style?.xAxis ? variant("some", style.xAxis) : variant("none", null),
+        yAxis: style?.yAxis ? variant("some", style.yAxis) : variant("none", null),
         curveType: curveValue ? variant("some", curveValue) : variant("none", null),
         stacked: style?.stacked !== undefined ? variant("some", style.stacked) : variant("none", null),
         stackOffset: stackOffsetValue ? variant("some", stackOffsetValue) : variant("none", null),
-        showGrid: style?.showGrid !== undefined ? variant("some", style.showGrid) : variant("none", null),
-        showTooltip: style?.showTooltip !== undefined ? variant("some", style.showTooltip) : variant("none", null),
-        showLegend: style?.showLegend !== undefined ? variant("some", style.showLegend) : variant("none", null),
+        grid: style?.grid !== undefined ? variant("some", style.grid) : variant("none", null),
+        tooltip: style?.tooltip !== undefined ? variant("some", style.tooltip) : variant("none", null),
+        legend: style?.legend !== undefined ? variant("some", style.legend) : variant("none", null),
+        margin: style?.margin !== undefined ? variant("some", style.margin) : variant("none", null),
         fillOpacity: style?.fillOpacity !== undefined ? variant("some", style.fillOpacity) : variant("none", null),
         connectNulls: style?.connectNulls !== undefined ? variant("some", style.connectNulls) : variant("none", null),
-        width: style?.width !== undefined ? variant("some", style.width) : variant("none", null),
-        height: style?.height !== undefined ? variant("some", style.height) : variant("none", null),
     }), UIComponentType);
 }

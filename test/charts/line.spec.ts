@@ -3,7 +3,6 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { type ValueTypeOf, LiteralValueType, variant } from "@elaraai/east";
 import { describeEast, assertEast } from "../platforms.spec.js";
 import { Chart } from "../../src/index.js";
 
@@ -15,11 +14,11 @@ describeEast("Chart.Line", (test) => {
     test("creates basic line chart with single series", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["sale", variant("Float", 10)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "February")], ["sale", variant("Float", 95)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "March")], ["sale", variant("Float", 87)]]),
+                { month: "January", sale: 10 },
+                { month: "February", sale: 95 },
+                { month: "March", sale: 87 },
             ],
-            [{ name: "sale", color: "teal.solid" }]
+            { sale: { color: "teal.solid" } }
         ));
 
         $(assertEast.equal(chart.getTag(), "LineChart"));
@@ -31,10 +30,10 @@ describeEast("Chart.Line", (test) => {
     test("creates line chart with x-axis dataKey", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["sale", variant("Float", 10)]]),
+                { month: "January", sale: 10 },
             ],
-            [{ name: "sale", color: "teal.solid" }],
-            { xAxis: { dataKey: "month" } }
+            { sale: { color: "teal.solid" } },
+            { xAxis: Chart.Axis({ dataKey: "month" }) }
         ));
 
         $(assertEast.equal(chart.unwrap("LineChart").xAxis.unwrap("some").dataKey.unwrap("some"), "month"));
@@ -47,14 +46,14 @@ describeEast("Chart.Line", (test) => {
     test("creates line chart with multiple series", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["mac", variant("Float", 10)], ["linux", variant("Float", 120)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "February")], ["mac", variant("Float", 95)], ["linux", variant("Float", 110)]]),
+                { month: "January", mac: 10, linux: 120 },
+                { month: "February", mac: 95, linux: 110 },
             ],
-            [
-                { name: "mac", color: "purple.solid" },
-                { name: "linux", color: "blue.solid" },
-            ],
-            { xAxis: { dataKey: "month" } }
+            {
+                mac: { color: "purple.solid" },
+                linux: { color: "blue.solid" },
+            },
+            { xAxis: Chart.Axis({ dataKey: "month" }) }
         ));
 
         $(assertEast.equal(chart.unwrap("LineChart").series.size(), 2n));
@@ -69,9 +68,9 @@ describeEast("Chart.Line", (test) => {
     test("creates line chart with natural curve", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["sale", variant("Float", 10)]]),
+                { month: "January", sale: 10 },
             ],
-            [{ name: "sale", color: "teal.solid" }],
+            { sale: { color: "teal.solid" } },
             { curveType: "natural" }
         ));
 
@@ -81,9 +80,9 @@ describeEast("Chart.Line", (test) => {
     test("creates line chart with monotone curve", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["sale", variant("Float", 10)]]),
+                { month: "January", sale: 10 },
             ],
-            [{ name: "sale", color: "teal.solid" }],
+            { sale: { color: "teal.solid" } },
             { curveType: "monotone" }
         ));
 
@@ -93,9 +92,9 @@ describeEast("Chart.Line", (test) => {
     test("creates line chart with linear curve", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["sale", variant("Float", 10)]]),
+                { month: "January", sale: 10 },
             ],
-            [{ name: "sale", color: "teal.solid" }],
+            { sale: { color: "teal.solid" } },
             { curveType: "linear" }
         ));
 
@@ -105,9 +104,9 @@ describeEast("Chart.Line", (test) => {
     test("creates line chart with step curve", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["sale", variant("Float", 10)]]),
+                { month: "January", sale: 10 },
             ],
-            [{ name: "sale", color: "teal.solid" }],
+            { sale: { color: "teal.solid" } },
             { curveType: "step" }
         ));
 
@@ -121,45 +120,45 @@ describeEast("Chart.Line", (test) => {
     test("creates line chart with grid", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["sale", variant("Float", 10)]]),
+                { month: "January", sale: 10 },
             ],
-            [{ name: "sale", color: "teal.solid" }],
-            { showGrid: true }
+            { sale: { color: "teal.solid" } },
+            { grid: Chart.Grid({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("LineChart").showGrid.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("LineChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates line chart with legend", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["sale", variant("Float", 10)]]),
+                { month: "January", sale: 10 },
             ],
-            [{ name: "sale", color: "teal.solid" }],
-            { showLegend: true }
+            { sale: { color: "teal.solid" } },
+            { legend: Chart.Legend({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("LineChart").showLegend.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("LineChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates line chart with tooltip", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["sale", variant("Float", 10)]]),
+                { month: "January", sale: 10 },
             ],
-            [{ name: "sale", color: "teal.solid" }],
-            { showTooltip: true }
+            { sale: { color: "teal.solid" } },
+            { tooltip: Chart.Tooltip({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("LineChart").showTooltip.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("LineChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates line chart with dots", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["sale", variant("Float", 10)]]),
+                { month: "January", sale: 10 },
             ],
-            [{ name: "sale", color: "teal.solid" }],
+            { sale: { color: "teal.solid" } },
             { showDots: true }
         ));
 
@@ -169,9 +168,9 @@ describeEast("Chart.Line", (test) => {
     test("creates line chart without dots", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["sale", variant("Float", 10)]]),
+                { month: "January", sale: 10 },
             ],
-            [{ name: "sale", color: "teal.solid" }],
+            { sale: { color: "teal.solid" } },
             { showDots: false }
         ));
 
@@ -185,9 +184,9 @@ describeEast("Chart.Line", (test) => {
     test("creates line chart with custom stroke width", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["sale", variant("Float", 10)]]),
+                { month: "January", sale: 10 },
             ],
-            [{ name: "sale", color: "teal.solid" }],
+            { sale: { color: "teal.solid" } },
             { strokeWidth: 4n }
         ));
 
@@ -201,9 +200,9 @@ describeEast("Chart.Line", (test) => {
     test("creates line chart with connectNulls", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["sale", variant("Float", 10)]]),
+                { month: "January", sale: 10 },
             ],
-            [{ name: "sale", color: "teal.solid" }],
+            { sale: { color: "teal.solid" } },
             { connectNulls: true }
         ));
 
@@ -217,11 +216,14 @@ describeEast("Chart.Line", (test) => {
     test("creates line chart with y-axis domain", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["sales", variant("Float", 175)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "February")], ["sales", variant("Float", 195)]]),
+                { month: "January", sales: 175 },
+                { month: "February", sales: 195 },
             ],
-            [{ name: "sales", color: "teal.solid" }],
-            { xAxis: { dataKey: "month" }, yAxis: { domain: [160, 210] } }
+            { sales: { color: "teal.solid" } },
+            {
+                xAxis: Chart.Axis({ dataKey: "month" }),
+                yAxis: Chart.Axis({ domain: [160, 210] })
+            }
         ));
 
         $(assertEast.equal(chart.unwrap("LineChart").xAxis.unwrap("some").dataKey.unwrap("some"), "month"));
@@ -229,20 +231,20 @@ describeEast("Chart.Line", (test) => {
     });
 
     // =========================================================================
-    // Dimensions
+    // Margin
     // =========================================================================
 
-    test("creates line chart with custom dimensions", $ => {
+    test("creates line chart with custom margin", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["sale", variant("Float", 10)]]),
+                { month: "January", sale: 10 },
             ],
-            [{ name: "sale", color: "teal.solid" }],
-            { width: 600n, height: 400n }
+            { sale: { color: "teal.solid" } },
+            { margin: Chart.Margin({ top: 20n, right: 30n, bottom: 20n, left: 30n }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("LineChart").width.unwrap("some"), 600n));
-        $(assertEast.equal(chart.unwrap("LineChart").height.unwrap("some"), 400n));
+        $(assertEast.equal(chart.unwrap("LineChart").margin.unwrap("some").top.unwrap("some"), 20n));
+        $(assertEast.equal(chart.unwrap("LineChart").margin.unwrap("some").left.unwrap("some"), 30n));
     });
 
     // =========================================================================
@@ -252,33 +254,45 @@ describeEast("Chart.Line", (test) => {
     test("creates complete line chart matching Chakra LineChartBasic example", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["sale", variant("Float", 10)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "February")], ["sale", variant("Float", 95)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "March")], ["sale", variant("Float", 87)]]),
+                { month: "January", sale: 10 },
+                { month: "February", sale: 95 },
+                { month: "March", sale: 87 },
             ],
-            [{ name: "sale", color: "teal.solid" }],
-            { xAxis: { dataKey: "month" }, showGrid: true, showTooltip: true, showDots: false, strokeWidth: 2n }
+            { sale: { color: "teal.solid" } },
+            {
+                xAxis: Chart.Axis({ dataKey: "month" }),
+                grid: Chart.Grid({ show: true }),
+                tooltip: Chart.Tooltip({ show: true }),
+                showDots: false,
+                strokeWidth: 2n
+            }
         ));
 
         $(assertEast.equal(chart.getTag(), "LineChart"));
         $(assertEast.equal(chart.unwrap("LineChart").series.get(0n).name, "sale"));
-        $(assertEast.equal(chart.unwrap("LineChart").showGrid.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("LineChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates complete multi-series line chart matching Chakra LineChartMultiple example", $ => {
         const chart = $.let(Chart.Line(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["mac", variant("Float", 10)], ["linux", variant("Float", 120)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "February")], ["mac", variant("Float", 95)], ["linux", variant("Float", 110)]]),
+                { month: "January", mac: 10, linux: 120 },
+                { month: "February", mac: 95, linux: 110 },
             ],
-            [
-                { name: "mac", color: "purple.solid" },
-                { name: "linux", color: "blue.solid" },
-            ],
-            { xAxis: { dataKey: "month" }, showGrid: true, showTooltip: true, showLegend: true, strokeWidth: 2n }
+            {
+                mac: { color: "purple.solid" },
+                linux: { color: "blue.solid" },
+            },
+            {
+                xAxis: Chart.Axis({ dataKey: "month" }),
+                grid: Chart.Grid({ show: true }),
+                tooltip: Chart.Tooltip({ show: true }),
+                legend: Chart.Legend({ show: true }),
+                strokeWidth: 2n
+            }
         ));
 
         $(assertEast.equal(chart.unwrap("LineChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap("LineChart").showLegend.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("LineChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 });

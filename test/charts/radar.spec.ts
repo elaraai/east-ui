@@ -3,7 +3,6 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { type ValueTypeOf, LiteralValueType, variant } from "@elaraai/east";
 import { describeEast, assertEast } from "../platforms.spec.js";
 import { Chart } from "../../src/index.js";
 
@@ -15,11 +14,11 @@ describeEast("Chart.Radar", (test) => {
     test("creates basic radar chart with single series", $ => {
         const chart = $.let(Chart.Radar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 130)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "February")], ["windows", variant("Float", 120)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "March")], ["windows", variant("Float", 75)]]),
+                { month: "January", windows: 130 },
+                { month: "February", windows: 120 },
+                { month: "March", windows: 75 },
             ],
-            [{ name: "windows", color: "teal.solid" }]
+            { windows: { color: "teal.solid" } }
         ));
 
         $(assertEast.equal(chart.getTag(), "RadarChart"));
@@ -31,9 +30,9 @@ describeEast("Chart.Radar", (test) => {
     test("creates radar chart with dataKey", $ => {
         const chart = $.let(Chart.Radar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 130)]]),
+                { month: "January", windows: 130 },
             ],
-            [{ name: "windows", color: "teal.solid" }],
+            { windows: { color: "teal.solid" } },
             { dataKey: "month" }
         ));
 
@@ -47,13 +46,13 @@ describeEast("Chart.Radar", (test) => {
     test("creates radar chart with multiple series", $ => {
         const chart = $.let(Chart.Radar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 30)], ["mac", variant("Float", 100)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "February")], ["windows", variant("Float", 50)], ["mac", variant("Float", 80)]]),
+                { month: "January", windows: 30, mac: 100 },
+                { month: "February", windows: 50, mac: 80 },
             ],
-            [
-                { name: "windows", color: "teal.solid" },
-                { name: "mac", color: "orange.solid" },
-            ],
+            {
+                windows: { color: "teal.solid" },
+                mac: { color: "orange.solid" },
+            },
             { dataKey: "month" }
         ));
 
@@ -65,14 +64,14 @@ describeEast("Chart.Radar", (test) => {
     test("creates skills comparison radar chart", $ => {
         const chart = $.let(Chart.Radar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["subject", variant("String", "Math")], ["current", variant("Float", 80)], ["target", variant("Float", 90)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["subject", variant("String", "Science")], ["current", variant("Float", 95)], ["target", variant("Float", 85)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["subject", variant("String", "English")], ["current", variant("Float", 70)], ["target", variant("Float", 80)]]),
+                { subject: "Math", current: 80, target: 90 },
+                { subject: "Science", current: 95, target: 85 },
+                { subject: "English", current: 70, target: 80 },
             ],
-            [
-                { name: "current", color: "teal.solid" },
-                { name: "target", color: "orange.solid" },
-            ],
+            {
+                current: { color: "teal.solid" },
+                target: { color: "orange.solid" },
+            },
             { dataKey: "subject" }
         ));
 
@@ -87,37 +86,37 @@ describeEast("Chart.Radar", (test) => {
     test("creates radar chart with grid", $ => {
         const chart = $.let(Chart.Radar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 130)]]),
+                { month: "January", windows: 130 },
             ],
-            [{ name: "windows", color: "teal.solid" }],
-            { showGrid: true }
+            { windows: { color: "teal.solid" } },
+            { grid: Chart.Grid({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("RadarChart").showGrid.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("RadarChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates radar chart with legend", $ => {
         const chart = $.let(Chart.Radar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 130)]]),
+                { month: "January", windows: 130 },
             ],
-            [{ name: "windows", color: "teal.solid" }],
-            { showLegend: true }
+            { windows: { color: "teal.solid" } },
+            { legend: Chart.Legend({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("RadarChart").showLegend.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("RadarChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates radar chart with tooltip", $ => {
         const chart = $.let(Chart.Radar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 130)]]),
+                { month: "January", windows: 130 },
             ],
-            [{ name: "windows", color: "teal.solid" }],
-            { showTooltip: true }
+            { windows: { color: "teal.solid" } },
+            { tooltip: Chart.Tooltip({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("RadarChart").showTooltip.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("RadarChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -127,9 +126,9 @@ describeEast("Chart.Radar", (test) => {
     test("creates radar chart with custom fill opacity", $ => {
         const chart = $.let(Chart.Radar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 130)]]),
+                { month: "January", windows: 130 },
             ],
-            [{ name: "windows", color: "teal.solid" }],
+            { windows: { color: "teal.solid" } },
             { fillOpacity: 0.5 }
         ));
 
@@ -139,12 +138,12 @@ describeEast("Chart.Radar", (test) => {
     test("creates radar chart with low fill opacity for overlapping series", $ => {
         const chart = $.let(Chart.Radar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 30)], ["mac", variant("Float", 100)]]),
+                { month: "January", windows: 30, mac: 100 },
             ],
-            [
-                { name: "windows", color: "teal.solid" },
-                { name: "mac", color: "orange.solid" },
-            ],
+            {
+                windows: { color: "teal.solid" },
+                mac: { color: "orange.solid" },
+            },
             { fillOpacity: 0.2 }
         ));
 
@@ -152,20 +151,20 @@ describeEast("Chart.Radar", (test) => {
     });
 
     // =========================================================================
-    // Dimensions
+    // Margin
     // =========================================================================
 
-    test("creates radar chart with custom dimensions", $ => {
+    test("creates radar chart with custom margin", $ => {
         const chart = $.let(Chart.Radar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 130)]]),
+                { month: "January", windows: 130 },
             ],
-            [{ name: "windows", color: "teal.solid" }],
-            { width: 400n, height: 400n }
+            { windows: { color: "teal.solid" } },
+            { margin: Chart.Margin({ top: 20n, right: 30n, bottom: 20n, left: 30n }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("RadarChart").width.unwrap("some"), 400n));
-        $(assertEast.equal(chart.unwrap("RadarChart").height.unwrap("some"), 400n));
+        $(assertEast.equal(chart.unwrap("RadarChart").margin.unwrap("some").top.unwrap("some"), 20n));
+        $(assertEast.equal(chart.unwrap("RadarChart").margin.unwrap("some").left.unwrap("some"), 30n));
     });
 
     // =========================================================================
@@ -175,38 +174,47 @@ describeEast("Chart.Radar", (test) => {
     test("creates complete radar chart matching Chakra RadarChartBasic example", $ => {
         const chart = $.let(Chart.Radar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 130)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "February")], ["windows", variant("Float", 120)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "March")], ["windows", variant("Float", 75)]]),
+                { month: "January", windows: 130 },
+                { month: "February", windows: 120 },
+                { month: "March", windows: 75 },
             ],
-            [{ name: "windows", color: "teal.solid" }],
-            { dataKey: "month", showGrid: true, fillOpacity: 0.5 }
+            { windows: { color: "teal.solid" } },
+            {
+                dataKey: "month",
+                grid: Chart.Grid({ show: true }),
+                fillOpacity: 0.5
+            }
         ));
 
         $(assertEast.equal(chart.getTag(), "RadarChart"));
         $(assertEast.equal(chart.unwrap("RadarChart").series.get(0n).name, "windows"));
         $(assertEast.equal(chart.unwrap("RadarChart").dataKey.unwrap("some"), "month"));
-        $(assertEast.equal(chart.unwrap("RadarChart").showGrid.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("RadarChart").grid.unwrap("some").show.unwrap("some"), true));
         $(assertEast.equal(chart.unwrap("RadarChart").fillOpacity.unwrap("some"), 0.5));
     });
 
     test("creates complete multi-series radar chart matching Chakra RadarChartMultiple example", $ => {
         const chart = $.let(Chart.Radar(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 30)], ["mac", variant("Float", 100)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "February")], ["windows", variant("Float", 50)], ["mac", variant("Float", 80)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "March")], ["windows", variant("Float", 70)], ["mac", variant("Float", 60)]]),
+                { month: "January", windows: 30, mac: 100 },
+                { month: "February", windows: 50, mac: 80 },
+                { month: "March", windows: 70, mac: 60 },
             ],
-            [
-                { name: "windows", color: "teal.solid" },
-                { name: "mac", color: "orange.solid" },
-            ],
-            { dataKey: "month", showGrid: true, showLegend: true, fillOpacity: 0.2 }
+            {
+                windows: { color: "teal.solid" },
+                mac: { color: "orange.solid" },
+            },
+            {
+                dataKey: "month",
+                grid: Chart.Grid({ show: true }),
+                legend: Chart.Legend({ show: true }),
+                fillOpacity: 0.2
+            }
         ));
 
         $(assertEast.equal(chart.unwrap("RadarChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap("RadarChart").showGrid.unwrap("some"), true));
-        $(assertEast.equal(chart.unwrap("RadarChart").showLegend.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("RadarChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("RadarChart").legend.unwrap("some").show.unwrap("some"), true));
         $(assertEast.equal(chart.unwrap("RadarChart").fillOpacity.unwrap("some"), 0.2));
     });
 });

@@ -16,6 +16,7 @@ import {
     BorderWidthType,
     FontStyleType,
     FontWeightType,
+    SizeType,
     TextAlignType,
     TextTransformType,
 } from "../style.js";
@@ -73,6 +74,13 @@ function createText(
             : style.fontStyle)
         : undefined;
 
+
+    const fontSize = style?.fontSize
+        ? (typeof style.fontSize === "string"
+            ? East.value(variant(style.fontSize, null), SizeType)
+            : style.fontSize)
+        : undefined;
+
     const textTransformValue = style?.textTransform
         ? (typeof style.textTransform === "string"
             ? East.value(variant(style.textTransform, null), TextTransformType)
@@ -103,6 +111,7 @@ function createText(
         background: style?.background ? variant("some", style.background) : variant("none", null),
         fontWeight: fontWeightValue ? variant("some", fontWeightValue) : variant("none", null),
         fontStyle: fontStyleValue ? variant("some", fontStyleValue) : variant("none", null),
+        fontSize: fontSize ? variant("some", fontSize) : variant("none", null),
         textTransform: textTransformValue ? variant("some", textTransformValue) : variant("none", null),
         textAlign: textAlignValue ? variant("some", textAlignValue) : variant("none", null),
         borderWidth: borderWidthValue ? variant("some", borderWidthValue) : variant("none", null),

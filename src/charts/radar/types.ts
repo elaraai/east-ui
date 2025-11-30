@@ -8,7 +8,6 @@ import {
     OptionType,
     StructType,
     ArrayType,
-    BooleanType,
     FloatType,
     IntegerType,
     StringType,
@@ -18,6 +17,10 @@ import {
 
 import {
     ChartSeriesType,
+    ChartGridType,
+    ChartTooltipType,
+    ChartLegendType,
+    ChartMarginType,
     type BaseChartStyle,
 } from "../types.js";
 
@@ -35,23 +38,21 @@ import {
  * @property data - Array of data points with values for each axis
  * @property series - Series configuration for multi-series charts
  * @property dataKey - Key for axis labels (e.g., "subject")
- * @property showGrid - Show grid lines
- * @property showLegend - Show legend
- * @property showTooltip - Show tooltip on hover
+ * @property grid - Grid configuration
+ * @property tooltip - Tooltip configuration
+ * @property legend - Legend configuration
+ * @property margin - Chart margin configuration
  * @property fillOpacity - Fill opacity (0-1)
- * @property width - Chart width in pixels
- * @property height - Chart height in pixels
  */
 export const RadarChartType = StructType({
     data: ArrayType(DictType(StringType, LiteralValueType)),
     series: ArrayType(ChartSeriesType),
     dataKey: OptionType(StringType),
-    showGrid: OptionType(BooleanType),
-    showLegend: OptionType(BooleanType),
-    showTooltip: OptionType(BooleanType),
+    grid: OptionType(ChartGridType),
+    tooltip: OptionType(ChartTooltipType),
+    legend: OptionType(ChartLegendType),
+    margin: OptionType(ChartMarginType),
     fillOpacity: OptionType(FloatType),
-    width: OptionType(IntegerType),
-    height: OptionType(IntegerType),
 });
 
 /**
@@ -65,10 +66,33 @@ export type RadarChartType = typeof RadarChartType;
 
 /**
  * TypeScript interface for Radar chart style options.
+ *
+ * @remarks
+ * All properties are optional and accept either static values or East expressions.
  */
 export interface RadarChartStyle extends BaseChartStyle {
     /** Key for axis labels (e.g., "subject") */
     dataKey?: SubtypeExprOrValue<StringType>;
     /** Fill opacity (0-1) */
     fillOpacity?: SubtypeExprOrValue<FloatType>;
+}
+
+/**
+ * Series configuration for Radar charts (used in createRadarChart).
+ */
+export interface RadarChartSeriesConfig {
+    /** Chakra color token (e.g., "teal.solid", "blue.500") */
+    color?: SubtypeExprOrValue<StringType>;
+    /** Display label (defaults to name) */
+    label?: SubtypeExprOrValue<StringType>;
+    /** Stroke/line color (defaults to color) */
+    stroke?: SubtypeExprOrValue<StringType>;
+    /** Stroke/line width in pixels */
+    strokeWidth?: SubtypeExprOrValue<IntegerType>;
+    /** Fill color (defaults to color) */
+    fill?: SubtypeExprOrValue<StringType>;
+    /** Fill opacity (0-1) */
+    fillOpacity?: SubtypeExprOrValue<FloatType>;
+    /** Dash pattern for dashed lines (e.g., "5 5") */
+    strokeDasharray?: SubtypeExprOrValue<StringType>;
 }

@@ -11,13 +11,13 @@ import {
     StringType,
     FloatType,
     BooleanType,
-    VariantType,
-    NullType,
 } from "@elaraai/east";
 
 import {
     ChartSortType,
+    TickFormatType,
     type ChartSort,
+    type SimpleTickFormatLiteral,
 } from "../types.js";
 
 // ============================================================================
@@ -46,35 +46,6 @@ export const BarListItemType = StructType({
 export type BarListItemType = typeof BarListItemType;
 
 // ============================================================================
-// Bar List Value Format Type
-// ============================================================================
-
-/**
- * Value format for bar list values.
- *
- * @property number - Plain number
- * @property currency - Currency format
- * @property percent - Percentage format
- * @property compact - Compact notation (1K, 1M)
- */
-export const BarListValueFormatType = VariantType({
-    number: NullType,
-    currency: NullType,
-    percent: NullType,
-    compact: NullType,
-});
-
-/**
- * Type representing bar list value format.
- */
-export type BarListValueFormatType = typeof BarListValueFormatType;
-
-/**
- * String literal type for bar list value format.
- */
-export type BarListValueFormatLiteral = "number" | "currency" | "percent" | "compact";
-
-// ============================================================================
 // Bar List Type
 // ============================================================================
 
@@ -89,7 +60,7 @@ export type BarListValueFormatLiteral = "number" | "currency" | "percent" | "com
  * @property sort - Sort configuration
  * @property showValue - Show value text
  * @property showLabel - Show label text
- * @property valueFormat - Format for values
+ * @property valueFormat - Format for values (uses TickFormatType)
  * @property color - Default bar color
  */
 export const BarListType = StructType({
@@ -97,7 +68,7 @@ export const BarListType = StructType({
     sort: OptionType(ChartSortType),
     showValue: OptionType(BooleanType),
     showLabel: OptionType(BooleanType),
-    valueFormat: OptionType(BarListValueFormatType),
+    valueFormat: OptionType(TickFormatType),
     color: OptionType(StringType),
 });
 
@@ -120,8 +91,8 @@ export interface BarListStyle {
     showValue?: SubtypeExprOrValue<BooleanType>;
     /** Show label text */
     showLabel?: SubtypeExprOrValue<BooleanType>;
-    /** Format for values */
-    valueFormat?: SubtypeExprOrValue<BarListValueFormatType> | BarListValueFormatLiteral;
+    /** Format for values - use string literals or TickFormat helpers */
+    valueFormat?: SubtypeExprOrValue<TickFormatType> | SimpleTickFormatLiteral;
     /** Default bar color */
     color?: SubtypeExprOrValue<StringType>;
 }

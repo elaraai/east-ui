@@ -11,14 +11,21 @@ import {
     StringType,
     ArrayType,
     variant,
+    type SubtypeExprOrValue,
 } from "@elaraai/east";
 
-import { SizeType, OrientationType } from "../../style.js";
-import { DataListVariantType, type DataListStyle } from "./types.js";
+import { OrientationType } from "../../style.js";
+import { DataListVariantType, DataListSizeType, type DataListStyle } from "./types.js";
 import { UIComponentType } from "../../component.js";
 
 // Re-export style types
-export { DataListVariantType, DataListVariant, type DataListStyle } from "./types.js";
+export {
+    DataListVariantType,
+    DataListVariant,
+    DataListSizeType,
+    type DataListSizeLiteral,
+    type DataListStyle,
+} from "./types.js";
 
 // ============================================================================
 // DataList Item Type
@@ -62,7 +69,7 @@ export type DataListItemType = typeof DataListItemType;
 export const DataListRootType = StructType({
     items: ArrayType(DataListItemType),
     orientation: OptionType(OrientationType),
-    size: OptionType(SizeType),
+    size: OptionType(DataListSizeType),
     variant: OptionType(DataListVariantType),
 });
 
@@ -152,7 +159,7 @@ function DataListItem(
  * ```
  */
 function DataListRoot(
-    items: ExprType<DataListItemType>[],
+    items: SubtypeExprOrValue<ArrayType<DataListItemType>>,
     style?: DataListStyle
 ): ExprType<UIComponentType>  {
     const orientationValue = style?.orientation
@@ -163,7 +170,7 @@ function DataListRoot(
 
     const sizeValue = style?.size
         ? (typeof style.size === "string"
-            ? East.value(variant(style.size, null), SizeType)
+            ? East.value(variant(style.size, null), DataListSizeType)
             : style.size)
         : undefined;
 
@@ -213,5 +220,6 @@ export const DataList = {
         Root: DataListRootType,
         Item: DataListItemType,
         Variant: DataListVariantType,
+        Size: DataListSizeType,
     },
 } as const;

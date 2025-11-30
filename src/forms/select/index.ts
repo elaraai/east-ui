@@ -105,7 +105,7 @@ function createSelectRoot(
     style?: SelectStyle
 ): ExprType<UIComponentType> {
     const toStringOption = (val: SubtypeExprOrValue<StringType> | null | undefined) => {
-        if (val === undefined || val === null) return variant("none", null);
+        if (val === undefined || val === null || val === "") return variant("none", null);
         return variant("some", val);
     };
 

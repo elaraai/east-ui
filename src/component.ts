@@ -13,6 +13,7 @@ import {
     IntegerType,
     FloatType,
     BooleanType,
+    DictType,
 } from "@elaraai/east";
 
 // Typography
@@ -52,7 +53,7 @@ import { StatType } from "./display/stat/types.js";
 
 // Collections
 import { DataListRootType } from "./collections/data-list/index.js";
-import { TableRootType } from "./collections/table/index.js";
+import { TableColumnType, TableStyleType } from "./collections/table/types.js";
 // import { TreeViewStyleType } from "./collections/tree-view/types.js";
 
 // Charts
@@ -69,10 +70,12 @@ import { BarSegmentType } from "./charts/bar-segment/types.js";
 // Disclosure
 import { AccordionStyleType } from "./disclosure/accordion/types.js";
 import { CarouselStyleType } from "./disclosure/carousel/types.js";
+import { TabsStyleType } from "./disclosure/tabs/types.js";
 
 // Overlays
 import { PlacementType } from "./overlays/tooltip/types.js";
 import { MenuItemType } from "./overlays/menu/types.js";
+import { TreeViewStyleType } from "./collections/tree-view/types.js";
 
 /**
  * Recursive type representing any UI component in East UI.
@@ -148,7 +151,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
             rowStart: OptionType(StringType),
             rowEnd: OptionType(StringType),
         })),
-        // style: OptionType(GridStyleType),
+        style: OptionType(GridStyleType),
     }),
 
     Splitter: StructType({
@@ -164,7 +167,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
         style: OptionType(SplitterStyleType),
     }),
 
-    
+
     // Forms
     StringInput: StringInputType,
     IntegerInput: IntegerInputType,
@@ -215,7 +218,6 @@ export const UIComponentType = RecursiveType(node => VariantType({
         style: OptionType(CardStyleType),
     }),
     DataList: DataListRootType,
-    Table: TableRootType,
 
     // Charts
     Sparkline: SparklineType,
@@ -237,7 +239,13 @@ export const UIComponentType = RecursiveType(node => VariantType({
         label: OptionType(StringType),
         defaultExpandedValue: OptionType(ArrayType(StringType)),
         defaultSelectedValue: OptionType(ArrayType(StringType)),
-        // style: OptionType(TreeViewStyleType),
+        style: OptionType(TreeViewStyleType),
+    }),
+
+    Table: StructType({
+        rows: ArrayType(DictType(StringType, node)),
+        columns: ArrayType(TableColumnType),
+        style: OptionType(TableStyleType),
     }),
 
     // Disclosure
@@ -252,9 +260,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
     }),
 
     Carousel: StructType({
-        items: ArrayType(StructType({
-            content: node,
-        })),
+        items: ArrayType(node),
         index: OptionType(IntegerType),
         defaultIndex: OptionType(IntegerType),
         slidesPerView: OptionType(IntegerType),
@@ -265,6 +271,18 @@ export const UIComponentType = RecursiveType(node => VariantType({
         showIndicators: OptionType(BooleanType),
         showControls: OptionType(BooleanType),
         style: OptionType(CarouselStyleType),
+    }),
+
+    Tabs: StructType({
+        items: ArrayType(StructType({
+            value: StringType,
+            trigger: StringType,
+            content: ArrayType(node),
+            disabled: OptionType(BooleanType),
+        })),
+        value: OptionType(StringType),
+        defaultValue: OptionType(StringType),
+        style: OptionType(TabsStyleType),
     }),
 
     // Overlays

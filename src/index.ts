@@ -53,7 +53,7 @@ export { DataList, Table, TreeView } from "./collections/index.js";
 export { Chart, Sparkline } from "./charts/index.js";
 
 // Disclosure
-export { Accordion, Carousel } from "./disclosure/index.js";
+export { Accordion, Carousel, Tabs } from "./disclosure/index.js";
 
 // Overlays
 export { Tooltip, Menu } from "./overlays/index.js";

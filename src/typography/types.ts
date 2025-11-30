@@ -15,6 +15,7 @@ import {
     BorderWidthType,
     FontStyleType,
     FontWeightType,
+    SizeType,
     TextAlignType,
     TextTransformType,
 } from "../style.js";
@@ -23,6 +24,7 @@ import type {
     BorderWidthLiteral,
     FontStyleLiteral,
     FontWeightLiteral,
+    SizeLiteral,
     TextAlignLiteral,
     TextTransformLiteral,
 } from "../style.js";
@@ -55,6 +57,7 @@ export const TextType = StructType({
     background: OptionType(StringType),
     fontWeight: OptionType(FontWeightType),
     fontStyle: OptionType(FontStyleType),
+    fontSize: OptionType(SizeType),
     textTransform: OptionType(TextTransformType),
     textAlign: OptionType(TextAlignType),
     borderWidth: OptionType(BorderWidthType),
@@ -98,6 +101,8 @@ export type TextStyle = {
     fontWeight?: SubtypeExprOrValue<FontWeightType> | FontWeightLiteral;
     /** Font style variant */
     fontStyle?: SubtypeExprOrValue<FontStyleType> | FontStyleLiteral;
+    /** Fone sizt */
+    fontSize?: SubtypeExprOrValue<SizeType> | SizeLiteral
     /** Text transform variant */
     textTransform?: SubtypeExprOrValue<TextTransformType> | TextTransformLiteral;
     /** Horizontal text alignment */

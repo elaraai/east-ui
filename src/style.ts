@@ -554,14 +554,14 @@ export function Orientation(orientation: "horizontal" | "vertical"): ExprType<Or
  *
  * @property row - Row direction (horizontal, left to right)
  * @property column - Column direction (vertical, top to bottom)
- * @property row_reverse - Row direction reversed (horizontal, right to left)
- * @property column_reverse - Column direction reversed (vertical, bottom to top)
+ * @property row-reverse - Row direction reversed (horizontal, right to left)
+ * @property column-reverse - Column direction reversed (vertical, bottom to top)
  */
 export const FlexDirectionType = VariantType({
     row: NullType,
     column: NullType,
-    row_reverse: NullType,
-    column_reverse: NullType,
+    "row-reverse": NullType,
+    "column-reverse": NullType,
 });
 
 /**
@@ -572,7 +572,7 @@ export type FlexDirectionType = typeof FlexDirectionType;
 /**
  * String literal type for flex direction values.
  */
-export type FlexDirectionLiteral = "row" | "column" | "row_reverse" | "column_reverse";
+export type FlexDirectionLiteral = "row" | "column" | "row-reverse" | "column-reverse";
 
 /**
  * Creates a flex direction variant expression.
@@ -580,7 +580,7 @@ export type FlexDirectionLiteral = "row" | "column" | "row_reverse" | "column_re
  * @param direction - The flex direction value
  * @returns An East expression representing the flex direction
  */
-export function FlexDirection(direction: "row" | "column" | "row_reverse" | "column_reverse"): ExprType<FlexDirectionType> {
+export function FlexDirection(direction: "row" | "column" | "row-reverse" | "column-reverse"): ExprType<FlexDirectionType> {
     return East.value(variant(direction, null), FlexDirectionType);
 }
 
@@ -594,20 +594,20 @@ export function FlexDirection(direction: "row" | "column" | "row_reverse" | "col
  * @remarks
  * Create instances using the {@link JustifyContent} function.
  *
- * @property flex_start - Align items to the start
- * @property flex_end - Align items to the end
+ * @property flex-start - Align items to the start
+ * @property flex-end - Align items to the end
  * @property center - Center items
- * @property space_between - Distribute items with space between
- * @property space_around - Distribute items with space around
- * @property space_evenly - Distribute items with equal space
+ * @property space-between - Distribute items with space between
+ * @property space-around - Distribute items with space around
+ * @property space-evenly - Distribute items with equal space
  */
 export const JustifyContentType = VariantType({
-    flex_start: NullType,
-    flex_end: NullType,
+    "flex-start": NullType,
+    "flex-end": NullType,
     center: NullType,
-    space_between: NullType,
-    space_around: NullType,
-    space_evenly: NullType,
+    "space-between": NullType,
+    "space-around": NullType,
+    "space-evenly": NullType,
 });
 
 /**
@@ -618,7 +618,7 @@ export type JustifyContentType = typeof JustifyContentType;
 /**
  * String literal type for justify content values.
  */
-export type JustifyContentLiteral = "flex_start" | "flex_end" | "center" | "space_between" | "space_around" | "space_evenly";
+export type JustifyContentLiteral = "flex-start" | "flex-end" | "center" | "space-between" | "space-around" | "space-evenly";
 
 /**
  * Creates a justify content variant expression.
@@ -626,7 +626,7 @@ export type JustifyContentLiteral = "flex_start" | "flex_end" | "center" | "spac
  * @param justify - The justify content value
  * @returns An East expression representing the justify content
  */
-export function JustifyContent(justify: "flex_start" | "flex_end" | "center" | "space_between" | "space_around" | "space_evenly"): ExprType<JustifyContentType> {
+export function JustifyContent(justify: "flex-start" | "flex-end" | "center" | "space-between" | "space-around" | "space-evenly"): ExprType<JustifyContentType> {
     return East.value(variant(justify, null), JustifyContentType);
 }
 
@@ -640,15 +640,15 @@ export function JustifyContent(justify: "flex_start" | "flex_end" | "center" | "
  * @remarks
  * Create instances using the {@link AlignItems} function.
  *
- * @property flex_start - Align items to the start of the cross axis
- * @property flex_end - Align items to the end of the cross axis
+ * @property flex-start - Align items to the start of the cross axis
+ * @property flex-end - Align items to the end of the cross axis
  * @property center - Center items on the cross axis
  * @property baseline - Align items to text baseline
  * @property stretch - Stretch items to fill the container
  */
 export const AlignItemsType = VariantType({
-    flex_start: NullType,
-    flex_end: NullType,
+    "flex-start": NullType,
+    "flex-end": NullType,
     center: NullType,
     baseline: NullType,
     stretch: NullType,
@@ -662,7 +662,7 @@ export type AlignItemsType = typeof AlignItemsType;
 /**
  * String literal type for align items values.
  */
-export type AlignItemsLiteral = "flex_start" | "flex_end" | "center" | "baseline" | "stretch";
+export type AlignItemsLiteral = "flex-start" | "flex-end" | "center" | "baseline" | "stretch";
 
 /**
  * Creates an align items variant expression.
@@ -670,7 +670,7 @@ export type AlignItemsLiteral = "flex_start" | "flex_end" | "center" | "baseline
  * @param align - The align items value
  * @returns An East expression representing the align items
  */
-export function AlignItems(align: "flex_start" | "flex_end" | "center" | "baseline" | "stretch"): ExprType<AlignItemsType> {
+export function AlignItems(align: "flex-start" | "flex-end" | "center" | "baseline" | "stretch"): ExprType<AlignItemsType> {
     return East.value(variant(align, null), AlignItemsType);
 }
 
@@ -686,12 +686,12 @@ export function AlignItems(align: "flex_start" | "flex_end" | "center" | "baseli
  *
  * @property nowrap - Items don't wrap
  * @property wrap - Items wrap to next line
- * @property wrap_reverse - Items wrap in reverse order
+ * @property wrap-reverse - Items wrap in reverse order
  */
 export const FlexWrapType = VariantType({
     nowrap: NullType,
     wrap: NullType,
-    wrap_reverse: NullType,
+    "wrap-reverse": NullType,
 });
 
 /**
@@ -702,7 +702,7 @@ export type FlexWrapType = typeof FlexWrapType;
 /**
  * String literal type for flex wrap values.
  */
-export type FlexWrapLiteral = "nowrap" | "wrap" | "wrap_reverse";
+export type FlexWrapLiteral = "nowrap" | "wrap" | "wrap-reverse";
 
 /**
  * Creates a flex wrap variant expression.
@@ -717,7 +717,7 @@ export type FlexWrapLiteral = "nowrap" | "wrap" | "wrap_reverse";
  * Style.FlexWrap("wrap");
  * ```
  */
-export function FlexWrap(wrap: "nowrap" | "wrap" | "wrap_reverse"): ExprType<FlexWrapType> {
+export function FlexWrap(wrap: "nowrap" | "wrap" | "wrap-reverse"): ExprType<FlexWrapType> {
     return East.value(variant(wrap, null), FlexWrapType);
 }
 
@@ -733,21 +733,21 @@ export function FlexWrap(wrap: "nowrap" | "wrap" | "wrap_reverse"): ExprType<Fle
  *
  * @property block - Block-level element
  * @property inline - Inline element
- * @property inline_block - Inline-block element
+ * @property inline-block - Inline-block element
  * @property flex - Flex container
- * @property inline_flex - Inline flex container
+ * @property inline-flex - Inline flex container
  * @property grid - Grid container
- * @property inline_grid - Inline grid container
+ * @property inline-grid - Inline grid container
  * @property none - Hidden element
  */
 export const DisplayType = VariantType({
     block: NullType,
     inline: NullType,
-    inline_block: NullType,
+    "inline-block": NullType,
     flex: NullType,
-    inline_flex: NullType,
+    "inline-flex": NullType,
     grid: NullType,
-    inline_grid: NullType,
+    "inline-grid": NullType,
     none: NullType,
 });
 
@@ -759,7 +759,7 @@ export type DisplayType = typeof DisplayType;
 /**
  * String literal type for display values.
  */
-export type DisplayLiteral = "block" | "inline" | "inline_block" | "flex" | "inline_flex" | "grid" | "inline_grid" | "none";
+export type DisplayLiteral = "block" | "inline" | "inline-block" | "flex" | "inline-flex" | "grid" | "inline-grid" | "none";
 
 /**
  * Creates a display variant expression.
@@ -774,7 +774,7 @@ export type DisplayLiteral = "block" | "inline" | "inline_block" | "flex" | "inl
  * Style.Display("flex");
  * ```
  */
-export function Display(display: "block" | "inline" | "inline_block" | "flex" | "inline_flex" | "grid" | "inline_grid" | "none"): ExprType<DisplayType> {
+export function Display(display: "block" | "inline" | "inline-block" | "flex" | "inline-flex" | "grid" | "inline-grid" | "none"): ExprType<DisplayType> {
     return East.value(variant(display, null), DisplayType);
 }
 

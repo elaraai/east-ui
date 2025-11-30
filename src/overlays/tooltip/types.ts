@@ -27,43 +27,43 @@ import {
  * Supports all cardinal directions with start/end variations.
  *
  * @property top - Centered above the trigger
- * @property top_start - Above, aligned to start
- * @property top_end - Above, aligned to end
+ * @property top-start - Above, aligned to start
+ * @property top-end - Above, aligned to end
  * @property bottom - Centered below the trigger
- * @property bottom_start - Below, aligned to start
- * @property bottom_end - Below, aligned to end
+ * @property bottom-start - Below, aligned to start
+ * @property bottom-end - Below, aligned to end
  * @property left - Centered to the left
- * @property left_start - Left, aligned to start
- * @property left_end - Left, aligned to end
+ * @property left-start - Left, aligned to start
+ * @property left-end - Left, aligned to end
  * @property right - Centered to the right
- * @property right_start - Right, aligned to start
- * @property right_end - Right, aligned to end
+ * @property right-start - Right, aligned to start
+ * @property right-end - Right, aligned to end
  */
 export const PlacementType = VariantType({
     /** Centered above the trigger */
     top: NullType,
     /** Above, aligned to start */
-    top_start: NullType,
+    "top-start": NullType,
     /** Above, aligned to end */
-    top_end: NullType,
+    "top-end": NullType,
     /** Centered below the trigger */
     bottom: NullType,
     /** Below, aligned to start */
-    bottom_start: NullType,
+    "bottom-start": NullType,
     /** Below, aligned to end */
-    bottom_end: NullType,
+    "bottom-end": NullType,
     /** Centered to the left */
     left: NullType,
     /** Left, aligned to start */
-    left_start: NullType,
+    "left-start": NullType,
     /** Left, aligned to end */
-    left_end: NullType,
+    "left-end": NullType,
     /** Centered to the right */
     right: NullType,
     /** Right, aligned to start */
-    right_start: NullType,
+    "right-start": NullType,
     /** Right, aligned to end */
-    right_end: NullType,
+    "right-end": NullType,
 });
 
 /**
@@ -75,10 +75,10 @@ export type PlacementType = typeof PlacementType;
  * String literal type for placement values.
  */
 export type PlacementLiteral =
-    | "top" | "top_start" | "top_end"
-    | "bottom" | "bottom_start" | "bottom_end"
-    | "left" | "left_start" | "left_end"
-    | "right" | "right_start" | "right_end";
+    | "top" | "top-start" | "top-end"
+    | "bottom" | "bottom-start" | "bottom-end"
+    | "left" | "left-start" | "left-end"
+    | "right" | "right-start" | "right-end";
 
 /**
  * Helper function to create placement values.

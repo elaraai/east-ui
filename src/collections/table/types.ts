@@ -14,11 +14,7 @@ import {
 } from "@elaraai/east";
 
 import {
-    TextAlignType,
-    SizeType,
     ColorSchemeType,
-    type TextAlignLiteral,
-    type SizeLiteral,
     type ColorSchemeLiteral,
 } from "../../style.js";
 
@@ -51,95 +47,37 @@ export type TableVariantType = typeof TableVariantType;
 export type TableVariantLiteral = "line" | "outline";
 
 // ============================================================================
-// Table Cell Style
+// Table Size Type
 // ============================================================================
 
 /**
- * Style type for table cells.
+ * Size options for Table component.
  *
  * @remarks
- * All properties are optional and wrapped in {@link OptionType}.
+ * Chakra UI Table only supports sm, md, lg sizes (not xs).
  *
- * @property textAlign - Text alignment within the cell
- * @property color - Text color (Chakra UI color token)
- * @property background - Background color
+ * @property sm - Small table
+ * @property md - Medium table (default)
+ * @property lg - Large table
  */
-export const TableCellStyleType = StructType({
-    textAlign: OptionType(TextAlignType),
-    color: OptionType(StringType),
-    background: OptionType(StringType),
+export const TableSizeType = VariantType({
+    /** Small table */
+    sm: NullType,
+    /** Medium table (default) */
+    md: NullType,
+    /** Large table */
+    lg: NullType,
 });
 
 /**
- * Type representing the table cell style structure.
+ * Type representing the TableSize structure.
  */
-export type TableCellStyleType = typeof TableCellStyleType;
+export type TableSizeType = typeof TableSizeType;
 
 /**
- * TypeScript interface for table cell styling input.
- *
- * @remarks
- * Accepts both static values and East expressions.
- *
- * @property textAlign - Text alignment (left, center, right, justify)
- * @property color - Text color (Chakra UI color token or CSS color)
- * @property background - Background color
+ * String literal type for table size values.
  */
-export interface TableCellStyle {
-    textAlign?: SubtypeExprOrValue<TextAlignType> | TextAlignLiteral;
-    color?: SubtypeExprOrValue<StringType>;
-    background?: SubtypeExprOrValue<StringType>;
-}
-
-// ============================================================================
-// Table Row Style
-// ============================================================================
-
-/**
- * Style type for table rows.
- *
- * @remarks
- * All properties are optional and wrapped in {@link OptionType}.
- *
- * @property background - Background color for the row
- */
-export const TableRowStyleType = StructType({
-    background: OptionType(StringType),
-});
-
-/**
- * Type representing the table row style structure.
- */
-export type TableRowStyleType = typeof TableRowStyleType;
-
-/**
- * TypeScript interface for table row styling input.
- *
- * @remarks
- * Includes key for React rendering optimization.
- *
- * @property key - Unique key for the row (for React rendering)
- * @property background - Background color for the row
- */
-export interface TableRowStyle {
-    key?: SubtypeExprOrValue<StringType>;
-    background?: SubtypeExprOrValue<StringType>;
-}
-
-// ============================================================================
-// Table Column Style
-// ============================================================================
-
-/**
- * TypeScript interface for table column configuration.
- *
- * @property header - Column header text
- * @property textAlign - Default text alignment for cells in this column
- */
-export interface TableColumnStyle {
-    header?: SubtypeExprOrValue<StringType>;
-    textAlign?: SubtypeExprOrValue<TextAlignType> | TextAlignLiteral;
-}
+export type TableSizeLiteral = "sm" | "md" | "lg";
 
 // ============================================================================
 // Table Root Style
@@ -161,7 +99,7 @@ export interface TableColumnStyle {
  */
 export const TableStyleType = StructType({
     variant: OptionType(TableVariantType),
-    size: OptionType(SizeType),
+    size: OptionType(TableSizeType),
     striped: OptionType(BooleanType),
     interactive: OptionType(BooleanType),
     stickyHeader: OptionType(BooleanType),
@@ -190,7 +128,7 @@ export type TableStyleType = typeof TableStyleType;
  */
 export interface TableStyle {
     variant?: SubtypeExprOrValue<TableVariantType> | TableVariantLiteral;
-    size?: SubtypeExprOrValue<SizeType> | SizeLiteral;
+    size?: SubtypeExprOrValue<TableSizeType> | TableSizeLiteral;
     striped?: SubtypeExprOrValue<BooleanType>;
     interactive?: SubtypeExprOrValue<BooleanType>;
     stickyHeader?: SubtypeExprOrValue<BooleanType>;
@@ -210,12 +148,10 @@ export interface TableStyle {
  *
  * @property key - The column key (field name)
  * @property header - Optional header text for the column
- * @property style - Optional default cell style for the column
  */
 export const TableColumnType = StructType({
     key: StringType,
     header: OptionType(StringType),
-    style: OptionType(TableCellStyleType),
 });
 
 /**

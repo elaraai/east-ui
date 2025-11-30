@@ -3,7 +3,6 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { type ValueTypeOf, LiteralValueType, variant } from "@elaraai/east";
 import { describeEast, assertEast } from "../platforms.spec.js";
 import { Chart } from "../../src/index.js";
 
@@ -15,26 +14,29 @@ describeEast("Chart.Scatter", (test) => {
     test("creates basic scatter chart", $ => {
         const chart = $.let(Chart.Scatter(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["temp", variant("Float", 10)], ["sales", variant("Float", 30)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["temp", variant("Float", 15)], ["sales", variant("Float", 50)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["temp", variant("Float", 20)], ["sales", variant("Float", 80)]]),
+                { temp: 10, sales: 30 },
+                { temp: 15, sales: 50 },
+                { temp: 20, sales: 80 },
             ],
-            [{ name: "data", color: "teal.solid" }]
+            { temp: { color: "teal.solid" } }
         ));
 
         $(assertEast.equal(chart.getTag(), "ScatterChart"));
         $(assertEast.equal(chart.unwrap("ScatterChart").series.size(), 1n));
-        $(assertEast.equal(chart.unwrap("ScatterChart").series.get(0n).name, "data"));
+        $(assertEast.equal(chart.unwrap("ScatterChart").series.get(0n).name, "temp"));
         $(assertEast.equal(chart.unwrap("ScatterChart").series.get(0n).color.unwrap("some"), "teal.solid"));
     });
 
     test("creates scatter chart with x and y data keys", $ => {
         const chart = $.let(Chart.Scatter(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["temp", variant("Float", 10)], ["sales", variant("Float", 30)]]),
+                { temp: 10, sales: 30 },
             ],
-            [{ name: "data", color: "teal.solid" }],
-            { xDataKey: "temp", yDataKey: "sales" }
+            { temp: { color: "teal.solid" } },
+            {
+                xDataKey: "temp",
+                yDataKey: "sales"
+            }
         ));
 
         $(assertEast.equal(chart.unwrap("ScatterChart").xDataKey.unwrap("some"), "temp"));
@@ -42,24 +44,24 @@ describeEast("Chart.Scatter", (test) => {
     });
 
     // =========================================================================
-    // Multiple Groups
+    // Multiple Series
     // =========================================================================
 
-    test("creates scatter chart with multiple series (groups)", $ => {
+    test("creates scatter chart with multiple series", $ => {
         const chart = $.let(Chart.Scatter(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["id", variant("String", "group1")], ["x", variant("Float", 10)], ["y", variant("Float", 30)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["id", variant("String", "group2")], ["x", variant("Float", 20)], ["y", variant("Float", 40)]]),
+                { x: 10, y: 30, size: 5 },
+                { x: 20, y: 40, size: 8 },
             ],
-            [
-                { name: "group1", label: "Group 1", color: "blue.solid" },
-                { name: "group2", label: "Group 2", color: "green.solid" },
-            ]
+            {
+                x: { color: "blue.solid", label: "X Position" },
+                y: { color: "green.solid", label: "Y Position" },
+            }
         ));
 
         $(assertEast.equal(chart.unwrap("ScatterChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap("ScatterChart").series.get(0n).name, "group1"));
-        $(assertEast.equal(chart.unwrap("ScatterChart").series.get(0n).label.unwrap("some"), "Group 1"));
+        $(assertEast.equal(chart.unwrap("ScatterChart").series.get(0n).name, "x"));
+        $(assertEast.equal(chart.unwrap("ScatterChart").series.get(0n).label.unwrap("some"), "X Position"));
     });
 
     // =========================================================================
@@ -69,10 +71,10 @@ describeEast("Chart.Scatter", (test) => {
     test("creates scatter chart with x-axis configuration", $ => {
         const chart = $.let(Chart.Scatter(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["temp", variant("Float", 10)], ["sales", variant("Float", 30)]]),
+                { temp: 10, sales: 30 },
             ],
-            [{ name: "data", color: "teal.solid" }],
-            { xAxis: { dataKey: "temp", label: "Temperature" } }
+            { temp: { color: "teal.solid" } },
+            { xAxis: Chart.Axis({ dataKey: "temp", label: "Temperature" }) }
         ));
 
         $(assertEast.equal(chart.unwrap("ScatterChart").xAxis.unwrap("some").dataKey.unwrap("some"), "temp"));
@@ -82,10 +84,10 @@ describeEast("Chart.Scatter", (test) => {
     test("creates scatter chart with y-axis configuration", $ => {
         const chart = $.let(Chart.Scatter(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["temp", variant("Float", 10)], ["sales", variant("Float", 30)]]),
+                { temp: 10, sales: 30 },
             ],
-            [{ name: "data", color: "teal.solid" }],
-            { yAxis: { dataKey: "sales", label: "Sales" } }
+            { temp: { color: "teal.solid" } },
+            { yAxis: Chart.Axis({ dataKey: "sales", label: "Sales" }) }
         ));
 
         $(assertEast.equal(chart.unwrap("ScatterChart").yAxis.unwrap("some").dataKey.unwrap("some"), "sales"));
@@ -95,10 +97,13 @@ describeEast("Chart.Scatter", (test) => {
     test("creates scatter chart with axis domain", $ => {
         const chart = $.let(Chart.Scatter(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["temp", variant("Float", 10)], ["sales", variant("Float", 30)]]),
+                { temp: 10, sales: 30 },
             ],
-            [{ name: "data", color: "teal.solid" }],
-            { xAxis: { domain: [0, 50] }, yAxis: { domain: [0, 100] } }
+            { temp: { color: "teal.solid" } },
+            {
+                xAxis: Chart.Axis({ domain: [0, 50] }),
+                yAxis: Chart.Axis({ domain: [0, 100] })
+            }
         ));
 
         $(assertEast.equal(chart.unwrap("ScatterChart").xAxis.hasTag("some"), true));
@@ -112,37 +117,37 @@ describeEast("Chart.Scatter", (test) => {
     test("creates scatter chart with grid", $ => {
         const chart = $.let(Chart.Scatter(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["temp", variant("Float", 10)], ["sales", variant("Float", 30)]]),
+                { temp: 10, sales: 30 },
             ],
-            [{ name: "data", color: "teal.solid" }],
-            { showGrid: true }
+            { temp: { color: "teal.solid" } },
+            { grid: Chart.Grid({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("ScatterChart").showGrid.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("ScatterChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates scatter chart with legend", $ => {
         const chart = $.let(Chart.Scatter(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["temp", variant("Float", 10)], ["sales", variant("Float", 30)]]),
+                { temp: 10, sales: 30 },
             ],
-            [{ name: "data", color: "teal.solid" }],
-            { showLegend: true }
+            { temp: { color: "teal.solid" } },
+            { legend: Chart.Legend({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("ScatterChart").showLegend.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("ScatterChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates scatter chart with tooltip", $ => {
         const chart = $.let(Chart.Scatter(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["temp", variant("Float", 10)], ["sales", variant("Float", 30)]]),
+                { temp: 10, sales: 30 },
             ],
-            [{ name: "data", color: "teal.solid" }],
-            { showTooltip: true }
+            { temp: { color: "teal.solid" } },
+            { tooltip: Chart.Tooltip({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("ScatterChart").showTooltip.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("ScatterChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -152,9 +157,9 @@ describeEast("Chart.Scatter", (test) => {
     test("creates scatter chart with custom point size", $ => {
         const chart = $.let(Chart.Scatter(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["temp", variant("Float", 10)], ["sales", variant("Float", 30)]]),
+                { temp: 10, sales: 30 },
             ],
-            [{ name: "data", color: "teal.solid" }],
+            { temp: { color: "teal.solid" } },
             { pointSize: 8n }
         ));
 
@@ -162,20 +167,20 @@ describeEast("Chart.Scatter", (test) => {
     });
 
     // =========================================================================
-    // Dimensions
+    // Margin
     // =========================================================================
 
-    test("creates scatter chart with custom dimensions", $ => {
+    test("creates scatter chart with custom margin", $ => {
         const chart = $.let(Chart.Scatter(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["temp", variant("Float", 10)], ["sales", variant("Float", 30)]]),
+                { temp: 10, sales: 30 },
             ],
-            [{ name: "data", color: "teal.solid" }],
-            { width: 500n, height: 400n }
+            { temp: { color: "teal.solid" } },
+            { margin: Chart.Margin({ top: 20n, right: 30n, bottom: 20n, left: 30n }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("ScatterChart").width.unwrap("some"), 500n));
-        $(assertEast.equal(chart.unwrap("ScatterChart").height.unwrap("some"), 400n));
+        $(assertEast.equal(chart.unwrap("ScatterChart").margin.unwrap("some").top.unwrap("some"), 20n));
+        $(assertEast.equal(chart.unwrap("ScatterChart").margin.unwrap("some").left.unwrap("some"), 30n));
     });
 
     // =========================================================================
@@ -185,33 +190,41 @@ describeEast("Chart.Scatter", (test) => {
     test("creates complete scatter chart matching Chakra ScatterChartBasic example", $ => {
         const chart = $.let(Chart.Scatter(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["temp", variant("Float", 10)], ["sales", variant("Float", 30)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["temp", variant("Float", 15)], ["sales", variant("Float", 50)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["temp", variant("Float", 20)], ["sales", variant("Float", 80)]]),
+                { temp: 10, sales: 30 },
+                { temp: 15, sales: 50 },
+                { temp: 20, sales: 80 },
             ],
-            [{ name: "data", color: "teal.solid" }],
-            { xDataKey: "temp", yDataKey: "sales", showGrid: true }
+            { temp: { color: "teal.solid" } },
+            {
+                xDataKey: "temp",
+                yDataKey: "sales",
+                grid: Chart.Grid({ show: true })
+            }
         ));
 
         $(assertEast.equal(chart.getTag(), "ScatterChart"));
         $(assertEast.equal(chart.unwrap("ScatterChart").series.get(0n).color.unwrap("some"), "teal.solid"));
-        $(assertEast.equal(chart.unwrap("ScatterChart").showGrid.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("ScatterChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
-    test("creates complete multi-group scatter chart", $ => {
+    test("creates complete multi-series scatter chart", $ => {
         const chart = $.let(Chart.Scatter(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["id", variant("String", "group1")], ["x", variant("Float", 10)], ["y", variant("Float", 30)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["id", variant("String", "group2")], ["x", variant("Float", 20)], ["y", variant("Float", 40)]]),
+                { x: 10, y: 30 },
+                { x: 20, y: 40 },
             ],
-            [
-                { name: "group1", label: "Group 1", color: "blue.solid" },
-                { name: "group2", label: "Group 2", color: "green.solid" },
-            ],
-            { xAxis: { domain: [0, 50] }, yAxis: { domain: [0, 100] }, showTooltip: true }
+            {
+                x: { color: "blue.solid", label: "X Value" },
+                y: { color: "green.solid", label: "Y Value" },
+            },
+            {
+                xAxis: Chart.Axis({ domain: [0, 50] }),
+                yAxis: Chart.Axis({ domain: [0, 100] }),
+                tooltip: Chart.Tooltip({ show: true })
+            }
         ));
 
         $(assertEast.equal(chart.unwrap("ScatterChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap("ScatterChart").showTooltip.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("ScatterChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
 });

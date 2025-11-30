@@ -144,4 +144,5 @@ export interface TreeViewStyle {
     animateContent?: SubtypeExprOrValue<BooleanType>;
     defaultExpandedValue?: SubtypeExprOrValue<ArrayType<typeof StringType>>;
     defaultSelectedValue?: SubtypeExprOrValue<ArrayType<typeof StringType>>;
+    label?: SubtypeExprOrValue<typeof StringType>
 }

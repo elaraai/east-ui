@@ -207,20 +207,21 @@ function SplitterRoot(
     panels: SubtypeExprOrValue<ArrayType<SplitterPanelType>>,
     defaultSize: SubtypeExprOrValue<ArrayType<FloatType>>,
     style?: SplitterStyle
-): ExprType<SplitterType> {
+): ExprType<UIComponentType> {
+    const panels_expr = East.value(panels, ArrayType(SplitterPanelType));
     const orientationValue = style?.orientation
         ? (typeof style.orientation === "string"
             ? East.value(variant(style.orientation, null), OrientationType)
             : style.orientation)
         : undefined;
 
-    return East.value({
-        panels: panels,
+    return East.value(variant("Splitter", {
+        panels: panels_expr,
         defaultSize: defaultSize,
         style: style ? variant("some", East.value({
             orientation: orientationValue ? variant("some", orientationValue) : variant("none", null),
         }, SplitterStyleType)) : variant("none", null),
-    }, SplitterType);
+    }), UIComponentType);
 }
 
 // ============================================================================
@@ -260,4 +261,9 @@ function SplitterRoot(
 export const Splitter = {
     Root: SplitterRoot,
     Panel: SplitterPanel,
+    Types: {
+        Splitter: SplitterType,
+        Panel: SplitterPanelType,
+        Style: SplitterStyleType,
+    }
 } as const;

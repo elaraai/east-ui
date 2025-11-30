@@ -13,7 +13,7 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with single item", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
+            Text.Root("Slide 1"),
         ]));
 
         $(assertEast.equal(carousel.unwrap("Carousel").items.size(), 1n));
@@ -21,9 +21,9 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with multiple items", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
-            Carousel.Item(Text.Root("Slide 2")),
-            Carousel.Item(Text.Root("Slide 3")),
+            Text.Root("Slide 1"),
+            Text.Root("Slide 2"),
+            Text.Root("Slide 3"),
         ]));
 
         $(assertEast.equal(carousel.unwrap("Carousel").items.size(), 3n));
@@ -31,7 +31,7 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with no options - all options are none", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
+            Text.Root("Slide 1"),
         ]));
 
         $(assertEast.equal(carousel.unwrap("Carousel").index.hasTag("none"), true));
@@ -48,8 +48,8 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with index", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
-            Carousel.Item(Text.Root("Slide 2")),
+            Text.Root("Slide 1"),
+            Text.Root("Slide 2"),
         ], {
             index: 1n,
         }));
@@ -60,8 +60,8 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with defaultIndex", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
-            Carousel.Item(Text.Root("Slide 2")),
+            Text.Root("Slide 1")    ,
+            Text.Root("Slide 2"),
         ], {
             defaultIndex: 0n,
         }));
@@ -76,9 +76,9 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with slidesPerView", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
-            Carousel.Item(Text.Root("Slide 2")),
-            Carousel.Item(Text.Root("Slide 3")),
+            Text.Root("Slide 1"),
+            Text.Root("Slide 2"),
+            Text.Root("Slide 3"),
         ], {
             slidesPerView: 2n,
         }));
@@ -89,8 +89,8 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with slidesPerMove", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
-            Carousel.Item(Text.Root("Slide 2")),
+            Text.Root("Slide 1"),
+            Text.Root("Slide 2"),
         ], {
             slidesPerMove: 1n,
         }));
@@ -105,7 +105,7 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with loop", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
+            Text.Root("Slide 1"),
         ], {
             loop: true,
         }));
@@ -116,7 +116,7 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with autoplay", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
+            Text.Root("Slide 1"),
         ], {
             autoplay: true,
         }));
@@ -127,7 +127,7 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with allowMouseDrag", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
+            Text.Root("Slide 1"),
         ], {
             allowMouseDrag: true,
         }));
@@ -138,7 +138,7 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with showIndicators", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
+            Text.Root("Slide 1"),
         ], {
             showIndicators: true,
         }));
@@ -149,7 +149,7 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with showControls", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
+            Text.Root("Slide 1"),
         ], {
             showControls: true,
         }));
@@ -164,7 +164,7 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with horizontal orientation", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
+            Text.Root("Slide 1"),
         ], {
             orientation: "horizontal",
         }));
@@ -176,7 +176,7 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with vertical orientation", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
+            Text.Root("Slide 1"),
         ], {
             orientation: "vertical",
         }));
@@ -186,7 +186,7 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with spacing", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
+            Text.Root("Slide 1"),
         ], {
             spacing: "4",
         }));
@@ -198,7 +198,7 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with padding", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
+            Text.Root("Slide 1"),
         ], {
             padding: "2",
         }));
@@ -213,9 +213,9 @@ describeEast("Carousel", (test) => {
 
     test("creates carousel with all options", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Slide 1")),
-            Carousel.Item(Text.Root("Slide 2")),
-            Carousel.Item(Text.Root("Slide 3")),
+            Text.Root("Slide 1"),
+            Text.Root("Slide 2"),
+            Text.Root("Slide 3"),
         ], {
             defaultIndex: 0n,
             slidesPerView: 2n,
@@ -246,9 +246,9 @@ describeEast("Carousel", (test) => {
 
     test("creates image carousel with indicators and controls", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Image 1")),
-            Carousel.Item(Text.Root("Image 2")),
-            Carousel.Item(Text.Root("Image 3")),
+            Text.Root("Image 1"),
+            Text.Root("Image 2"),
+            Text.Root("Image 3"),
         ], {
             loop: true,
             showIndicators: true,
@@ -262,10 +262,10 @@ describeEast("Carousel", (test) => {
 
     test("creates multi-slide carousel", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Product 1")),
-            Carousel.Item(Text.Root("Product 2")),
-            Carousel.Item(Text.Root("Product 3")),
-            Carousel.Item(Text.Root("Product 4")),
+            Text.Root("Product 1"),
+            Text.Root("Product 2"),
+            Text.Root("Product 3"),
+            Text.Root("Product 4"),
         ], {
             slidesPerView: 3n,
             slidesPerMove: 1n,
@@ -278,8 +278,8 @@ describeEast("Carousel", (test) => {
 
     test("creates autoplay carousel", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Banner 1")),
-            Carousel.Item(Text.Root("Banner 2")),
+            Text.Root("Banner 1"),
+            Text.Root("Banner 2"),
         ], {
             autoplay: true,
             loop: true,
@@ -293,8 +293,8 @@ describeEast("Carousel", (test) => {
 
     test("creates vertical carousel", $ => {
         const carousel = $.let(Carousel.Root([
-            Carousel.Item(Text.Root("Testimonial 1")),
-            Carousel.Item(Text.Root("Testimonial 2")),
+            Text.Root("Testimonial 1"),
+            Text.Root("Testimonial 2"),
         ], {
             orientation: "vertical",
             slidesPerView: 1n,

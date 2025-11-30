@@ -9,7 +9,10 @@ import {
     East,
     variant,
     ArrayType,
+    OptionType,
     StructType,
+    IntegerType,
+    BooleanType,
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
@@ -28,49 +31,45 @@ export {
 } from "./types.js";
 
 // ============================================================================
-// Carousel Item Type
+// Carousel Root Type
 // ============================================================================
 
 /**
- * Type for a single carousel item/slide.
+ * Type for Carousel component data.
  *
  * @remarks
- * Each item contains UI component children.
+ * Carousel displays a slideshow of content items.
  *
- * @property content - The UI component content for this slide
+ * @property items - Array of carousel slide items
+ * @property index - Controlled current slide index
+ * @property defaultIndex - Initial slide index
+ * @property slidesPerView - Number of visible slides
+ * @property slidesPerMove - Number of slides to advance per step
+ * @property loop - Whether to enable infinite scrolling
+ * @property autoplay - Whether to enable automatic advancement
+ * @property allowMouseDrag - Whether to allow mouse drag navigation
+ * @property showIndicators - Whether to show dot indicators
+ * @property showControls - Whether to show prev/next controls
+ * @property style - Optional styling configuration
  */
-export const CarouselItemType = StructType({
-    /** The UI component content for this slide */
-    content: UIComponentType,
+export const CarouselRootType = StructType({
+    items: ArrayType(UIComponentType),
+    index: OptionType(IntegerType),
+    defaultIndex: OptionType(IntegerType),
+    slidesPerView: OptionType(IntegerType),
+    slidesPerMove: OptionType(IntegerType),
+    loop: OptionType(BooleanType),
+    autoplay: OptionType(BooleanType),
+    allowMouseDrag: OptionType(BooleanType),
+    showIndicators: OptionType(BooleanType),
+    showControls: OptionType(BooleanType),
+    style: OptionType(CarouselStyleType),
 });
 
 /**
- * Type representing the CarouselItem structure.
+ * Type representing the Carousel structure.
  */
-export type CarouselItemType = typeof CarouselItemType;
-
-// ============================================================================
-// Carousel Item Factory
-// ============================================================================
-
-/**
- * Creates a carousel item/slide.
- *
- * @param content - The UI component content for this slide
- * @returns An East expression representing the carousel item
- *
- * @example
- * ```ts
- * Carousel.Item(Image.Root({ src: "/slide1.jpg" }))
- * ```
- */
-function createCarouselItem(
-    content: SubtypeExprOrValue<UIComponentType>
-): ExprType<CarouselItemType> {
-    return East.value({
-        content: content,
-    }, CarouselItemType);
-}
+export type CarouselRootType = typeof CarouselRootType;
 
 // ============================================================================
 // Carousel Factory
@@ -114,7 +113,7 @@ function createCarouselItem(
  * ```
  */
 function createCarousel(
-    items: SubtypeExprOrValue<ArrayType<CarouselItemType>>,
+    items: SubtypeExprOrValue<ArrayType<UIComponentType>>,
     style?: CarouselStyle
 ): ExprType<UIComponentType> {
     // Convert string literal orientation to East value
@@ -182,12 +181,10 @@ function createCarousel(
 export const Carousel = {
     /** Creates a Carousel component */
     Root: createCarousel,
-    /** Creates a carousel item/slide */
-    Item: createCarouselItem,
     /** Type definitions */
     Types: {
-        /** Carousel item struct type */
-        Item: CarouselItemType,
+        /** Carousel root struct type */
+        Root: CarouselRootType,
         /** Carousel style struct type */
         Style: CarouselStyleType,
     },

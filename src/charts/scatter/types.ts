@@ -8,7 +8,6 @@ import {
     OptionType,
     StructType,
     ArrayType,
-    BooleanType,
     IntegerType,
     StringType,
     DictType,
@@ -18,7 +17,10 @@ import {
 import {
     ChartSeriesType,
     ChartAxisType,
-    type ChartAxis,
+    ChartGridType,
+    ChartTooltipType,
+    ChartLegendType,
+    ChartMarginType,
     type BaseChartStyle,
 } from "../types.js";
 
@@ -37,12 +39,13 @@ import {
  * @property series - Series configuration
  * @property xAxis - X-axis configuration
  * @property yAxis - Y-axis configuration
- * @property showGrid - Show grid lines
- * @property showTooltip - Show tooltip on hover
- * @property showLegend - Show legend
+ * @property xDataKey - Data key for X values
+ * @property yDataKey - Data key for Y values
+ * @property grid - Grid configuration
+ * @property tooltip - Tooltip configuration
+ * @property legend - Legend configuration
+ * @property margin - Chart margin configuration
  * @property pointSize - Size of scatter points
- * @property width - Chart width in pixels
- * @property height - Chart height in pixels
  */
 export const ScatterChartType = StructType({
     data: ArrayType(DictType(StringType, LiteralValueType)),
@@ -51,12 +54,11 @@ export const ScatterChartType = StructType({
     yAxis: OptionType(ChartAxisType),
     xDataKey: OptionType(StringType),
     yDataKey: OptionType(StringType),
-    showGrid: OptionType(BooleanType),
-    showTooltip: OptionType(BooleanType),
-    showLegend: OptionType(BooleanType),
+    grid: OptionType(ChartGridType),
+    tooltip: OptionType(ChartTooltipType),
+    legend: OptionType(ChartLegendType),
+    margin: OptionType(ChartMarginType),
     pointSize: OptionType(IntegerType),
-    width: OptionType(IntegerType),
-    height: OptionType(IntegerType),
 });
 
 /**
@@ -70,16 +72,31 @@ export type ScatterChartType = typeof ScatterChartType;
 
 /**
  * TypeScript interface for Scatter chart style options.
+ *
+ * @remarks
+ * All properties are optional and accept either static values or East expressions.
  */
 export interface ScatterChartStyle extends BaseChartStyle {
     /** X-axis configuration */
-    xAxis?: ChartAxis;
+    xAxis?: SubtypeExprOrValue<ChartAxisType>;
     /** Y-axis configuration */
-    yAxis?: ChartAxis;
+    yAxis?: SubtypeExprOrValue<ChartAxisType>;
     /** Data key for X values */
     xDataKey?: SubtypeExprOrValue<StringType>;
     /** Data key for Y values */
     yDataKey?: SubtypeExprOrValue<StringType>;
     /** Size of scatter points */
     pointSize?: SubtypeExprOrValue<IntegerType>;
+}
+
+/**
+ * Series configuration for Scatter charts (used in createScatterChart).
+ */
+export interface ScatterChartSeriesConfig {
+    /** Chakra color token (e.g., "teal.solid", "blue.500") */
+    color?: SubtypeExprOrValue<StringType>;
+    /** Display label (defaults to name) */
+    label?: SubtypeExprOrValue<StringType>;
+    /** Fill color for points */
+    fill?: SubtypeExprOrValue<StringType>;
 }

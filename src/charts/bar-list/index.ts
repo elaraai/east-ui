@@ -14,10 +14,10 @@ import {
 import { UIComponentType } from "../../component.js";
 import {
     ChartSortType,
+    simpleTickFormatToExpr,
 } from "../types.js";
 import {
     BarListItemType,
-    BarListValueFormatType,
     type BarListStyle,
 } from "./types.js";
 
@@ -25,7 +25,6 @@ import {
 export {
     BarListItemType,
     BarListType,
-    BarListValueFormatType,
     type BarListStyle,
 } from "./types.js";
 
@@ -79,7 +78,7 @@ export function createBarList(
 
     const valueFormatValue = style?.valueFormat
         ? (typeof style.valueFormat === "string"
-            ? East.value(variant(style.valueFormat, null), BarListValueFormatType)
+            ? simpleTickFormatToExpr(style.valueFormat)
             : style.valueFormat)
         : undefined;
 

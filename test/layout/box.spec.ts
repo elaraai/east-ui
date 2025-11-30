@@ -199,20 +199,20 @@ describeEast("Box", (test) => {
     test("supports all display types", $ => {
         const block = $.let(Box.Root([], { display: Style.Display("block") }));
         const inline = $.let(Box.Root([], { display: Style.Display("inline") }));
-        const inlineBlock = $.let(Box.Root([], { display: Style.Display("inline_block") }));
+        const inlineBlock = $.let(Box.Root([], { display: Style.Display("inline-block") }));
         const flex = $.let(Box.Root([], { display: Style.Display("flex") }));
-        const inlineFlex = $.let(Box.Root([], { display: Style.Display("inline_flex") }));
+        const inlineFlex = $.let(Box.Root([], { display: Style.Display("inline-flex") }));
         const grid = $.let(Box.Root([], { display: Style.Display("grid") }));
-        const inlineGrid = $.let(Box.Root([], { display: Style.Display("inline_grid") }));
+        const inlineGrid = $.let(Box.Root([], { display: Style.Display("inline-grid") }));
         const none = $.let(Box.Root([], { display: Style.Display("none") }));
 
         $(assertEast.equal(block.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("block"), true));
         $(assertEast.equal(inline.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("inline"), true));
-        $(assertEast.equal(inlineBlock.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("inline_block"), true));
+        $(assertEast.equal(inlineBlock.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("inline-block"), true));
         $(assertEast.equal(flex.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("flex"), true));
-        $(assertEast.equal(inlineFlex.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("inline_flex"), true));
+        $(assertEast.equal(inlineFlex.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("inline-flex"), true));
         $(assertEast.equal(grid.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("grid"), true));
-        $(assertEast.equal(inlineGrid.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("inline_grid"), true));
+        $(assertEast.equal(inlineGrid.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("inline-grid"), true));
         $(assertEast.equal(none.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("none"), true));
     });
 
@@ -223,13 +223,13 @@ describeEast("Box", (test) => {
     test("supports all flex directions", $ => {
         const row = $.let(Box.Root([], { flexDirection: Style.FlexDirection("row") }));
         const column = $.let(Box.Root([], { flexDirection: Style.FlexDirection("column") }));
-        const rowReverse = $.let(Box.Root([], { flexDirection: Style.FlexDirection("row_reverse") }));
-        const columnReverse = $.let(Box.Root([], { flexDirection: Style.FlexDirection("column_reverse") }));
+        const rowReverse = $.let(Box.Root([], { flexDirection: Style.FlexDirection("row-reverse") }));
+        const columnReverse = $.let(Box.Root([], { flexDirection: Style.FlexDirection("column-reverse") }));
 
         $(assertEast.equal(row.unwrap("Box").style.unwrap("some").flexDirection.unwrap("some").hasTag("row"), true));
         $(assertEast.equal(column.unwrap("Box").style.unwrap("some").flexDirection.unwrap("some").hasTag("column"), true));
-        $(assertEast.equal(rowReverse.unwrap("Box").style.unwrap("some").flexDirection.unwrap("some").hasTag("row_reverse"), true));
-        $(assertEast.equal(columnReverse.unwrap("Box").style.unwrap("some").flexDirection.unwrap("some").hasTag("column_reverse"), true));
+        $(assertEast.equal(rowReverse.unwrap("Box").style.unwrap("some").flexDirection.unwrap("some").hasTag("row-reverse"), true));
+        $(assertEast.equal(columnReverse.unwrap("Box").style.unwrap("some").flexDirection.unwrap("some").hasTag("column-reverse"), true));
     });
 
     // =========================================================================
@@ -237,19 +237,19 @@ describeEast("Box", (test) => {
     // =========================================================================
 
     test("supports all justify content options", $ => {
-        const flexStart = $.let(Box.Root([], { justifyContent: Style.JustifyContent("flex_start") }));
-        const flexEnd = $.let(Box.Root([], { justifyContent: Style.JustifyContent("flex_end") }));
+        const flexStart = $.let(Box.Root([], { justifyContent: Style.JustifyContent("flex-start") }));
+        const flexEnd = $.let(Box.Root([], { justifyContent: Style.JustifyContent("flex-end") }));
         const center = $.let(Box.Root([], { justifyContent: Style.JustifyContent("center") }));
-        const spaceBetween = $.let(Box.Root([], { justifyContent: Style.JustifyContent("space_between") }));
-        const spaceAround = $.let(Box.Root([], { justifyContent: Style.JustifyContent("space_around") }));
-        const spaceEvenly = $.let(Box.Root([], { justifyContent: Style.JustifyContent("space_evenly") }));
+        const spaceBetween = $.let(Box.Root([], { justifyContent: Style.JustifyContent("space-between") }));
+        const spaceAround = $.let(Box.Root([], { justifyContent: Style.JustifyContent("space-around") }));
+        const spaceEvenly = $.let(Box.Root([], { justifyContent: Style.JustifyContent("space-evenly") }));
 
-        $(assertEast.equal(flexStart.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("flex_start"), true));
-        $(assertEast.equal(flexEnd.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("flex_end"), true));
+        $(assertEast.equal(flexStart.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("flex-start"), true));
+        $(assertEast.equal(flexEnd.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("flex-end"), true));
         $(assertEast.equal(center.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("center"), true));
-        $(assertEast.equal(spaceBetween.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("space_between"), true));
-        $(assertEast.equal(spaceAround.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("space_around"), true));
-        $(assertEast.equal(spaceEvenly.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("space_evenly"), true));
+        $(assertEast.equal(spaceBetween.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-between"), true));
+        $(assertEast.equal(spaceAround.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-around"), true));
+        $(assertEast.equal(spaceEvenly.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-evenly"), true));
     });
 
     // =========================================================================
@@ -257,14 +257,14 @@ describeEast("Box", (test) => {
     // =========================================================================
 
     test("supports all align items options", $ => {
-        const flexStart = $.let(Box.Root([], { alignItems: Style.AlignItems("flex_start") }));
-        const flexEnd = $.let(Box.Root([], { alignItems: Style.AlignItems("flex_end") }));
+        const flexStart = $.let(Box.Root([], { alignItems: Style.AlignItems("flex-start") }));
+        const flexEnd = $.let(Box.Root([], { alignItems: Style.AlignItems("flex-end") }));
         const center = $.let(Box.Root([], { alignItems: Style.AlignItems("center") }));
         const baseline = $.let(Box.Root([], { alignItems: Style.AlignItems("baseline") }));
         const stretch = $.let(Box.Root([], { alignItems: Style.AlignItems("stretch") }));
 
-        $(assertEast.equal(flexStart.unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("flex_start"), true));
-        $(assertEast.equal(flexEnd.unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("flex_end"), true));
+        $(assertEast.equal(flexStart.unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("flex-start"), true));
+        $(assertEast.equal(flexEnd.unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("flex-end"), true));
         $(assertEast.equal(center.unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("center"), true));
         $(assertEast.equal(baseline.unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("baseline"), true));
         $(assertEast.equal(stretch.unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("stretch"), true));
@@ -283,7 +283,7 @@ describeEast("Box", (test) => {
         ], {
             display: Style.Display("flex"),
             flexDirection: Style.FlexDirection("row"),
-            justifyContent: Style.JustifyContent("space_between"),
+            justifyContent: Style.JustifyContent("space-between"),
             alignItems: Style.AlignItems("center"),
             gap: "4",
         }));
@@ -292,7 +292,7 @@ describeEast("Box", (test) => {
         const style = flexContainer.unwrap("Box").style.unwrap("some");
         $(assertEast.equal(style.display.unwrap("some").hasTag("flex"), true));
         $(assertEast.equal(style.flexDirection.unwrap("some").hasTag("row"), true));
-        $(assertEast.equal(style.justifyContent.unwrap("some").hasTag("space_between"), true));
+        $(assertEast.equal(style.justifyContent.unwrap("some").hasTag("space-between"), true));
         $(assertEast.equal(style.alignItems.unwrap("some").hasTag("center"), true));
         $(assertEast.equal(style.gap.unwrap("some"), "4"));
     });

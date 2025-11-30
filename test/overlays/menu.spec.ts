@@ -115,24 +115,24 @@ describeEast("Menu", (test) => {
         $(assertEast.equal(menu.unwrap("Menu").placement.unwrap("some").hasTag("bottom"), true));
     });
 
-    test("creates menu with bottom_start placement", $ => {
+    test("creates menu with bottom-start placement", $ => {
         const menu = $.let(Menu.Root(
             Button.Root("Actions"),
             [Menu.Item("action", "Action")],
-            { placement: "bottom_start" }
+            { placement: "bottom-start" }
         ));
 
-        $(assertEast.equal(menu.unwrap("Menu").placement.unwrap("some").hasTag("bottom_start"), true));
+        $(assertEast.equal(menu.unwrap("Menu").placement.unwrap("some").hasTag("bottom-start"), true));
     });
 
-    test("creates menu with bottom_end placement", $ => {
+    test("creates menu with bottom-end placement", $ => {
         const menu = $.let(Menu.Root(
             Button.Root("Actions"),
             [Menu.Item("action", "Action")],
-            { placement: "bottom_end" }
+            { placement: "bottom-end" }
         ));
 
-        $(assertEast.equal(menu.unwrap("Menu").placement.unwrap("some").hasTag("bottom_end"), true));
+        $(assertEast.equal(menu.unwrap("Menu").placement.unwrap("some").hasTag("bottom-end"), true));
     });
 
     test("creates menu with top placement", $ => {
@@ -182,7 +182,7 @@ describeEast("Menu", (test) => {
                 Menu.Separator(),
                 Menu.Item("close", "Close"),
             ],
-            { placement: "bottom_start" }
+            { placement: "bottom-start" }
         ));
 
         $(assertEast.equal(menu.unwrap("Menu").items.size(), 8n));
@@ -233,10 +233,10 @@ describeEast("Menu", (test) => {
                 Menu.Separator(),
                 Menu.Item("logout", "Log Out"),
             ],
-            { placement: "bottom_end" }
+            { placement: "bottom-end" }
         ));
 
         $(assertEast.equal(menu.unwrap("Menu").items.get(3n).unwrap("Item").value, "logout"));
-        $(assertEast.equal(menu.unwrap("Menu").placement.unwrap("some").hasTag("bottom_end"), true));
+        $(assertEast.equal(menu.unwrap("Menu").placement.unwrap("some").hasTag("bottom-end"), true));
     });
 });

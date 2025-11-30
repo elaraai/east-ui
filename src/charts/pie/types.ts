@@ -11,8 +11,13 @@ import {
     StringType,
     FloatType,
     BooleanType,
-    IntegerType,
 } from "@elaraai/east";
+
+import {
+    ChartTooltipType,
+    ChartLegendType,
+    ChartMarginType,
+} from "../types.js";
 
 // ============================================================================
 // Pie Slice Type
@@ -34,6 +39,10 @@ export const PieSliceType = StructType({
     color: OptionType(StringType),
 });
 
+/**
+ * Type representing a pie slice.
+ */
+export type PieSliceType = typeof PieSliceType;
 
 // ============================================================================
 // Pie Chart Type
@@ -53,10 +62,9 @@ export const PieSliceType = StructType({
  * @property endAngle - End angle in degrees
  * @property paddingAngle - Padding between slices in degrees
  * @property showLabels - Show slice labels
- * @property showLegend - Show legend
- * @property showTooltip - Show tooltip on hover
- * @property width - Chart width in pixels
- * @property height - Chart height in pixels
+ * @property tooltip - Tooltip configuration
+ * @property legend - Legend configuration
+ * @property margin - Chart margin configuration
  */
 export const PieChartType = StructType({
     data: ArrayType(PieSliceType),
@@ -66,10 +74,9 @@ export const PieChartType = StructType({
     endAngle: OptionType(FloatType),
     paddingAngle: OptionType(FloatType),
     showLabels: OptionType(BooleanType),
-    showLegend: OptionType(BooleanType),
-    showTooltip: OptionType(BooleanType),
-    width: OptionType(IntegerType),
-    height: OptionType(IntegerType),
+    tooltip: OptionType(ChartTooltipType),
+    legend: OptionType(ChartLegendType),
+    margin: OptionType(ChartMarginType),
 });
 
 /**
@@ -83,6 +90,9 @@ export type PieChartType = typeof PieChartType;
 
 /**
  * TypeScript interface for Pie chart style options.
+ *
+ * @remarks
+ * All properties are optional and accept either static values or East expressions.
  */
 export interface PieChartStyle {
     /** Inner radius (0 = pie, >0 = donut) */
@@ -97,12 +107,10 @@ export interface PieChartStyle {
     paddingAngle?: SubtypeExprOrValue<FloatType>;
     /** Show slice labels */
     showLabels?: SubtypeExprOrValue<BooleanType>;
-    /** Show legend */
-    showLegend?: SubtypeExprOrValue<BooleanType>;
-    /** Show tooltip on hover */
-    showTooltip?: SubtypeExprOrValue<BooleanType>;
-    /** Chart width in pixels */
-    width?: SubtypeExprOrValue<IntegerType>;
-    /** Chart height in pixels */
-    height?: SubtypeExprOrValue<IntegerType>;
+    /** Tooltip configuration */
+    tooltip?: SubtypeExprOrValue<ChartTooltipType>;
+    /** Legend configuration */
+    legend?: SubtypeExprOrValue<ChartLegendType>;
+    /** Chart margin configuration */
+    margin?: SubtypeExprOrValue<ChartMarginType>;
 }

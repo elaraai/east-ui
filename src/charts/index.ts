@@ -39,7 +39,6 @@ export {
     type ChartSort,
     type ChartAxis,
     type ChartSortDirectionLiteral,
-    type TickFormatLiteral,
     type CurveLiteral,
     type StackOffsetLiteral,
     type BarLayoutLiteral,
@@ -75,7 +74,6 @@ import { createBarList } from "./bar-list/index.js";
 export {
     BarListType,
     BarListItemType,
-    BarListValueFormatType,
     type BarListStyle,
 } from "./bar-list/index.js";
 
@@ -97,16 +95,15 @@ export {
 } from "./sparkline/index.js";
 
 // Import types for the namespace
-import { ChartSeriesType, ChartSortType, ChartSortDirectionType, ChartAxisType, TickFormatType, CurveType, StackOffsetType, BarLayoutType } from "./types.js";
+import { ChartSeriesType, ChartSortType, ChartSortDirectionType, ChartAxisType, TickFormatType, CurveType, StackOffsetType, BarLayoutType, ChartSeries, ChartSort, StackOffset, BarLayout, ChartGrid, ChartLegend, ChartTooltip, ChartAxis, ChartMargin, NumberTickFormat, CurrencyTickFormat, PercentTickFormat, CompactTickFormat, UnitTickFormat, ScientificTickFormat, EngineeringTickFormat, DateTickFormat, TimeTickFormat, DateTimeTickFormat } from "./types.js";
 import { AreaChartType } from "./area/index.js";
 import { BarChartType } from "./bar/index.js";
 import { LineChartType } from "./line/index.js";
 import { ScatterChartType } from "./scatter/index.js";
 import { PieChartType, PieSliceType } from "./pie/index.js";
 import { RadarChartType } from "./radar/index.js";
-import { BarListType, BarListItemType, BarListValueFormatType } from "./bar-list/index.js";
+import { BarListType, BarListItemType } from "./bar-list/index.js";
 import { BarSegmentType, BarSegmentItemType } from "./bar-segment/index.js";
-import { SparklineType, SparklineChartType } from "./sparkline/index.js";
 
 // ============================================================================
 // Chart Namespace
@@ -152,8 +149,41 @@ export const Chart = {
     BarList: createBarList,
     /** Create a bar segment (Chakra-native) */
     BarSegment: createBarSegment,
-    /** Create a sparkline */
-    Sparkline: Sparkline.Root,
+
+    /** Create a series */
+    Series: ChartSeries,
+    /** Sort */
+    Sort: ChartSort,
+    /** Chart grid */
+    Grid: ChartGrid,
+    /** Chart margin */
+    Margin: ChartMargin,
+
+    /** Stack offset */
+    StackOffset,
+    /** Bar layout */
+    BarLayout,
+
+    /** Legend */
+    Legend: ChartLegend,
+    /** Tooltip */
+    Tooltip: ChartTooltip,
+    /** Axis */
+    Axis: ChartAxis,
+
+    TickFormat: {
+        Number: NumberTickFormat,
+        Currency: CurrencyTickFormat,
+        Percent: PercentTickFormat,
+        Compact: CompactTickFormat,
+        Unit: UnitTickFormat,
+        Scientific: ScientificTickFormat,
+        Engineering: EngineeringTickFormat,
+        Date: DateTickFormat,
+        Time: TimeTickFormat,
+        DateTime: DateTimeTickFormat
+    },
+
 
     /** East types for all chart components */
     Types: {
@@ -177,11 +207,8 @@ export const Chart = {
         RadarChart: RadarChartType,
         BarList: BarListType,
         BarListItem: BarListItemType,
-        BarListValueFormat: BarListValueFormatType,
         BarSegment: BarSegmentType,
         BarSegmentItem: BarSegmentItemType,
-        Sparkline: SparklineType,
-        SparklineType: SparklineChartType,
     },
 } as const;
 

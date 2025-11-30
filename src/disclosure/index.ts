@@ -18,8 +18,26 @@ export {
 
 export {
     Carousel,
-    CarouselItemType,
+    CarouselRootType,
     CarouselStyleType,
     type CarouselStyle,
     type OrientationLiteral,
 } from "./carousel/index.js";
+
+export {
+    Tabs,
+    TabsRootType,
+    TabsItemType,
+    TabsVariantType,
+    TabsVariant,
+    TabsSizeType,
+    TabsJustifyType,
+    TabsActivationModeType,
+    TabsStyleType,
+    type TabsVariantLiteral,
+    type TabsSizeLiteral,
+    type TabsJustifyLiteral,
+    type TabsActivationModeLiteral,
+    type TabsStyle,
+    type TabsItemStyle,
+} from "./tabs/index.js";

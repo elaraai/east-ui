@@ -4,63 +4,19 @@
  */
 
 import {
-    type ExprType,
-    type SubtypeExprOrValue,
-    East,
-    ArrayType,
-    DictType,
-    StringType,
-    LiteralValueType,
-    variant,
+    type ExprType, type SubtypeExprOrValue, type TypeOf, ArrayType, DictType, East, Expr, LiteralValueType, none, some, StringType, StructType, variant
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
 import {
-    ChartSeriesType,
-    ChartAxisType,
     BarLayoutType,
-    StackOffsetType,
-    TickFormatType,
-    type ChartSeries,
+    StackOffsetType
 } from "../types.js";
-import type { BarChartStyle } from "./types.js";
+import type { BarChartStyle, BarChartSeriesConfig } from "./types.js";
 
 // Re-export types
-export { BarChartType, type BarChartStyle } from "./types.js";
+export { BarChartType, type BarChartStyle, type BarChartSeriesConfig } from "./types.js";
 
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-function convertSeries(series: ChartSeries[]): ExprType<ArrayType<ChartSeriesType>> {
-    return East.value(
-        series.map(s => ({
-            name: s.name,
-            color: s.color !== undefined ? variant("some", s.color) : variant("none", null),
-            stackId: s.stackId !== undefined ? variant("some", s.stackId) : variant("none", null),
-            label: s.label !== undefined ? variant("some", s.label) : variant("none", null),
-        })),
-        ArrayType(ChartSeriesType)
-    );
-}
-
-function convertAxis(axis: BarChartStyle["xAxis"]): ExprType<typeof ChartAxisType> | undefined {
-    if (!axis) return undefined;
-
-    const tickFormatValue = axis.tickFormat
-        ? (typeof axis.tickFormat === "string"
-            ? East.value(variant(axis.tickFormat, null), TickFormatType)
-            : axis.tickFormat)
-        : undefined;
-
-    return East.value({
-        dataKey: axis.dataKey !== undefined ? variant("some", axis.dataKey) : variant("none", null),
-        label: axis.label !== undefined ? variant("some", axis.label) : variant("none", null),
-        tickFormat: tickFormatValue ? variant("some", tickFormatValue) : variant("none", null),
-        domain: axis.domain !== undefined ? variant("some", axis.domain) : variant("none", null),
-        hide: axis.hide !== undefined ? variant("some", axis.hide) : variant("none", null),
-    }, ChartAxisType);
-}
 
 // ============================================================================
 // Bar Chart Function
@@ -70,30 +26,85 @@ function convertAxis(axis: BarChartStyle["xAxis"]): ExprType<typeof ChartAxisTyp
  * Creates a Bar chart component.
  *
  * @param data - Array of data points
- * @param series - Series configuration
+ * @param series - Series configuration keyed by field names from the data type
  * @param style - Optional styling configuration
  * @returns An East expression representing the bar chart component
+ *
+ * @remarks
+ * Bar charts display categorical data with rectangular bars.
+ * Use layout="vertical" for horizontal bars, stacked=true for stacked bars,
+ * or stackOffset="expand" for 100% stacked bar charts.
  *
  * @example
  * ```ts
  * import { Chart } from "@elaraai/east-ui";
  *
  * // Basic bar chart
- * Chart.Bar(
- *   [{ month: "Jan", revenue: 186 }, { month: "Feb", revenue: 305 }],
- *   [{ name: "revenue", color: "blue.solid" }],
- *   { xAxis: { dataKey: "month" }, showGrid: true }
+ * const chart = Chart.Bar(
+ *   [
+ *     { type: "Stock", allocation: 60 },
+ *     { type: "Crypto", allocation: 45 },
+ *     { type: "ETF", allocation: 12 },
+ *   ],
+ *   { allocation: { color: "teal.solid" } },
+ *   {
+ *     xAxis: Chart.Axis({ dataKey: "type" }),
+ *     grid: Chart.Grid({ show: true }),
+ *   }
  * );
  *
  * // Horizontal bar chart
- * Chart.Bar(data, [{ name: "value" }], { layout: "vertical" });
+ * const horizontalChart = Chart.Bar(
+ *   monthlyData,
+ *   { value: { color: "blue.solid" } },
+ *   {
+ *     layout: "vertical",
+ *     yAxis: Chart.Axis({ dataKey: "month" }),
+ *   }
+ * );
+ *
+ * // 100% stacked bar chart
+ * const stackedChart = Chart.Bar(
+ *   osUsageData,
+ *   {
+ *     windows: { color: "teal.solid", stackId: "a" },
+ *     mac: { color: "purple.solid", stackId: "a" },
+ *     linux: { color: "blue.solid", stackId: "a" },
+ *   },
+ *   {
+ *     stacked: true,
+ *     stackOffset: "expand",
+ *     legend: Chart.Legend({ show: true }),
+ *   }
+ * );
  * ```
  */
-export function createBarChart(
-    data: SubtypeExprOrValue<ArrayType<DictType<StringType, LiteralValueType>>>,
-    series: ChartSeries[],
+export function createBarChart<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
+    data: T,
+    series: {
+        [K in TypeOf<NoInfer<T>> extends ArrayType<StructType> ? keyof TypeOf<NoInfer<T>>["value"]["fields"] : never]?: BarChartSeriesConfig
+    },
     style?: BarChartStyle
 ): ExprType<UIComponentType> {
+    const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
+    const data_mapped = data_expr.map(($, datum) => {
+        const ret = $.let(new Map(), DictType(StringType, LiteralValueType));
+        for (const [field_name, field_type] of Object.entries(Expr.type(data_expr).value.fields)) {
+            $(ret.insert(field_name, variant(field_type.type, datum[field_name] as any)));
+        }
+        return ret
+    });
+    const series_mapped = Object.entries(series as Record<string, BarChartSeriesConfig>).map(([name, config]) => ({
+        name: name as string,
+        color: config?.color !== undefined ? some(config.color) : none,
+        stackId: config?.stackId !== undefined ? some(config.stackId) : none,
+        label: config?.label !== undefined ? some(config.label) : none,
+        stroke: config?.stroke !== undefined ? some(config.stroke) : none,
+        strokeWidth: config?.strokeWidth !== undefined ? some(config.strokeWidth) : none,
+        fill: config?.fill !== undefined ? some(config.fill) : none,
+        fillOpacity: config?.fillOpacity !== undefined ? some(config.fillOpacity) : none,
+        strokeDasharray: config?.strokeDasharray !== undefined ? some(config.strokeDasharray) : none,
+    }));
 
     const layoutValue = style?.layout
         ? (typeof style.layout === "string"
@@ -107,24 +118,20 @@ export function createBarChart(
             : style.stackOffset)
         : undefined;
 
-    const xAxisValue = convertAxis(style?.xAxis);
-    const yAxisValue = convertAxis(style?.yAxis);
-
     return East.value(variant("BarChart", {
-        data: data,
-        series: convertSeries(series),
-        xAxis: xAxisValue ? variant("some", xAxisValue) : variant("none", null),
-        yAxis: yAxisValue ? variant("some", yAxisValue) : variant("none", null),
+        data: data_mapped,
+        series: series_mapped,
+        xAxis: style?.xAxis ? variant("some", style.xAxis) : variant("none", null),
+        yAxis: style?.yAxis ? variant("some", style.yAxis) : variant("none", null),
         layout: layoutValue ? variant("some", layoutValue) : variant("none", null),
         stacked: style?.stacked !== undefined ? variant("some", style.stacked) : variant("none", null),
         stackOffset: stackOffsetValue ? variant("some", stackOffsetValue) : variant("none", null),
-        showGrid: style?.showGrid !== undefined ? variant("some", style.showGrid) : variant("none", null),
-        showTooltip: style?.showTooltip !== undefined ? variant("some", style.showTooltip) : variant("none", null),
-        showLegend: style?.showLegend !== undefined ? variant("some", style.showLegend) : variant("none", null),
+        grid: style?.grid !== undefined ? variant("some", style.grid) : variant("none", null),
+        tooltip: style?.tooltip !== undefined ? variant("some", style.tooltip) : variant("none", null),
+        legend: style?.legend !== undefined ? variant("some", style.legend) : variant("none", null),
+        margin: style?.margin !== undefined ? variant("some", style.margin) : variant("none", null),
         barSize: style?.barSize !== undefined ? variant("some", style.barSize) : variant("none", null),
         barGap: style?.barGap !== undefined ? variant("some", style.barGap) : variant("none", null),
         radius: style?.radius !== undefined ? variant("some", style.radius) : variant("none", null),
-        width: style?.width !== undefined ? variant("some", style.width) : variant("none", null),
-        height: style?.height !== undefined ? variant("some", style.height) : variant("none", null),
     }), UIComponentType);
 }

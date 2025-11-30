@@ -18,8 +18,11 @@ import {
 import {
     ChartSeriesType,
     ChartAxisType,
+    ChartGridType,
+    ChartTooltipType,
+    ChartLegendType,
+    ChartMarginType,
     CurveType,
-    type ChartAxis,
     type CurveLiteral,
     type BaseChartStyle,
 } from "../types.js";
@@ -40,14 +43,13 @@ import {
  * @property xAxis - X-axis configuration
  * @property yAxis - Y-axis configuration
  * @property curveType - Line curve interpolation type
- * @property showGrid - Show grid lines
- * @property showTooltip - Show tooltip on hover
- * @property showLegend - Show legend
+ * @property grid - Grid configuration
+ * @property tooltip - Tooltip configuration
+ * @property legend - Legend configuration
+ * @property margin - Chart margin configuration
  * @property showDots - Show dots at data points
  * @property strokeWidth - Line stroke width in pixels
  * @property connectNulls - Connect line across null data points
- * @property width - Chart width in pixels
- * @property height - Chart height in pixels
  */
 export const LineChartType = StructType({
     data: ArrayType(DictType(StringType, LiteralValueType)),
@@ -55,14 +57,13 @@ export const LineChartType = StructType({
     xAxis: OptionType(ChartAxisType),
     yAxis: OptionType(ChartAxisType),
     curveType: OptionType(CurveType),
-    showGrid: OptionType(BooleanType),
-    showTooltip: OptionType(BooleanType),
-    showLegend: OptionType(BooleanType),
+    grid: OptionType(ChartGridType),
+    tooltip: OptionType(ChartTooltipType),
+    legend: OptionType(ChartLegendType),
+    margin: OptionType(ChartMarginType),
     showDots: OptionType(BooleanType),
     strokeWidth: OptionType(IntegerType),
     connectNulls: OptionType(BooleanType),
-    width: OptionType(IntegerType),
-    height: OptionType(IntegerType),
 });
 
 /**
@@ -76,12 +77,15 @@ export type LineChartType = typeof LineChartType;
 
 /**
  * TypeScript interface for Line chart style options.
+ *
+ * @remarks
+ * All properties are optional and accept either static values or East expressions.
  */
 export interface LineChartStyle extends BaseChartStyle {
     /** X-axis configuration */
-    xAxis?: ChartAxis;
+    xAxis?: SubtypeExprOrValue<ChartAxisType>;
     /** Y-axis configuration */
-    yAxis?: ChartAxis;
+    yAxis?: SubtypeExprOrValue<ChartAxisType>;
     /** Line curve interpolation type */
     curveType?: SubtypeExprOrValue<CurveType> | CurveLiteral;
     /** Show dots at data points */
@@ -90,4 +94,22 @@ export interface LineChartStyle extends BaseChartStyle {
     strokeWidth?: SubtypeExprOrValue<IntegerType>;
     /** Connect line across null data points */
     connectNulls?: SubtypeExprOrValue<BooleanType>;
+    /** Chart margin configuration */
+    margin?: SubtypeExprOrValue<ChartMarginType>;
+}
+
+/**
+ * Series configuration for Line charts (used in createLineChart).
+ */
+export interface LineChartSeriesConfig {
+    /** Chakra color token (e.g., "teal.solid", "blue.500") */
+    color?: SubtypeExprOrValue<StringType>;
+    /** Display label (defaults to name) */
+    label?: SubtypeExprOrValue<StringType>;
+    /** Stroke/line color (defaults to color) */
+    stroke?: SubtypeExprOrValue<StringType>;
+    /** Stroke/line width in pixels */
+    strokeWidth?: SubtypeExprOrValue<IntegerType>;
+    /** Dash pattern for dashed lines (e.g., "5 5") */
+    strokeDasharray?: SubtypeExprOrValue<StringType>;
 }

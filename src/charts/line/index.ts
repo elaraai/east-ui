@@ -4,62 +4,15 @@
  */
 
 import {
-    type ExprType,
-    type SubtypeExprOrValue,
-    East,
-    ArrayType,
-    DictType,
-    StringType,
-    LiteralValueType,
-    variant,
+    type ExprType, type SubtypeExprOrValue, type TypeOf, ArrayType, DictType, East, Expr, LiteralValueType, none, some, StringType, StructType, variant
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
-import {
-    ChartSeriesType,
-    ChartAxisType,
-    CurveType,
-    TickFormatType,
-    type ChartSeries,
-} from "../types.js";
-import type { LineChartStyle } from "./types.js";
+import { CurveType } from "../types.js";
+import type { LineChartStyle, LineChartSeriesConfig } from "./types.js";
 
 // Re-export types
-export { LineChartType, type LineChartStyle } from "./types.js";
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-function convertSeries(series: ChartSeries[]): ExprType<ArrayType<ChartSeriesType>> {
-    return East.value(
-        series.map(s => ({
-            name: s.name,
-            color: s.color !== undefined ? variant("some", s.color) : variant("none", null),
-            stackId: s.stackId !== undefined ? variant("some", s.stackId) : variant("none", null),
-            label: s.label !== undefined ? variant("some", s.label) : variant("none", null),
-        })),
-        ArrayType(ChartSeriesType)
-    );
-}
-
-function convertAxis(axis: LineChartStyle["xAxis"]): ExprType<typeof ChartAxisType> | undefined {
-    if (!axis) return undefined;
-
-    const tickFormatValue = axis.tickFormat
-        ? (typeof axis.tickFormat === "string"
-            ? East.value(variant(axis.tickFormat, null), TickFormatType)
-            : axis.tickFormat)
-        : undefined;
-
-    return East.value({
-        dataKey: axis.dataKey !== undefined ? variant("some", axis.dataKey) : variant("none", null),
-        label: axis.label !== undefined ? variant("some", axis.label) : variant("none", null),
-        tickFormat: tickFormatValue ? variant("some", tickFormatValue) : variant("none", null),
-        domain: axis.domain !== undefined ? variant("some", axis.domain) : variant("none", null),
-        hide: axis.hide !== undefined ? variant("some", axis.hide) : variant("none", null),
-    }, ChartAxisType);
-}
+export { LineChartType, type LineChartStyle, type LineChartSeriesConfig } from "./types.js";
 
 // ============================================================================
 // Line Chart Function
@@ -69,29 +22,62 @@ function convertAxis(axis: LineChartStyle["xAxis"]): ExprType<typeof ChartAxisTy
  * Creates a Line chart component.
  *
  * @param data - Array of data points
- * @param series - Series configuration
+ * @param series - Series configuration keyed by field names from the data type
  * @param style - Optional styling configuration
  * @returns An East expression representing the line chart component
+ *
+ * @remarks
+ * Line charts display data points connected by line segments.
+ * Ideal for showing trends over time.
  *
  * @example
  * ```ts
  * import { Chart } from "@elaraai/east-ui";
  *
- * Chart.Line(
- *   [{ month: "Jan", revenue: 186, profit: 80 }],
+ * const chart = Chart.Line(
  *   [
- *     { name: "revenue", color: "teal.solid" },
- *     { name: "profit", color: "purple.solid" },
+ *     { month: "Jan", revenue: 186, profit: 80 },
+ *     { month: "Feb", revenue: 305, profit: 120 },
  *   ],
- *   { xAxis: { dataKey: "month" }, curveType: "natural", showDots: true }
+ *   {
+ *     revenue: { color: "teal.solid" },
+ *     profit: { color: "purple.solid" },
+ *   },
+ *   {
+ *     xAxis: Chart.Axis({ dataKey: "month" }),
+ *     curveType: "natural",
+ *     showDots: true,
+ *     grid: Chart.Grid({ show: true }),
+ *   }
  * );
  * ```
  */
-export function createLineChart(
-    data: SubtypeExprOrValue<ArrayType<DictType<StringType, LiteralValueType>>>,
-    series: ChartSeries[],
+export function createLineChart<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
+    data: T,
+    series: {
+        [K in TypeOf<NoInfer<T>> extends ArrayType<StructType> ? keyof TypeOf<NoInfer<T>>["value"]["fields"] : never]?: LineChartSeriesConfig
+    },
     style?: LineChartStyle
 ): ExprType<UIComponentType> {
+    const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
+    const data_mapped = data_expr.map(($, datum) => {
+        const ret = $.let(new Map(), DictType(StringType, LiteralValueType));
+        for (const [field_name, field_type] of Object.entries(Expr.type(data_expr).value.fields)) {
+            $(ret.insert(field_name, variant(field_type.type, datum[field_name] as any)));
+        }
+        return ret
+    });
+    const series_mapped = Object.entries(series as Record<string, LineChartSeriesConfig>).map(([name, config]) => ({
+        name: name as string,
+        color: config?.color !== undefined ? some(config.color) : none,
+        stackId: none,
+        label: config?.label !== undefined ? some(config.label) : none,
+        stroke: config?.stroke !== undefined ? some(config.stroke) : none,
+        strokeWidth: config?.strokeWidth !== undefined ? some(config.strokeWidth) : none,
+        fill: none,
+        fillOpacity: none,
+        strokeDasharray: config?.strokeDasharray !== undefined ? some(config.strokeDasharray) : none,
+    }));
 
     const curveValue = style?.curveType
         ? (typeof style.curveType === "string"
@@ -99,22 +85,18 @@ export function createLineChart(
             : style.curveType)
         : undefined;
 
-    const xAxisValue = convertAxis(style?.xAxis);
-    const yAxisValue = convertAxis(style?.yAxis);
-
     return East.value(variant("LineChart", {
-        data: data,
-        series: convertSeries(series),
-        xAxis: xAxisValue ? variant("some", xAxisValue) : variant("none", null),
-        yAxis: yAxisValue ? variant("some", yAxisValue) : variant("none", null),
+        data: data_mapped,
+        series: series_mapped,
+        xAxis: style?.xAxis ? variant("some", style.xAxis) : variant("none", null),
+        yAxis: style?.yAxis ? variant("some", style.yAxis) : variant("none", null),
         curveType: curveValue ? variant("some", curveValue) : variant("none", null),
-        showGrid: style?.showGrid !== undefined ? variant("some", style.showGrid) : variant("none", null),
-        showTooltip: style?.showTooltip !== undefined ? variant("some", style.showTooltip) : variant("none", null),
-        showLegend: style?.showLegend !== undefined ? variant("some", style.showLegend) : variant("none", null),
+        grid: style?.grid !== undefined ? variant("some", style.grid) : variant("none", null),
+        tooltip: style?.tooltip !== undefined ? variant("some", style.tooltip) : variant("none", null),
+        legend: style?.legend !== undefined ? variant("some", style.legend) : variant("none", null),
+        margin: style?.margin !== undefined ? variant("some", style.margin) : variant("none", null),
         showDots: style?.showDots !== undefined ? variant("some", style.showDots) : variant("none", null),
         strokeWidth: style?.strokeWidth !== undefined ? variant("some", style.strokeWidth) : variant("none", null),
         connectNulls: style?.connectNulls !== undefined ? variant("some", style.connectNulls) : variant("none", null),
-        width: style?.width !== undefined ? variant("some", style.width) : variant("none", null),
-        height: style?.height !== undefined ? variant("some", style.height) : variant("none", null),
     }), UIComponentType);
 }

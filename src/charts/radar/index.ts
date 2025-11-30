@@ -4,41 +4,14 @@
  */
 
 import {
-    type ExprType,
-    type SubtypeExprOrValue,
-    East,
-    ArrayType,
-    DictType,
-    StringType,
-    LiteralValueType,
-    variant,
+    type ExprType, type SubtypeExprOrValue, type TypeOf, ArrayType, DictType, East, Expr, LiteralValueType, none, some, StringType, StructType, variant
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
-import {
-    ChartSeriesType,
-    type ChartSeries,
-} from "../types.js";
-import type { RadarChartStyle } from "./types.js";
+import type { RadarChartStyle, RadarChartSeriesConfig } from "./types.js";
 
 // Re-export types
-export { RadarChartType, type RadarChartStyle } from "./types.js";
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-function convertSeries(series: ChartSeries[]): ExprType<ArrayType<ChartSeriesType>> {
-    return East.value(
-        series.map(s => ({
-            name: s.name,
-            color: s.color !== undefined ? variant("some", s.color) : variant("none", null),
-            stackId: s.stackId !== undefined ? variant("some", s.stackId) : variant("none", null),
-            label: s.label !== undefined ? variant("some", s.label) : variant("none", null),
-        })),
-        ArrayType(ChartSeriesType)
-    );
-}
+export { RadarChartType, type RadarChartStyle, type RadarChartSeriesConfig } from "./types.js";
 
 // ============================================================================
 // Radar Chart Function
@@ -48,42 +21,70 @@ function convertSeries(series: ChartSeries[]): ExprType<ArrayType<ChartSeriesTyp
  * Creates a Radar chart component.
  *
  * @param data - Array of data points
- * @param series - Series configuration
+ * @param series - Series configuration keyed by field names from the data type
  * @param style - Optional styling configuration
  * @returns An East expression representing the radar chart component
+ *
+ * @remarks
+ * Radar charts display multivariate data on radial axes.
+ * Each axis represents a different variable.
  *
  * @example
  * ```ts
  * import { Chart } from "@elaraai/east-ui";
  *
- * Chart.Radar(
+ * const chart = Chart.Radar(
  *   [
  *     { subject: "Math", current: 80, target: 90 },
  *     { subject: "Science", current: 95, target: 85 },
  *   ],
- *   [
- *     { name: "current", color: "teal.solid" },
- *     { name: "target", color: "orange.solid" },
- *   ],
- *   { dataKey: "subject", showGrid: true, fillOpacity: 0.3 }
+ *   {
+ *     current: { color: "teal.solid" },
+ *     target: { color: "orange.solid" },
+ *   },
+ *   {
+ *     dataKey: "subject",
+ *     grid: Chart.Grid({ show: true }),
+ *     fillOpacity: 0.3,
+ *   }
  * );
  * ```
  */
-export function createRadarChart(
-    data: SubtypeExprOrValue<ArrayType<DictType<StringType, LiteralValueType>>>,
-    series: ChartSeries[],
+export function createRadarChart<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
+    data: T,
+    series: {
+        [K in TypeOf<NoInfer<T>> extends ArrayType<StructType> ? keyof TypeOf<NoInfer<T>>["value"]["fields"] : never]?: RadarChartSeriesConfig
+    },
     style?: RadarChartStyle
 ): ExprType<UIComponentType> {
+    const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
+    const data_mapped = data_expr.map(($, datum) => {
+        const ret = $.let(new Map(), DictType(StringType, LiteralValueType));
+        for (const [field_name, field_type] of Object.entries(Expr.type(data_expr).value.fields)) {
+            $(ret.insert(field_name, variant(field_type.type, datum[field_name] as any)));
+        }
+        return ret
+    });
+    const series_mapped = Object.entries(series as Record<string, RadarChartSeriesConfig>).map(([name, config]) => ({
+        name: name as string,
+        color: config?.color !== undefined ? some(config.color) : none,
+        stackId: none,
+        label: config?.label !== undefined ? some(config.label) : none,
+        stroke: config?.stroke !== undefined ? some(config.stroke) : none,
+        strokeWidth: config?.strokeWidth !== undefined ? some(config.strokeWidth) : none,
+        fill: config?.fill !== undefined ? some(config.fill) : none,
+        fillOpacity: config?.fillOpacity !== undefined ? some(config.fillOpacity) : none,
+        strokeDasharray: config?.strokeDasharray !== undefined ? some(config.strokeDasharray) : none,
+    }));
 
     return East.value(variant("RadarChart", {
-        data: data,
-        series: convertSeries(series),
+        data: data_mapped,
+        series: series_mapped,
         dataKey: style?.dataKey !== undefined ? variant("some", style.dataKey) : variant("none", null),
-        showGrid: style?.showGrid !== undefined ? variant("some", style.showGrid) : variant("none", null),
-        showLegend: style?.showLegend !== undefined ? variant("some", style.showLegend) : variant("none", null),
-        showTooltip: style?.showTooltip !== undefined ? variant("some", style.showTooltip) : variant("none", null),
+        grid: style?.grid !== undefined ? variant("some", style.grid) : variant("none", null),
+        tooltip: style?.tooltip !== undefined ? variant("some", style.tooltip) : variant("none", null),
+        legend: style?.legend !== undefined ? variant("some", style.legend) : variant("none", null),
+        margin: style?.margin !== undefined ? variant("some", style.margin) : variant("none", null),
         fillOpacity: style?.fillOpacity !== undefined ? variant("some", style.fillOpacity) : variant("none", null),
-        width: style?.width !== undefined ? variant("some", style.width) : variant("none", null),
-        height: style?.height !== undefined ? variant("some", style.height) : variant("none", null),
     }), UIComponentType);
 }

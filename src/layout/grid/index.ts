@@ -12,18 +12,20 @@ import {
     ArrayType,
     variant,
     StringType,
+    some,
+    none,
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
-// import {
-//     GridStyleType,
-//     GridAutoFlowType,
-//     type GridStyle,
-// } from "./types.js";
-// import {
-//     JustifyContentType,
-//     AlignItemsType,
-// } from "../../style.js";
+import {
+    GridAutoFlowType,
+    GridStyleType,
+    type GridStyle,
+} from "./types.js";
+import {
+    JustifyContentType,
+    AlignItemsType,
+} from "../../style.js";
 
 
 // Re-export style types
@@ -63,11 +65,35 @@ export const GridItemType = StructType({
     rowEnd: OptionType(StringType),
 });
 
+export interface GridItemStyle {
+    colSpan?: SubtypeExprOrValue<StringType>;
+    rowSpan?: SubtypeExprOrValue<StringType>;
+    colStart?: SubtypeExprOrValue<StringType>;
+    colEnd?: SubtypeExprOrValue<StringType>;
+    rowStart?: SubtypeExprOrValue<StringType>;
+    rowEnd?: SubtypeExprOrValue<StringType>;
+}
+
 /**
  * Type representing the Grid item structure.
  */
 export type GridItemType = typeof GridItemType;
 
+export function GridItem(
+    content: SubtypeExprOrValue<UIComponentType>,
+    style?: GridItemStyle
+): ExprType<GridItemType> {
+    const content_expr = East.value(content, UIComponentType);
+    return East.value({
+        content: content_expr,
+        colSpan: style?.colSpan ? some(style.colSpan) : none,
+        rowSpan: style?.rowSpan ? some(style.rowSpan) : none,
+        colStart: style?.colStart ? some(style.colStart) : none,
+        colEnd: style?.colEnd ? some(style.colEnd) : none,
+        rowStart: style?.rowStart ? some(style.rowStart) : none,
+        rowEnd: style?.rowEnd ? some(style.rowEnd) : none,
+    }, GridItemType);
+}
 
 // ============================================================================
 // Grid Root Function
@@ -111,72 +137,70 @@ export type GridItemType = typeof GridItemType;
  * ```
  */
 function GridRoot(
-    items: SubtypeExprOrValue<ArrayType<
-        StructType<{
-            content: UIComponentType,
-            colSpan: OptionType<StringType>,
-            rowSpan: OptionType<StringType>,
-            colStart: OptionType<StringType>,
-            colEnd: OptionType<StringType>,
-            rowStart: OptionType<StringType>,
-            rowEnd: OptionType<StringType>,
-        }>>>,
-    // style?: GridStyle
+    items: SubtypeExprOrValue<ArrayType<GridItemType>>,
+    style?: GridStyle
 ): ExprType<UIComponentType> {
-    // const toStringOption = (value: SubtypeExprOrValue<StringType> | undefined) => {
-    //     if (value === undefined) return variant("none", null);
-    //     return variant("some", value);
-    // };
+    const items_expr = East.value(items, ArrayType(GridItemType));
+    const toStringOption = (value: SubtypeExprOrValue<StringType> | undefined) => {
+        if (value === undefined) return variant("none", null);
+        return variant("some", value);
+    };
 
-    // const justifyItemsValue = style?.justifyItems
-    //     ? (typeof style.justifyItems === "string"
-    //         ? East.value(variant(style.justifyItems, null), JustifyContentType)
-    //         : style.justifyItems)
-    //     : undefined;
+    const justifyItemsValue = style?.justifyItems
+        ? (typeof style.justifyItems === "string"
+            ? East.value(variant(style.justifyItems, null), JustifyContentType)
+            : style.justifyItems)
+        : undefined;
 
-    // const alignItemsValue = style?.alignItems
-    //     ? (typeof style.alignItems === "string"
-    //         ? East.value(variant(style.alignItems, null), AlignItemsType)
-    //         : style.alignItems)
-    //     : undefined;
+    const alignItemsValue = style?.alignItems
+        ? (typeof style.alignItems === "string"
+            ? East.value(variant(style.alignItems, null), AlignItemsType)
+            : style.alignItems)
+        : undefined;
 
-    // const justifyContentValue = style?.justifyContent
-    //     ? (typeof style.justifyContent === "string"
-    //         ? East.value(variant(style.justifyContent, null), JustifyContentType)
-    //         : style.justifyContent)
-    //     : undefined;
+    const justifyContentValue = style?.justifyContent
+        ? (typeof style.justifyContent === "string"
+            ? East.value(variant(style.justifyContent, null), JustifyContentType)
+            : style.justifyContent)
+        : undefined;
 
-    // const alignContentValue = style?.alignContent
-    //     ? (typeof style.alignContent === "string"
-    //         ? East.value(variant(style.alignContent, null), AlignItemsType)
-    //         : style.alignContent)
-    //     : undefined;
+    const alignContentValue = style?.alignContent
+        ? (typeof style.alignContent === "string"
+            ? East.value(variant(style.alignContent, null), AlignItemsType)
+            : style.alignContent)
+        : undefined;
 
-    // const autoFlowValue = style?.autoFlow
-    //     ? (typeof style.autoFlow === "string"
-    //         ? East.value(variant(style.autoFlow, null), GridAutoFlowType)
-    //         : style.autoFlow)
-    //     : undefined;
-    
+    const autoFlowValue = style?.autoFlow
+        ? (typeof style.autoFlow === "string"
+            ? East.value(variant(style.autoFlow, null), GridAutoFlowType)
+            : style.autoFlow)
+        : undefined;
     return East.value(variant("Grid", {
-        items,
-        // style ? variant("some", East.value({
-        //     templateColumns: toStringOption(style.templateColumns),
-        //     templateRows: toStringOption(style.templateRows),
-        //     templateAreas: toStringOption(style.templateAreas),
-        //     gap: toStringOption(style.gap),
-        //     columnGap: toStringOption(style.columnGap),
-        //     rowGap: toStringOption(style.rowGap),
-        //     justifyItems: justifyItemsValue ? variant("some", justifyItemsValue) : variant("none", null),
-        //     alignItems: alignItemsValue ? variant("some", alignItemsValue) : variant("none", null),
-        //     justifyContent: justifyContentValue ? variant("some", justifyContentValue) : variant("none", null),
-        //     alignContent: alignContentValue ? variant("some", alignContentValue) : variant("none", null),
-        //     autoColumns: toStringOption(style.autoColumns),
-        //     autoRows: toStringOption(style.autoRows),
-        //     autoFlow: autoFlowValue ? variant("some", autoFlowValue) : variant("none", null),
-        // }, GridStyleType)) : variant("none", null),
+        items: items_expr,
+        style: style ?
+            variant("some", {
+                templateColumns: toStringOption(style.templateColumns),
+                templateRows: toStringOption(style.templateRows),
+                templateAreas: toStringOption(style.templateAreas),
+                gap: toStringOption(style.gap),
+                columnGap: toStringOption(style.columnGap),
+                rowGap: toStringOption(style.rowGap),
+                justifyItems: justifyItemsValue ? variant("some", justifyItemsValue) : variant("none", null),
+                alignItems: alignItemsValue ? variant("some", alignItemsValue) : variant("none", null),
+                justifyContent: justifyContentValue ? variant("some", justifyContentValue) : variant("none", null),
+                alignContent: alignContentValue ? variant("some", alignContentValue) : variant("none", null),
+                autoColumns: toStringOption(style.autoColumns),
+                autoRows: toStringOption(style.autoRows),
+                autoFlow: autoFlowValue ? variant("some", autoFlowValue) : variant("none", null),
+            }) :
+            variant("none", null),
     }), UIComponentType);
 }
+
+export const GridType = StructType({
+    items: ArrayType(GridItemType),
+    style: OptionType(GridStyleType),
+})
 
 // ============================================================================
 // Grid Namespace Export
@@ -208,4 +232,10 @@ function GridRoot(
  */
 export const Grid = {
     Root: GridRoot,
+    Item: GridItem,
+    Types: {
+        Grid: GridType,
+        Item: GridItemType,
+        Style: GridStyleType,
+    },
 } as const;

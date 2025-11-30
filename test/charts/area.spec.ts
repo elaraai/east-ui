@@ -3,7 +3,6 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { type ValueTypeOf, LiteralValueType, variant } from "@elaraai/east";
 import { describeEast, assertEast } from "../platforms.spec.js";
 import { Chart } from "../../src/index.js";
 
@@ -15,12 +14,12 @@ describeEast("Chart.Area", (test) => {
     test("creates basic area chart with single series", $ => {
         const chart = $.let(Chart.Area(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["revenue", variant("Float", 186)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "February")], ["revenue", variant("Float", 305)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "March")], ["revenue", variant("Float", 237)]]),
-            ],
-            [{ name: "revenue", color: "teal.solid" }]
-        ));
+                { "month": "January", "revenue": 186 },
+                { "month": "February", "revenue": 305 },
+                { "month": "March", "revenue": 237 },
+            ], {
+            revenue: { color: "teal.solid" }
+        }));
 
         $(assertEast.equal(chart.getTag(), "AreaChart"));
         $(assertEast.equal(chart.unwrap("AreaChart").series.size(), 1n));
@@ -31,21 +30,18 @@ describeEast("Chart.Area", (test) => {
     test("creates area chart with multiple series", $ => {
         const chart = $.let(Chart.Area(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 186)], ["mac", variant("Float", 80)], ["linux", variant("Float", 120)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "February")], ["windows", variant("Float", 165)], ["mac", variant("Float", 95)], ["linux", variant("Float", 110)]]),
+                { month: "January", windows: 186, mac: 80, linux: 120 },
+                { month: "February", windows: 165, mac: 95, linux: 110 },
             ],
-            [
-                { name: "windows", color: "teal.solid" },
-                { name: "mac", color: "purple.solid" },
-                { name: "linux", color: "blue.solid" },
-            ]
+            {
+                windows: { color: "teal.solid" },
+                mac: { color: "purple.solid" },
+                linux: { color: "blue.solid" },
+            }
         ));
 
         $(assertEast.equal(chart.getTag(), "AreaChart"));
         $(assertEast.equal(chart.unwrap("AreaChart").series.size(), 3n));
-        $(assertEast.equal(chart.unwrap("AreaChart").series.get(0n).name, "windows"));
-        $(assertEast.equal(chart.unwrap("AreaChart").series.get(1n).name, "mac"));
-        $(assertEast.equal(chart.unwrap("AreaChart").series.get(2n).name, "linux"));
     });
 
     // =========================================================================
@@ -55,13 +51,13 @@ describeEast("Chart.Area", (test) => {
     test("creates stacked area chart", $ => {
         const chart = $.let(Chart.Area(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 186)], ["mac", variant("Float", 80)], ["linux", variant("Float", 120)]]),
+                { month: "January", windows: 186, mac: 80, linux: 120 },
             ],
-            [
-                { name: "windows", color: "teal.solid", stackId: "a" },
-                { name: "mac", color: "purple.solid", stackId: "a" },
-                { name: "linux", color: "blue.solid", stackId: "a" },
-            ],
+            {
+                windows: { color: "teal.solid", stackId: "a" },
+                mac: { color: "purple.solid", stackId: "a" },
+                linux: { color: "blue.solid", stackId: "a" },
+            },
             { stacked: true }
         ));
 
@@ -72,12 +68,12 @@ describeEast("Chart.Area", (test) => {
     test("creates 100% stacked area chart with stackOffset expand", $ => {
         const chart = $.let(Chart.Area(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 186)], ["mac", variant("Float", 80)]]),
+                { month: "January", windows: 186, mac: 80 },
             ],
-            [
-                { name: "windows", color: "teal.solid" },
-                { name: "mac", color: "purple.solid" },
-            ],
+            {
+                windows: { color: "teal.solid" },
+                mac: { color: "purple.solid" },
+            },
             { stacked: true, stackOffset: "expand" }
         ));
 
@@ -92,10 +88,10 @@ describeEast("Chart.Area", (test) => {
     test("creates area chart with x-axis dataKey", $ => {
         const chart = $.let(Chart.Area(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["revenue", variant("Float", 186)]]),
+                { month: "January", revenue: 186 },
             ],
-            [{ name: "revenue", color: "teal.solid" }],
-            { xAxis: { dataKey: "month" } }
+            { revenue: { color: "teal.solid" } },
+            { xAxis: Chart.Axis({ dataKey: "month" }) }
         ));
 
         $(assertEast.equal(chart.unwrap("AreaChart").xAxis.hasTag("some"), true));
@@ -105,10 +101,10 @@ describeEast("Chart.Area", (test) => {
     test("creates area chart with y-axis percent tick format", $ => {
         const chart = $.let(Chart.Area(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["revenue", variant("Float", 186)]]),
+                { month: "January", revenue: 186 },
             ],
-            [{ name: "revenue", color: "teal.solid" }],
-            { yAxis: { tickFormat: "percent" } }
+            { revenue: { color: "teal.solid" } },
+            { yAxis: Chart.Axis({ tickFormat: "percent" }) }
         ));
 
         $(assertEast.equal(chart.unwrap("AreaChart").yAxis.hasTag("some"), true));
@@ -122,9 +118,9 @@ describeEast("Chart.Area", (test) => {
     test("creates area chart with natural curve", $ => {
         const chart = $.let(Chart.Area(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["revenue", variant("Float", 186)]]),
+                { month: "January", revenue: 186 },
             ],
-            [{ name: "revenue", color: "teal.solid" }],
+            { revenue: { color: "teal.solid" } },
             { curveType: "natural" }
         ));
 
@@ -134,9 +130,9 @@ describeEast("Chart.Area", (test) => {
     test("creates area chart with monotone curve", $ => {
         const chart = $.let(Chart.Area(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["revenue", variant("Float", 186)]]),
+                { month: "January", revenue: 186 },
             ],
-            [{ name: "revenue", color: "teal.solid" }],
+            { revenue: { color: "teal.solid" } },
             { curveType: "monotone" }
         ));
 
@@ -150,45 +146,45 @@ describeEast("Chart.Area", (test) => {
     test("creates area chart with grid", $ => {
         const chart = $.let(Chart.Area(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["revenue", variant("Float", 186)]]),
+                { month: "January", revenue: 186 },
             ],
-            [{ name: "revenue", color: "teal.solid" }],
-            { showGrid: true }
+            { revenue: { color: "teal.solid" } },
+            { grid: Chart.Grid({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("AreaChart").showGrid.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("AreaChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates area chart with legend", $ => {
         const chart = $.let(Chart.Area(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["revenue", variant("Float", 186)]]),
+                { month: "January", revenue: 186 },
             ],
-            [{ name: "revenue", color: "teal.solid" }],
-            { showLegend: true }
+            { revenue: { color: "teal.solid" } },
+            { legend: Chart.Legend({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("AreaChart").showLegend.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("AreaChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates area chart with tooltip", $ => {
         const chart = $.let(Chart.Area(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["revenue", variant("Float", 186)]]),
+                { month: "January", revenue: 186 },
             ],
-            [{ name: "revenue", color: "teal.solid" }],
-            { showTooltip: true }
+            { revenue: { color: "teal.solid" } },
+            { tooltip: Chart.Tooltip({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("AreaChart").showTooltip.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("AreaChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates area chart with custom fill opacity", $ => {
         const chart = $.let(Chart.Area(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["revenue", variant("Float", 186)]]),
+                { month: "January", revenue: 186 },
             ],
-            [{ name: "revenue", color: "teal.solid" }],
+            { revenue: { color: "teal.solid" } },
             { fillOpacity: 0.3 }
         ));
 
@@ -196,20 +192,20 @@ describeEast("Chart.Area", (test) => {
     });
 
     // =========================================================================
-    // Dimensions
+    // Margin
     // =========================================================================
 
-    test("creates area chart with custom dimensions", $ => {
+    test("creates area chart with custom margin", $ => {
         const chart = $.let(Chart.Area(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["revenue", variant("Float", 186)]]),
+                { month: "January", revenue: 186 },
             ],
-            [{ name: "revenue", color: "teal.solid" }],
-            { width: 400n, height: 300n }
+            { revenue: { color: "teal.solid" } },
+            { margin: Chart.Margin({ top: 20n, right: 30n, bottom: 20n, left: 30n }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("AreaChart").width.unwrap("some"), 400n));
-        $(assertEast.equal(chart.unwrap("AreaChart").height.unwrap("some"), 300n));
+        $(assertEast.equal(chart.unwrap("AreaChart").margin.unwrap("some").top.unwrap("some"), 20n));
+        $(assertEast.equal(chart.unwrap("AreaChart").margin.unwrap("some").left.unwrap("some"), 30n));
     });
 
     // =========================================================================
@@ -219,21 +215,29 @@ describeEast("Chart.Area", (test) => {
     test("creates complete area chart matching Chakra example", $ => {
         const chart = $.let(Chart.Area(
             [
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "January")], ["windows", variant("Float", 186)], ["mac", variant("Float", 80)], ["linux", variant("Float", 120)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "February")], ["windows", variant("Float", 165)], ["mac", variant("Float", 95)], ["linux", variant("Float", 110)]]),
-                new Map<string, ValueTypeOf<typeof LiteralValueType>>([["month", variant("String", "March")], ["windows", variant("Float", 190)], ["mac", variant("Float", 87)], ["linux", variant("Float", 125)]]),
+                { month: "January", windows: 186, mac: 80, linux: 120 },
+                { month: "February", windows: 165, mac: 95, linux: 110 },
+                { month: "March", windows: 190, mac: 87, linux: 125 },
             ],
-            [
-                { name: "windows", color: "teal.solid", stackId: "a" },
-                { name: "mac", color: "purple.solid", stackId: "a" },
-                { name: "linux", color: "blue.solid", stackId: "a" },
-            ],
-            { xAxis: { dataKey: "month" }, showGrid: true, showTooltip: true, showLegend: true, fillOpacity: 0.2 }
+            {
+                windows: { color: "teal.solid", stackId: "a" },
+                mac: { color: "purple.solid", stackId: "a" },
+                linux: { color: "blue.solid", stackId: "a" },
+            },
+            {
+                xAxis: Chart.Axis({ dataKey: "month" }),
+                stacked: true,
+                stackOffset: "expand",
+                grid: Chart.Grid({ show: true }),
+                tooltip: Chart.Tooltip({ show: true }),
+                legend: Chart.Legend({ show: true }),
+                fillOpacity: 0.2,
+            }
         ));
 
         $(assertEast.equal(chart.getTag(), "AreaChart"));
         $(assertEast.equal(chart.unwrap("AreaChart").series.size(), 3n));
-        $(assertEast.equal(chart.unwrap("AreaChart").showGrid.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap("AreaChart").grid.unwrap("some").show.unwrap("some"), true));
         $(assertEast.equal(chart.unwrap("AreaChart").fillOpacity.unwrap("some"), 0.2));
     });
 });

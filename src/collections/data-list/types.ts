@@ -5,14 +5,15 @@
 
 import {
     type ExprType,
+    type SubtypeExprOrValue,
     NullType,
     VariantType,
     East,
     variant,
 } from "@elaraai/east";
 
-import { SizeType, OrientationType } from "../../style.js";
-import type { SizeLiteral, OrientationLiteral } from "../../style.js";
+import { OrientationType } from "../../style.js";
+import type { OrientationLiteral } from "../../style.js";
 
 // ============================================================================
 // DataList Variant Type
@@ -61,6 +62,39 @@ export function DataListVariant(v: "subtle" | "bold"): ExprType<DataListVariantT
     return East.value(variant(v, null), DataListVariantType);
 }
 
+// ============================================================================
+// DataList Size Type
+// ============================================================================
+
+/**
+ * Size options for DataList component.
+ *
+ * @remarks
+ * Chakra UI DataList only supports sm, md, lg sizes (not xs).
+ *
+ * @property sm - Small data list
+ * @property md - Medium data list (default)
+ * @property lg - Large data list
+ */
+export const DataListSizeType = VariantType({
+    /** Small data list */
+    sm: NullType,
+    /** Medium data list (default) */
+    md: NullType,
+    /** Large data list */
+    lg: NullType,
+});
+
+/**
+ * Type representing the DataListSize structure.
+ */
+export type DataListSizeType = typeof DataListSizeType;
+
+/**
+ * String literal type for data list size values.
+ */
+export type DataListSizeLiteral = "sm" | "md" | "lg";
+
 /**
  * TypeScript interface for DataList style options.
  *
@@ -70,9 +104,9 @@ export function DataListVariant(v: "subtle" | "bold"): ExprType<DataListVariantT
  */
 export interface DataListStyle {
     /** Layout direction (horizontal or vertical) */
-    orientation?: ExprType<OrientationType> | OrientationLiteral;
-    /** Size of the data list */
-    size?: ExprType<SizeType> | SizeLiteral;
+    orientation?: SubtypeExprOrValue<OrientationType> | OrientationLiteral;
+    /** Size of the data list (sm, md, lg) */
+    size?: SubtypeExprOrValue<DataListSizeType> | DataListSizeLiteral;
     /** Visual variant (subtle or bold) */
-    variant?: ExprType<DataListVariantType> | DataListVariantLiteral;
+    variant?: SubtypeExprOrValue<DataListVariantType> | DataListVariantLiteral;
 }

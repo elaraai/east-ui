@@ -178,7 +178,7 @@ function createAccordionItem(
 function createAccordionRoot(
     items: SubtypeExprOrValue<ArrayType<AccordionItemType>>,
     style?: AccordionStyle
-): ExprType<AccordionRootType> {
+): ExprType<UIComponentType> {
     const toBoolOption = (val: SubtypeExprOrValue<BooleanType> | undefined) => {
         if (val === undefined) return variant("none", null);
         return variant("some", val);
@@ -190,14 +190,14 @@ function createAccordionRoot(
             : style.variant)
         : undefined;
 
-    return East.value({
-        items,
+    return East.value(variant("Accordion", {
+        items: items,
         style: style ? variant("some", East.value({
             multiple: toBoolOption(style.multiple),
             collapsible: toBoolOption(style.collapsible),
             variant: variantValue ? variant("some", variantValue) : variant("none", null),
         }, AccordionStyleType)) : variant("none", null),
-    }, AccordionRootType);
+    }), UIComponentType);
 }
 
 // ============================================================================
