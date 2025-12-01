@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build all packages
         run: npm run build
 
       - name: Run tests
@@ -38,7 +38,24 @@ jobs:
             echo "tag=beta" >> $GITHUB_OUTPUT
           fi
 
-      - name: Publish to npm
+      # Publish packages in dependency order
+      # 1. east-ui (core types, no internal dependencies)
+      - name: Publish @elaraai/east-ui
         run: npm publish --access public --tag ${{ steps.npm-tag.outputs.tag }}
+        working-directory: packages/east-ui
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # 2. east-ui-platform (platform functions, depends on east)
+      - name: Publish @elaraai/east-ui-platform
+        run: npm publish --access public --tag ${{ steps.npm-tag.outputs.tag }}
+        working-directory: packages/east-ui-platform
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # 3. east-ui-components (depends on east-ui and east-ui-platform)
+      - name: Publish @elaraai/east-ui-components
+        run: npm publish --access public --tag ${{ steps.npm-tag.outputs.tag }}
+        working-directory: packages/east-ui-components
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

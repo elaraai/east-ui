@@ -1,0 +1,76 @@
+/**
+ * Copyright (c) 2025 Elara AI Pty Ltd
+ * Licensed under AGPL-3.0. See LICENSE file for details.
+ */
+
+import { memo, useMemo } from "react";
+import { TagsInput as ChakraTagsInput, type TagsInputRootProps } from "@chakra-ui/react";
+import { equalFor, type ValueTypeOf } from "@elaraai/east";
+import { TagsInput } from "@elaraai/east-ui";
+import { getSomeorUndefined } from "../../utils";
+
+// Pre-define equality function at module level
+const tagsInputEqual = equalFor(TagsInput.Types.Root);
+
+/** East TagsInput value type */
+export type TagsInputValue = ValueTypeOf<typeof TagsInput.Types.Root>;
+
+/**
+ * Converts an East UI TagsInput value to Chakra UI TagsInput props.
+ * Pure function - easy to test independently.
+ */
+export function toChakraTagsInput(value: TagsInputValue): TagsInputRootProps {
+    const max = getSomeorUndefined(value.max);
+    const maxLength = getSomeorUndefined(value.maxLength);
+
+    return {
+        value: value.value,
+        defaultValue: getSomeorUndefined(value.defaultValue),
+        max: max !== undefined ? Number(max) : undefined,
+        maxLength: maxLength !== undefined ? Number(maxLength) : undefined,
+        disabled: getSomeorUndefined(value.disabled),
+        readOnly: getSomeorUndefined(value.readOnly),
+        invalid: getSomeorUndefined(value.invalid),
+        editable: getSomeorUndefined(value.editable),
+        delimiter: getSomeorUndefined(value.delimiter),
+        addOnPaste: getSomeorUndefined(value.addOnPaste),
+        blurBehavior: getSomeorUndefined(value.blurBehavior)?.type,
+        allowOverflow: getSomeorUndefined(value.allowOverflow),
+        size: getSomeorUndefined(value.size)?.type,
+        variant: getSomeorUndefined(value.variant)?.type,
+        colorPalette: getSomeorUndefined(value.colorPalette)?.type,
+    };
+}
+
+export interface EastChakraTagsInputProps {
+    value: TagsInputValue;
+}
+
+/**
+ * Renders an East UI TagsInput value using Chakra UI TagsInput component.
+ */
+export const EastChakraTagsInput = memo(function EastChakraTagsInput({ value }: EastChakraTagsInputProps) {
+    const props = useMemo(() => toChakraTagsInput(value), [value]);
+    const label = useMemo(() => getSomeorUndefined(value.label), [value.label]);
+    const placeholder = useMemo(() => getSomeorUndefined(value.placeholder), [value.placeholder]);
+
+    return (
+        <ChakraTagsInput.Root {...props}>
+            {label && <ChakraTagsInput.Label>{label}</ChakraTagsInput.Label>}
+            <ChakraTagsInput.Control>
+                <ChakraTagsInput.Context>
+                    {(api) => api.value.map((tag, index) => (
+                        <ChakraTagsInput.Item key={index} index={index} value={tag}>
+                            <ChakraTagsInput.ItemPreview>
+                                <ChakraTagsInput.ItemText>{tag}</ChakraTagsInput.ItemText>
+                                <ChakraTagsInput.ItemDeleteTrigger />
+                            </ChakraTagsInput.ItemPreview>
+                        </ChakraTagsInput.Item>
+                    ))}
+                </ChakraTagsInput.Context>
+                <ChakraTagsInput.Input placeholder={placeholder} />
+            </ChakraTagsInput.Control>
+            <ChakraTagsInput.HiddenInput />
+        </ChakraTagsInput.Root>
+    );
+}, (prev, next) => tagsInputEqual(prev.value, next.value));
