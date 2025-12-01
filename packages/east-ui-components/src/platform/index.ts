@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2025 Elara AI Pty Ltd
- * Licensed under AGPL-3.0. See LICENSE file for details.
+ * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
 /**
@@ -12,8 +12,8 @@
  * @packageDocumentation
  */
 
-// Platform functions (re-exported from @elaraai/east-ui-platform)
-export { State, state_write, state_read } from "@elaraai/east-ui-platform";
+// Platform functions (re-exported from @elaraai/east-ui)
+export { State, state_write, state_read } from "@elaraai/east-ui";
 
 // Store
 export { EastStore, createEastStore, type EastStoreOptions } from "./store.js";

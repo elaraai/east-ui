@@ -1,14 +1,38 @@
-name: Publish to npm
+name: Publish
 
 on:
-  push:
-    tags:
-      - "v[0-9]+.[0-9]+.[0-9]+"
-      - "v[0-9]+.[0-9]+.[0-9]+-*"
+  workflow_dispatch:
+    inputs:
+      publish_east_ui:
+        description: 'Publish @elaraai/east-ui'
+        required: true
+        default: true
+        type: boolean
+      publish_east_ui_components:
+        description: 'Publish @elaraai/east-ui-components'
+        required: true
+        default: true
+        type: boolean
+      publish_vscode:
+        description: 'Publish VSCode extension'
+        required: true
+        default: true
+        type: boolean
+      npm_tag:
+        description: 'npm tag (latest or beta)'
+        required: true
+        default: 'latest'
+        type: choice
+        options:
+          - latest
+          - beta
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # Required for npm trusted publishers (OIDC)
     steps:
       - uses: actions/checkout@v4
 
@@ -29,33 +53,28 @@ jobs:
       - name: Run linter
         run: npm run lint
 
-      - name: Determine npm tag
-        id: npm-tag
-        run: |
-          if [[ "${GITHUB_REF}" =~ ^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "tag=latest" >> $GITHUB_OUTPUT
-          else
-            echo "tag=beta" >> $GITHUB_OUTPUT
-          fi
-
-      # Publish packages in dependency order
-      # 1. east-ui (core types, no internal dependencies)
+      # Publish npm packages in dependency order (using OIDC trusted publishers)
+      # 1. east-ui (core types and platform functions)
       - name: Publish @elaraai/east-ui
-        run: npm publish --access public --tag ${{ steps.npm-tag.outputs.tag }}
+        if: ${{ inputs.publish_east_ui }}
+        run: npm publish --access public --tag ${{ inputs.npm_tag }} --provenance
         working-directory: packages/east-ui
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # 2. east-ui-platform (platform functions, depends on east)
-      - name: Publish @elaraai/east-ui-platform
-        run: npm publish --access public --tag ${{ steps.npm-tag.outputs.tag }}
-        working-directory: packages/east-ui-platform
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      # 3. east-ui-components (depends on east-ui and east-ui-platform)
+      # 2. east-ui-components (depends on east-ui)
       - name: Publish @elaraai/east-ui-components
-        run: npm publish --access public --tag ${{ steps.npm-tag.outputs.tag }}
+        if: ${{ inputs.publish_east_ui_components }}
+        run: npm publish --access public --tag ${{ inputs.npm_tag }} --provenance
         working-directory: packages/east-ui-components
+
+      # 4. VSCode Extension
+      - name: Build VSCode extension
+        if: ${{ inputs.publish_vscode }}
+        run: npm run build && npm run package
+        working-directory: packages/east-ui-extension
+
+      - name: Publish VSCode extension
+        if: ${{ inputs.publish_vscode }}
+        run: npx vsce publish --no-dependencies
+        working-directory: packages/east-ui-extension
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
