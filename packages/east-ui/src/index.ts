@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2025 Elara AI Pty Ltd
- * Licensed under AGPL-3.0. See LICENSE file for details.
+ * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
 /**
@@ -60,3 +60,6 @@ export { Tooltip, Menu, Dialog, Drawer, Popover, HoverCard, ActionBar, ToggleTip
 
 // Component Types
 export { UIComponentType } from "./component.js";
+
+// Platform functions (state management)
+export { State, state_read, state_write } from "./platform/index.js";

@@ -1,4 +1,4 @@
-.PHONY: install build test lint dev clean
+.PHONY: install build test lint dev clean extension extension-install set-east-version
 
 # Install all workspace dependencies
 install:
@@ -21,6 +21,25 @@ dev:
 	rm -rf packages/east-ui-showcase/node_modules/.vite
 	. ${NVM_DIR}/nvm.sh && nvm use && npm run dev
 
+# Build and package the VSCode extension
+extension:
+	. ${NVM_DIR}/nvm.sh && nvm use && cd packages/east-ui-extension && npm run build && npm run package
+
+# Package and install the VSCode extension
+extension-install: extension
+	code --install-extension packages/east-ui-extension/*.vsix
+
 # Clean build artifacts
 clean:
-	rm -rf packages/*/dist packages/*/node_modules node_modules
+	rm -rf packages/*/dist packages/*/node_modules node_modules packages/east-ui-extension/*.vsix
+
+
+# Update @elaraai/east version across all packages
+# Usage: make set-east-version VERSION=0.0.1-beta.1
+set-east-version:
+ifndef VERSION
+	$(error VERSION is required. Usage: make set-east-version VERSION=0.0.1-beta.1)
+endif
+	@echo "Updating @elaraai/east to version $(VERSION)..."
+	@find packages -name "package.json" -exec sed -i 's/"@elaraai\/east": "[^"]*"/"@elaraai\/east": "^$(VERSION)"/g' {} \;
+	@echo "Done. Run 'npm install' to update dependencies."

@@ -8,7 +8,7 @@ export default defineConfig({
     'process.argv': '[]',
   },
   optimizeDeps: {
-    include: ['sorted-btree', '@elaraai/east', '@elaraai/east-ui', '@elaraai/east-ui-platform', 'react-dom/client', '@chakra-ui/react'],
+    include: ['sorted-btree', '@elaraai/east', '@elaraai/east-ui', 'react-dom/client', '@chakra-ui/react'],
   },
   server: {
     port: 3000,

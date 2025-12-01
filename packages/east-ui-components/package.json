@@ -14,7 +14,10 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE.md",
+    "CONTRIBUTING.md",
+    "CLA.md"
   ],
   "sideEffects": false,
   "scripts": {
@@ -32,9 +35,8 @@
   "dependencies": {
     "@chakra-ui/charts": "^3.30.0",
     "@chakra-ui/react": "^3.0.0",
-    "@elaraai/east": "file:../../../East",
+    "@elaraai/east": "^0.0.1-beta.0",
     "@elaraai/east-ui": "*",
-    "@elaraai/east-ui-platform": "*",
     "@emotion/react": "^11.14.0",
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
     "@fortawesome/free-brands-svg-icons": "^7.1.0",

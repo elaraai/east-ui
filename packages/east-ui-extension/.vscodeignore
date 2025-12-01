@@ -1,0 +1,32 @@
+# Source files
+src/**
+*.ts
+tsconfig.json
+eslint.config.js
+
+# Webview source (only need built output)
+webview/src/**
+webview/node_modules/**
+webview/package.json
+webview/package-lock.json
+webview/tsconfig.json
+webview/vite.config.ts
+webview/eslint.config.js
+webview/index.html
+
+# Node modules (bundled into dist)
+node_modules/**
+
+# Keep esbuild in dist (copied during prepackage)
+!dist/node_modules/**
+
+# Tests
+test/**
+
+# Git
+.git/**
+.gitignore
+
+# Misc
+*.vsix
+.vscode/**

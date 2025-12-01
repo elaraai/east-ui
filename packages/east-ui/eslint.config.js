@@ -29,7 +29,7 @@ export default [
       '@typescript-eslint/no-misused-promises': 'error',
       'headers/header-format': ['error', {
         source: 'string',
-        content: 'Copyright (c) 2025 Elara AI Pty Ltd\nLicensed under AGPL-3.0. See LICENSE file for details.'
+        content: 'Copyright (c) 2025 Elara AI Pty Ltd\nDual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.'
       }]
     }
   },
@@ -58,7 +58,7 @@ export default [
       'no-console': 'off',
       'headers/header-format': ['error', {
         source: 'string',
-        content: 'Copyright (c) 2025 Elara AI Pty Ltd\nLicensed under AGPL-3.0. See LICENSE file for details.'
+        content: 'Copyright (c) 2025 Elara AI Pty Ltd\nDual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.'
       }]
     }
   },
