@@ -52,7 +52,7 @@ describeEast("UIComponentType - Nested Components", (test) => {
                             Alert.Root("info", { title: "Welcome back!" }),
                             Progress.Root(75.0, { colorPalette: "blue" })
                         ],
-                        { padding: "4" }
+                        { padding: Box.Padding({ top: "4", right: "4", bottom: "4", left: "4" }) }
                     ),
 
                     // Tags row
@@ -69,7 +69,7 @@ describeEast("UIComponentType - Nested Components", (test) => {
                     { gap: "4" }
                 )
             ],
-            { padding: "6", background: "white" }
+            { padding: Box.Padding({ top: "6", right: "6", bottom: "6", left: "6" }), background: "white" }
         ), UIComponentType);
 
         // Build expected value using raw variant/struct literals
@@ -182,7 +182,12 @@ describeEast("UIComponentType - Nested Components", (test) => {
                                 display: variant("none", null),
                                 width: variant("none", null),
                                 height: variant("none", null),
-                                padding: variant("some", "4"),
+                                padding: variant("some", {
+                                    top: variant("some", "4"),
+                                    right: variant("some", "4"),
+                                    bottom: variant("some", "4"),
+                                    left: variant("some", "4"),
+                                }),
                                 margin: variant("none", null),
                                 background: variant("none", null),
                                 color: variant("none", null),
@@ -250,7 +255,12 @@ describeEast("UIComponentType - Nested Components", (test) => {
                 display: variant("none", null),
                 width: variant("none", null),
                 height: variant("none", null),
-                padding: variant("some", "6"),
+                padding: variant("some", {
+                    top: variant("some", "6"),
+                    right: variant("some", "6"),
+                    bottom: variant("some", "6"),
+                    left: variant("some", "6"),
+                }),
                 margin: variant("none", null),
                 background: variant("some", "white"),
                 color: variant("none", null),

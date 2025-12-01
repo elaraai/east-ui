@@ -11,6 +11,7 @@ import {
     ArrayType,
     variant,
     type SubtypeExprOrValue,
+    some,
 } from "@elaraai/east";
 
 import {
@@ -21,6 +22,7 @@ import {
 } from "../../style.js";
 import { UIComponentType } from "../../component.js";
 import { StackStyleType, type StackStyle } from "./types.js";
+import { Padding, PaddingType, Margin, MarginType } from "../style.js";
 
 // Re-export style types
 export { StackStyleType, type StackStyle } from "./types.js";
@@ -105,6 +107,28 @@ function createStack(
             : style.wrap)
         : undefined;
 
+    const paddingValue = style?.padding
+        ? (typeof style.padding === "string"
+            ? East.value({ 
+                top: some(style.padding), 
+                right: some(style.padding), 
+                bottom: some(style.padding), 
+                left: some(style.padding) 
+            }, PaddingType)
+            : style.padding)
+        : undefined;
+
+    const marginValue = style?.margin
+        ? (typeof style.margin === "string"
+            ? East.value({ 
+                top: some(style.margin), 
+                right: some(style.margin), 
+                bottom: some(style.margin), 
+                left: some(style.margin) 
+            }, MarginType)
+            : style.margin)
+        : undefined;
+
     return East.value(variant("Stack", {
         children: children,
         style: style ? variant("some", East.value({
@@ -113,8 +137,8 @@ function createStack(
             align: alignValue ? variant("some", alignValue) : variant("none", null),
             justify: justifyValue ? variant("some", justifyValue) : variant("none", null),
             wrap: wrapValue ? variant("some", wrapValue) : variant("none", null),
-            padding: style.padding ? variant("some", style.padding) : variant("none", null),
-            margin: style.margin ? variant("some", style.margin) : variant("none", null),
+            padding: paddingValue ? variant("some", paddingValue) : variant("none", null),
+            margin: marginValue ? variant("some", marginValue) : variant("none", null),
             background: style.background ? variant("some", style.background) : variant("none", null),
             width: style.width ? variant("some", style.width) : variant("none", null),
             height: style.height ? variant("some", style.height) : variant("none", null),
@@ -182,12 +206,12 @@ export const Stack = {
     Root: createStack,
     HStack: createHStack,
     VStack: createVStack,
+    Padding,
+    Margin,
     Types: {
         Stack: StackType,
         Style: StackStyleType,
+        Padding: PaddingType,
+        Margin: MarginType,
     },
 } as const;
-
-// Convenience exports for HStack and VStack
-export const HStack = createHStack;
-export const VStack = createVStack;

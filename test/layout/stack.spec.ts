@@ -4,7 +4,7 @@
  */
 
 import { describeEast, assertEast } from "../platforms.spec.js";
-import { Stack, HStack, VStack, Text, Style } from "../../src/index.js";
+import { Stack, Text, Style } from "../../src/index.js";
 
 describeEast("Stack", (test) => {
     // =========================================================================
@@ -91,11 +91,14 @@ describeEast("Stack", (test) => {
 
     test("creates stack with padding", $ => {
         const stack = $.let(Stack.Root([], {
-            padding: "4",
+            padding: Stack.Padding({ top: "4", right: "4", bottom: "4", left: "4" }),
         }));
 
         $(assertEast.equal(stack.unwrap("Stack").style.unwrap("some").padding.hasTag("some"), true));
-        $(assertEast.equal(stack.unwrap("Stack").style.unwrap("some").padding.unwrap("some"), "4"));
+        $(assertEast.equal(stack.unwrap("Stack").style.unwrap("some").padding.unwrap("some").top.unwrap("some"), "4"));
+        $(assertEast.equal(stack.unwrap("Stack").style.unwrap("some").padding.unwrap("some").right.unwrap("some"), "4"));
+        $(assertEast.equal(stack.unwrap("Stack").style.unwrap("some").padding.unwrap("some").bottom.unwrap("some"), "4"));
+        $(assertEast.equal(stack.unwrap("Stack").style.unwrap("some").padding.unwrap("some").left.unwrap("some"), "4"));
     });
 
     test("creates stack with background", $ => {
@@ -136,7 +139,7 @@ describeEast("Stack", (test) => {
         $(assertEast.equal(style.gap.unwrap("some"), "4"));
         $(assertEast.equal(style.align.unwrap("some").hasTag("center"), true));
         $(assertEast.equal(style.justify.unwrap("some").hasTag("space-between"), true));
-        $(assertEast.equal(style.padding.unwrap("some"), "2"));
+        $(assertEast.equal(style.padding.unwrap("some").top.unwrap("some"), "2"));
         $(assertEast.equal(style.background.unwrap("some"), "gray.50"));
         // Other styles should be none
         $(assertEast.equal(style.wrap.hasTag("none"), true));
@@ -178,7 +181,7 @@ describeEast("Stack", (test) => {
     // =========================================================================
 
     test("HStack creates horizontal stack", $ => {
-        const hstack = $.let(HStack([]));
+        const hstack = $.let(Stack.HStack([]));
 
         $(assertEast.equal(hstack.unwrap("Stack").style.hasTag("some"), true));
         $(assertEast.equal(hstack.unwrap("Stack").style.unwrap("some").direction.hasTag("some"), true));
@@ -186,7 +189,7 @@ describeEast("Stack", (test) => {
     });
 
     test("HStack with gap", $ => {
-        const hstack = $.let(HStack([], {
+        const hstack = $.let(Stack.HStack([], {
             gap: "4",
         }));
 
@@ -197,7 +200,7 @@ describeEast("Stack", (test) => {
     test("HStack with children and styling", $ => {
         const child1 = Text.Root("Left");
         const child2 = Text.Root("Right");
-        const hstack = $.let(HStack([
+        const hstack = $.let(Stack.HStack([
             child1,
             child2,
         ], {
@@ -219,7 +222,7 @@ describeEast("Stack", (test) => {
     // =========================================================================
 
     test("VStack creates vertical stack", $ => {
-        const vstack = $.let(VStack([]));
+        const vstack = $.let(Stack.VStack([]));
 
         $(assertEast.equal(vstack.unwrap("Stack").style.hasTag("some"), true));
         $(assertEast.equal(vstack.unwrap("Stack").style.unwrap("some").direction.hasTag("some"), true));
@@ -227,7 +230,7 @@ describeEast("Stack", (test) => {
     });
 
     test("VStack with gap", $ => {
-        const vstack = $.let(VStack([], {
+        const vstack = $.let(Stack.VStack([], {
             gap: "4",
         }));
 
@@ -238,7 +241,7 @@ describeEast("Stack", (test) => {
     test("VStack with children and styling", $ => {
         const child1 = Text.Root("Top");
         const child2 = Text.Root("Bottom");
-        const vstack = $.let(VStack([
+        const vstack = $.let(Stack.VStack([
             child1,
             child2,
         ], {
@@ -258,14 +261,14 @@ describeEast("Stack", (test) => {
     // =========================================================================
 
     test("creates nested stacks", $ => {
-        const innerStack = HStack([
+        const innerStack = Stack.HStack([
             Text.Root("Inner 1"),
             Text.Root("Inner 2"),
         ], {
             gap: "2",
         });
 
-        const outerStack = $.let(VStack([
+        const outerStack = $.let(Stack.VStack([
             innerStack,
             Text.Root("Outer Item"),
         ], {
@@ -285,7 +288,7 @@ describeEast("Stack", (test) => {
         const logo = Text.Root("Logo");
         const nav1 = Text.Root("Home");
         const nav2 = Text.Root("About");
-        const navBar = $.let(HStack([
+        const navBar = $.let(Stack.HStack([
             logo,
             nav1,
             nav2,
@@ -293,7 +296,7 @@ describeEast("Stack", (test) => {
             gap: "4",
             align: Style.AlignItems("center"),
             justify: Style.JustifyContent("space-between"),
-            padding: "4",
+            padding: Stack.Padding({ top: "4", right: "4", bottom: "4", left: "4" }),
             background: "white",
         }));
 
@@ -306,7 +309,7 @@ describeEast("Stack", (test) => {
     test("creates form layout", $ => {
         const label1 = Text.Root("Name:");
         const label2 = Text.Root("Email:");
-        const formLayout = $.let(VStack([
+        const formLayout = $.let(Stack.VStack([
             label1,
             label2,
         ], {

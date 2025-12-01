@@ -22,6 +22,11 @@ import type {
     JustifyContentLiteral,
     AlignItemsLiteral,
 } from "../../style.js";
+import { PaddingType, MarginType } from "../style.js";
+
+// ============================================================================
+// Box Style
+// ============================================================================
 
 /**
  * Style configuration for Box components.
@@ -50,10 +55,10 @@ export type BoxStyle = {
     width?: SubtypeExprOrValue<StringType>;
     /** Height (Chakra UI size token or CSS value) */
     height?: SubtypeExprOrValue<StringType>;
-    /** Padding (Chakra UI spacing token or CSS value) */
-    padding?: SubtypeExprOrValue<StringType>;
-    /** Margin (Chakra UI spacing token or CSS value) */
-    margin?: SubtypeExprOrValue<StringType>;
+    /** Padding configuration - use Padding() helper */
+    padding?: SubtypeExprOrValue<PaddingType> | string;
+    /** Margin configuration - use Margin() helper */
+    margin?: SubtypeExprOrValue<MarginType> | string;
     /** Background color (Chakra UI color token or CSS color) */
     background?: SubtypeExprOrValue<StringType>;
     /** Text color (Chakra UI color token or CSS color) */
@@ -79,8 +84,8 @@ export type BoxStyle = {
  * @property display - CSS display property
  * @property width - Width (Chakra UI size token or CSS value)
  * @property height - Height (Chakra UI size token or CSS value)
- * @property padding - Padding (Chakra UI spacing token or CSS value)
- * @property margin - Margin (Chakra UI spacing token or CSS value)
+ * @property padding - Padding configuration
+ * @property margin - Margin configuration
  * @property background - Background color (Chakra UI color token or CSS color)
  * @property color - Text color (Chakra UI color token or CSS color)
  * @property borderRadius - Border radius (Chakra UI radius token or CSS value)
@@ -93,8 +98,8 @@ export const BoxStyleType = StructType({
     display: OptionType(DisplayType),
     width: OptionType(StringType),
     height: OptionType(StringType),
-    padding: OptionType(StringType),
-    margin: OptionType(StringType),
+    padding: OptionType(PaddingType),
+    margin: OptionType(MarginType),
     background: OptionType(StringType),
     color: OptionType(StringType),
     borderRadius: OptionType(StringType),

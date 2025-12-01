@@ -22,6 +22,7 @@ import type {
     AlignItemsLiteral,
     FlexWrapLiteral,
 } from "../../style.js";
+import { PaddingType, MarginType } from "../style.js";
 
 /**
  * Style configuration for Stack components.
@@ -35,8 +36,8 @@ import type {
  * @property align - Cross-axis alignment
  * @property justify - Main-axis alignment
  * @property wrap - Flex wrap behavior
- * @property padding - Padding (Chakra UI spacing token or CSS value)
- * @property margin - Margin (Chakra UI spacing token or CSS value)
+ * @property padding - Padding configuration
+ * @property margin - Margin configuration
  * @property background - Background color (Chakra UI color token or CSS color)
  * @property width - Width (Chakra UI size token or CSS value)
  * @property height - Height (Chakra UI size token or CSS value)
@@ -52,10 +53,10 @@ export type StackStyle = {
     justify?: SubtypeExprOrValue<JustifyContentType> | JustifyContentLiteral;
     /** Flex wrap behavior */
     wrap?: SubtypeExprOrValue<FlexWrapType> | FlexWrapLiteral;
-    /** Padding (Chakra UI spacing token or CSS value) */
-    padding?: SubtypeExprOrValue<StringType>;
-    /** Margin (Chakra UI spacing token or CSS value) */
-    margin?: SubtypeExprOrValue<StringType>;
+    /** Padding configuration - use Padding() helper */
+    padding?: SubtypeExprOrValue<PaddingType> | string;
+    /** Margin configuration - use Margin() helper */
+    margin?: SubtypeExprOrValue<MarginType> | string;
     /** Background color (Chakra UI color token or CSS color) */
     background?: SubtypeExprOrValue<StringType>;
     /** Width (Chakra UI size token or CSS value) */
@@ -75,8 +76,8 @@ export type StackStyle = {
  * @property align - Cross-axis alignment
  * @property justify - Main-axis alignment
  * @property wrap - Flex wrap behavior
- * @property padding - Padding (Chakra UI spacing token or CSS value)
- * @property margin - Margin (Chakra UI spacing token or CSS value)
+ * @property padding - Padding configuration
+ * @property margin - Margin configuration
  * @property background - Background color (Chakra UI color token or CSS color)
  * @property width - Width (Chakra UI size token or CSS value)
  * @property height - Height (Chakra UI size token or CSS value)
@@ -87,8 +88,8 @@ export const StackStyleType = StructType({
     align: OptionType(AlignItemsType),
     justify: OptionType(JustifyContentType),
     wrap: OptionType(FlexWrapType),
-    padding: OptionType(StringType),
-    margin: OptionType(StringType),
+    padding: OptionType(PaddingType),
+    margin: OptionType(MarginType),
     background: OptionType(StringType),
     width: OptionType(StringType),
     height: OptionType(StringType),

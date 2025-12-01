@@ -11,6 +11,7 @@ import {
     ArrayType,
     variant,
     type SubtypeExprOrValue,
+    some,
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
@@ -21,6 +22,7 @@ import {
     JustifyContentType,
     AlignItemsType,
 } from "../../style.js";
+import { Padding, PaddingType, Margin, MarginType } from "../style.js";
 
 // Re-export style types
 export { BoxStyleType, type BoxStyle } from "./types.js";
@@ -103,14 +105,36 @@ function createBox(
             : style.alignItems)
         : undefined;
 
+    const paddingValue = style?.padding
+        ? (typeof style.padding === "string"
+            ? East.value({
+                top: some(style.padding),
+                right: some(style.padding),
+                bottom: some(style.padding),
+                left: some(style.padding)
+            }, PaddingType)
+            : style.padding)
+        : undefined;
+
+    const marginValue = style?.margin
+        ? (typeof style.margin === "string"
+            ? East.value({
+                top: some(style.margin),
+                right: some(style.margin),
+                bottom: some(style.margin),
+                left: some(style.margin)
+            }, MarginType)
+            : style.margin)
+        : undefined;
+
     return East.value(variant("Box", {
         children: children,
         style: style ? variant("some", East.value({
             display: displayValue ? variant("some", displayValue) : variant("none", null),
             width: style.width ? variant("some", style.width) : variant("none", null),
             height: style.height ? variant("some", style.height) : variant("none", null),
-            padding: style.padding ? variant("some", style.padding) : variant("none", null),
-            margin: style.margin ? variant("some", style.margin) : variant("none", null),
+            padding: paddingValue ? variant("some", paddingValue) : variant("none", null),
+            margin: marginValue ? variant("some", marginValue) : variant("none", null),
             background: style.background ? variant("some", style.background) : variant("none", null),
             color: style.color ? variant("some", style.color) : variant("none", null),
             borderRadius: style.borderRadius ? variant("some", style.borderRadius) : variant("none", null),
@@ -130,8 +154,12 @@ function createBox(
  */
 export const Box = {
     Root: createBox,
+    Padding,
+    Margin,
     Types: {
         Box: BoxType,
         Style: BoxStyleType,
+        Padding: PaddingType,
+        Margin: MarginType,
     },
 } as const;

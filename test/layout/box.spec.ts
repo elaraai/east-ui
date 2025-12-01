@@ -71,20 +71,23 @@ describeEast("Box", (test) => {
 
     test("creates box with padding", $ => {
         const box = $.let(Box.Root([], {
-            padding: "4",
+            padding: Box.Padding({ top: "4", right: "4", bottom: "4", left: "4" }),
         }));
 
         $(assertEast.equal(box.unwrap("Box").style.unwrap("some").padding.hasTag("some"), true));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").padding.unwrap("some"), "4"));
+        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").padding.unwrap("some").top.unwrap("some"), "4"));
+        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").padding.unwrap("some").right.unwrap("some"), "4"));
+        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").padding.unwrap("some").bottom.unwrap("some"), "4"));
+        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").padding.unwrap("some").left.unwrap("some"), "4"));
     });
 
     test("creates box with margin", $ => {
         const box = $.let(Box.Root([], {
-            margin: "2",
+            margin: Box.Margin({ top: "2", right: "2", bottom: "2", left: "2" }),
         }));
 
         $(assertEast.equal(box.unwrap("Box").style.unwrap("some").margin.hasTag("some"), true));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").margin.unwrap("some"), "2"));
+        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").margin.unwrap("some").top.unwrap("some"), "2"));
     });
 
     test("creates box with background", $ => {
@@ -171,7 +174,7 @@ describeEast("Box", (test) => {
             justifyContent: Style.JustifyContent("center"),
             alignItems: Style.AlignItems("center"),
             gap: "4",
-            padding: "4",
+            padding: Box.Padding({ top: "4", right: "4", bottom: "4", left: "4" }),
             background: "gray.100",
             borderRadius: "md",
         }));
@@ -182,7 +185,7 @@ describeEast("Box", (test) => {
         $(assertEast.equal(style.justifyContent.unwrap("some").hasTag("center"), true));
         $(assertEast.equal(style.alignItems.unwrap("some").hasTag("center"), true));
         $(assertEast.equal(style.gap.unwrap("some"), "4"));
-        $(assertEast.equal(style.padding.unwrap("some"), "4"));
+        $(assertEast.equal(style.padding.unwrap("some").top.unwrap("some"), "4"));
         $(assertEast.equal(style.background.unwrap("some"), "gray.100"));
         $(assertEast.equal(style.borderRadius.unwrap("some"), "md"));
         // Other styles should be none
@@ -305,19 +308,19 @@ describeEast("Box", (test) => {
         const innerBox = Box.Root([
             Text.Root("Inner"),
         ], {
-            padding: "2",
+            padding: Box.Padding({ top: "2", right: "2", bottom: "2", left: "2" }),
             background: "blue.100",
         });
 
         const outerBox = $.let(Box.Root([
             innerBox,
         ], {
-            padding: "4",
+            padding: Box.Padding({ top: "4", right: "4", bottom: "4", left: "4" }),
             background: "gray.100",
         }));
 
         $(assertEast.equal(outerBox.unwrap("Box").children.size(), 1n));
-        $(assertEast.equal(outerBox.unwrap("Box").style.unwrap("some").padding.unwrap("some"), "4"));
+        $(assertEast.equal(outerBox.unwrap("Box").style.unwrap("some").padding.unwrap("some").top.unwrap("some"), "4"));
         $(assertEast.equal(outerBox.unwrap("Box").style.unwrap("some").background.unwrap("some"), "gray.100"));
     });
 });

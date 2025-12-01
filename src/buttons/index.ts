@@ -4,3 +4,4 @@
  */
 
 export { Button } from "./button/index.js";
+export { IconButton } from "./icon-button/index.js";
