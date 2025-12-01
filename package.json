@@ -10,7 +10,18 @@
     "build": "npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
-    "dev": "npm run dev --workspace=@elaraai/east-ui-showcase"
+    "dev": "npm run dev --workspace=@elaraai/east-ui-showcase",
+    "version:east-ui:prerelease": "npm version prerelease --preid=beta --workspace=@elaraai/east-ui --no-git-tag-version",
+    "version:east-ui:patch": "npm version patch --workspace=@elaraai/east-ui --no-git-tag-version",
+    "version:east-ui:minor": "npm version minor --workspace=@elaraai/east-ui --no-git-tag-version",
+    "version:east-ui:major": "npm version major --workspace=@elaraai/east-ui --no-git-tag-version",
+    "version:components:prerelease": "npm version prerelease --preid=beta --workspace=@elaraai/east-ui-components --no-git-tag-version",
+    "version:components:patch": "npm version patch --workspace=@elaraai/east-ui-components --no-git-tag-version",
+    "version:components:minor": "npm version minor --workspace=@elaraai/east-ui-components --no-git-tag-version",
+    "version:components:major": "npm version major --workspace=@elaraai/east-ui-components --no-git-tag-version",
+    "version:extension:patch": "npm version patch --workspace=east-ui-preview --no-git-tag-version",
+    "version:extension:minor": "npm version minor --workspace=east-ui-preview --no-git-tag-version",
+    "version:extension:major": "npm version major --workspace=east-ui-preview --no-git-tag-version"
   },
   "repository": {
     "type": "git",
