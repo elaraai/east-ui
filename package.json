@@ -25,5 +25,8 @@
   "license": "SEE LICENSE IN LICENSE",
   "engines": {
     "node": ">=22.0.0"
+  },
+  "dependencies": {
+    "@elaraai/east": "^0.0.1-beta.0"
   }
 }
