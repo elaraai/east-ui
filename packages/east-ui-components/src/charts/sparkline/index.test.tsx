@@ -20,11 +20,11 @@ describe("toChakraSparkline", () => {
         const result = toChakraSparkline(value);
 
         expect(result).toEqual({
-            chartData: [{ value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }, { value: 5 }],
+            data: [1, 2, 3, 4, 5],
             chartType: "line",
-            color: "teal.solid",
-            width: "100px",
-            height: "32px",
+            color: "currentColor",
+            width: "100%",
+            height: "100%",
         });
     });
 
@@ -71,7 +71,7 @@ describe("toChakraSparkline", () => {
         expect(result.height).toBe("50px");
     });
 
-    it("converts data to chartData format", () => {
+    it("passes data array through directly", () => {
         const value: SparklineValue = {
             data: [100, 200, 150, 300],
             type: none,
@@ -82,12 +82,7 @@ describe("toChakraSparkline", () => {
 
         const result = toChakraSparkline(value);
 
-        expect(result.chartData).toEqual([
-            { value: 100 },
-            { value: 200 },
-            { value: 150 },
-            { value: 300 },
-        ]);
+        expect(result.data).toEqual([100, 200, 150, 300]);
     });
 
     it("handles empty data array", () => {
@@ -101,7 +96,7 @@ describe("toChakraSparkline", () => {
 
         const result = toChakraSparkline(value);
 
-        expect(result.chartData).toEqual([]);
+        expect(result.data).toEqual([]);
     });
 
     it("extracts all props when fully configured", () => {
@@ -116,7 +111,7 @@ describe("toChakraSparkline", () => {
         const result = toChakraSparkline(value);
 
         expect(result).toEqual({
-            chartData: [{ value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }, { value: 5 }],
+            data: [1, 2, 3, 4, 5],
             chartType: "area",
             color: "red.400",
             width: "150px",

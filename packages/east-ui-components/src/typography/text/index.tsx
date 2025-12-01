@@ -28,6 +28,7 @@ export function toChakraText(value: TextValue): TextProps {
         background: getSomeorUndefined(value.background),
         fontWeight: getSomeorUndefined(value.fontWeight)?.type,
         fontStyle: getSomeorUndefined(value.fontStyle)?.type,
+        fontSize: getSomeorUndefined(value.fontSize)?.type,
         textTransform: getSomeorUndefined(value.textTransform)?.type,
         textAlign: getSomeorUndefined(value.textAlign)?.type,
         borderWidth: getSomeorUndefined(value.borderWidth)?.type,

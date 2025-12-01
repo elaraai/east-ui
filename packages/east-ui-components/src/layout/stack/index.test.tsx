@@ -22,8 +22,14 @@ describe("toChakraStack", () => {
             align: undefined,
             justify: undefined,
             wrap: undefined,
-            padding: undefined,
-            margin: undefined,
+            pt: undefined,
+            pr: undefined,
+            pb: undefined,
+            pl: undefined,
+            mt: undefined,
+            mr: undefined,
+            mb: undefined,
+            ml: undefined,
             background: undefined,
             width: undefined,
             height: undefined,
@@ -107,8 +113,18 @@ describe("toChakraStack", () => {
                 align: none,
                 justify: none,
                 wrap: none,
-                padding: some("6"),
-                margin: some("2"),
+                padding: some({
+                    top: some("6"),
+                    right: some("6"),
+                    bottom: some("6"),
+                    left: some("6"),
+                }),
+                margin: some({
+                    top: some("2"),
+                    right: some("2"),
+                    bottom: some("2"),
+                    left: some("2"),
+                }),
                 background: none,
                 width: none,
                 height: none,
@@ -117,8 +133,8 @@ describe("toChakraStack", () => {
 
         const result = toChakraStack(value);
 
-        expect(result.padding).toBe("6");
-        expect(result.margin).toBe("2");
+        expect(result.pt).toBe("6");
+        expect(result.mt).toBe("2");
     });
 
     it("extracts dimensions and background from style", () => {
@@ -154,8 +170,18 @@ describe("toChakraStack", () => {
                 align: some(variant("stretch", null)),
                 justify: some(variant("flex-start", null)),
                 wrap: some(variant("nowrap", null)),
-                padding: some("4"),
-                margin: some("0"),
+                padding: some({
+                    top: some("4"),
+                    right: some("4"),
+                    bottom: some("4"),
+                    left: some("4"),
+                }),
+                margin: some({
+                    top: some("0"),
+                    right: some("0"),
+                    bottom: some("0"),
+                    left: some("0"),
+                }),
                 background: some("white"),
                 width: some("500px"),
                 height: some("100vh"),
@@ -170,8 +196,14 @@ describe("toChakraStack", () => {
             align: "stretch",
             justify: "flex-start",
             wrap: "nowrap",
-            padding: "4",
-            margin: "0",
+            pt: "4",
+            pr: "4",
+            pb: "4",
+            pl: "4",
+            mt: "0",
+            mr: "0",
+            mb: "0",
+            ml: "0",
             background: "white",
             width: "500px",
             height: "100vh",

@@ -20,8 +20,14 @@ describe("toChakraBox", () => {
             display: undefined,
             width: undefined,
             height: undefined,
-            padding: undefined,
-            margin: undefined,
+            pt: undefined,
+            pr: undefined,
+            pb: undefined,
+            pl: undefined,
+            mt: undefined,
+            mr: undefined,
+            mb: undefined,
+            ml: undefined,
             background: undefined,
             color: undefined,
             borderRadius: undefined,
@@ -88,8 +94,18 @@ describe("toChakraBox", () => {
                 display: none,
                 width: none,
                 height: none,
-                padding: some("4"),
-                margin: some("2"),
+                padding: some({
+                    top: some("4"),
+                    right: some("4"),
+                    bottom: some("4"),
+                    left: some("4"),
+                }),
+                margin: some({
+                    top: some("2"),
+                    right: some("2"),
+                    bottom: some("2"),
+                    left: some("2"),
+                }),
                 background: none,
                 color: none,
                 borderRadius: none,
@@ -102,8 +118,8 @@ describe("toChakraBox", () => {
 
         const result = toChakraBox(value);
 
-        expect(result.padding).toBe("4");
-        expect(result.margin).toBe("2");
+        expect(result.pt).toBe("4");
+        expect(result.mt).toBe("2");
         expect(result.gap).toBe("3");
     });
 
@@ -189,8 +205,18 @@ describe("toChakraBox", () => {
                 display: some(variant("flex", null)),
                 width: some("400px"),
                 height: some("300px"),
-                padding: some("6"),
-                margin: some("4"),
+                padding: some({
+                    top: some("6"),
+                    right: some("6"),
+                    bottom: some("6"),
+                    left: some("6"),
+                }),
+                margin: some({
+                    top: some("4"),
+                    right: some("4"),
+                    bottom: some("4"),
+                    left: some("4"),
+                }),
                 background: some("blue.50"),
                 color: some("blue.900"),
                 borderRadius: some("lg"),
@@ -207,8 +233,14 @@ describe("toChakraBox", () => {
             display: "flex",
             width: "400px",
             height: "300px",
-            padding: "6",
-            margin: "4",
+            pt: "6",
+            pr: "6",
+            pb: "6",
+            pl: "6",
+            mt: "4",
+            mr: "4",
+            mb: "4",
+            ml: "4",
             background: "blue.50",
             color: "blue.900",
             borderRadius: "lg",

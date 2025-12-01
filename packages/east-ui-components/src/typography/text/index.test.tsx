@@ -25,18 +25,17 @@ describe("toChakraText", () => {
 
         const result = toChakraText(value);
 
-        expect(result).toEqual({
-            color: undefined,
-            background: undefined,
-            fontWeight: undefined,
-            fontStyle: undefined,
-            fontSize: undefined,
-            textTransform: undefined,
-            textAlign: undefined,
-            borderWidth: undefined,
-            borderStyle: undefined,
-            borderColor: undefined,
-        });
+        // fontSize returns undefined when the option is none
+        expect(result.color).toBeUndefined();
+        expect(result.background).toBeUndefined();
+        expect(result.fontWeight).toBeUndefined();
+        expect(result.fontStyle).toBeUndefined();
+        expect(result.fontSize).toBeUndefined();
+        expect(result.textTransform).toBeUndefined();
+        expect(result.textAlign).toBeUndefined();
+        expect(result.borderWidth).toBeUndefined();
+        expect(result.borderStyle).toBeUndefined();
+        expect(result.borderColor).toBeUndefined();
     });
 
     it("extracts color from value", () => {
