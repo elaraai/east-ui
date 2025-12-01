@@ -1,0 +1,191 @@
+/**
+ * Copyright (c) 2025 Elara AI Pty Ltd
+ * Licensed under AGPL-3.0. See LICENSE file for details.
+ */
+
+import {
+    type ExprType,
+    type SubtypeExprOrValue,
+    East,
+    variant,
+    ArrayType,
+    OptionType,
+    StructType,
+    IntegerType,
+    BooleanType,
+} from "@elaraai/east";
+
+import { UIComponentType } from "../../component.js";
+import { OrientationType } from "../../style.js";
+import {
+    CarouselStyleType,
+    type CarouselStyle,
+} from "./types.js";
+
+// Re-export types
+export {
+    CarouselStyleType,
+    OrientationType,
+    type CarouselStyle,
+    type OrientationLiteral,
+} from "./types.js";
+
+// ============================================================================
+// Carousel Root Type
+// ============================================================================
+
+/**
+ * Type for Carousel component data.
+ *
+ * @remarks
+ * Carousel displays a slideshow of content items.
+ *
+ * @property items - Array of carousel slide items
+ * @property index - Controlled current slide index
+ * @property defaultIndex - Initial slide index
+ * @property slidesPerView - Number of visible slides
+ * @property slidesPerMove - Number of slides to advance per step
+ * @property loop - Whether to enable infinite scrolling
+ * @property autoplay - Whether to enable automatic advancement
+ * @property allowMouseDrag - Whether to allow mouse drag navigation
+ * @property showIndicators - Whether to show dot indicators
+ * @property showControls - Whether to show prev/next controls
+ * @property style - Optional styling configuration
+ */
+export const CarouselRootType = StructType({
+    items: ArrayType(UIComponentType),
+    index: OptionType(IntegerType),
+    defaultIndex: OptionType(IntegerType),
+    slidesPerView: OptionType(IntegerType),
+    slidesPerMove: OptionType(IntegerType),
+    loop: OptionType(BooleanType),
+    autoplay: OptionType(BooleanType),
+    allowMouseDrag: OptionType(BooleanType),
+    showIndicators: OptionType(BooleanType),
+    showControls: OptionType(BooleanType),
+    style: OptionType(CarouselStyleType),
+});
+
+/**
+ * Type representing the Carousel structure.
+ */
+export type CarouselRootType = typeof CarouselRootType;
+
+// ============================================================================
+// Carousel Factory
+// ============================================================================
+
+/**
+ * Creates a Carousel component.
+ *
+ * @param items - Array of carousel items/slides
+ * @param style - Optional style and configuration options
+ * @returns An East expression representing the Carousel component
+ *
+ * @example
+ * ```ts
+ * import { Carousel, Box, Text } from "@elaraai/east-ui";
+ *
+ * // Simple image carousel
+ * const carousel = Carousel.Root([
+ *   Carousel.Item(Box.Root([Text.Root("Slide 1")])),
+ *   Carousel.Item(Box.Root([Text.Root("Slide 2")])),
+ *   Carousel.Item(Box.Root([Text.Root("Slide 3")])),
+ * ], {
+ *   loop: true,
+ *   showIndicators: true,
+ *   showControls: true,
+ * });
+ *
+ * // Multi-slide carousel
+ * const multiSlide = Carousel.Root(items, {
+ *   slidesPerView: 3n,
+ *   slidesPerMove: 1n,
+ *   spacing: "4",
+ * });
+ *
+ * // Autoplay carousel
+ * const autoplay = Carousel.Root(banners, {
+ *   autoplay: true,
+ *   loop: true,
+ *   allowMouseDrag: true,
+ * });
+ * ```
+ */
+function createCarousel(
+    items: SubtypeExprOrValue<ArrayType<UIComponentType>>,
+    style?: CarouselStyle
+): ExprType<UIComponentType> {
+    // Convert string literal orientation to East value
+    const orientationValue = style?.orientation
+        ? (typeof style.orientation === "string"
+            ? East.value(variant(style.orientation, null), OrientationType)
+            : style.orientation)
+        : undefined;
+
+    // Build style object if any style properties are provided
+    const styleValue = (orientationValue || style?.spacing || style?.padding)
+        ? variant("some", East.value({
+            orientation: orientationValue ? variant("some", orientationValue) : variant("none", null),
+            spacing: style?.spacing !== undefined ? variant("some", style.spacing) : variant("none", null),
+            padding: style?.padding !== undefined ? variant("some", style.padding) : variant("none", null),
+        }, CarouselStyleType))
+        : variant("none", null);
+
+    return East.value(variant("Carousel", {
+        items: items,
+        index: style?.index !== undefined ? variant("some", style.index) : variant("none", null),
+        defaultIndex: style?.defaultIndex !== undefined ? variant("some", style.defaultIndex) : variant("none", null),
+        slidesPerView: style?.slidesPerView !== undefined ? variant("some", style.slidesPerView) : variant("none", null),
+        slidesPerMove: style?.slidesPerMove !== undefined ? variant("some", style.slidesPerMove) : variant("none", null),
+        loop: style?.loop !== undefined ? variant("some", style.loop) : variant("none", null),
+        autoplay: style?.autoplay !== undefined ? variant("some", style.autoplay) : variant("none", null),
+        allowMouseDrag: style?.allowMouseDrag !== undefined ? variant("some", style.allowMouseDrag) : variant("none", null),
+        showIndicators: style?.showIndicators !== undefined ? variant("some", style.showIndicators) : variant("none", null),
+        showControls: style?.showControls !== undefined ? variant("some", style.showControls) : variant("none", null),
+        style: styleValue,
+    }), UIComponentType);
+}
+
+// ============================================================================
+// Carousel Namespace Export
+// ============================================================================
+
+/**
+ * Carousel component namespace.
+ *
+ * @remarks
+ * Carousel provides a slideshow component for cycling through content.
+ *
+ * @example
+ * ```ts
+ * import { Carousel, Box, Text } from "@elaraai/east-ui";
+ *
+ * // Basic carousel with indicators
+ * const carousel = Carousel.Root([
+ *   Carousel.Item(Box.Root([Text.Root("Slide 1")])),
+ *   Carousel.Item(Box.Root([Text.Root("Slide 2")])),
+ * ], {
+ *   showIndicators: true,
+ *   showControls: true,
+ *   loop: true,
+ * });
+ *
+ * // Vertical carousel
+ * const vertical = Carousel.Root(items, {
+ *   orientation: "vertical",
+ *   slidesPerView: 1n,
+ * });
+ * ```
+ */
+export const Carousel = {
+    /** Creates a Carousel component */
+    Root: createCarousel,
+    /** Type definitions */
+    Types: {
+        /** Carousel root struct type */
+        Root: CarouselRootType,
+        /** Carousel style struct type */
+        Style: CarouselStyleType,
+    },
+} as const;

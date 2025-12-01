@@ -1,0 +1,272 @@
+/**
+ * Copyright (c) 2025 Elara AI Pty Ltd
+ * Licensed under AGPL-3.0. See LICENSE file for details.
+ */
+
+/**
+ * East UI React - React components for rendering East UI types with Chakra UI.
+ *
+ * @packageDocumentation
+ */
+
+// Top-level component that renders any East UI component
+export { EastChakraComponent, type EastChakraComponentProps } from "./component.js";
+
+// Typography
+export {
+    toChakraText,
+    EastChakraText,
+    type TextValue,
+    type EastChakraTextProps,
+} from "./typography/index.js";
+
+// Buttons
+export {
+    toChakraButton,
+    EastChakraButton,
+    type ButtonValue,
+    type EastChakraButtonProps,
+    toChakraIconButton,
+    EastChakraIconButton,
+    type IconButtonValue,
+    type EastChakraIconButtonProps,
+} from "./buttons/index.js";
+
+// Layout
+export {
+    toChakraBox,
+    EastChakraBox,
+    type BoxValue,
+    type EastChakraBoxProps,
+    toChakraStack,
+    EastChakraStack,
+    type StackValue,
+    type EastChakraStackProps,
+    toChakraSeparator,
+    EastChakraSeparator,
+    type SeparatorValue,
+    type EastChakraSeparatorProps,
+    toChakraGrid,
+    EastChakraGrid,
+    type GridValue,
+    type EastChakraGridProps,
+    toChakraSplitter,
+    EastChakraSplitter,
+    type SplitterValue,
+    type EastChakraSplitterProps,
+} from "./layout/index.js";
+
+// Charts
+export {
+    EastChakraSparkline,
+    type EastChakraSparklineProps,
+    EastChakraAreaChart,
+    type EastChakraAreaChartProps,
+} from "./charts/index.js";
+
+// Disclosure
+export {
+    EastChakraAccordion,
+    EastChakraAccordionItem,
+    toChakraAccordionRoot,
+    toChakraAccordionItem,
+    type AccordionRootValue,
+    type AccordionItemValue,
+    type EastChakraAccordionProps,
+    type EastChakraAccordionItemProps,
+    EastChakraCarousel,
+    toChakraCarousel,
+    type CarouselValue,
+    type EastChakraCarouselProps,
+    EastChakraTabs,
+    EastChakraTabsTrigger,
+    EastChakraTabsContent,
+    toChakraTabsRoot,
+    toChakraTabsTrigger,
+    toChakraTabsContent,
+    type TabsRootValue,
+    type TabsItemValue,
+    type EastChakraTabsProps,
+    type EastChakraTabsItemProps,
+} from "./disclosure/index.js";
+
+// Collections
+export {
+    EastChakraDataList,
+    toChakraDataListRoot,
+    type DataListRootValue,
+    type DataListItemValue,
+    type EastChakraDataListProps,
+    EastChakraTable,
+    toChakraTableRoot,
+    type TableRootValue,
+    type TableColumnValue,
+    type EastChakraTableProps,
+    EastChakraTreeView,
+    toChakraTreeViewRoot,
+    type TreeViewRootValue,
+    type TreeNodeValue,
+    type EastChakraTreeViewProps,
+} from "./collections/index.js";
+
+// Display
+export {
+    EastChakraIcon,
+    toFontAwesomeIcon,
+    type IconValue,
+    type EastChakraIconProps,
+    EastChakraBadge,
+    toChakraBadge,
+    type BadgeValue,
+    type EastChakraBadgeProps,
+    EastChakraTag,
+    toChakraTag,
+    type TagValue,
+    type EastChakraTagProps,
+    EastChakraAvatar,
+    toChakraAvatar,
+    type AvatarValue,
+    type EastChakraAvatarProps,
+    EastChakraStat,
+    type StatValue,
+    type EastChakraStatProps,
+} from "./display/index.js";
+
+// Forms
+export {
+    // Input
+    EastChakraStringInput,
+    EastChakraIntegerInput,
+    EastChakraFloatInput,
+    EastChakraDateTimeInput,
+    toChakraStringInput,
+    toChakraIntegerInput,
+    toChakraFloatInput,
+    toChakraDateTimeInput,
+    type StringInputValue,
+    type IntegerInputValue,
+    type FloatInputValue,
+    type DateTimeInputValue,
+    type EastChakraStringInputProps,
+    type EastChakraIntegerInputProps,
+    type EastChakraFloatInputProps,
+    type EastChakraDateTimeInputProps,
+    // Checkbox
+    EastChakraCheckbox,
+    toChakraCheckbox,
+    type CheckboxValue,
+    type EastChakraCheckboxProps,
+    // Switch
+    EastChakraSwitch,
+    toChakraSwitch,
+    type SwitchValue,
+    type EastChakraSwitchProps,
+    // Select
+    EastChakraSelect,
+    toChakraSelect,
+    type SelectRootValue,
+    type SelectItemValue,
+    type EastChakraSelectProps,
+    // Slider
+    EastChakraSlider,
+    toChakraSlider,
+    type SliderValue,
+    type EastChakraSliderProps,
+    // Field
+    EastChakraField,
+    toChakraField,
+    type FieldValue,
+    type EastChakraFieldProps,
+    // Fieldset
+    EastChakraFieldset,
+    toChakraFieldset,
+    type FieldsetValue,
+    type EastChakraFieldsetProps,
+    // Textarea
+    EastChakraTextarea,
+    toChakraTextarea,
+    type TextareaValue,
+    type EastChakraTextareaProps,
+    // TagsInput
+    EastChakraTagsInput,
+    toChakraTagsInput,
+    type TagsInputValue,
+    type EastChakraTagsInputProps,
+    // FileUpload
+    EastChakraFileUpload,
+    toChakraFileUpload,
+    type FileUploadValue,
+    type EastChakraFileUploadProps,
+} from "./forms/index.js";
+
+// Feedback
+export {
+    EastChakraAlert,
+    toChakraAlert,
+    type AlertValue,
+    type EastChakraAlertProps,
+    EastChakraProgress,
+    toChakraProgress,
+    type ProgressValue,
+    type EastChakraProgressProps,
+} from "./feedback/index.js";
+
+// Container
+export {
+    EastChakraCard,
+    toChakraCard,
+    type CardValue,
+    type EastChakraCardProps,
+} from "./container/index.js";
+
+// Overlays
+export {
+    EastChakraTooltip,
+    type TooltipValue,
+    type EastChakraTooltipProps,
+    EastChakraMenu,
+    type MenuValue,
+    type MenuItemValue,
+    type EastChakraMenuProps,
+    EastChakraPopover,
+    type PopoverValue,
+    type EastChakraPopoverProps,
+    EastChakraHoverCard,
+    type HoverCardValue,
+    type EastChakraHoverCardProps,
+    EastChakraDialog,
+    type DialogValue,
+    type EastChakraDialogProps,
+    EastChakraDrawer,
+    type DrawerValue,
+    type EastChakraDrawerProps,
+    EastChakraActionBar,
+    type ActionBarValue,
+    type ActionBarItemValue,
+    type EastChakraActionBarProps,
+    EastChakraToggleTip,
+    type ToggleTipValue,
+    type EastChakraToggleTipProps,
+} from "./overlays/index.js";
+
+// Platform (State Management)
+export {
+    // Platform functions
+    State,
+    state_write,
+    state_read,
+    // Store
+    EastStore,
+    createEastStore,
+    type EastStoreOptions,
+    // React hooks
+    EastStoreProvider,
+    EastFunction,
+    useEastStore,
+    useEastState,
+    useEastKey,
+    useEastWrite,
+    useEastBatch,
+    type EastStoreProviderProps,
+    type EastFunctionProps,
+} from "./platform/index.js";

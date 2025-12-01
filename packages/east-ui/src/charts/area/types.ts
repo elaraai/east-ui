@@ -1,0 +1,128 @@
+/**
+ * Copyright (c) 2025 Elara AI Pty Ltd
+ * Licensed under AGPL-3.0. See LICENSE file for details.
+ */
+
+import {
+    type SubtypeExprOrValue,
+    OptionType,
+    StructType,
+    ArrayType,
+    BooleanType,
+    FloatType,
+    IntegerType,
+    StringType,
+    DictType,
+    LiteralValueType,
+} from "@elaraai/east";
+
+import {
+    ChartSeriesType,
+    ChartAxisType,
+    ChartGridType,
+    ChartTooltipType,
+    ChartLegendType,
+    ChartMarginType,
+    CurveType,
+    StackOffsetType,
+    type CurveLiteral,
+    type StackOffsetLiteral,
+    type BaseChartStyle,
+} from "../types.js";
+
+// ============================================================================
+// Area Chart Type
+// ============================================================================
+
+/**
+ * Area chart component type.
+ *
+ * @remarks
+ * Area charts display quantitative data with filled areas under line curves.
+ * Supports stacking for showing part-to-whole relationships.
+ *
+ * @property data - Array of data points (flexible shape via runtime)
+ * @property series - Series configuration for multi-series charts
+ * @property xAxis - X-axis configuration
+ * @property yAxis - Y-axis configuration
+ * @property curveType - Line curve interpolation type
+ * @property stacked - Enable stacking of series
+ * @property stackOffset - Stack offset mode (none, expand, etc.)
+ * @property grid - Grid configuration
+ * @property tooltip - Tooltip configuration
+ * @property legend - Legend configuration
+ * @property margin - Chart margin configuration
+ * @property fillOpacity - Fill opacity (0-1)
+ * @property connectNulls - Connect line across null data points
+ */
+export const AreaChartType = StructType({
+    data: ArrayType(DictType(StringType, LiteralValueType)),
+    series: ArrayType(ChartSeriesType),
+    xAxis: OptionType(ChartAxisType),
+    yAxis: OptionType(ChartAxisType),
+    curveType: OptionType(CurveType),
+    stacked: OptionType(BooleanType),
+    stackOffset: OptionType(StackOffsetType),
+    grid: OptionType(ChartGridType),
+    tooltip: OptionType(ChartTooltipType),
+    legend: OptionType(ChartLegendType),
+    margin: OptionType(ChartMarginType),
+    fillOpacity: OptionType(FloatType),
+    connectNulls: OptionType(BooleanType),
+});
+
+/**
+ * Type representing an area chart.
+ */
+export type AreaChartType = typeof AreaChartType;
+
+// ============================================================================
+// Area Chart Style
+// ============================================================================
+
+/**
+ * TypeScript interface for Area chart style options.
+ *
+ * @remarks
+ * All properties are optional and accept either static values or East expressions.
+ */
+export interface AreaChartStyle extends BaseChartStyle {
+    /** X-axis configuration */
+    xAxis?: SubtypeExprOrValue<ChartAxisType>;
+    /** Y-axis configuration */
+    yAxis?: SubtypeExprOrValue<ChartAxisType>;
+    /** Line curve interpolation type */
+    curveType?: SubtypeExprOrValue<CurveType> | CurveLiteral;
+    /** Enable stacking of series */
+    stacked?: SubtypeExprOrValue<BooleanType>;
+    /** Stack offset mode (none, expand for 100%, etc.) */
+    stackOffset?: SubtypeExprOrValue<StackOffsetType> | StackOffsetLiteral;
+    /** Fill opacity (0-1, applies to all series unless overridden per-series) */
+    fillOpacity?: SubtypeExprOrValue<FloatType>;
+    /** Connect line across null data points */
+    connectNulls?: SubtypeExprOrValue<BooleanType>;
+    /** Chart margin configuration */
+    margin?: SubtypeExprOrValue<ChartMarginType>;
+}
+
+/**
+ * Series configuration for Area charts (used in createAreaChart).
+ */
+export interface AreaChartSeriesConfig {
+    /** Chakra color token (e.g., "teal.solid", "blue.500") */
+    color?: SubtypeExprOrValue<StringType>;
+    /** Stack group ID (same stackId = stacked together) */
+    stackId?: SubtypeExprOrValue<StringType>;
+    /** Display label (defaults to name) */
+    label?: SubtypeExprOrValue<StringType>;
+    /** Stroke/line color (defaults to color) */
+    stroke?: SubtypeExprOrValue<StringType>;
+    /** Stroke/line width in pixels */
+    strokeWidth?: SubtypeExprOrValue<IntegerType>;
+    /** Fill color (defaults to color) */
+    fill?: SubtypeExprOrValue<StringType>;
+    /** Fill opacity (0-1) */
+    fillOpacity?: SubtypeExprOrValue<FloatType>;
+    /** Dash pattern for dashed lines (e.g., "5 5") */
+    strokeDasharray?: SubtypeExprOrValue<StringType>;
+}

@@ -1,0 +1,38 @@
+{
+  "name": "@elaraai/east-ui-showcase",
+  "version": "0.0.1-beta.0",
+  "private": true,
+  "description": "Showcase and development app for East UI components",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^3.0.0",
+    "@elaraai/east": "file:../../../East",
+    "@elaraai/east-ui": "*",
+    "@elaraai/east-ui-components": "*",
+    "@emotion/react": "^11.14.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.42.0",
+    "@typescript-eslint/parser": "^8.42.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "eslint": "^9.34.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "typescript": "~5.9.2",
+    "vite": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
