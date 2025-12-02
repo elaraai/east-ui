@@ -1,6 +1,6 @@
 {
   "name": "@elaraai/east-ui-showcase",
-  "version": "0.0.1-beta.0",
+  "version": "0.0.1-beta.2",
   "private": true,
   "description": "Showcase and development app for East UI components",
   "type": "module",

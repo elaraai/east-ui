@@ -31,6 +31,7 @@ import { EastChakraTabs } from "./disclosure/tabs";
 import { EastChakraDataList } from "./collections/data-list";
 import { EastChakraTable } from "./collections/table";
 import { EastChakraTreeView } from "./collections/tree-view";
+import { EastChakraGantt } from "./collections/gantt";
 import { EastChakraIcon } from "./display/icon";
 import { EastChakraBadge } from "./display/badge";
 import { EastChakraTag } from "./display/tag";
@@ -124,6 +125,7 @@ export const EastChakraComponent = memo(function EastChakraComponent({ value }: 
             // Collections
             DataList: (v) => <EastChakraDataList value={v} />,
             Table: (v) => <EastChakraTable value={v} />,
+            Gantt: (v) => <EastChakraGantt value={v} />,
 
             // Charts
             Sparkline: (v) => <EastChakraSparkline value={v} />,

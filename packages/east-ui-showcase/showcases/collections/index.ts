@@ -9,4 +9,5 @@
 export { default as dataListShowcase } from "./data-list";
 export { default as tableShowcase } from "./table";
 export { default as treeViewShowcase } from "./tree-view";
+export { default as ganttShowcase } from "./gantt";
 export { default as allShowcase } from "./all";

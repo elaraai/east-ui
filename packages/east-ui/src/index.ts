@@ -47,7 +47,7 @@ export { Badge, Tag, Avatar, Stat, Icon, type IconName } from "./display/index.j
 export { Card } from "./container/index.js";
 
 // Collections
-export { DataList, Table, TreeView } from "./collections/index.js";
+export { DataList, Table, TreeView, Gantt } from "./collections/index.js";
 
 // Charts
 export { Chart, Sparkline } from "./charts/index.js";
