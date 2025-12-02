@@ -3,41 +3,39 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import * as esbuild from 'esbuild';
+import ts from 'typescript';
 import * as path from 'path';
+import * as fs from 'fs';
 import * as vm from 'vm';
+import Module from 'module';
 import type { FunctionIR } from '../types.js';
 
 export async function loadTypeScriptFile(filePath: string): Promise<FunctionIR> {
-    // Bundle the TypeScript file with all dependencies
-    const result = await esbuild.build({
-        entryPoints: [filePath],
-        bundle: true,
-        write: false,
-        format: 'cjs',
-        platform: 'node',
-        target: 'node22',
-        // Externalize node built-ins but bundle everything else
-        external: [],
-        // Resolve workspace packages
-        nodePaths: [path.resolve(__dirname, '../../node_modules')],
-        // Source maps for better error messages
-        sourcemap: 'inline',
+    // Read the TypeScript file
+    const tsCode = fs.readFileSync(filePath, 'utf-8');
+
+    // Transpile TypeScript to JavaScript
+    const result = ts.transpileModule(tsCode, {
+        compilerOptions: {
+            module: ts.ModuleKind.CommonJS,
+            target: ts.ScriptTarget.ES2022,
+            esModuleInterop: true,
+            sourceMap: true,
+        },
+        fileName: filePath,
     });
 
-    if (result.errors.length > 0) {
-        const errorMessages = result.errors.map(e => e.text).join('\n');
-        throw new Error(`Failed to bundle TypeScript file:\n${errorMessages}`);
-    }
+    const transpiledCode = result.outputText;
 
-    const bundledCode = result.outputFiles[0].text;
+    // Create a require function that resolves from user's project directory
+    const userRequire = Module.createRequire(filePath);
 
-    // Execute the bundled code to get the exported function
+    // Execute the transpiled code to get the exported function
     const module = { exports: {} as Record<string, unknown> };
     const context = vm.createContext({
         module,
         exports: module.exports,
-        require: require,
+        require: userRequire,
         console,
         Buffer,
         process,
@@ -46,12 +44,12 @@ export async function loadTypeScriptFile(filePath: string): Promise<FunctionIR> 
     });
 
     try {
-        vm.runInContext(bundledCode, context, {
+        vm.runInContext(transpiledCode, context, {
             filename: filePath,
         });
     } catch (error) {
         throw new Error(
-            `Failed to execute bundled code: ${error instanceof Error ? error.message : String(error)}`
+            `Failed to execute transpiled code: ${error instanceof Error ? error.message : String(error)}`
         );
     }
 

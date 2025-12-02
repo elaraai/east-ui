@@ -1,4 +1,4 @@
-.PHONY: install build test lint dev clean extension extension-install set-east-version
+.PHONY: install build test lint dev clean extension extension-install set-east-version version-prerelease version-patch version-minor version-major
 
 # Install all workspace dependencies
 install:
@@ -43,3 +43,16 @@ endif
 	@echo "Updating @elaraai/east to version $(VERSION)..."
 	@find packages -name "package.json" -exec sed -i 's/"@elaraai\/east": "[^"]*"/"@elaraai\/east": "^$(VERSION)"/g' {} \;
 	@echo "Done. Run 'npm install' to update dependencies."
+
+# Bump all package versions
+version-prerelease:
+	. ${NVM_DIR}/nvm.sh && nvm use && npm run version:all:prerelease
+
+version-patch:
+	. ${NVM_DIR}/nvm.sh && nvm use && npm run version:all:patch
+
+version-minor:
+	. ${NVM_DIR}/nvm.sh && nvm use && npm run version:all:minor
+
+version-major:
+	. ${NVM_DIR}/nvm.sh && nvm use && npm run version:all:major

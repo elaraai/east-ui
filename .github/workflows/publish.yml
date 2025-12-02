@@ -81,12 +81,12 @@ jobs:
       # 4. VSCode Extension
       - name: Build VSCode extension
         if: ${{ inputs.publish_vscode }}
-        run: npm run build && npm run prepackage && npm run package
+        run: npm run build && npm run package
         working-directory: packages/east-ui-extension
 
       - name: Publish VSCode extension
         if: ${{ inputs.publish_vscode }}
-        run: npx vsce publish --no-dependencies
+        run: npx vsce publish --no-dependencies ${{ inputs.npm_tag == 'beta' && '--pre-release' || '' }}
         working-directory: packages/east-ui-extension
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
