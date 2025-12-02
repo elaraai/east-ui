@@ -3,6 +3,7 @@ import { UIComponentType, Stack, Text } from "@elaraai/east-ui";
 import dataListShowcase from "./data-list";
 import tableShowcase from "./table";
 import treeViewShowcase from "./tree-view";
+import ganttShowcase from "./gantt";
 
 /**
  * Combined collections showcase - all collection components in one East.function.
@@ -18,6 +19,8 @@ export default East.function(
             $(tableShowcase()),
             Text.Root("TreeView", { fontWeight: "bold", fontSize: "lg" }),
             $(treeViewShowcase()),
+            Text.Root("Gantt", { fontWeight: "bold", fontSize: "lg" }),
+            $(ganttShowcase()),
         ], { gap: "8", align: "stretch" });
     }
 );

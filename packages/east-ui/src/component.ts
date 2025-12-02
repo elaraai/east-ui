@@ -56,6 +56,7 @@ import { IconType } from "./display/icon/types.js";
 // Collections
 import { DataListRootType } from "./collections/data-list/index.js";
 import { TableColumnType, TableStyleType, TableValueLiteral } from "./collections/table/types.js";
+import { GanttEventType, GanttStyleType } from "./collections/gantt/types.js";
 // import { TreeViewStyleType } from "./collections/tree-view/types.js";
 
 // Charts
@@ -268,6 +269,18 @@ export const UIComponentType = RecursiveType(node => VariantType({
         }))),
         columns: ArrayType(TableColumnType),
         style: OptionType(TableStyleType),
+    }),
+
+    Gantt: StructType({
+        rows: ArrayType(StructType({
+            cells: DictType(StringType, StructType({
+                value: TableValueLiteral,
+                content: node,
+            })),
+            events: ArrayType(GanttEventType),
+        })),
+        columns: ArrayType(TableColumnType),
+        style: OptionType(GanttStyleType),
     }),
 
     // Disclosure
