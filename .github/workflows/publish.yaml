@@ -62,7 +62,7 @@ jobs:
       # 1. east-ui (core types and platform functions)
       - name: Publish @elaraai/east-ui
         if: ${{ inputs.publish_east_ui }}
-        run: npm publish --access public --tag ${{ inputs.npm_tag }} --provenance
+        run: npm publish --access public --provenance --tag ${{ inputs.npm_tag }}
         working-directory: packages/east-ui
 
       # 2. east-ui-components (depends on east-ui)
@@ -75,7 +75,7 @@ jobs:
 
       - name: Publish @elaraai/east-ui-components
         if: ${{ inputs.publish_east_ui_components }}
-        run: npm publish --access public --tag ${{ inputs.npm_tag }} --provenance
+        run: npm publish --access public --provenance --tag ${{ inputs.npm_tag }}
         working-directory: packages/east-ui-components
 
       # 4. VSCode Extension
