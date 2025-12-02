@@ -36,10 +36,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: 22.x
+          cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
+
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@latest
 
       - name: Install dependencies
         run: npm ci
@@ -61,6 +66,13 @@ jobs:
         working-directory: packages/east-ui
 
       # 2. east-ui-components (depends on east-ui)
+      - name: Update east-ui-components workspace dependency
+        if: ${{ inputs.publish_east_ui_components }}
+        run: |
+          EAST_UI_VERSION=$(node -p "require('./packages/east-ui/package.json').version")
+          cd packages/east-ui-components
+          npm pkg set "dependencies.@elaraai/east-ui=^${EAST_UI_VERSION}"
+
       - name: Publish @elaraai/east-ui-components
         if: ${{ inputs.publish_east_ui_components }}
         run: npm publish --access public --tag ${{ inputs.npm_tag }} --provenance
