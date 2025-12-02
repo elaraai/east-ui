@@ -821,6 +821,151 @@ export function VerticalAlign(align: "top" | "middle" | "bottom" | "baseline"): 
 }
 
 // ============================================================================
+// Text Overflow
+// ============================================================================
+
+/**
+ * Text overflow variant type for controlling text overflow behavior.
+ *
+ * @remarks
+ * Create instances using the {@link TextOverflow} function.
+ *
+ * @property clip - Clip overflowing text
+ * @property ellipsis - Show ellipsis (...) for overflowing text
+ */
+export const TextOverflowType = VariantType({
+    clip: NullType,
+    ellipsis: NullType,
+});
+
+/**
+ * Type representing text overflow variant values.
+ */
+export type TextOverflowType = typeof TextOverflowType;
+
+/**
+ * String literal type for text overflow values.
+ */
+export type TextOverflowLiteral = "clip" | "ellipsis";
+
+/**
+ * Creates a text overflow variant expression.
+ *
+ * @param overflow - The text overflow value
+ * @returns An East expression representing the text overflow
+ *
+ * @example
+ * ```ts
+ * import { Style } from "@elaraai/east-ui";
+ *
+ * Style.TextOverflow("ellipsis");
+ * ```
+ */
+export function TextOverflow(overflow: "clip" | "ellipsis"): ExprType<TextOverflowType> {
+    return East.value(variant(overflow, null), TextOverflowType);
+}
+
+// ============================================================================
+// White Space
+// ============================================================================
+
+/**
+ * White space variant type for controlling whitespace handling.
+ *
+ * @remarks
+ * Create instances using the {@link WhiteSpace} function.
+ *
+ * @property normal - Normal whitespace handling (wraps text)
+ * @property nowrap - Prevent text wrapping
+ * @property pre - Preserve whitespace and newlines
+ * @property pre-wrap - Preserve whitespace but allow wrapping
+ * @property pre-line - Collapse whitespace but preserve newlines
+ */
+export const WhiteSpaceType = VariantType({
+    normal: NullType,
+    nowrap: NullType,
+    pre: NullType,
+    "pre-wrap": NullType,
+    "pre-line": NullType,
+});
+
+/**
+ * Type representing white space variant values.
+ */
+export type WhiteSpaceType = typeof WhiteSpaceType;
+
+/**
+ * String literal type for white space values.
+ */
+export type WhiteSpaceLiteral = "normal" | "nowrap" | "pre" | "pre-wrap" | "pre-line";
+
+/**
+ * Creates a white space variant expression.
+ *
+ * @param whiteSpace - The white space value
+ * @returns An East expression representing the white space handling
+ *
+ * @example
+ * ```ts
+ * import { Style } from "@elaraai/east-ui";
+ *
+ * Style.WhiteSpace("nowrap");
+ * ```
+ */
+export function WhiteSpace(whiteSpace: "normal" | "nowrap" | "pre" | "pre-wrap" | "pre-line"): ExprType<WhiteSpaceType> {
+    return East.value(variant(whiteSpace, null), WhiteSpaceType);
+}
+
+// ============================================================================
+// Overflow
+// ============================================================================
+
+/**
+ * Overflow variant type for controlling element overflow behavior.
+ *
+ * @remarks
+ * Create instances using the {@link Overflow} function.
+ *
+ * @property visible - Content is not clipped
+ * @property hidden - Content is clipped with no scrollbars
+ * @property scroll - Content is clipped with scrollbars always visible
+ * @property auto - Content is clipped with scrollbars as needed
+ */
+export const OverflowType = VariantType({
+    visible: NullType,
+    hidden: NullType,
+    scroll: NullType,
+    auto: NullType,
+});
+
+/**
+ * Type representing overflow variant values.
+ */
+export type OverflowType = typeof OverflowType;
+
+/**
+ * String literal type for overflow values.
+ */
+export type OverflowLiteral = "visible" | "hidden" | "scroll" | "auto";
+
+/**
+ * Creates an overflow variant expression.
+ *
+ * @param overflow - The overflow value
+ * @returns An East expression representing the overflow behavior
+ *
+ * @example
+ * ```ts
+ * import { Style } from "@elaraai/east-ui";
+ *
+ * Style.Overflow("hidden");
+ * ```
+ */
+export function Overflow(overflow: "visible" | "hidden" | "scroll" | "auto"): ExprType<OverflowType> {
+    return East.value(variant(overflow, null), OverflowType);
+}
+
+// ============================================================================
 // Style Namespace Export
 // ============================================================================
 
@@ -870,4 +1015,7 @@ export const Style = {
     VerticalAlign,
     FlexWrap,
     Display,
+    TextOverflow,
+    WhiteSpace,
+    Overflow,
 } as const;

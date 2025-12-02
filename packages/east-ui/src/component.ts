@@ -13,7 +13,7 @@ import {
     IntegerType,
     FloatType,
     BooleanType,
-    DictType,
+    DictType
 } from "@elaraai/east";
 
 // Typography
@@ -55,7 +55,7 @@ import { IconType } from "./display/icon/types.js";
 
 // Collections
 import { DataListRootType } from "./collections/data-list/index.js";
-import { TableColumnType, TableStyleType } from "./collections/table/types.js";
+import { TableColumnType, TableStyleType, TableValueLiteral } from "./collections/table/types.js";
 // import { TreeViewStyleType } from "./collections/tree-view/types.js";
 
 // Charts
@@ -262,7 +262,10 @@ export const UIComponentType = RecursiveType(node => VariantType({
     }),
 
     Table: StructType({
-        rows: ArrayType(DictType(StringType, node)),
+        rows: ArrayType(DictType(StringType, StructType({
+            value: TableValueLiteral,
+            content: node,
+        }))),
         columns: ArrayType(TableColumnType),
         style: OptionType(TableStyleType),
     }),

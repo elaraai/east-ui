@@ -14,7 +14,7 @@
         "react-dom": "^18.3.1",
         "@chakra-ui/react": "^3.2.3",
         "@emotion/react": "^11.14.0",
-        "@elaraai/east": "file:../../../../East",
+        "@elaraai/east": "^0.0.1-beta.1",
         "@elaraai/east-ui": "*",
         "@elaraai/east-ui-components": "*"
     },

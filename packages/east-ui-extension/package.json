@@ -2,14 +2,24 @@
     "name": "east-ui-preview",
     "displayName": "East UI Preview",
     "description": "Live preview of East UI components from TypeScript or IR files",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "ElaraAI",
     "license": "SEE LICENSE IN LICENSE",
     "engines": {
         "vscode": "^1.85.0"
     },
-    "categories": ["Visualization", "Other"],
-    "keywords": ["east", "ui", "preview", "ir", "components", "typescript"],
+    "categories": [
+        "Visualization",
+        "Other"
+    ],
+    "keywords": [
+        "east",
+        "ui",
+        "preview",
+        "ir",
+        "components",
+        "typescript"
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/elaraai/east-ui"
@@ -50,7 +60,7 @@
         "lint": "eslint ."
     },
     "dependencies": {
-        "@elaraai/east": "^0.0.1-beta.0",
+        "@elaraai/east": "^0.0.1-beta.1",
         "@elaraai/east-ui": "*",
         "esbuild": "^0.24.0"
     },

@@ -6,7 +6,6 @@
 import {
     type ExprType,
     type SubtypeExprOrValue,
-    type EastType,
     East,
     Expr,
     StructType,
@@ -16,7 +15,7 @@ import {
     BooleanType,
     OptionType,
     variant,
-    type TypeOf
+    type TypeOf, some, type ValueTypeOf
 } from "@elaraai/east";
 
 import {
@@ -28,7 +27,10 @@ import {
     TableStyleType,
     TableColumnType,
     TableSizeType,
-    type TableStyle
+    type TableStyle,
+    TableValueLiteral,
+    type TableValueType,
+    TableValueTypeType
 } from "./types.js";
 import { UIComponentType } from "../../component.js";
 import { Text } from "../../typography/index.js";
@@ -42,6 +44,21 @@ export {
     type TableSizeLiteral,
     type TableStyle,
 } from "./types.js";
+
+/**
+ * East type for a table cell.
+ *
+ * @remarks
+ * Defines the type for a table cell.
+ *
+ * @property value - The cell value as a literal
+ * @property content - Optional UI component content for the cell
+ */
+export const TableCellType = StructType({
+    value: TableValueLiteral,
+    content: UIComponentType,
+});
+
 
 // ============================================================================
 // Table Root Type
@@ -58,10 +75,12 @@ export {
  * @property style - Optional styling configuration
  */
 export const TableRootType = StructType({
-    rows: ArrayType(DictType(StringType, UIComponentType)),
+    rows: ArrayType(DictType(StringType, TableCellType)),
     columns: ArrayType(TableColumnType),
     style: OptionType(TableStyleType),
 });
+
+
 
 /**
  * Type representing the Table structure.
@@ -84,7 +103,7 @@ export type TableRootType = typeof TableRootType;
  * @property header - Column header text (defaults to column key)
  * @property render - Function to render the cell content from field value
  */
-export interface TableColumnConfig<FieldType extends EastType = EastType> {
+export interface TableColumnConfig<FieldType extends TableValueType = TableValueType> {
     /** Column header text (defaults to column key if not provided) */
     header?: SubtypeExprOrValue<StringType>;
     /** Optional render function - defaults to Text.Root (with auto string conversion for non-strings) */
@@ -132,8 +151,8 @@ export interface TableColumnConfig<FieldType extends EastType = EastType> {
 // Helper types to extract struct fields from array data type
 type ExtractStructFields<T> = T extends ArrayType<infer S>
     ? S extends StructType
-        ? S["fields"]
-        : never
+    ? S["fields"]
+    : never
     : never;
 
 type DataFields<T extends SubtypeExprOrValue<ArrayType<StructType>>> = ExtractStructFields<TypeOf<T>>;
@@ -152,39 +171,56 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
     const field_types = Expr.type(data_expr).value.fields;
 
     // Normalize columns to object format
-    const columns_obj: Record<string, TableColumnConfig> = Array.isArray(columns)
-        ? Object.fromEntries((columns as string[]).map(key => [key, {}]))
-        : columns as Record<string, TableColumnConfig>;
-
+    const columns_obj: Record<string, TableColumnConfig & { type: ValueTypeOf<typeof TableValueTypeType> }> = Array.isArray(columns)
+        ? Object.fromEntries((columns as string[]).map(key => [key, {
+            type: variant(field_types[key as keyof typeof field_types].type, null)
+        }]))  as Record<string, TableColumnConfig & { type: ValueTypeOf<typeof TableValueTypeType> }>
+        : Object.fromEntries((Object.entries(columns)).map(([key, value]) => [key, {
+            ...value,
+            type: variant(field_types[key as keyof typeof field_types].type, null)
+        }])) as Record<string, TableColumnConfig & { type: ValueTypeOf<typeof TableValueTypeType> }>;
     // Map each data row to a Dict<String, UIComponentType> by calling render functions
     const rows_mapped = data_expr.map(($, datum) => {
-        const ret = $.let(new Map(), DictType(StringType, UIComponentType));
+        const ret = $.let(new Map(), DictType(StringType, StructType({
+            value: TableValueLiteral,
+            content: UIComponentType
+        })));
         for (const [col_key, col_config] of Object.entries(columns_obj)) {
             const field_value = (datum as any)[col_key];
             const field_type = field_types[col_key];
-
-            // Use custom render if provided, otherwise default to Text
-            let cell_value: ExprType<UIComponentType>;
+            let value = variant(field_type.type, field_value);
+            // Use custom render if provided, otherwise default to Text with ellipsis overflow
+            let content: ValueTypeOf<UIComponentType>;
             if (col_config.render) {
-                cell_value = col_config.render(field_value);
-            } else if (field_type?.type === "string") {
-                // String field - render directly as Text
-                cell_value = Text.Root(field_value);
+                content = col_config.render(field_value) as any
             } else {
-                // Non-string field - convert to string first
-                cell_value = Text.Root(East.str`${field_value}`);
+                content = Text.Root(East.str`${field_value}`, {
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                }) as any
             }
-            $(ret.insert(col_key, cell_value));
+            $(ret.insert(col_key, { value, content }));
         }
         return ret;
     });
 
     // Create columns array from the columns config
-    const columns_mapped = Object.entries(columns_obj).map(([key, config]) => ({
-        key: key,
-        header: config?.header !== undefined ? variant("some", config.header) : variant("some", key),
-    }));
-
+    const columns_mapped: ValueTypeOf<ArrayType<typeof TableColumnType>> = []
+    for(const [key, config] of Object.entries(columns_obj)) {
+        if(config.type.type !== "Boolean" &&
+           config.type.type !== "Integer" &&
+           config.type.type !== "Float" &&
+           config.type.type !== "String" &&
+           config.type.type !== "DateTime") {
+            throw new Error(`Table column type for key "${key}" must be one of Boolean, Integer, Float, String, or DateTime.`);
+        }
+        columns_mapped.push({
+            key: key,
+            type: config.type,
+            header: config?.header !== undefined ? some(config.header) : some(key) as any,
+        });
+    }
     // Build the style object
     const variantValue = style?.variant
         ? (typeof style.variant === "string"
@@ -211,7 +247,7 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
 
     return East.value(variant("Table", {
         rows: rows_mapped,
-        columns: columns_mapped,
+        columns: columns_mapped as ValueTypeOf<typeof TableRootType>["columns"],
         style: style ? variant("some", East.value({
             variant: variantValue ? variant("some", variantValue) : variant("none", null),
             size: sizeValue ? variant("some", sizeValue) : variant("none", null),
@@ -257,6 +293,8 @@ export const Table = {
         Root: TableRootType,
         Style: TableStyleType,
         Column: TableColumnType,
+        Cell: TableCellType,
+        Value: TableValueLiteral,
         Variant: TableVariantType,
         Size: TableSizeType,
     },

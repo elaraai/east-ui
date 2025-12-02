@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^3.0.0",
-    "@elaraai/east": "^0.0.1-beta.0",
+    "@elaraai/east": "^0.0.1-beta.1",
     "@elaraai/east-ui": "*",
     "@elaraai/east-ui-components": "*",
     "@emotion/react": "^11.14.0",

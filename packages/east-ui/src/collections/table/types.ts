@@ -11,6 +11,9 @@ import {
     StringType,
     BooleanType,
     NullType,
+    IntegerType,
+    FloatType,
+    DateTimeType,
 } from "@elaraai/east";
 
 import {
@@ -137,6 +140,38 @@ export interface TableStyle {
 }
 
 // ============================================================================
+// Table Value Type (for serialization)
+// ============================================================================
+
+
+/**
+ * Type representing the Table structure.
+ */
+export type TableValueType = BooleanType | IntegerType | FloatType | StringType | DateTimeType;
+
+/**
+ * Type representing the Table structure.
+ */
+export const TableValueLiteral = VariantType({
+    Boolean: BooleanType,
+    Integer: IntegerType,
+    Float: FloatType,
+    String: StringType,
+    DateTime: DateTimeType,
+});
+
+/**
+ * Type representing the Table structure.
+ */
+export const TableValueTypeType = VariantType({
+    Boolean: NullType,
+    Integer: NullType,
+    Float: NullType,
+    String: NullType,
+    DateTime: NullType,
+});
+
+// ============================================================================
 // Table Column Type (for serialization)
 // ============================================================================
 
@@ -147,10 +182,12 @@ export interface TableStyle {
  * Defines the header text and key for a column.
  *
  * @property key - The column key (field name)
+ * @property type - The column value type
  * @property header - Optional header text for the column
  */
 export const TableColumnType = StructType({
     key: StringType,
+    type: TableValueTypeType,
     header: OptionType(StringType),
 });
 

@@ -16,9 +16,12 @@ import {
     BorderWidthType,
     FontStyleType,
     FontWeightType,
+    OverflowType,
     SizeType,
     TextAlignType,
+    TextOverflowType,
     TextTransformType,
+    WhiteSpaceType,
 } from "../style.js";
 import { UIComponentType } from "../component.js";
 import { TextType, type TextStyle } from "./types.js";
@@ -74,7 +77,6 @@ function createText(
             : style.fontStyle)
         : undefined;
 
-
     const fontSize = style?.fontSize
         ? (typeof style.fontSize === "string"
             ? East.value(variant(style.fontSize, null), SizeType)
@@ -105,6 +107,24 @@ function createText(
             : style.borderStyle)
         : undefined;
 
+    const textOverflowValue = style?.textOverflow
+        ? (typeof style.textOverflow === "string"
+            ? East.value(variant(style.textOverflow, null), TextOverflowType)
+            : style.textOverflow)
+        : undefined;
+
+    const whiteSpaceValue = style?.whiteSpace
+        ? (typeof style.whiteSpace === "string"
+            ? East.value(variant(style.whiteSpace, null), WhiteSpaceType)
+            : style.whiteSpace)
+        : undefined;
+
+    const overflowValue = style?.overflow
+        ? (typeof style.overflow === "string"
+            ? East.value(variant(style.overflow, null), OverflowType)
+            : style.overflow)
+        : undefined;
+
     return East.value(variant("Text", {
         value: value,
         color: style?.color ? variant("some", style.color) : variant("none", null),
@@ -114,6 +134,9 @@ function createText(
         fontSize: fontSize ? variant("some", fontSize) : variant("none", null),
         textTransform: textTransformValue ? variant("some", textTransformValue) : variant("none", null),
         textAlign: textAlignValue ? variant("some", textAlignValue) : variant("none", null),
+        textOverflow: textOverflowValue ? variant("some", textOverflowValue) : variant("none", null),
+        whiteSpace: whiteSpaceValue ? variant("some", whiteSpaceValue) : variant("none", null),
+        overflow: overflowValue ? variant("some", overflowValue) : variant("none", null),
         borderWidth: borderWidthValue ? variant("some", borderWidthValue) : variant("none", null),
         borderStyle: borderStyleValue ? variant("some", borderStyleValue) : variant("none", null),
         borderColor: style?.borderColor ? variant("some", style.borderColor) : variant("none", null),

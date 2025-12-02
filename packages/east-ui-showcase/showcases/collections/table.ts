@@ -3,7 +3,7 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East } from "@elaraai/east";
+import { East, IntegerType } from "@elaraai/east";
 import { Table, UIComponentType, Grid, Badge } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -56,10 +56,10 @@ export default East.function(
                 "Alternating row colors for readability",
                 Table.Root(
                     [
-                        { product: "Widget A", price: "$29.99", stock: "150" },
-                        { product: "Widget B", price: "$49.99", stock: "75" },
-                        { product: "Widget C", price: "$19.99", stock: "200" },
-                        { product: "Widget D", price: "$39.99", stock: "50" },
+                        { product: "Widget A", price: "$29.99", stock: 150n },
+                        { product: "Widget B", price: "$49.99", stock: 75n },
+                        { product: "Widget C", price: "$19.99", stock: 200n },
+                        { product: "Widget D", price: "$39.99", stock: 50n },
                     ],
                     {
                         product: { header: "Product" },
@@ -98,11 +98,11 @@ export default East.function(
                 "Custom Render",
                 "Using Badge for status column",
                 Table.Root(
-                    [
-                        { name: "Alice Smith", email: "alice@example.com", status: "Active" },
-                        { name: "Bob Jones", email: "bob@example.com", status: "Pending" },
-                        { name: "Charlie Brown", email: "charlie@example.com", status: "Inactive" },
-                    ],
+                    East.Array.range(0n, 1000n).map(($, i) => ({
+                        name: East.str`User ${i}`,
+                        email: East.str`user${i}@example.com`,
+                        status: "Active",
+                    })),
                     {
                         name: { header: "Name" },
                         email: { header: "Email" },

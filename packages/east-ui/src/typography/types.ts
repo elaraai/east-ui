@@ -15,18 +15,24 @@ import {
     BorderWidthType,
     FontStyleType,
     FontWeightType,
+    OverflowType,
     SizeType,
     TextAlignType,
+    TextOverflowType,
     TextTransformType,
+    WhiteSpaceType,
 } from "../style.js";
 import type {
     BorderStyleLiteral,
     BorderWidthLiteral,
     FontStyleLiteral,
     FontWeightLiteral,
+    OverflowLiteral,
     SizeLiteral,
     TextAlignLiteral,
+    TextOverflowLiteral,
     TextTransformLiteral,
+    WhiteSpaceLiteral,
 } from "../style.js";
 
 // ============================================================================
@@ -60,6 +66,9 @@ export const TextType = StructType({
     fontSize: OptionType(SizeType),
     textTransform: OptionType(TextTransformType),
     textAlign: OptionType(TextAlignType),
+    textOverflow: OptionType(TextOverflowType),
+    whiteSpace: OptionType(WhiteSpaceType),
+    overflow: OptionType(OverflowType),
     borderWidth: OptionType(BorderWidthType),
     borderStyle: OptionType(BorderStyleType),
     borderColor: OptionType(StringType),
@@ -101,12 +110,18 @@ export type TextStyle = {
     fontWeight?: SubtypeExprOrValue<FontWeightType> | FontWeightLiteral;
     /** Font style variant */
     fontStyle?: SubtypeExprOrValue<FontStyleType> | FontStyleLiteral;
-    /** Fone sizt */
-    fontSize?: SubtypeExprOrValue<SizeType> | SizeLiteral
+    /** Font size */
+    fontSize?: SubtypeExprOrValue<SizeType> | SizeLiteral;
     /** Text transform variant */
     textTransform?: SubtypeExprOrValue<TextTransformType> | TextTransformLiteral;
     /** Horizontal text alignment */
     textAlign?: SubtypeExprOrValue<TextAlignType> | TextAlignLiteral;
+    /** Text overflow behavior (clip or ellipsis) */
+    textOverflow?: SubtypeExprOrValue<TextOverflowType> | TextOverflowLiteral;
+    /** White space handling (normal, nowrap, pre, etc.) */
+    whiteSpace?: SubtypeExprOrValue<WhiteSpaceType> | WhiteSpaceLiteral;
+    /** Overflow behavior (visible, hidden, scroll, auto) */
+    overflow?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
     /** Border width for all sides */
     borderWidth?: SubtypeExprOrValue<BorderWidthType> | BorderWidthLiteral;
     /** Border style for all sides */
