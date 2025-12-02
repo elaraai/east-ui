@@ -5,6 +5,7 @@ coverage
 *.beast
 *.avro
 *.csv
+*.vsix
 
 # Allow important config files
 !package.json

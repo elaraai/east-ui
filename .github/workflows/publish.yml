@@ -81,7 +81,7 @@ jobs:
       # 4. VSCode Extension
       - name: Build VSCode extension
         if: ${{ inputs.publish_vscode }}
-        run: npm run build && npm run package
+        run: npm run build && npm run prepackage && npm run package
         working-directory: packages/east-ui-extension
 
       - name: Publish VSCode extension
