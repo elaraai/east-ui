@@ -2,7 +2,7 @@
     "name": "east-ui-preview",
     "displayName": "East UI Preview",
     "description": "Live preview of East UI components from TypeScript or IR files",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "publisher": "ElaraAI",
     "license": "SEE LICENSE IN LICENSE",
     "engines": {
