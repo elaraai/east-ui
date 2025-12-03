@@ -214,12 +214,101 @@ function DataListRoot(
  * ```
  */
 export const DataList = {
+    /**
+     * Creates a DataList component with items and optional styling.
+     *
+     * @param items - Array of DataList items
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the data list component
+     *
+     * @remarks
+     * DataList is used to display structured label-value pairs, commonly used
+     * for displaying metadata, details, or key-value information.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { DataList, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return DataList.Root([
+     *         DataList.Item("Name", "John Doe"),
+     *         DataList.Item("Email", "john@example.com"),
+     *         DataList.Item("Role", "Administrator"),
+     *     ], {
+     *         orientation: "horizontal",
+     *     });
+     * });
+     * ```
+     */
     Root: DataListRoot,
+    /**
+     * Creates a DataList item with label and value.
+     *
+     * @param label - The term/label for this item
+     * @param value - The definition/value for this item
+     * @returns An East expression representing the data list item
+     *
+     * @remarks
+     * Each DataList item represents a single label-value pair.
+     * Items are typically created as an array passed to DataList.Root.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { DataList, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return DataList.Root([
+     *         DataList.Item("Status", "Active"),
+     *         DataList.Item("Count", "42"),
+     *     ]);
+     * });
+     * ```
+     */
     Item: DataListItem,
     Types: {
+        /**
+         * Type for DataList component data.
+         *
+         * @remarks
+         * DataList displays a list of label-value pairs, similar to an HTML
+         * description list (dl/dt/dd).
+         *
+         * @property items - Array of label-value items
+         * @property orientation - Layout direction (horizontal or vertical)
+         * @property size - Size of the data list
+         * @property variant - Visual variant (subtle or bold)
+         */
         Root: DataListRootType,
+        /**
+         * Type for DataList item data.
+         *
+         * @remarks
+         * Each item in a DataList has a label and value pair.
+         *
+         * @property label - The term/label for this item
+         * @property value - The definition/value for this item
+         */
         Item: DataListItemType,
+        /**
+         * Variant types for DataList visual style.
+         *
+         * @remarks
+         * - subtle: Light/subtle styling
+         * - bold: Bold/emphasized styling
+         */
         Variant: DataListVariantType,
+        /**
+         * Size options for DataList component.
+         *
+         * @remarks
+         * Chakra UI DataList only supports sm, md, lg sizes (not xs).
+         *
+         * @property sm - Small data list
+         * @property md - Medium data list (default)
+         * @property lg - Large data list
+         */
         Size: DataListSizeType,
     },
 } as const;

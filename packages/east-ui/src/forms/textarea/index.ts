@@ -148,13 +148,45 @@ function createTextarea(
  * ```
  */
 export const Textarea = {
-    /** Creates a Textarea component */
+    /**
+     * Creates a Textarea component.
+     *
+     * @param value - The current text value
+     * @param style - Optional style and configuration options
+     * @returns An East expression representing the Textarea component
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Textarea, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Textarea.Root("Hello world", {
+     *         placeholder: "Enter description",
+     *         rows: 4n,
+     *     });
+     * });
+     * ```
+     */
     Root: createTextarea,
-    /** Type definitions */
     Types: {
-        /** Textarea struct type */
+        /**
+         * Type for Textarea component data.
+         *
+         * @property value - Current text content
+         * @property placeholder - Placeholder text when empty
+         * @property rows - Number of visible text rows
+         * @property resize - Resize behavior (none, vertical, horizontal, both)
+         */
         Textarea: TextareaType,
-        /** Resize behavior variant type */
+        /**
+         * Resize behavior options for Textarea.
+         *
+         * @property none - No resizing allowed
+         * @property vertical - Only vertical resizing
+         * @property horizontal - Only horizontal resizing
+         * @property both - Both directions allowed
+         */
         Resize: TextareaResizeType,
     },
 } as const;

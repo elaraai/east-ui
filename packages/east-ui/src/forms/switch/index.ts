@@ -102,6 +102,26 @@ function createSwitch(
  * Use `Switch.Root(checked, style)` to create a switch, or access `Switch.Types.Switch` for the East type.
  */
 export const Switch = {
+    /**
+     * Creates a Switch component with checked state and optional styling.
+     *
+     * @param checked - Whether the switch is on
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the switch component
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Switch, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Switch.Root(true, {
+     *         label: "Dark mode",
+     *         colorPalette: "blue",
+     *     });
+     * });
+     * ```
+     */
     Root: createSwitch,
     Types: {
         Switch: SwitchType,

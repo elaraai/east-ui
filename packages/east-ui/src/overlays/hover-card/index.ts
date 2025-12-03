@@ -152,11 +152,88 @@ function createHoverCard(
  * ```
  */
 export const HoverCard = {
+    /**
+     * Creates a HoverCard component with a trigger and body content.
+     *
+     * @param trigger - The UI component that shows the hover card on hover
+     * @param body - Array of UI components for hover card content
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the hover card component
+     *
+     * @remarks
+     * HoverCard displays rich preview content when hovering over an element.
+     * Ideal for user profile previews, link previews, or contextual information.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { HoverCard, Text, Avatar, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return HoverCard.Root(
+     *         Text.Root("@username"),
+     *         [
+     *             Avatar.Root({ name: "John Doe" }),
+     *             Text.Root("Software Engineer"),
+     *         ],
+     *         { openDelay: 200n }
+     *     );
+     * });
+     * ```
+     */
     Root: createHoverCard,
     Types: {
+        /**
+         * East StructType for HoverCard component.
+         *
+         * @remarks
+         * HoverCard displays rich content when hovering over a trigger element.
+         * Similar to Tooltip but with more structured content (e.g., user profiles).
+         *
+         * @property trigger - The UI component that shows the hover card on hover
+         * @property body - Array of UI components for hover card content
+         * @property style - Optional style configuration
+         */
         HoverCard: HoverCardType,
+        /**
+         * Style type for HoverCard component.
+         *
+         * @property size - HoverCard size variant
+         * @property placement - Position relative to trigger
+         * @property hasArrow - Show arrow pointing to trigger
+         * @property openDelay - Delay before opening (ms)
+         * @property closeDelay - Delay before closing (ms)
+         */
         Style: HoverCardStyleType,
+        /**
+         * Size variant type for HoverCard component.
+         *
+         * @property xs - Extra small padding
+         * @property sm - Small padding
+         * @property md - Medium padding (default)
+         * @property lg - Large padding
+         */
         Size: HoverCardSizeType,
+        /**
+         * Placement options for Tooltip positioning.
+         *
+         * @remarks
+         * Controls where the tooltip appears relative to its trigger element.
+         * Supports all cardinal directions with start/end variations.
+         *
+         * @property top - Centered above the trigger
+         * @property top-start - Above, aligned to start
+         * @property top-end - Above, aligned to end
+         * @property bottom - Centered below the trigger
+         * @property bottom-start - Below, aligned to start
+         * @property bottom-end - Below, aligned to end
+         * @property left - Centered to the left
+         * @property left-start - Left, aligned to start
+         * @property left-end - Left, aligned to end
+         * @property right - Centered to the right
+         * @property right-start - Right, aligned to start
+         * @property right-end - Right, aligned to end
+         */
         Placement: PlacementType,
     },
 } as const;

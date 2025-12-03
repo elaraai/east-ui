@@ -143,13 +143,17 @@ function createSelectRoot(
  *
  * @example
  * ```ts
- * import { Select } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Select, UIComponentType } from "@elaraai/east-ui";
  *
- * const select = Select.Root(null, [
- *   Select.Item("us", "United States"),
- *   Select.Item("uk", "United Kingdom"),
- * ], {
- *   placeholder: "Select a country",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Select.Root("", [
+ *         Select.Item("us", "United States"),
+ *         Select.Item("uk", "United Kingdom"),
+ *         Select.Item("ca", "Canada"),
+ *     ], {
+ *         placeholder: "Select a country",
+ *     });
  * });
  * ```
  */

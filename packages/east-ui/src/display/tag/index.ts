@@ -111,9 +111,57 @@ function createTag(
  * ```
  */
 export const Tag = {
+    /**
+     * Creates a Tag component with label and optional styling.
+     *
+     * @param label - The tag text content
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the tag component
+     *
+     * @remarks
+     * Tag is used for categorization and filtering. Common uses include
+     * filter chips, labels, and removable categories.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Tag, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Tag.Root("Featured", {
+     *         colorPalette: "blue",
+     *         variant: "solid",
+     *     });
+     * });
+     * ```
+     */
     Root: createTag,
     Types: {
+        /**
+         * Type for Tag component data.
+         *
+         * @remarks
+         * Tag is used for categorization, filtering, and labeling items.
+         * Unlike Badge, Tags can be closable/removable.
+         *
+         * @property label - The tag text content
+         * @property variant - Visual variant (solid, subtle, outline)
+         * @property colorPalette - Color scheme for the tag
+         * @property size - Size of the tag (sm, md, lg, xl)
+         * @property closable - Whether the tag shows a close button
+         */
         Tag: TagType,
+        /**
+         * Size variant type for Tag component.
+         *
+         * @remarks
+         * Tag supports sm, md, lg, and xl sizes (no xs).
+         *
+         * @property sm - Small size
+         * @property md - Medium size (default)
+         * @property lg - Large size
+         * @property xl - Extra large size
+         */
         Size: TagSizeType,
     },
 } as const;

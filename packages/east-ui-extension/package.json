@@ -2,7 +2,7 @@
     "name": "east-ui-preview",
     "displayName": "East UI Preview",
     "description": "Live preview of East UI components from TypeScript or IR files",
-    "version": "0.0.4",
+    "version": "0.0.7",
     "publisher": "ElaraAI",
     "license": "SEE LICENSE IN LICENSE",
     "engines": {
@@ -49,23 +49,21 @@
     ],
     "scripts": {
         "build": "npm run build:extension && npm run build:webview",
-        "build:extension": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --external:esbuild --format=cjs --platform=node --target=node22",
+        "build:extension": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --target=node22",
         "build:webview": "cd webview && npm run build",
         "watch": "npm run build:extension -- --watch",
-        "prepackage": "mkdir -p dist/node_modules && cp -rL node_modules/esbuild dist/node_modules/ && cp -rL node_modules/@esbuild dist/node_modules/",
         "package": "vsce package --no-dependencies",
-        "postpackage": "rm -rf dist/node_modules",
         "publish": "vsce publish",
         "test": "echo 'No tests yet'",
         "lint": "eslint ."
     },
     "dependencies": {
         "@elaraai/east": "^0.0.1-beta.1",
-        "@elaraai/east-ui": "*",
-        "esbuild": "^0.24.0"
+        "@elaraai/east-ui": "*"
     },
     "devDependencies": {
         "@types/node": "^22.0.0",
+        "esbuild": "^0.24.0",
         "@types/vscode": "^1.85.0",
         "@typescript-eslint/eslint-plugin": "^8.32.1",
         "@typescript-eslint/parser": "^8.32.1",

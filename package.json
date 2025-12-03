@@ -1,6 +1,6 @@
 {
   "name": "east-ui-monorepo",
-  "version": "0.0.1-beta.0",
+  "version": "0.0.1-beta.4",
   "private": true,
   "description": "East UI - UI component library for the East language",
   "workspaces": [
@@ -22,10 +22,18 @@
     "version:extension:patch": "npm version patch --workspace=east-ui-preview --no-git-tag-version",
     "version:extension:minor": "npm version minor --workspace=east-ui-preview --no-git-tag-version",
     "version:extension:major": "npm version major --workspace=east-ui-preview --no-git-tag-version",
+    "version:monorepo:prerelease": "npm version prerelease --preid=beta --no-git-tag-version",
+    "version:monorepo:patch": "npm version patch --no-git-tag-version",
+    "version:monorepo:minor": "npm version minor --no-git-tag-version",
+    "version:monorepo:major": "npm version major --no-git-tag-version",
     "version:showcase:prerelease": "npm version prerelease --preid=beta --workspace=@elaraai/east-ui-showcase --no-git-tag-version",
     "version:showcase:patch": "npm version patch --workspace=@elaraai/east-ui-showcase --no-git-tag-version",
     "version:showcase:minor": "npm version minor --workspace=@elaraai/east-ui-showcase --no-git-tag-version",
-    "version:showcase:major": "npm version major --workspace=@elaraai/east-ui-showcase --no-git-tag-version"
+    "version:showcase:major": "npm version major --workspace=@elaraai/east-ui-showcase --no-git-tag-version",
+    "version:all:prerelease": "npm run version:monorepo:prerelease && npm run version:east-ui:prerelease && npm run version:components:prerelease && npm run version:showcase:prerelease",
+    "version:all:patch": "npm run version:monorepo:patch && npm run version:east-ui:patch && npm run version:components:patch && npm run version:showcase:patch && npm run version:extension:patch",
+    "version:all:minor": "npm run version:monorepo:minor && npm run version:east-ui:minor && npm run version:components:minor && npm run version:showcase:minor && npm run version:extension:minor",
+    "version:all:major": "npm run version:monorepo:major && npm run version:east-ui:major && npm run version:components:major && npm run version:showcase:major && npm run version:extension:major"
   },
   "repository": {
     "type": "git",

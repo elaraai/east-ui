@@ -189,21 +189,145 @@ function createMenu(
  * ```
  */
 export const Menu = {
-    /** Creates a Menu component */
+    /**
+     * Creates a Menu component with a trigger and menu items.
+     *
+     * @param trigger - The element that triggers the menu
+     * @param items - Array of menu items
+     * @param style - Optional style configuration
+     * @returns An East expression representing the Menu component
+     *
+     * @remarks
+     * Menu provides a dropdown list of actions triggered by clicking a UI element.
+     * Supports items with labels and values, plus separators for visual grouping.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Menu, Button, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Menu.Root(
+     *         Button.Root("Actions"),
+     *         [
+     *             Menu.Item("edit", "Edit"),
+     *             Menu.Separator(),
+     *             Menu.Item("delete", "Delete"),
+     *         ]
+     *     );
+     * });
+     * ```
+     */
     Root: createMenu,
-    /** Creates a menu item */
+    /**
+     * Creates a menu item with value and label.
+     *
+     * @param value - Unique identifier for the item
+     * @param label - Display text for the item
+     * @param disabled - Whether the item is disabled
+     * @returns An East expression representing the menu item
+     *
+     * @remarks
+     * Menu items are clickable entries within a Menu. Each item has a unique
+     * value for identification and a label for display.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Menu, Button, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Menu.Root(
+     *         Button.Root("Actions"),
+     *         [
+     *             Menu.Item("edit", "Edit"),
+     *             Menu.Item("delete", "Delete", true), // disabled
+     *         ]
+     *     );
+     * });
+     * ```
+     */
     Item: createMenuItem,
-    /** Creates a menu separator */
+    /**
+     * Creates a menu separator for visual grouping.
+     *
+     * @returns An East expression representing a menu separator
+     *
+     * @remarks
+     * Separators create visual dividers between groups of menu items.
+     * Use them to organize related actions within a menu.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Menu, Button, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Menu.Root(
+     *         Button.Root("File"),
+     *         [
+     *             Menu.Item("new", "New"),
+     *             Menu.Item("open", "Open"),
+     *             Menu.Separator(),
+     *             Menu.Item("exit", "Exit"),
+     *         ]
+     *     );
+     * });
+     * ```
+     */
     Separator: createMenuSeparator,
-    /** Type definitions */
     Types: {
-        /** Menu struct type */
+        /**
+         * East StructType for Menu component.
+         *
+         * @remarks
+         * Menu wraps a trigger element and displays a dropdown menu on click.
+         * The trigger can be any UI component.
+         *
+         * @property trigger - The UI component that triggers the menu on click
+         * @property items - Array of menu items (Item or Separator)
+         * @property placement - Optional placement position
+         */
         Menu: MenuType,
-        /** Menu item variant type */
+        /**
+         * Menu item variant type.
+         *
+         * @remarks
+         * Menu items can be either an Item (clickable menu entry) or a Separator (visual divider).
+         *
+         * @property Item - A clickable menu item with value, label, and optional disabled state
+         * @property Separator - A visual separator between menu items
+         */
         Item: MenuItemType,
-        /** Menu style struct type */
+        /**
+         * Style type for Menu component.
+         *
+         * @remarks
+         * Contains optional styling properties for the menu.
+         *
+         * @property placement - Where to position the menu relative to the trigger
+         */
         Style: MenuStyleType,
-        /** Placement variant type */
+        /**
+         * Placement options for Tooltip positioning.
+         *
+         * @remarks
+         * Controls where the tooltip appears relative to its trigger element.
+         * Supports all cardinal directions with start/end variations.
+         *
+         * @property top - Centered above the trigger
+         * @property top-start - Above, aligned to start
+         * @property top-end - Above, aligned to end
+         * @property bottom - Centered below the trigger
+         * @property bottom-start - Below, aligned to start
+         * @property bottom-end - Below, aligned to end
+         * @property left - Centered to the left
+         * @property left-start - Left, aligned to start
+         * @property left-end - Left, aligned to end
+         * @property right - Centered to the right
+         * @property right-start - Right, aligned to start
+         * @property right-end - Right, aligned to end
+         */
         Placement: PlacementType,
     },
 } as const;

@@ -98,8 +98,43 @@ function createBadge(
  * ```
  */
 export const Badge = {
+    /**
+     * Creates a Badge component with value and optional styling.
+     *
+     * @param value - The badge text content
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the badge component
+     *
+     * @remarks
+     * Badge is used to display short labels, counts, or status indicators.
+     * Common uses include notification counts, status labels, and category tags.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Badge, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Badge.Root("Active", {
+     *         colorPalette: "green",
+     *         variant: "solid",
+     *     });
+     * });
+     * ```
+     */
     Root: createBadge,
     Types: {
+        /**
+         * Type for Badge component data.
+         *
+         * @remarks
+         * Badge displays short labels, counts, or status indicators.
+         *
+         * @property value - The badge text content
+         * @property variant - Visual variant (solid, subtle, outline)
+         * @property colorPalette - Color scheme for the badge
+         * @property size - Size of the badge
+         */
         Badge: BadgeType,
     },
 } as const;

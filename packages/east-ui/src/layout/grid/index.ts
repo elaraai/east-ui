@@ -231,11 +231,114 @@ export const GridType = StructType({
  * ```
  */
 export const Grid = {
+    /**
+     * Creates a Grid container component with items and optional styling.
+     *
+     * @param items - Array of grid items created with Grid.Item
+     * @param style - Optional styling configuration for the grid
+     * @returns An East expression representing the styled grid component
+     *
+     * @remarks
+     * Grid is a powerful layout component that uses CSS Grid for two-dimensional
+     * layouts. It supports template definitions, gap configuration, alignment,
+     * and automatic item placement.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Grid, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Grid.Root([
+     *         Grid.Item(Text.Root("Cell 1")),
+     *         Grid.Item(Text.Root("Cell 2")),
+     *         Grid.Item(Text.Root("Cell 3")),
+     *     ], {
+     *         templateColumns: "repeat(3, 1fr)",
+     *         gap: "4",
+     *     });
+     * });
+     * ```
+     */
     Root: GridRoot,
+    /**
+     * Creates a Grid item with content and optional placement configuration.
+     *
+     * @param content - The UI component to render in this grid cell
+     * @param style - Optional placement properties (colSpan, rowSpan, etc.)
+     * @returns An East expression representing the grid item
+     *
+     * @remarks
+     * Grid items can span multiple columns or rows and can be positioned explicitly
+     * using colStart/colEnd and rowStart/rowEnd properties.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Grid, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Grid.Root([
+     *         Grid.Item(Text.Root("Header"), { colSpan: 2n }),
+     *         Grid.Item(Text.Root("Sidebar")),
+     *         Grid.Item(Text.Root("Content")),
+     *     ], {
+     *         templateColumns: "repeat(2, 1fr)",
+     *         gap: "4",
+     *     });
+     * });
+     * ```
+     */
     Item: GridItem,
     Types: {
+        /**
+         * The concrete East type for Grid component data.
+         *
+         * @remarks
+         * This struct type represents the serializable data structure for a Grid component.
+         * Grid provides a two-dimensional layout system using CSS Grid.
+         *
+         * @property items - Array of grid items
+         * @property style - Optional styling configuration wrapped in OptionType
+         */
         Grid: GridType,
+        /**
+         * The concrete East type for Grid item data.
+         *
+         * @remarks
+         * This struct type represents a single item within a Grid.
+         * Each item has content (a UI component) and optional placement properties.
+         *
+         * @property content - The UI component to render in this grid cell
+         * @property colSpan - Number of columns the item spans
+         * @property rowSpan - Number of rows the item spans
+         * @property colStart - Starting column line
+         * @property colEnd - Ending column line
+         * @property rowStart - Starting row line
+         * @property rowEnd - Ending row line
+         */
         Item: GridItemType,
+        /**
+         * Grid style type containing all root-level style properties.
+         *
+         * @remarks
+         * This struct defines the styling options for the Grid component.
+         * All properties are optional and wrapped in {@link OptionType}.
+         *
+         * @property templateColumns - CSS grid-template-columns (e.g., "repeat(3, 1fr)")
+         * @property templateRows - CSS grid-template-rows
+         * @property templateAreas - CSS grid-template-areas
+         * @property gap - Gap between grid items (Chakra spacing token)
+         * @property columnGap - Gap between columns
+         * @property rowGap - Gap between rows
+         * @property justifyItems - Alignment of items along the inline (row) axis
+         * @property alignItems - Alignment of items along the block (column) axis
+         * @property justifyContent - Distribution of grid columns
+         * @property alignContent - Distribution of grid rows
+         * @property autoColumns - Size of implicitly-created columns
+         * @property autoRows - Size of implicitly-created rows
+         * @property autoFlow - How auto-placed items are inserted
+         */
         Style: GridStyleType,
     },
 } as const;

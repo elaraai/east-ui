@@ -129,11 +129,71 @@ function createCard(
  * Use `Card.Root(children, style)` to create a card, or access `Card.Types.Card` for the East type.
  */
 export const Card = {
+    /**
+     * Creates a Card container component with children and optional styling.
+     *
+     * @param children - Array of child UI components
+     * @param style - Optional styling configuration including title and description
+     * @returns An East expression representing the card component
+     *
+     * @remarks
+     * Card is a container component that groups related content with optional
+     * title, description, and visual styling.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Card, Text, Button, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Card.Root([
+     *         Text.Root("Card content here"),
+     *         Button.Root("Action"),
+     *     ], {
+     *         title: "Card Title",
+     *         description: "A brief description",
+     *     });
+     * });
+     * ```
+     */
     Root: createCard,
+    /**
+     * Helper function to create card variant values.
+     *
+     * @param v - The variant string ("elevated", "outline", "subtle")
+     * @returns An East expression representing the card variant
+     */
     Variant: CardVariant,
     Types: {
+        /**
+         * The concrete East type for Card component data.
+         *
+         * @remarks
+         * This struct type represents the serializable data structure for a Card component.
+         *
+         * @property title - Optional card title
+         * @property description - Optional card description
+         * @property body - Array of child UI components
+         * @property style - Optional styling configuration
+         */
         Card: CardType,
+        /**
+         * Style type for Card component configuration.
+         *
+         * @remarks
+         * This struct type defines the styling configuration for a Card.
+         *
+         * @property variant - Visual variant (elevated, outline, subtle)
+         * @property size - Size of the card (sm, md, lg)
+         */
         Style: CardStyleType,
+        /**
+         * Variant type for Card appearance styles.
+         *
+         * @property elevated - Card with shadow elevation
+         * @property outline - Card with border outline
+         * @property subtle - Card with subtle background
+         */
         Variant: CardVariantType,
     },
 } as const;

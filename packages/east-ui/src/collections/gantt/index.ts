@@ -406,21 +406,194 @@ function createGantt<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
  * ```
  */
 export const Gantt = {
-    /** Create a Gantt chart component */
+    /**
+     * Creates a Gantt component following the Table pattern.
+     *
+     * @typeParam T - The struct type of each data row
+     * @param data - Array of data structs
+     * @param columns - Column specification for the left-side table columns
+     * @param events - Function to extract events from each row
+     * @param style - Optional Gantt styling
+     * @returns An East expression representing the Gantt component
+     *
+     * @remarks
+     * Gantt charts display time-based events (tasks and milestones) in rows.
+     * Each row has table columns on the left and a timeline with events on the right.
+     * The API follows the Table pattern for column configuration.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Gantt, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Gantt.Root(
+     *         [
+     *             { name: "Design", start: new Date("2024-01-01"), end: new Date("2024-01-15") },
+     *             { name: "Development", start: new Date("2024-01-10"), end: new Date("2024-02-01") },
+     *         ],
+     *         ["name"],
+     *         row => [Gantt.Task({ start: row.start, end: row.end })],
+     *         { showToday: true }
+     *     );
+     * });
+     * ```
+     */
     Root: createGantt,
-    /** Create a Task event (spans time range) */
+    /**
+     * Creates a Task event for a Gantt row.
+     *
+     * @param input - Task configuration
+     * @returns An East expression representing the Task event
+     *
+     * @remarks
+     * Tasks represent work items that span a duration from start to end date.
+     * Tasks can show progress and be styled with different colors.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Gantt, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Gantt.Root(
+     *         [{ name: "Task", start: new Date("2024-01-01"), end: new Date("2024-01-15") }],
+     *         ["name"],
+     *         row => [Gantt.Task({
+     *             start: row.start,
+     *             end: row.end,
+     *             label: "Design Phase",
+     *             progress: 75,
+     *             colorPalette: "blue",
+     *         })]
+     *     );
+     * });
+     * ```
+     */
     Task: createTask,
-    /** Create a Milestone event (single point in time) */
+    /**
+     * Creates a Milestone event for a Gantt row.
+     *
+     * @param input - Milestone configuration
+     * @returns An East expression representing the Milestone event
+     *
+     * @remarks
+     * Milestones represent single points in time (e.g., deadlines, releases).
+     * They appear as markers on the timeline rather than bars.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Gantt, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Gantt.Root(
+     *         [{ name: "Launch", date: new Date("2024-02-01") }],
+     *         ["name"],
+     *         row => [Gantt.Milestone({
+     *             date: row.date,
+     *             label: "Launch",
+     *             colorPalette: "green",
+     *         })]
+     *     );
+     * });
+     * ```
+     */
     Milestone: createMilestone,
-    /** Type definitions for Gantt components */
     Types: {
+        /**
+         * Type for Gantt component data.
+         *
+         * @remarks
+         * Gantt displays rows with time-based events (tasks and milestones).
+         * The time range is derived from the events' domain.
+         *
+         * @property rows - Array of Gantt rows
+         * @property columns - Array of column definitions (same as Table)
+         * @property style - Optional styling configuration
+         */
         Root: GanttRootType,
+        /**
+         * East type for a Gantt row.
+         *
+         * @remarks
+         * Each row has table cells (displayed on the left) and events (displayed on the right as a timeline).
+         *
+         * @property cells - Dict of column key to cell content (same as Table)
+         * @property events - Array of events (Task or Milestone variants)
+         */
         Row: GanttRowType,
+        /**
+         * Gantt event variant type.
+         *
+         * @remarks
+         * Events can be either tasks (with duration) or milestones (single point).
+         *
+         * @property Task - A task spanning from start to end date
+         * @property Milestone - A milestone at a specific date
+         */
         Event: GanttEventType,
+        /**
+         * Task event data for Gantt charts.
+         *
+         * @remarks
+         * Represents a task bar spanning from start to end date.
+         *
+         * @property start - Start date/time of the task
+         * @property end - End date/time of the task
+         * @property label - Optional label to display on the task bar
+         * @property progress - Optional progress percentage (0-100)
+         * @property colorPalette - Optional color scheme for the task bar
+         */
         Task: GanttTaskType,
+        /**
+         * Milestone event data for Gantt charts.
+         *
+         * @remarks
+         * Represents a single point in time milestone.
+         *
+         * @property date - The date/time of the milestone
+         * @property label - Optional label to display near the milestone
+         * @property colorPalette - Optional color scheme for the milestone marker
+         */
         Milestone: GanttMilestoneType,
+        /**
+         * Style type for the Gantt component.
+         *
+         * @remarks
+         * All properties are optional and wrapped in {@link OptionType}.
+         * Reuses table styling properties where applicable.
+         *
+         * @property variant - Table variant (line or outline)
+         * @property size - Table size (sm, md, lg)
+         * @property striped - Whether to show zebra stripes on rows
+         * @property interactive - Whether to highlight rows on hover
+         * @property stickyHeader - Whether the header sticks when scrolling
+         * @property showColumnBorder - Whether to show borders between columns
+         * @property colorPalette - Default color scheme for events
+         * @property showToday - Whether to show a today marker line
+         */
         Style: GanttStyleType,
+        /**
+         * East type for a table column definition.
+         *
+         * @remarks
+         * Defines the header text and key for a column.
+         *
+         * @property key - The column key (field name)
+         * @property type - The column value type
+         * @property header - Optional header text for the column
+         */
         Column: TableColumnType,
+        /**
+         * East type for a table cell.
+         *
+         * @remarks
+         * Defines the type for a table cell.
+         *
+         * @property value - The cell value as a literal
+         * @property content - Optional UI component content for the cell
+         */
         Cell: TableCellType,
     },
 } as const;

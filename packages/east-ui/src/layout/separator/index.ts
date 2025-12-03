@@ -101,9 +101,50 @@ function createSeparator(
  * Use `Separator.Root(style)` to create a separator, or access `Separator.Types.Separator` for the East type.
  */
 export const Separator = {
+    /**
+     * Creates a Separator component for visual division between content.
+     *
+     * @param style - Optional styling configuration for the separator
+     * @returns An East expression representing the separator component
+     *
+     * @remarks
+     * Separator is a simple visual divider. By default it's horizontal.
+     * Use orientation to create vertical separators in flex row layouts.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Separator, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Separator.Root({
+     *         orientation: "horizontal",
+     *         variant: "solid",
+     *     });
+     * });
+     * ```
+     */
     Root: createSeparator,
     Types: {
+        /**
+         * The concrete East type for Separator component data.
+         *
+         * @remarks
+         * Separator is a leaf component (no children) that provides a visual divider.
+         */
         Separator: SeparatorType,
+        /**
+         * The concrete East type for Separator component style data.
+         *
+         * @remarks
+         * All properties are optional and wrapped in {@link OptionType}.
+         *
+         * @property orientation - Orientation (horizontal or vertical)
+         * @property variant - Line style variant (solid, dashed, dotted)
+         * @property size - Thickness size
+         * @property color - Color (Chakra UI color token or CSS color)
+         * @property label - Optional label text in the middle of the separator
+         */
         Style: SeparatorStyleType,
     },
 } as const;

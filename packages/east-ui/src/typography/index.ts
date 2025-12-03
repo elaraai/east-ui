@@ -161,8 +161,47 @@ function createText(
  * ```
  */
 export const Text = {
+    /**
+     * Creates a Text component for displaying styled text content.
+     *
+     * @param value - The text string to display
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the text component
+     *
+     * @remarks
+     * Text is the fundamental component for displaying text content.
+     * It supports various styling options including color, font weight,
+     * alignment, and text overflow handling.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Text.Root("Hello World", {
+     *         color: "blue.500",
+     *         fontWeight: "bold",
+     *         textAlign: "center",
+     *     });
+     * });
+     * ```
+     */
     Root: createText,
     Types: {
+        /**
+         * The concrete East type for Text component data.
+         *
+         * @remarks
+         * This struct type represents the serializable data structure for a Text component.
+         *
+         * @property value - The text string content
+         * @property color - Text color (Chakra UI color token or CSS color)
+         * @property fontWeight - Font weight (normal, bold, semibold, etc.)
+         * @property fontSize - Font size (xs, sm, md, lg, xl, etc.)
+         * @property textAlign - Text alignment (left, center, right, justify)
+         * @property textOverflow - Text overflow behavior (clip, ellipsis)
+         */
         Text: TextType,
     },
 } as const;

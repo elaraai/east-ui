@@ -9,7 +9,15 @@ import { openPreviewCommand } from './commands/openPreview.js';
 export function activate(context: vscode.ExtensionContext) {
     const disposable = vscode.commands.registerCommand(
         'east-ui.openPreview',
-        () => openPreviewCommand(context)
+        async (uri?: vscode.Uri) => {
+            try {
+                await openPreviewCommand(context, uri);
+            } catch (error) {
+                const message = error instanceof Error ? error.message : String(error);
+                vscode.window.showErrorMessage(`East UI Preview failed: ${message}`);
+                console.error('East UI Preview error:', error);
+            }
+        }
     );
     context.subscriptions.push(disposable);
 }

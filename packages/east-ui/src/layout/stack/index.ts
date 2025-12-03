@@ -203,15 +203,173 @@ function createVStack(
  * Use `Stack.Root(children, style)` for general stack, `Stack.HStack()` for horizontal, `Stack.VStack()` for vertical.
  */
 export const Stack = {
+    /**
+     * Creates a Stack container with flex layout.
+     *
+     * @param children - Array of child UI components
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the stack component
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Stack, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Stack.Root([
+     *         Text.Root("Item 1"),
+     *         Text.Root("Item 2"),
+     *     ], {
+     *         gap: "4",
+     *         direction: "column",
+     *     });
+     * });
+     * ```
+     */
     Root: createStack,
+    /**
+     * Creates a horizontal Stack (row direction).
+     *
+     * @param children - Array of child UI components
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the horizontal stack
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Stack, Button, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Stack.HStack([
+     *         Button.Root("Cancel"),
+     *         Button.Root("Submit", { colorPalette: "blue" }),
+     *     ], {
+     *         gap: "2",
+     *     });
+     * });
+     * ```
+     */
     HStack: createHStack,
+    /**
+     * Creates a vertical Stack (column direction).
+     *
+     * @param children - Array of child UI components
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the vertical stack
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Stack, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Stack.VStack([
+     *         Text.Root("Title"),
+     *         Text.Root("Subtitle"),
+     *     ], {
+     *         gap: "1",
+     *         align: "flex-start",
+     *     });
+     * });
+     * ```
+     */
     VStack: createVStack,
+    /**
+     * Creates padding configuration for layout components.
+     *
+     * @param top - Top padding (Chakra UI spacing token or CSS value)
+     * @param right - Right padding
+     * @param bottom - Bottom padding
+     * @param left - Left padding
+     * @returns An East expression representing the padding configuration
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Stack, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Stack.Root([
+     *         Text.Root("Content"),
+     *     ], {
+     *         padding: Stack.Padding("4", "2", "4", "2"),
+     *     });
+     * });
+     * ```
+     */
     Padding,
+    /**
+     * Creates margin configuration for layout components.
+     *
+     * @param top - Top margin (Chakra UI spacing token or CSS value)
+     * @param right - Right margin
+     * @param bottom - Bottom margin
+     * @param left - Left margin
+     * @returns An East expression representing the margin configuration
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Stack, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Stack.Root([
+     *         Text.Root("Content"),
+     *     ], {
+     *         margin: Stack.Margin("4", "auto", "4", "auto"),
+     *     });
+     * });
+     * ```
+     */
     Margin,
     Types: {
+        /**
+         * The concrete East type for Stack component data.
+         *
+         * @remarks
+         * This struct type represents the serializable data structure for a Stack component.
+         * Stack arranges children in a flex container with configurable direction and spacing.
+         *
+         * @property children - Array of child UI components
+         * @property style - Optional styling configuration wrapped in OptionType
+         */
         Stack: StackType,
+        /**
+         * Style type for Stack component configuration.
+         *
+         * @remarks
+         * This struct type defines the styling configuration for a Stack component.
+         *
+         * @property direction - Flex direction (row, column, row-reverse, column-reverse)
+         * @property gap - Spacing between children (Chakra UI spacing token)
+         * @property align - Cross-axis alignment (flex-start, center, flex-end, stretch)
+         * @property justify - Main-axis alignment (flex-start, center, flex-end, space-between)
+         * @property wrap - Whether items should wrap (nowrap, wrap, wrap-reverse)
+         */
         Style: StackStyleType,
+        /**
+         * Type for padding configuration.
+         *
+         * @remarks
+         * Allows specifying individual padding values for each side.
+         *
+         * @property top - Top padding value
+         * @property right - Right padding value
+         * @property bottom - Bottom padding value
+         * @property left - Left padding value
+         */
         Padding: PaddingType,
+        /**
+         * Type for margin configuration.
+         *
+         * @remarks
+         * Allows specifying individual margin values for each side.
+         *
+         * @property top - Top margin value
+         * @property right - Right margin value
+         * @property bottom - Bottom margin value
+         * @property left - Left margin value
+         */
         Margin: MarginType,
     },
 } as const;

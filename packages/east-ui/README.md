@@ -13,7 +13,7 @@
 - **📝 Typography** - Text with comprehensive styling options
 - **🔘 Buttons** - Button, IconButton with variants and states
 - **📋 Forms** - Input, Select, Checkbox, Switch, Slider, Textarea, TagsInput, FileUpload
-- **📊 Collections** - Table, DataList, TreeView
+- **📊 Collections** - Table, Gantt, DataList, TreeView
 - **📈 Charts** - Area, Bar, Line, Pie, Radar, Scatter, Sparkline, BarList, BarSegment
 - **💬 Feedback** - Alert, Progress
 - **🏷️ Display** - Badge, Tag, Avatar, Stat, Icon
@@ -54,12 +54,12 @@ const ir = MyComponent.toIR();
 
 | Category | Components | Description |
 |----------|------------|-------------|
-| **Layout** | `Box`, `Stack`, `HStack`, `VStack`, `Grid`, `Splitter`, `Separator` | Container and layout components |
+| **Layout** | `Box`, `Stack`, `Grid`, `Splitter`, `Separator` | Container and layout components |
 | **Typography** | `Text` | Text display with styling |
 | **Buttons** | `Button`, `IconButton` | Interactive button components |
 | **Forms** | `Input`, `Select`, `Checkbox`, `Switch`, `Slider`, `Textarea`, `TagsInput`, `FileUpload`, `Field`, `Fieldset` | Form input components |
-| **Collections** | `Table`, `DataList`, `TreeView` | Data display components |
-| **Charts** | `Chart.Area`, `Chart.Bar`, `Chart.Line`, `Chart.Pie`, `Chart.Radar`, `Chart.Scatter`, `Chart.Sparkline`, `Chart.BarList`, `Chart.BarSegment` | Data visualization |
+| **Collections** | `Table`, `Gantt`, `DataList`, `TreeView` | Data display components |
+| **Charts** | `Chart.Area`, `Chart.Bar`, `Chart.Line`, `Chart.Pie`, `Chart.Radar`, `Chart.Scatter`, `Chart.BarList`, `Chart.BarSegment`, `Sparkline` | Data visualization |
 | **Display** | `Badge`, `Tag`, `Avatar`, `Stat`, `Icon` | Visual display components |
 | **Feedback** | `Alert`, `Progress` | User feedback components |
 | **Disclosure** | `Accordion`, `Tabs`, `Carousel` | Content organization |

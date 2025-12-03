@@ -171,12 +171,117 @@ function createActionBar(
  * ```
  */
 export const ActionBar = {
+    /**
+     * Creates an ActionBar component with action items.
+     *
+     * @param items - Array of action items (use ActionBar.Action and ActionBar.Separator)
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the action bar component
+     *
+     * @remarks
+     * ActionBar displays a floating bar with batch actions for selected items.
+     * Typically used in data tables or lists with multi-select functionality.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { ActionBar, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return ActionBar.Root([
+     *         ActionBar.Action("delete", "Delete"),
+     *         ActionBar.Separator(),
+     *         ActionBar.Action("archive", "Archive"),
+     *     ], {
+     *         selectionCount: 5n,
+     *         selectionLabel: "items selected",
+     *     });
+     * });
+     * ```
+     */
     Root: createActionBar,
+    /**
+     * Creates an Action item for the ActionBar.
+     *
+     * @param value - Unique identifier for the action
+     * @param label - Display label for the action button
+     * @param disabled - Whether the action is disabled
+     * @returns An East expression representing the action item
+     *
+     * @remarks
+     * Action items are clickable buttons within an ActionBar. Each action
+     * has a unique value for identification and a label for display.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { ActionBar, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return ActionBar.Root([
+     *         ActionBar.Action("edit", "Edit"),
+     *         ActionBar.Action("delete", "Delete", true), // disabled
+     *     ], {
+     *         selectionCount: 3n,
+     *     });
+     * });
+     * ```
+     */
     Action: createAction,
+    /**
+     * Creates a Separator item for visual grouping.
+     *
+     * @returns An East expression representing a separator
+     *
+     * @remarks
+     * Separators create visual dividers between groups of actions.
+     * Use them to organize related actions within an ActionBar.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { ActionBar, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return ActionBar.Root([
+     *         ActionBar.Action("copy", "Copy"),
+     *         ActionBar.Action("paste", "Paste"),
+     *         ActionBar.Separator(),
+     *         ActionBar.Action("delete", "Delete"),
+     *     ], {
+     *         selectionCount: 2n,
+     *     });
+     * });
+     * ```
+     */
     Separator: createSeparator,
     Types: {
+        /**
+         * East StructType for ActionBar component.
+         *
+         * @remarks
+         * ActionBar is a floating bar that appears when items are selected.
+         * It displays the selection count and provides batch action buttons.
+         *
+         * @property items - Array of action items (actions or separators)
+         * @property selectionCount - Number of selected items
+         * @property selectionLabel - Label for selection (e.g., "items selected")
+         * @property style - Optional style configuration
+         */
         ActionBar: ActionBarType,
+        /**
+         * Action bar item variant type.
+         *
+         * @property Action - A clickable action with value and label
+         * @property Separator - A visual separator between actions
+         */
         Item: ActionBarItemType,
+        /**
+         * Style type for ActionBar component.
+         *
+         * @remarks
+         * ActionBar has fixed styling - no size/variant options.
+         */
         Style: ActionBarStyleType,
     },
 } as const;

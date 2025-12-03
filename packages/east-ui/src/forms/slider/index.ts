@@ -131,6 +131,21 @@ function createSlider(
  *
  * @remarks
  * Use `Slider.Root(value, style)` to create a slider, or access `Slider.Types.Slider` for the East type.
+ *
+ * @example
+ * ```ts
+ * import { East } from "@elaraai/east";
+ * import { Slider, UIComponentType } from "@elaraai/east-ui";
+ *
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Slider.Root(50.0, {
+ *         min: 0,
+ *         max: 100,
+ *         step: 1,
+ *         colorPalette: "blue",
+ *     });
+ * });
+ * ```
  */
 export const Slider = {
     Root: createSlider,

@@ -129,12 +129,76 @@ function createAlert(
  * ```
  */
 export const Alert = {
+    /**
+     * Creates an Alert component with status and optional styling.
+     *
+     * @param status - The alert status (info, warning, success, error) or AlertStatusType expression
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the alert component
+     *
+     * @remarks
+     * Alert is used to display feedback messages to users. Different status
+     * types have appropriate color schemes (blue for info, yellow for warning,
+     * green for success, red for error).
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Alert, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Alert.Root("warning", {
+     *         title: "Warning",
+     *         description: "Your session will expire in 5 minutes",
+     *     });
+     * });
+     * ```
+     */
     Root: createAlert,
+    /**
+     * Helper function to create alert status values.
+     *
+     * @param status - The status string ("info", "warning", "success", "error")
+     * @returns An East expression representing the alert status
+     */
     Status: AlertStatus,
+    /**
+     * Helper function to create alert variant values.
+     *
+     * @param v - The variant string ("solid", "subtle", "outline")
+     * @returns An East expression representing the alert variant
+     */
     Variant: AlertVariant,
     Types: {
+        /**
+         * Type for Alert component data.
+         *
+         * @remarks
+         * Alert displays feedback messages to users, indicating status of
+         * operations or important information.
+         *
+         * @property status - The status type (info, warning, success, error)
+         * @property title - Optional alert title
+         * @property description - Optional alert description
+         * @property variant - Visual variant (solid, subtle, outline)
+         */
         Alert: AlertType,
+        /**
+         * Status types for Alert component.
+         *
+         * @property info - Informational alert
+         * @property warning - Warning alert
+         * @property success - Success/confirmation alert
+         * @property error - Error/danger alert
+         */
         Status: AlertStatusType,
+        /**
+         * Variant types for Alert visual style.
+         *
+         * @property solid - Solid background alert
+         * @property subtle - Subtle/light background alert
+         * @property outline - Bordered alert
+         */
         Variant: AlertVariantType,
     },
 } as const;

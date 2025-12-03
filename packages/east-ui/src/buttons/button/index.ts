@@ -127,10 +127,67 @@ function createButton(
  * ```
  */
 export const Button = {
+    /**
+     * Creates a Button component with a label and optional styling.
+     *
+     * @param label - The text to display on the button
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the styled button component
+     *
+     * @remarks
+     * Button is an interactive component for triggering actions.
+     * It supports multiple variants, color schemes, and sizes.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Button, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Button.Root("Save", {
+     *         variant: "solid",
+     *         colorPalette: "blue",
+     *         size: "md",
+     *     });
+     * });
+     * ```
+     */
     Root: createButton,
     Types: {
+        /**
+         * The concrete East type for Button component data.
+         *
+         * @remarks
+         * This struct type represents the serializable data structure for a Button component.
+         *
+         * @property label - The text displayed on the button
+         * @property style - Optional styling configuration wrapped in OptionType
+         */
         Button: ButtonType,
+        /**
+         * Style type for Button component configuration.
+         *
+         * @remarks
+         * This struct type defines the styling configuration for a Button component.
+         *
+         * @property variant - Button appearance variant (solid, subtle, outline, ghost)
+         * @property colorPalette - Color scheme for the button
+         * @property size - Size of the button (xs, sm, md, lg)
+         * @property loading - Whether the button shows a loading state
+         * @property disabled - Whether the button is disabled
+         */
         Style: ButtonStyleType,
+        /**
+         * Variant type for Button appearance styles.
+         *
+         * @remarks
+         * Create instances using string literals like "solid", "outline", etc.
+         *
+         * @property solid - Solid filled button (default)
+         * @property subtle - Subtle/light background button
+         * @property outline - Outlined button with border
+         * @property ghost - Transparent button, visible on hover
+         */
         Variant: ButtonVariantType,
     },
 } as const;

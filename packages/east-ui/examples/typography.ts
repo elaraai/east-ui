@@ -12,7 +12,7 @@
 
 import { East } from "@elaraai/east";
 import type { CallableFunctionExpr } from "@elaraai/east/internal";
-import { UIComponentType, Text, Stack } from "../src/index.js";
+import { UIComponentType, Text, Stack } from "@elaraai/east-ui";
 
 const example: CallableFunctionExpr<[], typeof UIComponentType> = East.function(
     [],
@@ -20,7 +20,7 @@ const example: CallableFunctionExpr<[], typeof UIComponentType> = East.function(
     () => {
         return Stack.Root([
             // Basic text
-            Text.Root("Basic"),
+            Text.Root("Basic Text"),
 
             // Text with background
             Text.Root("Text with Background", {
@@ -39,10 +39,18 @@ const example: CallableFunctionExpr<[], typeof UIComponentType> = East.function(
             }),
 
             // Different font sizes
-            Text.Root("Extra Small Text", { fontSize: "xs" }),
-            Text.Root("Small Text", { fontSize: "sm" }),
-            Text.Root("Medium Text", { fontSize: "md" }),
-            Text.Root("Large Text", { fontSize: "lg" }),
+            Text.Root("Extra Small Text", { 
+                fontSize: "xs" 
+            }),
+            Text.Root("Small Text", { 
+                fontSize: "sm" 
+            }),
+            Text.Root("Medium Text", { 
+                fontSize: "md" 
+            }),
+            Text.Root("Large Text", { 
+                fontSize: "lg" 
+            }),
 
             // Text transforms
             Text.Root("uppercase text", {

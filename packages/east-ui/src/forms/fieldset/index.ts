@@ -116,11 +116,38 @@ function createFieldset(
  * ```
  */
 export const Fieldset = {
-    /** Creates a Fieldset component */
+    /**
+     * Creates a Fieldset component.
+     *
+     * @param content - Array of UI components (typically Field components)
+     * @param style - Optional style and configuration options
+     * @returns An East expression representing the Fieldset component
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Fieldset, Field, Input, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Fieldset.Root([
+     *         Field.Root("First Name", Input.String("", { placeholder: "First name" })),
+     *         Field.Root("Last Name", Input.String("", { placeholder: "Last name" })),
+     *     ], {
+     *         legend: "Personal Information",
+     *     });
+     * });
+     * ```
+     */
     Root: createFieldset,
-    /** Type definitions */
     Types: {
-        /** Fieldset style struct type */
+        /**
+         * Style type for Fieldset component.
+         *
+         * @remarks
+         * Contains optional styling properties for the fieldset.
+         *
+         * @property size - Size of the fieldset (sm, md, lg)
+         */
         Style: FieldsetStyleType,
     },
 } as const;

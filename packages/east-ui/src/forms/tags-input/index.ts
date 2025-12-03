@@ -164,13 +164,42 @@ function createTagsInput(
  * ```
  */
 export const TagsInput = {
-    /** Creates a TagsInput component */
+    /**
+     * Creates a TagsInput component.
+     *
+     * @param value - Array of current tag values
+     * @param style - Optional style and configuration options
+     * @returns An East expression representing the TagsInput component
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { TagsInput, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return TagsInput.Root(["React", "TypeScript"], {
+     *         placeholder: "Add tag...",
+     *         max: 5n,
+     *     });
+     * });
+     * ```
+     */
     Root: createTagsInput,
-    /** Type definitions */
     Types: {
-        /** TagsInput struct type */
+        /**
+         * Type for TagsInput component data.
+         *
+         * @property value - Current array of tag strings
+         * @property max - Maximum number of tags allowed
+         * @property placeholder - Placeholder text
+         */
         Root: TagsInputRootType,
-        /** Blur behavior variant type */
+        /**
+         * Blur behavior options for TagsInput.
+         *
+         * @property add - Add current input as tag on blur
+         * @property clear - Clear current input on blur
+         */
         BlurBehavior: TagsInputBlurBehaviorType,
     },
 } as const;
