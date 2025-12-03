@@ -96,6 +96,7 @@ Dual-licensed:
 
 ## Links
 
+- **Live Showcase**: [https://elaraai.github.io/east-ui/](https://elaraai.github.io/east-ui/)
 - **Website**: [https://elaraai.com/](https://elaraai.com/)
 - **East Repository**: [https://github.com/elaraai/East](https://github.com/elaraai/East)
 - **Issues**: [https://github.com/elaraai/east-ui/issues](https://github.com/elaraai/east-ui/issues)

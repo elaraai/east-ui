@@ -117,6 +117,7 @@ Dual-licensed:
 
 ## Links
 
+- **Live Showcase**: [https://elaraai.github.io/east-ui/](https://elaraai.github.io/east-ui/)
 - **Website**: [https://elaraai.com/](https://elaraai.com/)
 - **East UI**: [https://www.npmjs.com/package/@elaraai/east-ui](https://www.npmjs.com/package/@elaraai/east-ui)
 - **East Repository**: [https://github.com/elaraai/East](https://github.com/elaraai/East)
