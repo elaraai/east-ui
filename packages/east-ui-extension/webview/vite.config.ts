@@ -28,6 +28,11 @@ export default defineConfig({
         assetsInlineLimit: 100000,
         // Don't copy public folder
         copyPublicDir: false,
+        // Handle CommonJS modules that use exports.default (like sorted-btree)
+        commonjsOptions: {
+            defaultIsModuleExports: true,
+            include: [/sorted-btree/, /node_modules/],
+        },
     },
     optimizeDeps: {
         include: ['sorted-btree', '@elaraai/east', '@elaraai/east-ui', '@elaraai/east-ui-components', 'react-dom/client', '@chakra-ui/react'],
