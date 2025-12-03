@@ -111,8 +111,43 @@ function createAvatar(style?: AvatarStyle): ExprType<UIComponentType> {
  * ```
  */
 export const Avatar = {
+    /**
+     * Creates an Avatar component with optional image and fallback.
+     *
+     * @param style - Avatar configuration and styling
+     * @returns An East expression representing the avatar component
+     *
+     * @remarks
+     * Avatar displays user profile images. When no image is provided or fails
+     * to load, it shows initials from the name or a default icon.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Avatar, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Avatar.Root({
+     *         name: "Jane Smith",
+     *         colorPalette: "blue",
+     *     });
+     * });
+     * ```
+     */
     Root: createAvatar,
     Types: {
+        /**
+         * Type for Avatar component data.
+         *
+         * @remarks
+         * Avatar displays user profile images or initials/icons as fallback.
+         *
+         * @property src - Image URL for the avatar
+         * @property name - User name (used for initials fallback)
+         * @property size - Size of the avatar
+         * @property variant - Visual variant (solid, subtle, outline)
+         * @property colorPalette - Color scheme for fallback avatar
+         */
         Avatar: AvatarType,
     },
 } as const;

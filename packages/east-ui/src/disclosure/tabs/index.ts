@@ -294,16 +294,195 @@ function createTabsRoot(
  * ```
  */
 export const Tabs = {
+    /**
+     * Creates a Tabs container with items and optional styling.
+     *
+     * @param items - Array of tab items created with Tabs.Item
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the tabs component
+     *
+     * @remarks
+     * Tabs organize content into separate panels where only one panel
+     * is visible at a time. Supports various visual variants, sizes,
+     * orientations, and activation modes.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Tabs, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Tabs.Root([
+     *         Tabs.Item("tab1", "Overview", [Text.Root("Overview content")]),
+     *         Tabs.Item("tab2", "Details", [Text.Root("Details content")]),
+     *     ], {
+     *         variant: "line",
+     *         fitted: true,
+     *     });
+     * });
+     * ```
+     */
     Root: createTabsRoot,
+    /**
+     * Creates a Tabs item with trigger label and content.
+     *
+     * @param value - Unique identifier for this tab
+     * @param trigger - The tab label text displayed in the tab list
+     * @param content - Array of child UI components for the tab panel
+     * @param style - Optional item configuration
+     * @returns An East expression representing the tabs item
+     *
+     * @remarks
+     * Each tab item has a unique value for identification, a trigger
+     * text displayed in the tab list, and content shown when selected.
+     * Items can be individually disabled.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Tabs, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Tabs.Root([
+     *         Tabs.Item("overview", "Overview", [
+     *             Text.Root("Overview content here"),
+     *         ]),
+     *         Tabs.Item("disabled", "Disabled Tab", [
+     *             Text.Root("This tab is disabled"),
+     *         ], {
+     *             disabled: true,
+     *         }),
+     *     ], {
+     *         defaultValue: "overview",
+     *     });
+     * });
+     * ```
+     */
     Item: createTabsItem,
+    /**
+     * Helper function to create tabs variant values.
+     *
+     * @param v - The variant string ("line", "subtle", "enclosed", "outline", "plain")
+     * @returns An East expression representing the tabs variant
+     *
+     * @remarks
+     * Use this helper to create variant values programmatically. In most cases,
+     * you can pass string literals directly to the style property.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Tabs, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Tabs.Root([
+     *         Tabs.Item("tab1", "Tab 1", [Text.Root("Content")]),
+     *     ], {
+     *         variant: Tabs.Variant("enclosed"),
+     *     });
+     * });
+     * ```
+     */
     Variant: TabsVariant,
     Types: {
+        /**
+         * The concrete East type for Tabs container data.
+         *
+         * @remarks
+         * This struct type represents the serializable data structure for a Tabs
+         * component. Tabs display content in separate panels, with only one panel
+         * visible at a time. The container holds an array of tab items and
+         * optional controlled/uncontrolled selection state.
+         *
+         * @property items - Array of tab items (TabsItemType)
+         * @property value - Controlled selected tab value (OptionType<StringType>)
+         * @property defaultValue - Initial selected tab value (OptionType<StringType>)
+         * @property style - Optional styling configuration (OptionType<TabsStyleType>)
+         */
         Root: TabsRootType,
+        /**
+         * The concrete East type for Tabs item data.
+         *
+         * @remarks
+         * This struct type represents a single tab within the Tabs component.
+         * Each item has a unique identifier, trigger text displayed in the tab
+         * list, and content components shown when the tab is selected.
+         *
+         * @property value - Unique identifier for this tab (StringType)
+         * @property trigger - The tab label text displayed in the tab list (StringType)
+         * @property content - Array of child UI components for the panel (ArrayType<UIComponentType>)
+         * @property disabled - Whether this tab is disabled (OptionType<BooleanType>)
+         */
         Item: TabsItemType,
+        /**
+         * The concrete East type for Tabs style configuration.
+         *
+         * @remarks
+         * This struct type defines the styling configuration for a Tabs component.
+         * It controls visual appearance, layout, keyboard behavior, and
+         * performance optimizations for tab content mounting.
+         *
+         * @property variant - Visual variant: line, subtle, enclosed, outline, plain (OptionType<TabsVariantType>)
+         * @property size - Size of the tabs: sm, md, lg (OptionType<TabsSizeType>)
+         * @property orientation - Layout direction: horizontal or vertical (OptionType<OrientationType>)
+         * @property activationMode - Keyboard navigation: automatic or manual (OptionType<TabsActivationModeType>)
+         * @property fitted - Whether tabs take equal width (OptionType<BooleanType>)
+         * @property justify - Tab list alignment: start, center, end (OptionType<TabsJustifyType>)
+         * @property lazyMount - Mount content only when tab is selected (OptionType<BooleanType>)
+         * @property unmountOnExit - Unmount content when tab is deselected (OptionType<BooleanType>)
+         * @property colorPalette - Color scheme for the tabs (OptionType<ColorSchemeType>)
+         */
         Style: TabsStyleType,
+        /**
+         * Variant type for Tabs visual appearance styles.
+         *
+         * @remarks
+         * This variant type provides type-safe visual style options for tabs.
+         * Each variant affects how the tab list and selected indicator appear.
+         *
+         * @property line - Tabs with an underline indicator on the selected tab
+         * @property subtle - Light background highlighting on the selected tab
+         * @property enclosed - Tabs with a bordered container around the selected tab
+         * @property outline - Outlined tabs with border around each tab
+         * @property plain - No visible styling or indicator
+         */
         Variant: TabsVariantType,
+        /**
+         * Size type for Tabs component dimensions.
+         *
+         * @remarks
+         * This variant type provides type-safe size options for tabs.
+         * Affects the padding, font size, and overall dimensions of the tab list.
+         * Note: Chakra UI Tabs only supports sm, md, lg (not xs or xl).
+         *
+         * @property sm - Small tabs with compact padding
+         * @property md - Medium tabs with standard padding (default)
+         * @property lg - Large tabs with generous padding
+         */
         Size: TabsSizeType,
+        /**
+         * Justify type for tab list alignment.
+         *
+         * @remarks
+         * This variant type controls how tabs are aligned within the tab list
+         * container. Useful when tabs don't fill the entire available width.
+         *
+         * @property start - Align tabs to the start (left in LTR, right in RTL)
+         * @property center - Center the tabs horizontally
+         * @property end - Align tabs to the end (right in LTR, left in RTL)
+         */
         Justify: TabsJustifyType,
+        /**
+         * Activation mode type for keyboard navigation behavior.
+         *
+         * @remarks
+         * This variant type controls how tabs respond to keyboard navigation.
+         * Affects accessibility and user experience when navigating with
+         * arrow keys.
+         *
+         * @property automatic - Tab content activates immediately when focused via keyboard
+         * @property manual - Tab requires Enter/Space key press to activate after focus
+         */
         ActivationMode: TabsActivationModeType,
     },
 } as const;

@@ -179,13 +179,69 @@ function createCarousel(
  * ```
  */
 export const Carousel = {
-    /** Creates a Carousel component */
+    /**
+     * Creates a Carousel component for sliding content.
+     *
+     * @param items - Array of UI components to display as slides
+     * @param style - Optional styling and behavior configuration
+     * @returns An East expression representing the carousel component
+     *
+     * @remarks
+     * Carousel displays a slideshow of content items with optional navigation
+     * controls, indicators, autoplay, and infinite loop support. Supports
+     * multiple slides per view for gallery layouts.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Carousel, Box, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Carousel.Root([
+     *         Box.Root([Text.Root("Slide 1")]),
+     *         Box.Root([Text.Root("Slide 2")]),
+     *     ], {
+     *         showControls: true,
+     *         showIndicators: true,
+     *     });
+     * });
+     * ```
+     */
     Root: createCarousel,
-    /** Type definitions */
     Types: {
-        /** Carousel root struct type */
+        /**
+         * The concrete East type for Carousel container data.
+         *
+         * @remarks
+         * This struct type represents the serializable data structure for a Carousel
+         * component. Contains the array of slides and all configuration options for
+         * navigation, display, and behavior.
+         *
+         * @property items - Array of UI components to display as slides (ArrayType<UIComponentType>)
+         * @property index - Controlled current slide index (OptionType<IntegerType>)
+         * @property defaultIndex - Initial slide index (OptionType<IntegerType>)
+         * @property slidesPerView - Number of visible slides at once (OptionType<IntegerType>)
+         * @property slidesPerMove - Number of slides to advance per navigation step (OptionType<IntegerType>)
+         * @property loop - Whether to enable infinite scrolling (OptionType<BooleanType>)
+         * @property autoplay - Whether to enable automatic slide advancement (OptionType<BooleanType>)
+         * @property allowMouseDrag - Whether to allow mouse drag navigation (OptionType<BooleanType>)
+         * @property showIndicators - Whether to show dot indicators (OptionType<BooleanType>)
+         * @property showControls - Whether to show prev/next controls (OptionType<BooleanType>)
+         * @property style - Optional styling configuration (OptionType<CarouselStyleType>)
+         */
         Root: CarouselRootType,
-        /** Carousel style struct type */
+        /**
+         * The concrete East type for Carousel style configuration.
+         *
+         * @remarks
+         * This struct type defines the visual styling configuration for a Carousel
+         * component. Controls the slide direction, spacing between slides, and
+         * viewport padding.
+         *
+         * @property orientation - Slide direction: horizontal or vertical (OptionType<OrientationType>)
+         * @property spacing - Gap between slides as Chakra spacing token (OptionType<StringType>)
+         * @property padding - Padding around the carousel viewport (OptionType<StringType>)
+         */
         Style: CarouselStyleType,
     },
 } as const;

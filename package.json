@@ -1,6 +1,6 @@
 {
   "name": "east-ui-monorepo",
-  "version": "0.0.1-beta.3",
+  "version": "0.0.1-beta.4",
   "private": true,
   "description": "East UI - UI component library for the East language",
   "workspaces": [
@@ -19,7 +19,6 @@
     "version:components:patch": "npm version patch --workspace=@elaraai/east-ui-components --no-git-tag-version",
     "version:components:minor": "npm version minor --workspace=@elaraai/east-ui-components --no-git-tag-version",
     "version:components:major": "npm version major --workspace=@elaraai/east-ui-components --no-git-tag-version",
-    "version:extension:prerelease": "npm version prerelease --preid=beta --workspace=east-ui-preview --no-git-tag-version",
     "version:extension:patch": "npm version patch --workspace=east-ui-preview --no-git-tag-version",
     "version:extension:minor": "npm version minor --workspace=east-ui-preview --no-git-tag-version",
     "version:extension:major": "npm version major --workspace=east-ui-preview --no-git-tag-version",

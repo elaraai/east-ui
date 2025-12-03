@@ -230,14 +230,97 @@ function createAccordionRoot(
  * ```
  */
 export const Accordion = {
+    /**
+     * Creates an Accordion container with items and optional styling.
+     *
+     * @param items - Array of accordion items created with Accordion.Item
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the accordion component
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Accordion, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Accordion.Root([
+     *         Accordion.Item("section-1", "Section 1", [Text.Root("Content 1")]),
+     *         Accordion.Item("section-2", "Section 2", [Text.Root("Content 2")]),
+     *     ], {
+     *         variant: "enclosed",
+     *         collapsible: true,
+     *     });
+     * });
+     * ```
+     */
     Root: createAccordionRoot,
+    /**
+     * Creates an Accordion item with trigger and content.
+     *
+     * @param value - Unique identifier for the item
+     * @param trigger - The text displayed in the accordion trigger/header
+     * @param content - Array of child UI components shown when expanded
+     * @param style - Optional item styling
+     * @returns An East expression representing the accordion item
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Accordion, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Accordion.Root([
+     *         Accordion.Item("faq-1", "What is East UI?", [
+     *             Text.Root("East UI is a typed UI component library."),
+     *         ]),
+     *     ]);
+     * });
+     * ```
+     */
     Item: createAccordionItem,
+    /**
+     * Helper function to create accordion variant values.
+     *
+     * @param v - The variant string ("enclosed", "subtle", "outline")
+     * @returns An East expression representing the accordion variant
+     */
     Variant: AccordionVariant,
     Types: {
+        /**
+         * The concrete East type for Accordion container data.
+         *
+         * @property items - Array of accordion items
+         * @property style - Optional styling configuration
+         */
         Root: AccordionRootType,
+        /**
+         * The concrete East type for Accordion item data.
+         *
+         * @property value - Unique identifier for the item
+         * @property trigger - Header/trigger text
+         * @property content - Array of child UI components
+         * @property disabled - Whether the item is disabled
+         */
         Item: AccordionItemType,
+        /**
+         * Style type for Accordion container.
+         *
+         * @property multiple - Allow multiple items open simultaneously
+         * @property collapsible - Allow all items to be closed
+         * @property variant - Visual variant
+         */
         Style: AccordionStyleType,
+        /**
+         * Style type for individual Accordion items.
+         */
         ItemStyle: AccordionItemStyleType,
+        /**
+         * Variant type for Accordion appearance styles.
+         *
+         * @property enclosed - Enclosed panel style
+         * @property subtle - Subtle background style
+         * @property outline - Outlined style
+         */
         Variant: AccordionVariantType,
     },
 } as const;

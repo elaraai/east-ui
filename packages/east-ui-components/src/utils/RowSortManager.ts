@@ -147,7 +147,6 @@ export class RowSortManager<TRow> {
      * Uses East's compareFor for type-aware comparison.
      */
     registerCompare<T extends EastType>(columnKey: string, type: T): void {
-        console.log({ columnKey, type });
         this.compareCache.set(columnKey, compareFor(type) as (a: unknown, b: unknown) => number);
     }
 

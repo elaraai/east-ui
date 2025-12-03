@@ -155,8 +155,50 @@ function createField(
  * ```
  */
 export const Field = {
+    /**
+     * Creates a Field component wrapping a form control with label and messages.
+     *
+     * @param label - Label text for the field
+     * @param control - The form control component (Input, Select, Checkbox, etc.)
+     * @param style - Optional configuration for helper text, error text, and states
+     * @returns An East expression representing the field component
+     *
+     * @remarks
+     * Field provides a consistent way to present form controls with labels,
+     * helper text, and validation messages. It wraps any form control component.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Field, Input, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Field.Root(
+     *         "Email",
+     *         Input.String("", { placeholder: "Enter email" }),
+     *         { helperText: "We'll never share your email" }
+     *     );
+     * });
+     * ```
+     */
     Root: createField,
     Types: {
+        /**
+         * The concrete East type for Field component data.
+         *
+         * @remarks
+         * Field wraps a form control (Input, Select, Checkbox, etc.) with
+         * a label and optional helper/error text for form field presentation.
+         *
+         * @property label - Label text for the field
+         * @property control - The form control component (Input, Select, etc.)
+         * @property helperText - Optional descriptive help text
+         * @property errorText - Optional validation error message
+         * @property required - Whether the field is required
+         * @property disabled - Whether the field is disabled
+         * @property invalid - Whether the field is in an invalid state
+         * @property readOnly - Whether the field is read-only
+         */
         Field: FieldType,
     },
 } as const;

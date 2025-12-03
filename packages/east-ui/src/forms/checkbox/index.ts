@@ -103,8 +103,46 @@ function createCheckbox(
  * Use `Checkbox.Root(checked, style)` to create a checkbox, or access `Checkbox.Types.Checkbox` for the East type.
  */
 export const Checkbox = {
+    /**
+     * Creates a Checkbox component with checked state and optional styling.
+     *
+     * @param checked - Whether the checkbox is checked
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the checkbox component
+     *
+     * @remarks
+     * Checkbox is a form control for boolean selections. It supports labels,
+     * indeterminate state for partial selections, and various sizes and colors.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Checkbox, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Checkbox.Root(true, {
+     *         label: "Enable notifications",
+     *         colorPalette: "blue",
+     *         size: "md",
+     *     });
+     * });
+     * ```
+     */
     Root: createCheckbox,
     Types: {
+        /**
+         * Type for Checkbox component data.
+         *
+         * @remarks
+         * Checkbox is a form control for boolean selections with optional label.
+         *
+         * @property checked - Whether the checkbox is checked
+         * @property label - Optional label text displayed next to the checkbox
+         * @property indeterminate - Whether to show indeterminate state (partial selection)
+         * @property disabled - Whether the checkbox is disabled
+         * @property colorPalette - Color scheme for the checkbox
+         * @property size - Size of the checkbox
+         */
         Checkbox: CheckboxType,
     },
 } as const;

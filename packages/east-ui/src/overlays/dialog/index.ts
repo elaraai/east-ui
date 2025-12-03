@@ -180,14 +180,102 @@ function createDialog(
  * ```
  */
 export const Dialog = {
+    /**
+     * Creates a Dialog component with a trigger and body content.
+     *
+     * @param trigger - The UI component that opens the dialog
+     * @param body - Array of UI components for dialog content
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the dialog component
+     *
+     * @remarks
+     * Dialog is a modal window that appears above the main content.
+     * It captures focus and prevents interaction with the underlying page.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Dialog, Button, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Dialog.Root(
+     *         Button.Root("Open Dialog"),
+     *         [Text.Root("Dialog content here")],
+     *         { title: "My Dialog" }
+     *     );
+     * });
+     * ```
+     */
     Root: createDialog,
     Types: {
+        /**
+         * East StructType for Dialog component.
+         *
+         * @remarks
+         * Dialog is a modal overlay with a trigger and body content.
+         * The trigger can be any UI component, and body contains UI children.
+         *
+         * @property trigger - The UI component that opens the dialog
+         * @property body - Array of UI components for dialog content
+         * @property title - Optional dialog title
+         * @property description - Optional dialog description
+         * @property style - Optional style configuration
+         */
         Dialog: DialogType,
+        /**
+         * Style type for Dialog component.
+         *
+         * @property size - Dialog size variant
+         * @property placement - Vertical positioning
+         * @property scrollBehavior - Scroll behavior
+         * @property motionPreset - Animation style
+         * @property role - ARIA role
+         */
         Style: DialogStyleType,
+        /**
+         * Size variant type for Dialog component.
+         *
+         * @property xs - Extra small (24rem max width)
+         * @property sm - Small (28rem max width)
+         * @property md - Medium (32rem max width)
+         * @property lg - Large (42rem max width)
+         * @property xl - Extra large (56rem max width)
+         * @property cover - Full viewport with padding
+         * @property full - Full viewport width
+         */
         Size: DialogSizeType,
+        /**
+         * Placement variant type for Dialog component.
+         *
+         * @property center - Center of viewport
+         * @property top - Top of viewport
+         * @property bottom - Bottom of viewport
+         */
         Placement: DialogPlacementType,
+        /**
+         * Scroll behavior variant type for Dialog component.
+         *
+         * @property inside - Content scrolls inside dialog
+         * @property outside - Positioner handles scrolling
+         */
         ScrollBehavior: DialogScrollBehaviorType,
+        /**
+         * Motion preset variant type for Dialog component.
+         *
+         * @property scale - Scale and fade animation
+         * @property slide-in-bottom - Slide from bottom
+         * @property slide-in-top - Slide from top
+         * @property slide-in-left - Slide from left
+         * @property slide-in-right - Slide from right
+         * @property none - No animation
+         */
         MotionPreset: DialogMotionPresetType,
+        /**
+         * ARIA role variant type for Dialog component.
+         *
+         * @property dialog - Standard dialog role
+         * @property alertdialog - Alert dialog role for confirmations
+         */
         Role: DialogRoleType,
     },
 } as const;

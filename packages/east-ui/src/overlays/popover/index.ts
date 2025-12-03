@@ -156,11 +156,95 @@ function createPopover(
  * ```
  */
 export const Popover = {
+    /**
+     * Creates a Popover component with a trigger and body content.
+     *
+     * @param trigger - The UI component that opens the popover
+     * @param body - Array of UI components for popover content
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the popover component
+     *
+     * @remarks
+     * Popover displays rich interactive content in a floating panel.
+     * Unlike Tooltip, it's controlled via click and can contain form elements.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Popover, Button, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Popover.Root(
+     *         Button.Root("Show Info"),
+     *         [Text.Root("Popover content here")],
+     *         { title: "Information" }
+     *     );
+     * });
+     * ```
+     */
     Root: createPopover,
     Types: {
+        /**
+         * The concrete East type for Popover component data.
+         *
+         * @remarks
+         * This struct type represents the serializable data structure for a Popover
+         * component. Popover is a floating panel that appears near a trigger element
+         * and can contain interactive content.
+         *
+         * @property trigger - The UI component that opens the popover (UIComponentType)
+         * @property body - Array of UI components for popover content (ArrayType<UIComponentType>)
+         * @property title - Optional popover title (OptionType<StringType>)
+         * @property description - Optional popover description (OptionType<StringType>)
+         * @property style - Optional style configuration (OptionType<PopoverStyleType>)
+         */
         Popover: PopoverType,
+        /**
+         * The concrete East type for Popover style configuration.
+         *
+         * @remarks
+         * This struct type defines the styling configuration for a Popover component.
+         * Controls the popover size, positioning, and visual appearance.
+         *
+         * @property size - Popover size variant: xs, sm, md, lg (OptionType<PopoverSizeType>)
+         * @property placement - Position relative to trigger (OptionType<PlacementType>)
+         * @property hasArrow - Show arrow pointing to trigger (OptionType<BooleanType>)
+         * @property gutter - Gap between trigger and popover (OptionType<IntegerType>)
+         */
         Style: PopoverStyleType,
+        /**
+         * Size variant type for Popover component dimensions.
+         *
+         * @remarks
+         * This variant type provides type-safe size options for popovers.
+         * Affects the padding and maximum width of the popover container.
+         *
+         * @property xs - Extra small popover with minimal padding
+         * @property sm - Small popover with compact padding
+         * @property md - Medium popover with standard padding (default)
+         * @property lg - Large popover with generous padding
+         */
         Size: PopoverSizeType,
+        /**
+         * Placement variant type for Popover positioning.
+         *
+         * @remarks
+         * Controls where the popover appears relative to its trigger element.
+         * Supports all cardinal directions with start/end variations.
+         *
+         * @property top - Centered above the trigger
+         * @property top-start - Above, aligned to start
+         * @property top-end - Above, aligned to end
+         * @property bottom - Centered below the trigger
+         * @property bottom-start - Below, aligned to start
+         * @property bottom-end - Below, aligned to end
+         * @property left - Centered to the left
+         * @property left-start - Left, aligned to start
+         * @property left-end - Left, aligned to end
+         * @property right - Centered to the right
+         * @property right-start - Right, aligned to start
+         * @property right-end - Right, aligned to end
+         */
         Placement: PlacementType,
     },
 } as const;

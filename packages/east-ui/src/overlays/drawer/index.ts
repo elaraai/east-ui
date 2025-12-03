@@ -153,11 +153,75 @@ function createDrawer(
  * ```
  */
 export const Drawer = {
+    /**
+     * Creates a Drawer component with a trigger and body content.
+     *
+     * @param trigger - The UI component that opens the drawer
+     * @param body - Array of UI components for drawer content
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the drawer component
+     *
+     * @remarks
+     * Drawer is a panel that slides in from the edge of the viewport.
+     * It's typically used for navigation, settings, or detailed content.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Drawer, Button, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Drawer.Root(
+     *         Button.Root("Open Drawer"),
+     *         [Text.Root("Drawer content")],
+     *         { title: "Settings", placement: "end" }
+     *     );
+     * });
+     * ```
+     */
     Root: createDrawer,
     Types: {
+        /**
+         * East StructType for Drawer component.
+         *
+         * @remarks
+         * Drawer is a panel that slides in from an edge of the screen.
+         * The trigger can be any UI component, and body contains UI children.
+         *
+         * @property trigger - The UI component that opens the drawer
+         * @property body - Array of UI components for drawer content
+         * @property title - Optional drawer title
+         * @property description - Optional drawer description
+         * @property style - Optional style configuration
+         */
         Drawer: DrawerType,
+        /**
+         * Style type for Drawer component.
+         *
+         * @property size - Drawer size variant
+         * @property placement - Edge placement
+         * @property contained - Render within parent container
+         */
         Style: DrawerStyleType,
+        /**
+         * Size variant type for Drawer component.
+         *
+         * @property xs - Extra small (20rem max width)
+         * @property sm - Small (28rem max width)
+         * @property md - Medium (32rem max width)
+         * @property lg - Large (42rem max width)
+         * @property xl - Extra large (56rem max width)
+         * @property full - Full viewport
+         */
         Size: DrawerSizeType,
+        /**
+         * Placement variant type for Drawer component.
+         *
+         * @property start - Left side (RTL-aware)
+         * @property end - Right side (RTL-aware)
+         * @property top - Top edge
+         * @property bottom - Bottom edge
+         */
         Placement: DrawerPlacementType,
     },
 } as const;

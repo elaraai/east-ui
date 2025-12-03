@@ -12,7 +12,7 @@
 
 import { East } from "@elaraai/east";
 import type { CallableFunctionExpr } from "@elaraai/east/internal";
-import { UIComponentType, Text, Stack } from "../src/index.js";
+import { UIComponentType, Text, Stack } from "@elaraai/east-ui";
 
 const example: CallableFunctionExpr<[], typeof UIComponentType> = East.function(
     [],

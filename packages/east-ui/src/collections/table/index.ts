@@ -288,14 +288,113 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
  * ```
  */
 export const Table = {
+    /**
+     * Creates a Table component following the chart pattern.
+     *
+     * @typeParam T - The struct type of each data row
+     * @param data - Array of data structs
+     * @param columns - Column specification: array of field names, or object with optional config
+     * @param style - Optional table styling
+     * @returns An East expression representing the table component
+     *
+     * @remarks
+     * Columns can be specified as a simple array of field names, or an object
+     * with optional header and render configuration.
+     *
+     * When render is not provided, fields render as Text automatically:
+     * - String fields: `Text.Root(value)`
+     * - Other types: `Text.Root(East.str\`\${value}\`)` (auto string conversion)
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Table, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Table.Root(
+     *         [
+     *             { name: "Alice", age: 30n, role: "Admin" },
+     *             { name: "Bob", age: 25n, role: "User" },
+     *         ],
+     *         ["name", "age", "role"],
+     *         { variant: "line", striped: true }
+     *     );
+     * });
+     * ```
+     */
     Root: createTable,
     Types: {
+        /**
+         * Type for Table component data.
+         *
+         * @remarks
+         * Table displays data in rows and columns with optional styling.
+         *
+         * @property rows - Array of row data (Dict mapping column keys to UI components)
+         * @property columns - Array of column definitions
+         * @property style - Optional styling configuration
+         */
         Root: TableRootType,
+        /**
+         * Style type for the table root component.
+         *
+         * @remarks
+         * All properties are optional and wrapped in {@link OptionType}.
+         *
+         * @property variant - Table variant (line or outline)
+         * @property size - Table size (sm, md, lg)
+         * @property striped - Whether to show zebra stripes on rows
+         * @property interactive - Whether to highlight rows on hover
+         * @property stickyHeader - Whether the header sticks when scrolling
+         * @property showColumnBorder - Whether to show borders between columns
+         * @property colorPalette - Color scheme for interactive hover
+         */
         Style: TableStyleType,
+        /**
+         * East type for a table column definition.
+         *
+         * @remarks
+         * Defines the header text and key for a column.
+         *
+         * @property key - The column key (field name)
+         * @property type - The column value type
+         * @property header - Optional header text for the column
+         */
         Column: TableColumnType,
+        /**
+         * East type for a table cell.
+         *
+         * @remarks
+         * Defines the type for a table cell.
+         *
+         * @property value - The cell value as a literal
+         * @property content - Optional UI component content for the cell
+         */
         Cell: TableCellType,
+        /**
+         * Type representing the Table structure.
+         */
         Value: TableValueLiteral,
+        /**
+         * Table variant type for Chakra UI v3 table styling.
+         *
+         * @remarks
+         * Create instances using the {@link TableVariant} function.
+         *
+         * @property line - Table with horizontal lines between rows
+         * @property outline - Table with full border outline
+         */
         Variant: TableVariantType,
+        /**
+         * Size options for Table component.
+         *
+         * @remarks
+         * Chakra UI Table only supports sm, md, lg sizes (not xs).
+         *
+         * @property sm - Small table
+         * @property md - Medium table (default)
+         * @property lg - Large table
+         */
         Size: TableSizeType,
     },
 } as const;

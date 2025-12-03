@@ -764,15 +764,40 @@ const avatar = Avatar.Root("AB", { name: "Alice Brown", src: "https://..." });
 
 ### Stat
 
+Key metric display with optional trend indicator.
+
 ```typescript
 import { Stat } from "@elaraai/east-ui";
 
-const stat = Stat.Root({ label: "Revenue", value: "$45,000", helpText: "+12%", indicator: "increase" });
+// Simple stat
+const revenue = Stat.Root("Revenue", "$45,000");
+
+// With help text and trend indicator
+const growth = Stat.Root("Growth", "+23.5%", {
+    helpText: "vs last month",
+    indicator: "up",
+});
+
+// Dynamic indicator based on data
+const metric = Stat.Root("Profit", East.str`$${East.print(value)}`, {
+    indicator: East.greater(value, 0.0).ifElse(
+        $ => Stat.Indicator("up"),
+        $ => Stat.Indicator("down")
+    ),
+});
 ```
 
-| Signature | Description | Example |
-|-----------|-------------|---------|
-| `Stat.Root(style?: StatStyle): ExprType<UIComponentType>` | Create stat display | `Stat.Root({ label: "Users", value: "1,234" })` |
+| Signature | Description |
+|-----------|-------------|
+| `Stat.Root(label, value, style?): ExprType<UIComponentType>` | Create stat display |
+| `Stat.Indicator(direction): ExprType<StatIndicatorType>` | Create indicator value ("up" or "down") |
+
+**StatStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `helpText` | `SubtypeExprOrValue<StringType>` | Help text or trend description |
+| `indicator` | `SubtypeExprOrValue<StatIndicatorType> \| "up" \| "down"` | Trend indicator direction |
 
 ---
 
@@ -817,15 +842,43 @@ const alert = Alert.Root({ status: "success", title: "Saved", description: "Chan
 
 ### Progress
 
+Progress bar for displaying completion status.
+
 ```typescript
 import { Progress } from "@elaraai/east-ui";
 
-const progress = Progress.Root({ value: 75, colorPalette: "green", striped: true });
+// Simple progress
+const progress = Progress.Root(75.0);
+
+// Styled progress
+const styled = Progress.Root(60.0, {
+    colorPalette: "green",
+    size: "md",
+    striped: true,
+});
+
+// Dynamic progress from data
+const dynamic = Progress.Root(task.completion.toFloat(), {
+    colorPalette: "blue",
+});
 ```
 
-| Signature | Description | Example |
-|-----------|-------------|---------|
-| `Progress.Root(style?: ProgressStyle): ExprType<UIComponentType>` | Create progress bar | `Progress.Root({ value: 50 })` |
+| Signature | Description |
+|-----------|-------------|
+| `Progress.Root(value, style?): ExprType<UIComponentType>` | Create progress bar |
+
+**ProgressStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `min` | `SubtypeExprOrValue<FloatType>` | Minimum value (default 0) |
+| `max` | `SubtypeExprOrValue<FloatType>` | Maximum value (default 100) |
+| `colorPalette` | `SubtypeExprOrValue<ColorSchemeType> \| ColorSchemeLiteral` | Color scheme |
+| `size` | `SubtypeExprOrValue<SizeType> \| SizeLiteral` | Size variant |
+| `striped` | `SubtypeExprOrValue<BooleanType>` | Show striped pattern |
+| `animated` | `SubtypeExprOrValue<BooleanType>` | Animate the progress |
+| `label` | `SubtypeExprOrValue<StringType>` | Label text |
+| `valueText` | `SubtypeExprOrValue<StringType>` | Value display text |
 
 ---
 

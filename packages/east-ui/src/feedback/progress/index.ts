@@ -152,10 +152,64 @@ function createProgress(
  * ```
  */
 export const Progress = {
+    /**
+     * Creates a Progress component with value and optional styling.
+     *
+     * @param value - Current progress value (between min and max)
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the progress component
+     *
+     * @remarks
+     * Progress is used to display the completion status of a task. It supports
+     * striped and animated styles for visual feedback.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Progress, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Progress.Root(60.0, {
+     *         colorPalette: "green",
+     *         size: "md",
+     *         striped: true,
+     *     });
+     * });
+     * ```
+     */
     Root: createProgress,
+    /**
+     * Helper function to create progress variant values.
+     *
+     * @param v - The variant string ("outline" or "subtle")
+     * @returns An East expression representing the progress variant
+     */
     Variant: ProgressVariant,
     Types: {
+        /**
+         * Type for Progress component data.
+         *
+         * @remarks
+         * Progress displays the completion status of a task or operation.
+         *
+         * @property value - Current progress value (between min and max)
+         * @property min - Minimum value (defaults to 0)
+         * @property max - Maximum value (defaults to 100)
+         * @property colorPalette - Color scheme for the progress bar
+         * @property size - Size of the progress bar
+         * @property variant - Visual variant (outline or subtle)
+         * @property striped - Whether to show striped pattern
+         * @property animated - Whether to animate the progress bar
+         * @property label - Optional label text
+         * @property valueText - Optional text showing current value
+         */
         Progress: ProgressType,
+        /**
+         * Variant types for Progress visual style.
+         *
+         * @property outline - Progress bar with outlined track
+         * @property subtle - Progress bar with subtle/filled track
+         */
         Variant: ProgressVariantType,
     },
 } as const;

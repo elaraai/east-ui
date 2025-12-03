@@ -259,11 +259,103 @@ function SplitterRoot(
  * ```
  */
 export const Splitter = {
+    /**
+     * Creates a Splitter container with panels and optional styling.
+     *
+     * @param panels - Array of panels created with Splitter.Panel
+     * @param defaultSize - Array of initial sizes (percentages) for each panel
+     * @param style - Optional styling configuration for the splitter
+     * @returns An East expression representing the styled splitter component
+     *
+     * @remarks
+     * Splitter provides resizable panels with draggable dividers.
+     * The defaultSize array must have the same length as the panels array,
+     * with values representing percentages that should sum to 100.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Splitter, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Splitter.Root(
+     *         [
+     *             Splitter.Panel(Text.Root("Left Panel"), { id: "left" }),
+     *             Splitter.Panel(Text.Root("Right Panel"), { id: "right" }),
+     *         ],
+     *         [50.0, 50.0],
+     *         { orientation: "horizontal" }
+     *     );
+     * });
+     * ```
+     */
     Root: SplitterRoot,
+    /**
+     * Creates a Splitter panel with content and configuration.
+     *
+     * @param content - The UI component to render in this panel
+     * @param config - Panel configuration including id and optional constraints
+     * @returns An East expression representing the splitter panel
+     *
+     * @remarks
+     * Splitter panels can have size constraints and collapsibility settings.
+     * The id is used to identify the panel for resize triggers.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Splitter, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Splitter.Root(
+     *         [
+     *             Splitter.Panel(Text.Root("Sidebar"), { id: "sidebar", minSize: 20 }),
+     *             Splitter.Panel(Text.Root("Main"), { id: "main", collapsible: true }),
+     *         ],
+     *         [30.0, 70.0],
+     *         { orientation: "horizontal" }
+     *     );
+     * });
+     * ```
+     */
     Panel: SplitterPanel,
     Types: {
+        /**
+         * The concrete East type for Splitter component data.
+         *
+         * @remarks
+         * This struct type represents the serializable data structure for a Splitter component.
+         * Splitter provides resizable panels with draggable dividers between them.
+         *
+         * @property panels - Array of panel configurations
+         * @property defaultSize - Initial sizes for each panel as percentages
+         * @property style - Optional styling configuration wrapped in OptionType
+         */
         Splitter: SplitterType,
+        /**
+         * The concrete East type for Splitter panel data.
+         *
+         * @remarks
+         * This struct type represents a single panel within a Splitter.
+         * Each panel has an identifier, content, and optional sizing constraints.
+         *
+         * @property id - Unique identifier for the panel
+         * @property content - The UI component to render in this panel
+         * @property minSize - Minimum size as a percentage (0-100)
+         * @property maxSize - Maximum size as a percentage (0-100)
+         * @property collapsible - Whether the panel can be collapsed
+         * @property defaultCollapsed - Whether the panel starts collapsed
+         */
         Panel: SplitterPanelType,
+        /**
+         * Style type for Splitter container configuration.
+         *
+         * @remarks
+         * This struct type defines the styling configuration for the Splitter container.
+         * It controls the layout orientation of the panels.
+         *
+         * @property orientation - Layout orientation (horizontal or vertical)
+         */
         Style: SplitterStyleType,
     }
 } as const;

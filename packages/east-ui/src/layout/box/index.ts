@@ -153,13 +153,148 @@ function createBox(
  * Use `Box.Root(children, style)` to create a box, or access `Box.Types.Box` for the East type.
  */
 export const Box = {
+    /**
+     * Creates a Box container component with children and optional styling.
+     *
+     * @param children - Array of child UI components
+     * @param style - Optional styling configuration for the box
+     * @returns An East expression representing the styled box component
+     *
+     * @remarks
+     * Box is the fundamental building block for layouts. It maps to a div element
+     * and supports all common CSS layout properties through style configuration.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Box, Text, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Box.Root([
+     *         Text.Root("Hello"),
+     *     ], {
+     *         padding: "4",
+     *         background: "gray.100",
+     *     });
+     * });
+     * ```
+     */
     Root: createBox,
+    /**
+     * Creates padding configuration for layout components.
+     *
+     * @param top - Top padding (Chakra UI spacing token or CSS value)
+     * @param right - Right padding (Chakra UI spacing token or CSS value)
+     * @param bottom - Bottom padding (Chakra UI spacing token or CSS value)
+     * @param left - Left padding (Chakra UI spacing token or CSS value)
+     * @returns An East expression representing the padding configuration
+     *
+     * @remarks
+     * Use this helper to create structured padding values for Box and Stack components.
+     * You can also pass a plain string to the padding style property for uniform padding.
+     *
+     * @example
+     * ```ts
+     * import { Box, Padding } from "@elaraai/east-ui";
+     *
+     * // Structured padding
+     * Box.Root([...], {
+     *   padding: Padding("4", "2", "4", "2"),
+     * });
+     *
+     * // Uniform padding (shorthand)
+     * Box.Root([...], {
+     *   padding: "4",
+     * });
+     * ```
+     */
     Padding,
+    /**
+     * Creates margin configuration for layout components.
+     *
+     * @param top - Top margin (Chakra UI spacing token or CSS value)
+     * @param right - Right margin (Chakra UI spacing token or CSS value)
+     * @param bottom - Bottom margin (Chakra UI spacing token or CSS value)
+     * @param left - Left margin (Chakra UI spacing token or CSS value)
+     * @returns An East expression representing the margin configuration
+     *
+     * @remarks
+     * Use this helper to create structured margin values for Box and Stack components.
+     * You can also pass a plain string to the margin style property for uniform margin.
+     *
+     * @example
+     * ```ts
+     * import { Box, Margin } from "@elaraai/east-ui";
+     *
+     * // Structured margin
+     * Box.Root([...], {
+     *   margin: Margin("4", "auto", "4", "auto"),
+     * });
+     *
+     * // Uniform margin (shorthand)
+     * Box.Root([...], {
+     *   margin: "4",
+     * });
+     * ```
+     */
     Margin,
     Types: {
+        /**
+         * The concrete East type for Box component data.
+         *
+         * @remarks
+         * This struct type represents the serializable data structure for a Box component.
+         * Box is a container component that can hold child components.
+         *
+         * @property children - Array of child UI components
+         * @property style - Optional styling configuration wrapped in OptionType
+         */
         Box: BoxType,
+        /**
+         * The concrete East type for Box component style data.
+         *
+         * @remarks
+         * All properties are optional and wrapped in {@link OptionType}.
+         *
+         * @property display - CSS display property
+         * @property width - Width (Chakra UI size token or CSS value)
+         * @property height - Height (Chakra UI size token or CSS value)
+         * @property padding - Padding configuration
+         * @property margin - Margin configuration
+         * @property background - Background color (Chakra UI color token or CSS color)
+         * @property color - Text color (Chakra UI color token or CSS color)
+         * @property borderRadius - Border radius (Chakra UI radius token or CSS value)
+         * @property flexDirection - Flex direction for flex containers
+         * @property justifyContent - Justify content for flex/grid containers
+         * @property alignItems - Align items for flex/grid containers
+         * @property gap - Gap between children (Chakra UI spacing token or CSS value)
+         */
         Style: BoxStyleType,
+        /**
+         * The concrete East type for padding configuration.
+         *
+         * @remarks
+         * This struct type defines padding for all four sides of a box.
+         * Each side is optional and accepts Chakra UI spacing tokens or CSS values.
+         *
+         * @property top - Top padding (Chakra UI spacing token or CSS value)
+         * @property right - Right padding (Chakra UI spacing token or CSS value)
+         * @property bottom - Bottom padding (Chakra UI spacing token or CSS value)
+         * @property left - Left padding (Chakra UI spacing token or CSS value)
+         */
         Padding: PaddingType,
+        /**
+         * The concrete East type for margin configuration.
+         *
+         * @remarks
+         * This struct type defines margin for all four sides of a box.
+         * Each side is optional and accepts Chakra UI spacing tokens or CSS values.
+         *
+         * @property top - Top margin (Chakra UI spacing token or CSS value)
+         * @property right - Right margin (Chakra UI spacing token or CSS value)
+         * @property bottom - Bottom margin (Chakra UI spacing token or CSS value)
+         * @property left - Left margin (Chakra UI spacing token or CSS value)
+         */
         Margin: MarginType,
     },
 } as const;

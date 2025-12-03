@@ -124,10 +124,72 @@ function createIconButton(
  * ```
  */
 export const IconButton = {
+    /**
+     * Creates an IconButton component with an icon and optional styling.
+     *
+     * @param prefix - The Font Awesome icon prefix (e.g., "fas", "far")
+     * @param name - The Font Awesome icon name (e.g., "xmark", "bars")
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the icon button component
+     *
+     * @remarks
+     * IconButton renders an icon within a button. It's useful for toolbar actions,
+     * close buttons, and other icon-only interactive elements.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { IconButton, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return IconButton.Root("fas", "xmark");
+     * });
+     *
+     * const styledExample = East.function([], UIComponentType, $ => {
+     *     return IconButton.Root("fas", "bars", {
+     *         variant: "ghost",
+     *         size: "lg",
+     *     });
+     * });
+     * ```
+     */
     Root: createIconButton,
     Types: {
+        /**
+         * The concrete East type for IconButton component data.
+         *
+         * @remarks
+         * This struct type represents the serializable data structure for an IconButton component.
+         *
+         * @property prefix - The Font Awesome icon prefix
+         * @property name - The icon name
+         * @property style - Optional styling configuration wrapped in OptionType
+         */
         IconButton: IconButtonType,
+        /**
+         * Style type for IconButton component configuration.
+         *
+         * @remarks
+         * IconButton shares the same style options as Button.
+         *
+         * @property variant - Button appearance variant (solid, subtle, outline, ghost)
+         * @property colorPalette - Color scheme for the button
+         * @property size - Size of the button (xs, sm, md, lg)
+         * @property loading - Whether the button shows a loading state
+         * @property disabled - Whether the button is disabled
+         */
         Style: IconButtonStyleType,
+        /**
+         * Variant type for Button appearance styles.
+         *
+         * @remarks
+         * Create instances using string literals like "solid", "outline", etc.
+         *
+         * @property solid - Solid filled button (default)
+         * @property subtle - Subtle/light background button
+         * @property outline - Outlined button with border
+         * @property ghost - Transparent button, visible on hover
+         */
         Variant: ButtonVariantType,
     },
 } as const;

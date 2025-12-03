@@ -234,30 +234,39 @@ function DateTimeInput(
  *
  * @example
  * ```ts
- * import { Input } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Input, UIComponentType } from "@elaraai/east-ui";
  *
- * // String input (accepts plain strings)
- * const nameInput = Input.String("John", {
- *   placeholder: "Enter name",
- *   variant: "outline",
+ * // String input
+ * const stringExample = East.function([], UIComponentType, $ => {
+ *     return Input.String("John", {
+ *         placeholder: "Enter name",
+ *         variant: "outline",
+ *     });
  * });
  *
  * // Integer input with constraints
- * const ageInput = Input.Integer(East.value(25n, IntegerType), {
- *   min: 0n,
- *   max: 150n,
+ * const integerExample = East.function([], UIComponentType, $ => {
+ *     return Input.Integer(25n, {
+ *         min: 0n,
+ *         max: 150n,
+ *     });
  * });
  *
  * // Float input with precision
- * const priceInput = Input.Float(East.value(19.99, FloatType), {
- *   min: 0,
- *   precision: 2n,
+ * const floatExample = East.function([], UIComponentType, $ => {
+ *     return Input.Float(19.99, {
+ *         min: 0,
+ *         precision: 2n,
+ *     });
  * });
  *
  * // DateTime input
- * const dateInput = Input.DateTime(East.value(new Date(), DateTimeType), {
- *   showTime: true,
- *   format: "yyyy-MM-dd HH:mm",
+ * const dateExample = East.function([], UIComponentType, $ => {
+ *     return Input.DateTime(new Date(), {
+ *         showTime: true,
+ *         format: "yyyy-MM-dd HH:mm",
+ *     });
  * });
  * ```
  */
@@ -266,12 +275,82 @@ export const Input = {
     Integer: IntegerInput,
     Float: FloatInput,
     DateTime: DateTimeInput,
+    /**
+     * Creates an input variant expression.
+     *
+     * @param inputVariant - The input variant style
+     * @returns An East expression representing the input variant
+     *
+     * @example
+     * ```ts
+     * import { InputVariant } from "@elaraai/east-ui";
+     *
+     * InputVariant("outline");
+     * InputVariant("subtle");
+     * ```
+     */
     Variant: InputVariant,
     Types: {
+        /**
+         * Type for String input component data.
+         *
+         * @property value - The current string value
+         * @property placeholder - Placeholder text when empty
+         * @property variant - Input appearance variant
+         * @property size - Size of the input
+         * @property maxLength - Maximum character count
+         * @property pattern - Regex pattern for validation
+         * @property disabled - Whether the input is disabled
+         */
         String: StringInputType,
+        /**
+         * Type for Integer input component data.
+         *
+         * @property value - The current integer value
+         * @property min - Minimum allowed value
+         * @property max - Maximum allowed value
+         * @property step - Step increment for stepper controls
+         * @property variant - Input appearance variant
+         * @property size - Size of the input
+         * @property disabled - Whether the input is disabled
+         */
         Integer: IntegerInputType,
+        /**
+         * Type for Float input component data.
+         *
+         * @property value - The current float value
+         * @property min - Minimum allowed value
+         * @property max - Maximum allowed value
+         * @property step - Step increment for stepper controls
+         * @property precision - Number of decimal places
+         * @property variant - Input appearance variant
+         * @property size - Size of the input
+         * @property disabled - Whether the input is disabled
+         */
         Float: FloatInputType,
+        /**
+         * Type for DateTime input component data.
+         *
+         * @property value - The current DateTime value
+         * @property min - Minimum allowed date/time
+         * @property max - Maximum allowed date/time
+         * @property showTime - Whether to show time picker
+         * @property format - Display format string
+         * @property variant - Input appearance variant
+         * @property size - Size of the input
+         * @property disabled - Whether the input is disabled
+         */
         DateTime: DateTimeInputType,
+        /**
+         * Variant type for Input appearance styles.
+         *
+         * @remarks
+         * Create instances using the {@link InputVariant} function.
+         *
+         * @property outline - Outlined input with border (default)
+         * @property subtle - Input with muted background
+         * @property flushed - Underlined input without border
+         */
         Variant: InputVariantType,
     },
 } as const;

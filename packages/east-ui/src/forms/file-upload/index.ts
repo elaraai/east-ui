@@ -140,13 +140,57 @@ function createFileUpload(
  * ```
  */
 export const FileUpload = {
-    /** Creates a FileUpload component */
+    /**
+     * Creates a FileUpload component.
+     *
+     * @param style - Configuration options for the file upload
+     * @returns An East expression representing the FileUpload component
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { FileUpload, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return FileUpload.Root({
+     *         accept: "image/*",
+     *         maxFiles: 5n,
+     *     });
+     * });
+     * ```
+     */
     Root: createFileUpload,
-    /** Type definitions */
     Types: {
-        /** FileUpload struct type */
+        /**
+         * Type for FileUpload component data.
+         *
+         * @remarks
+         * FileUpload is a form control for uploading files with drag-and-drop support.
+         *
+         * @property accept - Accepted file types (MIME type pattern, e.g., "image/*" or ".pdf,.doc")
+         * @property maxFiles - Maximum number of files allowed
+         * @property maxFileSize - Maximum file size in bytes
+         * @property minFileSize - Minimum file size in bytes
+         * @property directory - Whether to allow folder/directory upload
+         * @property disabled - Whether the upload is disabled
+         * @property required - Whether file upload is required
+         * @property allowDrop - Whether to allow drag-and-drop
+         * @property capture - Camera capture mode for mobile devices
+         * @property name - Form input name attribute
+         * @property label - Label text for the upload area
+         * @property dropzoneText - Text shown in the dropzone area
+         * @property triggerText - Text for the upload trigger button
+         */
         FileUpload: FileUploadType,
-        /** File capture variant type */
+        /**
+         * Capture mode for camera access on mobile devices.
+         *
+         * @remarks
+         * Controls which camera to use when capturing media files.
+         *
+         * @property user - Front-facing camera (selfie mode)
+         * @property environment - Rear-facing camera
+         */
         Capture: FileCaptureType,
     },
 } as const;

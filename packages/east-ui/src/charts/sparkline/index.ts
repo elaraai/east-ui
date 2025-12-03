@@ -110,9 +110,56 @@ function createSparkline(
  * ```
  */
 export const Sparkline = {
+    /**
+     * Creates a Sparkline component with data and optional styling.
+     *
+     * @param data - Array of numeric values to plot
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the sparkline component
+     *
+     * @remarks
+     * Sparkline is a compact inline chart for showing trends in data.
+     * It's commonly used in tables, dashboards, and alongside statistics
+     * to show historical values or trends without taking much space.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Sparkline, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Sparkline.Root(
+     *         [1.2, 2.4, 1.8, 3.1, 2.9, 4.2],
+     *         { type: "area", color: "teal.500" }
+     *     );
+     * });
+     * ```
+     */
     Root: createSparkline,
     Types: {
+        /**
+         * The concrete East type for Sparkline component data.
+         *
+         * @remarks
+         * Sparkline is a compact inline chart for showing trends.
+         * It displays an array of numeric values as a small visualization.
+         *
+         * @property data - Array of numeric values to plot (ArrayType<FloatType>)
+         * @property type - Chart type line or area (OptionType<SparklineChartType>)
+         * @property color - Line/fill color (OptionType<StringType>)
+         * @property height - Height of the sparkline (OptionType<StringType>)
+         * @property width - Width of the sparkline (OptionType<StringType>)
+         */
         Sparkline: SparklineType,
+        /**
+         * Variant type for Sparkline chart appearance.
+         *
+         * @remarks
+         * Determines how the sparkline data is visualized.
+         *
+         * @property line - Line chart connecting data points
+         * @property area - Filled area chart below the line
+         */
         ChartType: SparklineChartType,
     },
 } as const;

@@ -12,10 +12,10 @@ import {
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
-import { StatType, StatIndicatorType, type StatStyle } from "./types.js";
+import { StatType, StatIndicatorType, StatIndicator, type StatStyle } from "./types.js";
 
-// Re-export types
-export { StatType, StatIndicatorType, StatIndicator, type StatStyle, type StatIndicatorLiteral } from "./types.js";
+// Re-export types (only TypeScript interfaces, not East types - those go through Stat.Types)
+export { type StatStyle, type StatIndicatorLiteral } from "./types.js";
 
 // ============================================================================
 // Stat Function
@@ -103,9 +103,74 @@ function createStat(
  * ```
  */
 export const Stat = {
+    /**
+     * Creates a Stat component with label, value, and optional trend info.
+     *
+     * @param label - The stat label/title
+     * @param value - The main stat value
+     * @param style - Optional styling configuration
+     * @returns An East expression representing the stat component
+     *
+     * @remarks
+     * Stat is used to display key metrics or KPIs with optional trend indicators
+     * and help text describing changes.
+     *
+     * @example
+     * ```ts
+     * import { East } from "@elaraai/east";
+     * import { Stat, UIComponentType } from "@elaraai/east-ui";
+     *
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Stat.Root("Growth", "+23.36%", {
+     *         helpText: "From last week",
+     *         indicator: "up",
+     *     });
+     * });
+     * ```
+     */
     Root: createStat,
+    /**
+     * Helper function to create stat indicator values.
+     *
+     * @param direction - The indicator direction ("up" or "down")
+     * @returns An East expression representing the stat indicator
+     *
+     * @example
+     * ```ts
+     * import { Stat } from "@elaraai/east-ui";
+     *
+     * // Dynamic indicator based on value
+     * const stat = Stat.Root("Profit", value, {
+     *   indicator: condition.ifElse(
+     *     $ => Stat.Indicator("up"),
+     *     $ => Stat.Indicator("down")
+     *   ),
+     * });
+     * ```
+     */
+    Indicator: StatIndicator,
     Types: {
+        /**
+         * Type for Stat component data.
+         *
+         * @remarks
+         * Stat displays a key metric with optional label, help text, and trend indicator.
+         *
+         * @property label - The stat label/title
+         * @property value - The main stat value
+         * @property helpText - Optional help text or trend description
+         * @property indicator - Optional trend indicator (up/down)
+         */
         Stat: StatType,
+        /**
+         * Indicator types for Stat component.
+         *
+         * @remarks
+         * Used to show trend direction.
+         *
+         * @property up - Positive trend (usually green)
+         * @property down - Negative trend (usually red)
+         */
         Indicator: StatIndicatorType,
     },
 } as const;
