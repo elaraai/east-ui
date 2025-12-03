@@ -9,6 +9,13 @@ export default defineConfig({
     'process.env': {},
     'process.argv': '[]',
   },
+  build: {
+    // Handle CommonJS modules that use exports.default (like sorted-btree)
+    commonjsOptions: {
+      defaultIsModuleExports: true,
+      include: [/sorted-btree/, /node_modules/],
+    },
+  },
   optimizeDeps: {
     include: ['sorted-btree', '@elaraai/east', '@elaraai/east-ui', 'react-dom/client', '@chakra-ui/react'],
   },
