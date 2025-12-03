@@ -7,7 +7,6 @@ import {
     Box,
     Container,
     Flex,
-    Heading,
     Tabs,
     Text,
 } from "@chakra-ui/react";
@@ -57,17 +56,14 @@ export function App() {
                     borderColor="gray.200"
                     py={4}
                 >
-                    <Container maxW="container.xl">
-                        <Flex align="center" gap={4}>
-                            <ElaraLogo height="32px" />
-                            <Box>
-                                <Heading size="lg">East UI React</Heading>
-                                <Text color="gray.500" fontSize="sm">
-                                    Component Showcase
+                        <Container maxW="container.xl">
+                            <Flex align="center" gap={3}>
+                                <ElaraLogo height="28px" />
+                                <Text fontSize="lg" fontWeight="semibold">
+                                    East UI <Text as="span" color="gray.500" fontWeight="normal">Showcase</Text>
                                 </Text>
-                            </Box>
-                        </Flex>
-                    </Container>
+                            </Flex>
+                        </Container>
                 </Box>
 
                 {/* Tabs */}

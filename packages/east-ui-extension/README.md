@@ -64,6 +64,7 @@ See `packages/east-ui/examples/` for more complete examples.
 
 ## Links
 
+- **Live Showcase**: [https://elaraai.github.io/east-ui/](https://elaraai.github.io/east-ui/)
 - **East UI**: [https://www.npmjs.com/package/@elaraai/east-ui](https://www.npmjs.com/package/@elaraai/east-ui)
 - **Documentation**: [https://github.com/elaraai/east-ui](https://github.com/elaraai/east-ui)
 - **Issues**: [https://github.com/elaraai/east-ui/issues](https://github.com/elaraai/east-ui/issues)
