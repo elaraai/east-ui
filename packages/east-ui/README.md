@@ -10,7 +10,7 @@
 ## Features
 
 - **📦 Layout Components** - Box, Stack, Grid, Splitter, Separator
-- **📝 Typography** - Text with comprehensive styling options
+- **📝 Typography** - Text, Code, Heading, Link, Highlight, Mark, List, CodeBlock
 - **🔘 Buttons** - Button, IconButton with variants and states
 - **📋 Forms** - Input, Select, Checkbox, Switch, Slider, Textarea, TagsInput, FileUpload
 - **📊 Collections** - Table, Gantt, DataList, TreeView
@@ -55,7 +55,7 @@ const ir = MyComponent.toIR();
 | Category | Components | Description |
 |----------|------------|-------------|
 | **Layout** | `Box`, `Stack`, `Grid`, `Splitter`, `Separator` | Container and layout components |
-| **Typography** | `Text` | Text display with styling |
+| **Typography** | `Text`, `Code`, `Heading`, `Link`, `Highlight`, `Mark`, `List`, `CodeBlock` | Text and typography components |
 | **Buttons** | `Button`, `IconButton` | Interactive button components |
 | **Forms** | `Input`, `Select`, `Checkbox`, `Switch`, `Slider`, `Textarea`, `TagsInput`, `FileUpload`, `Field`, `Fieldset` | Form input components |
 | **Collections** | `Table`, `Gantt`, `DataList`, `TreeView` | Data display components |

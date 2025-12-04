@@ -3,7 +3,7 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East } from "@elaraai/east";
+import { East, some } from "@elaraai/east";
 import {
     UIComponentType,
     Grid,
@@ -29,7 +29,12 @@ export default East.function(
                 "Simple card container",
                 Card.Root([
                     Text.Root("This is a basic card with some content."),
-                ])
+                ]),
+                some(`
+                    Card.Root([
+                        Text.Root("This is a basic card with some content."),
+                    ])
+                `)
             )
         );
 
@@ -42,7 +47,14 @@ export default East.function(
                     Text.Root("Card content goes here. This card has a title in the header."),
                 ], {
                     title: "Card Title",
-                })
+                }),
+                some(`
+                    Card.Root([
+                        Text.Root("Card content goes here."),
+                    ], {
+                        title: "Card Title",
+                    })
+                `)
             )
         );
 
@@ -56,7 +68,15 @@ export default East.function(
                 ], {
                     title: "Featured Article",
                     description: "A brief summary of what this card contains",
-                })
+                }),
+                some(`
+                    Card.Root([
+                        Text.Root("The main content area of the card."),
+                    ], {
+                        title: "Featured Article",
+                        description: "A brief summary of what this card contains",
+                    })
+                `)
             )
         );
 
@@ -71,7 +91,16 @@ export default East.function(
                 ], {
                     title: "Elevated Style",
                     variant: "elevated",
-                })
+                }),
+                some(`
+                    Card.Root([
+                        Text.Root("This card has a shadow effect."),
+                        Button.Root("Learn More", { variant: "solid", colorPalette: "blue", size: "sm" }),
+                    ], {
+                        title: "Elevated Style",
+                        variant: "elevated",
+                    })
+                `)
             )
         );
 
@@ -85,7 +114,15 @@ export default East.function(
                 ], {
                     title: "Outline Style",
                     variant: "outline",
-                })
+                }),
+                some(`
+                    Card.Root([
+                        Text.Root("A card with a visible border outline."),
+                    ], {
+                        title: "Outline Style",
+                        variant: "outline",
+                    })
+                `)
             )
         );
 
@@ -99,7 +136,15 @@ export default East.function(
                 ], {
                     title: "Subtle Style",
                     variant: "subtle",
-                })
+                }),
+                some(`
+                    Card.Root([
+                        Text.Root("A card with a subtle background color."),
+                    ], {
+                        title: "Subtle Style",
+                        variant: "subtle",
+                    })
+                `)
             )
         );
 
@@ -122,7 +167,24 @@ export default East.function(
                     title: "Action Required",
                     description: "Please review and respond",
                     variant: "elevated",
-                })
+                }),
+                some(`
+                    Card.Root([
+                        Stack.HStack([
+                            Badge.Root("New", { colorPalette: "green", variant: "solid" }),
+                            Badge.Root("Featured", { colorPalette: "purple", variant: "solid" }),
+                        ], { gap: "2" }),
+                        Text.Root("Card content with multiple components."),
+                        Stack.HStack([
+                            Button.Root("Accept", { variant: "solid", colorPalette: "green", size: "sm" }),
+                            Button.Root("Decline", { variant: "outline", colorPalette: "red", size: "sm" }),
+                        ], { gap: "2" }),
+                    ], {
+                        title: "Action Required",
+                        description: "Please review and respond",
+                        variant: "elevated",
+                    })
+                `)
             )
         );
 
@@ -135,7 +197,14 @@ export default East.function(
                     Card.Root([Text.Root("Small card")], { title: "Small", size: "sm", variant: "outline" }),
                     Card.Root([Text.Root("Medium card")], { title: "Medium", size: "md", variant: "outline" }),
                     Card.Root([Text.Root("Large card")], { title: "Large", size: "lg", variant: "outline" }),
-                ], { gap: "4", align: "stretch", width: "100%" })
+                ], { gap: "4", align: "stretch", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Card.Root([Text.Root("Small card")], { title: "Small", size: "sm", variant: "outline" }),
+                        Card.Root([Text.Root("Medium card")], { title: "Medium", size: "md", variant: "outline" }),
+                        Card.Root([Text.Root("Large card")], { title: "Large", size: "lg", variant: "outline" }),
+                    ], { gap: "4", align: "stretch", width: "100%" })
+                `)
             )
         );
 

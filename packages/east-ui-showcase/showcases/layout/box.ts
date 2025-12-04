@@ -1,4 +1,4 @@
-import { East } from "@elaraai/east";
+import { East, some } from "@elaraai/east";
 import { Box, Text, UIComponentType, Grid, Style } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -16,7 +16,8 @@ export default East.function(
                 "Simple container with no styling",
                 Box.Root([
                     Text.Root("Content inside a basic box"),
-                ])
+                ]),
+                some(`Box.Root([Text.Root("Content inside a basic box")])`)
             )
         );
 
@@ -32,7 +33,15 @@ export default East.function(
                     background: "blue.50",
                     color: "blue.800",
                     borderRadius: "md",
-                })
+                }),
+                some(`
+                    Box.Root([Text.Root("Styled container content")], {
+                        padding: "4",
+                        background: "blue.50",
+                        color: "blue.800",
+                        borderRadius: "md",
+                    })
+                `)
             )
         );
 
@@ -54,7 +63,23 @@ export default East.function(
                     padding: "4",
                     background: "gray.100",
                     borderRadius: "md",
-                })
+                }),
+                some(`
+                    Box.Root([
+                        Text.Root("Item 1"),
+                        Text.Root("Item 2"),
+                        Text.Root("Item 3"),
+                    ], {
+                        display: Style.Display("flex"),
+                        flexDirection: Style.FlexDirection("row"),
+                        justifyContent: Style.JustifyContent("space-between"),
+                        alignItems: Style.AlignItems("center"),
+                        gap: "4",
+                        padding: "4",
+                        background: "gray.100",
+                        borderRadius: "md",
+                    })
+                `)
             )
         );
 
@@ -77,7 +102,24 @@ export default East.function(
                     background: "purple.50",
                     color: "purple.800",
                     borderRadius: "lg",
-                })
+                }),
+                some(`
+                    Box.Root([
+                        Text.Root("Top"),
+                        Text.Root("Middle"),
+                        Text.Root("Bottom"),
+                    ], {
+                        display: Style.Display("flex"),
+                        flexDirection: Style.FlexDirection("column"),
+                        justifyContent: Style.JustifyContent("space-around"),
+                        alignItems: Style.AlignItems("center"),
+                        height: "150px",
+                        padding: "4",
+                        background: "purple.50",
+                        color: "purple.800",
+                        borderRadius: "lg",
+                    })
+                `)
             )
         );
 
@@ -97,7 +139,18 @@ export default East.function(
                     background: "teal.100",
                     color: "teal.800",
                     borderRadius: "sm",
-                })
+                }),
+                some(`
+                    Box.Root([Text.Root("200x100 box")], {
+                        width: "200px",
+                        height: "100px",
+                        justifyContent: Style.JustifyContent("center"),
+                        alignItems: Style.AlignItems("center"),
+                        background: "teal.100",
+                        color: "teal.800",
+                        borderRadius: "sm",
+                    })
+                `)
             )
         );
 
@@ -118,7 +171,20 @@ export default East.function(
                     padding: "4",
                     background: "gray.100",
                     borderRadius: "md",
-                })
+                }),
+                some(`
+                    Box.Root([
+                        Box.Root([Text.Root("Inner box")], {
+                            padding: "2",
+                            background: "blue.100",
+                            borderRadius: "sm",
+                        }),
+                    ], { 
+                        padding: "4",
+                        background: "gray.100",
+                        borderRadius: "md",
+                    })
+                `)
             )
         );
 
@@ -153,7 +219,36 @@ export default East.function(
                     display: Style.Display("flex"),
                     flexDirection: Style.FlexDirection("column"),
                     gap: "2",
-                })
+                }),
+                some(`
+                    Box.Root([
+                        Box.Root([Text.Root("start")], {
+                            display: Style.Display("flex"),
+                            justifyContent: Style.JustifyContent("flex-start"),
+                            padding: "2",
+                            background: "green.100",
+                            borderRadius: "sm",
+                        }),
+                        Box.Root([Text.Root("center")], {
+                            display: Style.Display("flex"),
+                            justifyContent: Style.JustifyContent("center"),
+                            padding: "2",
+                            background: "green.100",
+                            borderRadius: "sm",
+                        }),
+                        Box.Root([Text.Root("end")], {
+                            display: Style.Display("flex"),
+                            justifyContent: Style.JustifyContent("flex-end"),
+                            padding: "2",
+                            background: "green.100",
+                            borderRadius: "sm",
+                        }),
+                    ], {
+                        display: Style.Display("flex"),
+                        flexDirection: Style.FlexDirection("column"),
+                        gap: "2",
+                    }), 
+                `)
             )
         );
 

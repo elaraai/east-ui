@@ -1,4 +1,4 @@
-import { East } from "@elaraai/east";
+import { East, some } from "@elaraai/east";
 import { Chart, UIComponentType, Grid, Box } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -30,7 +30,26 @@ export default East.function(
                             fillOpacity: 0.5,
                         }
                     ),
-                ], { height: "250px", width: "100%" })
+                ], { height: "250px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Radar(
+                            [
+                                { month: "January", windows: 130 },
+                                { month: "February", windows: 120 },
+                                { month: "March", windows: 75 },
+                                { month: "April", windows: 90 },
+                                { month: "May", windows: 110 },
+                            ],
+                            { windows: { color: "teal.solid" } },
+                            {
+                                dataKey: "month",
+                                grid: Chart.Grid({ show: true }),
+                                fillOpacity: 0.5,
+                            }
+                        ),
+                    ], { height: "250px", width: "100%" })
+                `)
             )
         );
 
@@ -59,7 +78,30 @@ export default East.function(
                             fillOpacity: 0.2,
                         }
                     ),
-                ], { height: "280px", width: "100%" })
+                ], { height: "280px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Radar(
+                            [
+                                { month: "January", windows: 30, mac: 100 },
+                                { month: "February", windows: 50, mac: 80 },
+                                { month: "March", windows: 70, mac: 60 },
+                                { month: "April", windows: 90, mac: 70 },
+                                { month: "May", windows: 60, mac: 90 },
+                            ],
+                            {
+                                windows: { color: "teal.solid" },
+                                mac: { color: "orange.solid" },
+                            },
+                            {
+                                dataKey: "month",
+                                grid: Chart.Grid({ show: true }),
+                                legend: Chart.Legend({ show: true }),
+                                fillOpacity: 0.2,
+                            }
+                        ),
+                    ], { height: "280px", width: "100%" })
+                `)
             )
         );
 
@@ -89,7 +131,31 @@ export default East.function(
                             fillOpacity: 0.3,
                         }
                     ),
-                ], { height: "280px", width: "100%" })
+                ], { height: "280px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Radar(
+                            [
+                                { subject: "Math", current: 80, target: 90 },
+                                { subject: "Science", current: 95, target: 85 },
+                                { subject: "English", current: 70, target: 80 },
+                                { subject: "History", current: 85, target: 75 },
+                                { subject: "Art", current: 60, target: 70 },
+                            ],
+                            {
+                                current: { color: "blue.solid" },
+                                target: { color: "green.solid" },
+                            },
+                            {
+                                dataKey: "subject",
+                                grid: Chart.Grid({ show: true }),
+                                legend: Chart.Legend({ show: true }),
+                                tooltip: Chart.Tooltip({ show: true }),
+                                fillOpacity: 0.3,
+                            }
+                        ),
+                    ], { height: "280px", width: "100%" })
+                `)
             )
         );
 
@@ -114,7 +180,26 @@ export default East.function(
                             fillOpacity: 0.7,
                         }
                     ),
-                ], { height: "250px", width: "100%" })
+                ], { height: "250px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Radar(
+                            [
+                                { skill: "Speed", value: 85 },
+                                { skill: "Power", value: 90 },
+                                { skill: "Defense", value: 70 },
+                                { skill: "Stamina", value: 80 },
+                                { skill: "Technique", value: 95 },
+                            ],
+                            { value: { color: "purple.solid" } },
+                            {
+                                dataKey: "skill",
+                                grid: Chart.Grid({ show: true }),
+                                fillOpacity: 0.7,
+                            }
+                        ),
+                    ], { height: "250px", width: "100%" })
+                `)
             )
         );
 

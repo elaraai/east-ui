@@ -17,7 +17,14 @@ import {
 } from "@elaraai/east";
 
 // Typography
-import { TextType } from "./typography/types.js";
+import { TextType } from "./typography/text/types.js";
+import { CodeType } from "./typography/code/types.js";
+import { HeadingType } from "./typography/heading/types.js";
+import { LinkType } from "./typography/link/types.js";
+import { HighlightType } from "./typography/highlight/types.js";
+import { MarkType } from "./typography/mark/types.js";
+import { ListType } from "./typography/list/types.js";
+import { CodeBlockType } from "./typography/code-block/types.js";
 
 // Layout
 import { BoxStyleType } from "./layout/box/types.js";
@@ -133,6 +140,13 @@ import { ToggleTipStyleType } from "./overlays/toggle-tip/types.js";
 export const UIComponentType = RecursiveType(node => VariantType({
     // Typography
     Text: TextType,
+    Code: CodeType,
+    Heading: HeadingType,
+    Link: LinkType,
+    Highlight: HighlightType,
+    Mark: MarkType,
+    List: ListType,
+    CodeBlock: CodeBlockType,
 
     // Buttons
     Button: ButtonType,

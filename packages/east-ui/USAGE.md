@@ -101,20 +101,11 @@ Common style variant types exported from `@elaraai/east-ui`. Style properties ac
 Generic container with flexible styling. Maps to a div element.
 
 ```typescript
-import { Box, Text } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Box, Text, UIComponentType } from "@elaraai/east-ui";
 
-// Simple box with children
-const container = Box.Root([
-    Text.Root("Content"),
-], {
-    padding: "4",
-    background: "gray.100",
-    borderRadius: "md",
-});
-
-// Directional padding using helper
-const paddedBox = Box.Root([Text.Root("Content")], {
-    padding: Box.Padding({ top: "2", bottom: "4", left: "4", right: "4" }),
+const example = East.function([], UIComponentType, $ => {
+    return Box.Root([Text.Root("Content")], { padding: "4", background: "gray.100" });
 });
 ```
 
@@ -152,25 +143,15 @@ const paddedBox = Box.Root([Text.Root("Content")], {
 Flexbox-based stack layout.
 
 ```typescript
-import { Stack, Text, Button } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Stack, Text, Button, UIComponentType } from "@elaraai/east-ui";
 
-// Vertical stack (VStack)
-const vertical = Stack.VStack([
-    Text.Root("Item 1"),
-    Text.Root("Item 2"),
-], { gap: "4" });
-
-// Horizontal stack (HStack)
-const horizontal = Stack.HStack([
-    Button.Root("Left"),
-    Button.Root("Right"),
-], { gap: "2", justify: "center" });
-
-// Generic stack with explicit direction
-const stack = Stack.Root([Text.Root("Content")], {
-    direction: "column",
-    gap: "4",
-    align: "center",
+const example = East.function([], UIComponentType, $ => {
+    return Stack.VStack([
+        Text.Root("Item 1"),
+        Text.Root("Item 2"),
+        Stack.HStack([Button.Root("Left"), Button.Root("Right")], { gap: "2" }),
+    ], { gap: "4" });
 });
 ```
 
@@ -206,13 +187,16 @@ const stack = Stack.Root([Text.Root("Content")], {
 CSS Grid layout component.
 
 ```typescript
-import { Grid, Text } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Grid, Text, UIComponentType } from "@elaraai/east-ui";
 
-const grid = Grid.Root([
-    Grid.Item(Text.Root("Cell 1"), { colSpan: "2" }),
-    Grid.Item(Text.Root("Cell 2")),
-    Grid.Item(Text.Root("Cell 3")),
-], { templateColumns: "repeat(3, 1fr)", gap: "4" });
+const example = East.function([], UIComponentType, $ => {
+    return Grid.Root([
+        Grid.Item(Text.Root("Cell 1"), { colSpan: "2" }),
+        Grid.Item(Text.Root("Cell 2")),
+        Grid.Item(Text.Root("Cell 3")),
+    ], { templateColumns: "repeat(3, 1fr)", gap: "4" });
+});
 ```
 
 | Signature | Description | Example |
@@ -253,12 +237,15 @@ const grid = Grid.Root([
 Resizable split pane layout.
 
 ```typescript
-import { Splitter, Text } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Splitter, Text, UIComponentType } from "@elaraai/east-ui";
 
-const split = Splitter.Root([
-    Splitter.Panel("left", Text.Root("Left"), { minSize: 20 }),
-    Splitter.Panel("right", Text.Root("Right")),
-], [50, 50], { orientation: "horizontal" });
+const example = East.function([], UIComponentType, $ => {
+    return Splitter.Root([
+        Splitter.Panel("left", Text.Root("Left"), { minSize: 20 }),
+        Splitter.Panel("right", Text.Root("Right")),
+    ], [50, 50], { orientation: "horizontal" });
+});
 ```
 
 | Signature | Description | Example |
@@ -273,9 +260,12 @@ const split = Splitter.Root([
 Visual divider between content.
 
 ```typescript
-import { Separator } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Separator, UIComponentType } from "@elaraai/east-ui";
 
-const divider = Separator.Root({ orientation: "horizontal", variant: "solid" });
+const example = East.function([], UIComponentType, $ => {
+    return Separator.Root({ orientation: "horizontal", variant: "solid" });
+});
 ```
 
 | Signature | Description | Example |
@@ -298,22 +288,12 @@ const divider = Separator.Root({ orientation: "horizontal", variant: "solid" });
 Text display with comprehensive styling.
 
 ```typescript
-import { Text } from "@elaraai/east-ui";
 import { East } from "@elaraai/east";
+import { Text, UIComponentType } from "@elaraai/east-ui";
 
-// Simple text
-const text = Text.Root("Hello");
-
-// Styled text with string literals
-const styled = Text.Root("Important Message", {
-    fontSize: "lg",
-    fontWeight: "bold",
-    color: "blue.600",
-    textAlign: "center",
+const example = East.function([], UIComponentType, $ => {
+    return Text.Root("Hello", { fontSize: "lg", fontWeight: "bold", color: "blue.600" });
 });
-
-// Dynamic text with East string interpolation
-const dynamic = Text.Root(East.str`Hello, ${name}!`, { fontSize: "lg" });
 ```
 
 | Signature | Description | Example |
@@ -341,6 +321,215 @@ const dynamic = Text.Root(East.str`Hello, ${name}!`, { fontSize: "lg" });
 
 ---
 
+### Code
+
+Inline code snippet display.
+
+```typescript
+import { East } from "@elaraai/east";
+import { Code, UIComponentType } from "@elaraai/east-ui";
+
+const example = East.function([], UIComponentType, $ => {
+    return Code.Root("const x = 1", { variant: "surface", colorPalette: "blue" });
+});
+```
+
+| Signature | Description | Example |
+|-----------|-------------|---------|
+| `Code.Root(value: SubtypeExprOrValue<StringType>, style?: CodeStyle): ExprType<UIComponentType>` | Create inline code | `Code.Root("console.log()", { variant: "subtle" })` |
+| `Code.Types.Code` | East StructType for Code component | `Code.Types.Code` |
+| `Code.Types.Variant` | East VariantType for code variant | `Code.Types.Variant` |
+
+**CodeStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `variant` | `SubtypeExprOrValue<CodeVariantType> \| CodeVariantLiteral` | "subtle", "surface", "outline" |
+| `colorPalette` | `SubtypeExprOrValue<StringType>` | Color palette (e.g., "gray", "blue") |
+| `size` | `SubtypeExprOrValue<SizeType> \| SizeLiteral` | Code text size |
+
+---
+
+### Heading
+
+Semantic heading component with extended size options.
+
+```typescript
+import { East } from "@elaraai/east";
+import { Heading, UIComponentType } from "@elaraai/east-ui";
+
+const example = East.function([], UIComponentType, $ => {
+    return Heading.Root("Documentation", { size: "4xl", as: "h1" });
+});
+```
+
+| Signature | Description | Example |
+|-----------|-------------|---------|
+| `Heading.Root(value: SubtypeExprOrValue<StringType>, style?: HeadingStyle): ExprType<UIComponentType>` | Create heading | `Heading.Root("Title", { size: "3xl", as: "h1" })` |
+| `Heading.Types.Heading` | East StructType for Heading component | `Heading.Types.Heading` |
+| `Heading.Types.Size` | East VariantType for heading size | `Heading.Types.Size` |
+| `Heading.Types.As` | East VariantType for semantic level | `Heading.Types.As` |
+
+**HeadingStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `size` | `SubtypeExprOrValue<HeadingSizeType> \| HeadingSizeLiteral` | "xs", "sm", "md", "lg", "xl", "2xl", "3xl", "4xl", "5xl", "6xl" |
+| `as` | `SubtypeExprOrValue<HeadingAsType> \| HeadingAsLiteral` | Semantic level: "h1", "h2", "h3", "h4", "h5", "h6" |
+| `color` | `SubtypeExprOrValue<StringType>` | Text color |
+| `textAlign` | `SubtypeExprOrValue<TextAlignType> \| TextAlignLiteral` | Text alignment |
+
+---
+
+### Link
+
+Hyperlink component for navigation.
+
+```typescript
+import { East } from "@elaraai/east";
+import { Link, UIComponentType } from "@elaraai/east-ui";
+
+const example = East.function([], UIComponentType, $ => {
+    return Link.Root("Documentation", "https://docs.example.com", { external: true });
+});
+```
+
+| Signature | Description | Example |
+|-----------|-------------|---------|
+| `Link.Root(value: SubtypeExprOrValue<StringType>, href: SubtypeExprOrValue<StringType>, style?: LinkStyle): ExprType<UIComponentType>` | Create link | `Link.Root("Click", "/page", { external: true })` |
+| `Link.Types.Link` | East StructType for Link component | `Link.Types.Link` |
+| `Link.Types.Variant` | East VariantType for link variant | `Link.Types.Variant` |
+
+**LinkStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `external` | `SubtypeExprOrValue<BooleanType> \| boolean` | Open in new tab |
+| `variant` | `SubtypeExprOrValue<LinkVariantType> \| LinkVariantLiteral` | "underline", "plain" |
+| `colorPalette` | `SubtypeExprOrValue<StringType>` | Color palette (e.g., "blue", "teal") |
+
+---
+
+### Highlight
+
+Text with highlighted search terms.
+
+```typescript
+import { East } from "@elaraai/east";
+import { Highlight, UIComponentType } from "@elaraai/east-ui";
+
+const example = East.function([], UIComponentType, $ => {
+    return Highlight.Root("React is a JavaScript library", ["React", "JavaScript"]);
+});
+```
+
+| Signature | Description | Example |
+|-----------|-------------|---------|
+| `Highlight.Root(value: SubtypeExprOrValue<StringType>, query: SubtypeExprOrValue<ArrayType<StringType>>, style?: HighlightStyle): ExprType<UIComponentType>` | Create highlight | `Highlight.Root("text", ["term"])` |
+| `Highlight.Types.Highlight` | East StructType for Highlight component | `Highlight.Types.Highlight` |
+
+**HighlightStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `color` | `SubtypeExprOrValue<StringType>` | Background color for highlighted portions |
+
+---
+
+### Mark
+
+Inline text mark/highlight.
+
+```typescript
+import { East } from "@elaraai/east";
+import { Mark, UIComponentType } from "@elaraai/east-ui";
+
+const example = East.function([], UIComponentType, $ => {
+    return Mark.Root("Important", { variant: "solid", colorPalette: "green" });
+});
+```
+
+| Signature | Description | Example |
+|-----------|-------------|---------|
+| `Mark.Root(value: SubtypeExprOrValue<StringType>, style?: MarkStyle): ExprType<UIComponentType>` | Create mark | `Mark.Root("text", { variant: "solid" })` |
+| `Mark.Types.Mark` | East StructType for Mark component | `Mark.Types.Mark` |
+| `Mark.Types.Variant` | East VariantType for mark variant | `Mark.Types.Variant` |
+
+**MarkStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `variant` | `SubtypeExprOrValue<MarkVariantType> \| MarkVariantLiteral` | "subtle", "solid", "text", "plain" |
+| `colorPalette` | `SubtypeExprOrValue<StringType>` | Color palette (e.g., "yellow", "green") |
+
+---
+
+### List
+
+Ordered and unordered lists.
+
+```typescript
+import { East } from "@elaraai/east";
+import { List, UIComponentType } from "@elaraai/east-ui";
+
+const example = East.function([], UIComponentType, $ => {
+    return List.Root(["Step 1", "Step 2", "Step 3"], { variant: "ordered", gap: "2" });
+});
+```
+
+| Signature | Description | Example |
+|-----------|-------------|---------|
+| `List.Root(items: SubtypeExprOrValue<ArrayType<StringType>>, style?: ListStyle): ExprType<UIComponentType>` | Create list | `List.Root(["A", "B"], { variant: "ordered" })` |
+| `List.Types.List` | East StructType for List component | `List.Types.List` |
+| `List.Types.Variant` | East VariantType for list variant | `List.Types.Variant` |
+
+**ListStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `variant` | `SubtypeExprOrValue<ListVariantType> \| ListVariantLiteral` | "ordered", "unordered" |
+| `gap` | `SubtypeExprOrValue<StringType>` | Spacing between items |
+| `colorPalette` | `SubtypeExprOrValue<StringType>` | Color for list markers |
+
+---
+
+### CodeBlock
+
+Multi-line code block with syntax highlighting.
+
+```typescript
+import { East } from "@elaraai/east";
+import { CodeBlock, UIComponentType } from "@elaraai/east-ui";
+
+const example = East.function([], UIComponentType, $ => {
+    return CodeBlock.Root(`function hello() {\n  console.log("Hello!");\n}`, {
+        language: "typescript",
+        showLineNumbers: true,
+        title: "example.ts",
+        showCopyButton: true,
+    });
+});
+```
+
+| Signature | Description | Example |
+|-----------|-------------|---------|
+| `CodeBlock.Root(code: SubtypeExprOrValue<StringType>, style?: CodeBlockStyle): ExprType<UIComponentType>` | Create code block | `CodeBlock.Root("code", { language: "typescript" })` |
+| `CodeBlock.Types.CodeBlock` | East StructType for CodeBlock component | `CodeBlock.Types.CodeBlock` |
+| `CodeBlock.Types.Language` | East VariantType for language | `CodeBlock.Types.Language` |
+
+**CodeBlockStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `language` | `SubtypeExprOrValue<CodeLanguageType> \| CodeLanguage` | Syntax highlighting: "typescript", "javascript", "json", "html", "css", "python", "rust", "go", "sql", "bash", "markdown", "yaml", "xml", "plaintext" |
+| `showLineNumbers` | `SubtypeExprOrValue<BooleanType> \| boolean` | Display line numbers |
+| `highlightLines` | `SubtypeExprOrValue<ArrayType<IntegerType>>` | Array of line numbers to highlight (bigint[]) |
+| `maxHeight` | `SubtypeExprOrValue<StringType>` | Maximum height with scroll (e.g., "400px") |
+| `showCopyButton` | `SubtypeExprOrValue<BooleanType> \| boolean` | Show copy-to-clipboard button in header |
+| `title` | `SubtypeExprOrValue<StringType>` | Title displayed in header (e.g., filename) |
+
+---
+
 ## Buttons
 
 ### Button
@@ -348,11 +537,12 @@ const dynamic = Text.Root(East.str`Hello, ${name}!`, { fontSize: "lg" });
 Interactive button component.
 
 ```typescript
-import { Button } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Button, UIComponentType } from "@elaraai/east-ui";
 
-const primary = Button.Root("Submit", { variant: "solid", colorPalette: "blue" });
-const danger = Button.Root("Delete", { variant: "solid", colorPalette: "red" });
-const ghost = Button.Root("Cancel", { variant: "ghost" });
+const example = East.function([], UIComponentType, $ => {
+    return Button.Root("Submit", { variant: "solid", colorPalette: "blue" });
+});
 ```
 
 | Signature | Description | Example |
@@ -379,9 +569,12 @@ const ghost = Button.Root("Cancel", { variant: "ghost" });
 Button with icon instead of text.
 
 ```typescript
-import { IconButton } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { IconButton, UIComponentType } from "@elaraai/east-ui";
 
-const iconBtn = IconButton.Root("search", { ariaLabel: "Search", variant: "ghost" });
+const example = East.function([], UIComponentType, $ => {
+    return IconButton.Root("search", { ariaLabel: "Search", variant: "ghost" });
+});
 ```
 
 | Signature | Description | Example |
@@ -397,12 +590,12 @@ const iconBtn = IconButton.Root("search", { ariaLabel: "Search", variant: "ghost
 Text input with multiple types.
 
 ```typescript
-import { Input } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Input, UIComponentType } from "@elaraai/east-ui";
 
-const stringInput = Input.String("initial value", { placeholder: "Enter text" });
-const intInput = Input.Integer(0n, { placeholder: "Enter number" });
-const floatInput = Input.Float(0.0, { placeholder: "Enter decimal" });
-const dateInput = Input.DateTime(new Date(), { placeholder: "Select date" });
+const example = East.function([], UIComponentType, $ => {
+    return Input.String("", { placeholder: "Enter text" });
+});
 ```
 
 | Signature | Description | Example |
@@ -429,50 +622,97 @@ const dateInput = Input.DateTime(new Date(), { placeholder: "Select date" });
 Dropdown selection component.
 
 ```typescript
-import { Select } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Select, UIComponentType } from "@elaraai/east-ui";
 
-const select = Select.Root([
-    Select.Item("us", "United States"),
-    Select.Item("uk", "United Kingdom"),
-], { placeholder: "Select country" });
+const example = East.function([], UIComponentType, $ => {
+    return Select.Root("", [
+        Select.Item("us", "United States"),
+        Select.Item("uk", "United Kingdom"),
+    ], { placeholder: "Select country" });
+});
 ```
 
 | Signature | Description | Example |
 |-----------|-------------|---------|
-| `Select.Root(items: SelectItem[], style?: SelectStyle): ExprType<UIComponentType>` | Create select | `Select.Root([Select.Item(...)])` |
-| `Select.Item(value: string, label: string): SelectItem` | Create select item | `Select.Item("us", "United States")` |
+| `Select.Root(value: SubtypeExprOrValue<StringType>, items: SubtypeExprOrValue<ArrayType<SelectItemType>>, style?: SelectStyle): ExprType<UIComponentType>` | Create select | `Select.Root("", [Select.Item(...)])` |
+| `Select.Item(value: SubtypeExprOrValue<StringType>, label: SubtypeExprOrValue<StringType>, style?: SelectItemStyle): ExprType<SelectItemType>` | Create select item | `Select.Item("us", "United States")` |
+| `Select.Types.Root` | East StructType for Select component | `Select.Types.Root` |
+| `Select.Types.Item` | East StructType for SelectItem | `Select.Types.Item` |
+
+**SelectStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `placeholder` | `SubtypeExprOrValue<StringType>` | Placeholder text when no selection |
+| `multiple` | `SubtypeExprOrValue<BooleanType> \| boolean` | Allow multiple selections |
+| `disabled` | `SubtypeExprOrValue<BooleanType> \| boolean` | Disabled state |
+| `size` | `SubtypeExprOrValue<SizeType> \| SizeLiteral` | Select size |
+
+**SelectItemStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `disabled` | `SubtypeExprOrValue<BooleanType> \| boolean` | Disabled state for item |
 
 ---
 
 ### Checkbox
 
-Checkbox input component.
+Checkbox input component for boolean selections.
 
 ```typescript
-import { Checkbox } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Checkbox, UIComponentType } from "@elaraai/east-ui";
 
-const checkbox = Checkbox.Root("Accept terms", { checked: false, colorPalette: "blue" });
+const example = East.function([], UIComponentType, $ => {
+    return Checkbox.Root(false, { label: "Accept terms", colorPalette: "blue" });
+});
 ```
 
 | Signature | Description | Example |
 |-----------|-------------|---------|
-| `Checkbox.Root(label: SubtypeExprOrValue<StringType>, style?: CheckboxStyle): ExprType<UIComponentType>` | Create checkbox | `Checkbox.Root("Accept", { checked: true })` |
+| `Checkbox.Root(checked: SubtypeExprOrValue<BooleanType>, style?: CheckboxStyle): ExprType<UIComponentType>` | Create checkbox | `Checkbox.Root(true, { label: "Accept" })` |
+| `Checkbox.Types.Checkbox` | East StructType for Checkbox component | `Checkbox.Types.Checkbox` |
+
+**CheckboxStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `label` | `SubtypeExprOrValue<StringType>` | Label text displayed next to checkbox |
+| `indeterminate` | `SubtypeExprOrValue<BooleanType> \| boolean` | Show indeterminate state (partial selection) |
+| `disabled` | `SubtypeExprOrValue<BooleanType> \| boolean` | Disabled state |
+| `colorPalette` | `SubtypeExprOrValue<ColorSchemeType> \| ColorSchemeLiteral` | Color scheme |
+| `size` | `SubtypeExprOrValue<SizeType> \| SizeLiteral` | Checkbox size |
 
 ---
 
 ### Switch
 
-Toggle switch component.
+Toggle switch component for on/off states.
 
 ```typescript
-import { Switch } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Switch, UIComponentType } from "@elaraai/east-ui";
 
-const toggle = Switch.Root("Enable notifications", { checked: true });
+const example = East.function([], UIComponentType, $ => {
+    return Switch.Root(false, { label: "Enable notifications", colorPalette: "blue" });
+});
 ```
 
 | Signature | Description | Example |
 |-----------|-------------|---------|
-| `Switch.Root(label: SubtypeExprOrValue<StringType>, style?: SwitchStyle): ExprType<UIComponentType>` | Create switch | `Switch.Root("Dark mode")` |
+| `Switch.Root(checked: SubtypeExprOrValue<BooleanType>, style?: SwitchStyle): ExprType<UIComponentType>` | Create switch | `Switch.Root(true, { label: "Dark mode" })` |
+| `Switch.Types.Switch` | East StructType for Switch component | `Switch.Types.Switch` |
+
+**SwitchStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `label` | `SubtypeExprOrValue<StringType>` | Label text displayed next to switch |
+| `disabled` | `SubtypeExprOrValue<BooleanType> \| boolean` | Disabled state |
+| `colorPalette` | `SubtypeExprOrValue<ColorSchemeType> \| ColorSchemeLiteral` | Color scheme |
+| `size` | `SubtypeExprOrValue<SizeType> \| SizeLiteral` | Switch size |
 
 ---
 
@@ -481,9 +721,12 @@ const toggle = Switch.Root("Enable notifications", { checked: true });
 Range slider component.
 
 ```typescript
-import { Slider } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Slider, UIComponentType } from "@elaraai/east-ui";
 
-const slider = Slider.Root({ min: 0, max: 100, value: 50, step: 1 });
+const example = East.function([], UIComponentType, $ => {
+    return Slider.Root({ min: 0, max: 100, value: 50, step: 1 });
+});
 ```
 
 | Signature | Description | Example |
@@ -499,22 +742,20 @@ const slider = Slider.Root({ min: 0, max: 100, value: 50, step: 1 });
 Data table component with typed rows.
 
 ```typescript
-import { Table, Badge } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Table, Badge, UIComponentType } from "@elaraai/east-ui";
 
-const data = [
-    { name: "Alice", email: "alice@example.com", role: "Admin" },
-    { name: "Bob", email: "bob@example.com", role: "User" },
-];
-
-// Simple: array of field names (uses field name as header)
-const simple = Table.Root(data, ["name", "email", "role"]);
-
-// With custom headers and optional rendering
-const custom = Table.Root(data, {
-    name: { header: "Name" },
-    email: { header: "Email" },
-    role: { header: "Role", render: value => Badge.Root(value, { colorPalette: "blue" }) },
-}, { variant: "line", striped: true });
+const example = East.function([], UIComponentType, $ => {
+    const data = $.let([
+        { name: "Alice", email: "alice@example.com", role: "Admin" },
+        { name: "Bob", email: "bob@example.com", role: "User" },
+    ]);
+    return Table.Root(data, {
+        name: { header: "Name" },
+        email: { header: "Email" },
+        role: { header: "Role", render: value => Badge.Root(value, { colorPalette: "blue" }) },
+    }, { variant: "line", striped: true });
+});
 ```
 
 | Signature | Description | Example |
@@ -556,29 +797,18 @@ const custom = Table.Root(data, {
 Gantt chart for project timelines.
 
 ```typescript
-import { Gantt } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Gantt, UIComponentType } from "@elaraai/east-ui";
 
-const gantt = Gantt.Root(
-    [
+const example = East.function([], UIComponentType, $ => {
+    const data = $.let([
         { task: "Design", start: new Date("2024-01-01"), end: new Date("2024-01-15") },
         { task: "Development", start: new Date("2024-01-10"), end: new Date("2024-02-01") },
-    ],
-    { task: { header: "Task" } },
-    row => [
+    ]);
+    return Gantt.Root(data, { task: { header: "Task" } }, row => [
         Gantt.Task({ start: row.start, end: row.end, colorPalette: "blue" }),
-    ],
-    { variant: "line", showToday: true }
-);
-
-// With milestones
-const withMilestones = Gantt.Root(
-    [{ name: "Sprint 1", start: new Date("2024-01-01"), end: new Date("2024-01-14"), release: new Date("2024-01-14") }],
-    { name: { header: "Sprint" } },
-    row => [
-        Gantt.Task({ start: row.start, end: row.end }),
-        Gantt.Milestone({ date: row.release, label: "Release", colorPalette: "green" }),
-    ]
-);
+    ], { variant: "line", showToday: true });
+});
 ```
 
 | Signature | Description | Example |
@@ -612,12 +842,15 @@ const withMilestones = Gantt.Root(
 Key-value data display.
 
 ```typescript
-import { DataList } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { DataList, UIComponentType } from "@elaraai/east-ui";
 
-const list = DataList.Root([
-    DataList.Item("Name", "Alice"),
-    DataList.Item("Email", "alice@example.com"),
-], { orientation: "horizontal" });
+const example = East.function([], UIComponentType, $ => {
+    return DataList.Root([
+        DataList.Item("Name", "Alice"),
+        DataList.Item("Email", "alice@example.com"),
+    ], { orientation: "horizontal" });
+});
 ```
 
 | Signature | Description | Example |
@@ -632,15 +865,18 @@ const list = DataList.Root([
 Hierarchical tree display.
 
 ```typescript
-import { TreeView } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { TreeView, UIComponentType } from "@elaraai/east-ui";
 
-const tree = TreeView.Root([
-    TreeView.Branch("folder-1", "Documents", [
-        TreeView.Item("file-1", "Resume.pdf"),
-        TreeView.Item("file-2", "Cover Letter.docx"),
-    ]),
-    TreeView.Item("file-3", "README.md"),
-]);
+const example = East.function([], UIComponentType, $ => {
+    return TreeView.Root([
+        TreeView.Branch("folder-1", "Documents", [
+            TreeView.Item("file-1", "Resume.pdf"),
+            TreeView.Item("file-2", "Cover Letter.docx"),
+        ]),
+        TreeView.Item("file-3", "README.md"),
+    ]);
+});
 ```
 
 | Signature | Description | Example |
@@ -658,19 +894,16 @@ Access all charts through the `Chart` namespace.
 ### Chart.Line
 
 ```typescript
-import { Chart } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Chart, UIComponentType } from "@elaraai/east-ui";
 
-const lineChart = Chart.Line(
-    [
-        { month: "Jan", revenue: 186 },
-        { month: "Feb", revenue: 305 },
-    ],
-    { revenue: { color: "teal.solid" } },
-    {
+const example = East.function([], UIComponentType, $ => {
+    const data = $.let([{ month: "Jan", revenue: 186 }, { month: "Feb", revenue: 305 }]);
+    return Chart.Line(data, { revenue: { color: "teal.solid" } }, {
         xAxis: Chart.Axis({ dataKey: "month" }),
         grid: Chart.Grid({ show: true }),
-    }
-);
+    });
+});
 ```
 
 | Signature | Description | Example |
@@ -704,11 +937,11 @@ const lineChart = Chart.Line(
 Compact inline trend visualization.
 
 ```typescript
-import { Sparkline } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Sparkline, UIComponentType } from "@elaraai/east-ui";
 
-const trend = Sparkline.Root([1.2, 2.4, 1.8, 3.1, 2.9], {
-    type: "area",
-    color: "teal.500",
+const example = East.function([], UIComponentType, $ => {
+    return Sparkline.Root([1.2, 2.4, 1.8, 3.1, 2.9], { type: "area", color: "teal.500" });
 });
 ```
 
@@ -723,9 +956,12 @@ const trend = Sparkline.Root([1.2, 2.4, 1.8, 3.1, 2.9], {
 ### Badge
 
 ```typescript
-import { Badge } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Badge, UIComponentType } from "@elaraai/east-ui";
 
-const badge = Badge.Root("New", { variant: "solid", colorPalette: "green" });
+const example = East.function([], UIComponentType, $ => {
+    return Badge.Root("New", { variant: "solid", colorPalette: "green" });
+});
 ```
 
 | Signature | Description | Example |
@@ -737,9 +973,12 @@ const badge = Badge.Root("New", { variant: "solid", colorPalette: "green" });
 ### Tag
 
 ```typescript
-import { Tag } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Tag, UIComponentType } from "@elaraai/east-ui";
 
-const tag = Tag.Root("JavaScript", { variant: "subtle", closable: true });
+const example = East.function([], UIComponentType, $ => {
+    return Tag.Root("JavaScript", { variant: "subtle", closable: true });
+});
 ```
 
 | Signature | Description | Example |
@@ -750,15 +989,31 @@ const tag = Tag.Root("JavaScript", { variant: "subtle", closable: true });
 
 ### Avatar
 
-```typescript
-import { Avatar } from "@elaraai/east-ui";
+User profile image or initials display.
 
-const avatar = Avatar.Root("AB", { name: "Alice Brown", src: "https://..." });
+```typescript
+import { East } from "@elaraai/east";
+import { Avatar, UIComponentType } from "@elaraai/east-ui";
+
+const example = East.function([], UIComponentType, $ => {
+    return Avatar.Root({ name: "Alice Brown", colorPalette: "blue", size: "lg" });
+});
 ```
 
 | Signature | Description | Example |
 |-----------|-------------|---------|
-| `Avatar.Root(fallback: SubtypeExprOrValue<StringType>, style?: AvatarStyle): ExprType<UIComponentType>` | Create avatar | `Avatar.Root("AB", { name: "Alice" })` |
+| `Avatar.Root(style?: AvatarStyle): ExprType<UIComponentType>` | Create avatar | `Avatar.Root({ name: "Alice" })` |
+| `Avatar.Types.Avatar` | East StructType for Avatar component | `Avatar.Types.Avatar` |
+
+**AvatarStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `src` | `SubtypeExprOrValue<StringType>` | Image URL for the avatar |
+| `name` | `SubtypeExprOrValue<StringType>` | User name (used for initials fallback) |
+| `size` | `SubtypeExprOrValue<SizeType> \| SizeLiteral` | Avatar size |
+| `variant` | `SubtypeExprOrValue<StyleVariantType> \| StyleVariantLiteral` | "solid", "subtle", "outline" |
+| `colorPalette` | `SubtypeExprOrValue<ColorSchemeType> \| ColorSchemeLiteral` | Color scheme for fallback |
 
 ---
 
@@ -767,23 +1022,11 @@ const avatar = Avatar.Root("AB", { name: "Alice Brown", src: "https://..." });
 Key metric display with optional trend indicator.
 
 ```typescript
-import { Stat } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Stat, UIComponentType } from "@elaraai/east-ui";
 
-// Simple stat
-const revenue = Stat.Root("Revenue", "$45,000");
-
-// With help text and trend indicator
-const growth = Stat.Root("Growth", "+23.5%", {
-    helpText: "vs last month",
-    indicator: "up",
-});
-
-// Dynamic indicator based on data
-const metric = Stat.Root("Profit", East.str`$${East.print(value)}`, {
-    indicator: East.greater(value, 0.0).ifElse(
-        $ => Stat.Indicator("up"),
-        $ => Stat.Indicator("down")
-    ),
+const example = East.function([], UIComponentType, $ => {
+    return Stat.Root("Revenue", "$45,000", { helpText: "vs last month", indicator: "up" });
 });
 ```
 
@@ -803,15 +1046,38 @@ const metric = Stat.Root("Profit", East.str`$${East.print(value)}`, {
 
 ### Icon
 
-```typescript
-import { Icon } from "@elaraai/east-ui";
+Font Awesome icon component with typesafe prefix and name.
 
-const icon = Icon.Root("check", { size: "lg", color: "green.500" });
+```typescript
+import { East } from "@elaraai/east";
+import { Icon, UIComponentType } from "@elaraai/east-ui";
+
+const example = East.function([], UIComponentType, $ => {
+    return Icon.Root("fas", "check", { size: "lg", color: "green.500" });
+});
 ```
 
 | Signature | Description | Example |
 |-----------|-------------|---------|
-| `Icon.Root(name: SubtypeExprOrValue<StringType>, style?: IconStyle): ExprType<UIComponentType>` | Create icon | `Icon.Root("search")` |
+| `Icon.Root(prefix: IconPrefix, name: IconName, style?: IconStyle): ExprType<UIComponentType>` | Create icon | `Icon.Root("fas", "search")` |
+| `Icon.Types.Icon` | East StructType for Icon component | `Icon.Types.Icon` |
+| `Icon.Types.Size` | East VariantType for icon size | `Icon.Types.Size` |
+
+**IconStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `size` | `SubtypeExprOrValue<IconSizeType> \| IconSizeLiteral` | "xs", "sm", "md", "lg", "xl", "2xl" |
+| `color` | `SubtypeExprOrValue<StringType>` | Icon color (CSS or Chakra token) |
+| `colorPalette` | `SubtypeExprOrValue<ColorSchemeType> \| ColorSchemeLiteral` | Color scheme |
+
+**Icon Prefixes:**
+
+| Prefix | Description |
+|--------|-------------|
+| `fas` | Solid icons (filled) |
+| `far` | Regular icons (outlined) |
+| `fab` | Brand icons (logos) |
 
 ---
 
@@ -820,9 +1086,12 @@ const icon = Icon.Root("check", { size: "lg", color: "green.500" });
 ### Alert
 
 ```typescript
-import { Alert } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Alert, UIComponentType } from "@elaraai/east-ui";
 
-const alert = Alert.Root({ status: "success", title: "Saved", description: "Changes saved successfully" });
+const example = East.function([], UIComponentType, $ => {
+    return Alert.Root({ status: "success", title: "Saved", description: "Changes saved successfully" });
+});
 ```
 
 | Signature | Description | Example |
@@ -845,21 +1114,11 @@ const alert = Alert.Root({ status: "success", title: "Saved", description: "Chan
 Progress bar for displaying completion status.
 
 ```typescript
-import { Progress } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Progress, UIComponentType } from "@elaraai/east-ui";
 
-// Simple progress
-const progress = Progress.Root(75.0);
-
-// Styled progress
-const styled = Progress.Root(60.0, {
-    colorPalette: "green",
-    size: "md",
-    striped: true,
-});
-
-// Dynamic progress from data
-const dynamic = Progress.Root(task.completion.toFloat(), {
-    colorPalette: "blue",
+const example = East.function([], UIComponentType, $ => {
+    return Progress.Root(75.0, { colorPalette: "green", size: "md", striped: true });
 });
 ```
 
@@ -887,53 +1146,106 @@ const dynamic = Progress.Root(task.completion.toFloat(), {
 ### Accordion
 
 ```typescript
-import { Accordion, Text } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Accordion, Text, UIComponentType } from "@elaraai/east-ui";
 
-const accordion = Accordion.Root([
-    Accordion.Item("section-1", "Section 1", [Text.Root("Content 1")]),
-    Accordion.Item("section-2", "Section 2", [Text.Root("Content 2")]),
-], { variant: "enclosed", collapsible: true });
+const example = East.function([], UIComponentType, $ => {
+    return Accordion.Root([
+        Accordion.Item("section-1", "Section 1", [Text.Root("Content 1")]),
+        Accordion.Item("section-2", "Section 2", [Text.Root("Content 2")]),
+    ], { variant: "enclosed", collapsible: true });
+});
 ```
 
 | Signature | Description | Example |
 |-----------|-------------|---------|
 | `Accordion.Root(items: AccordionItem[], style?: AccordionStyle): ExprType<UIComponentType>` | Create accordion | `Accordion.Root([...])` |
-| `Accordion.Item(value: string, trigger: string, content: UIComponent[], style?: ItemStyle): AccordionItem` | Create accordion item | `Accordion.Item("id", "Title", [...])` |
+| `Accordion.Item(value: string, trigger: string, content: UIComponent[], style?: AccordionItemStyle): AccordionItem` | Create accordion item | `Accordion.Item("id", "Title", [...])` |
+
+**AccordionStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `multiple` | `SubtypeExprOrValue<BooleanType>` | Whether multiple items can be open at once |
+| `collapsible` | `SubtypeExprOrValue<BooleanType>` | Whether all items can be collapsed |
+| `variant` | `SubtypeExprOrValue<AccordionVariantType> \| AccordionVariantLiteral` | "enclosed", "plain", "subtle" |
+
+**AccordionItemStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `disabled` | `SubtypeExprOrValue<BooleanType>` | Whether this item is disabled |
 
 ---
 
 ### Tabs
 
 ```typescript
-import { Tabs, Text } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Tabs, Text, UIComponentType } from "@elaraai/east-ui";
 
-const tabs = Tabs.Root([
-    Tabs.Tab("tab-1", "Overview", [Text.Root("Overview content")]),
-    Tabs.Tab("tab-2", "Details", [Text.Root("Details content")]),
-], { variant: "line", fitted: true });
+const example = East.function([], UIComponentType, $ => {
+    return Tabs.Root([
+        Tabs.Tab("tab-1", "Overview", [Text.Root("Overview content")]),
+        Tabs.Tab("tab-2", "Details", [Text.Root("Details content")]),
+    ], { variant: "line", fitted: true });
+});
 ```
 
 | Signature | Description | Example |
 |-----------|-------------|---------|
 | `Tabs.Root(items: TabItem[], style?: TabsStyle): ExprType<UIComponentType>` | Create tabs | `Tabs.Root([...])` |
-| `Tabs.Tab(value: string, trigger: string, content: UIComponent[], style?: TabStyle): TabItem` | Create tab item | `Tabs.Tab("id", "Label", [...])` |
+| `Tabs.Tab(value: string, trigger: string, content: UIComponent[], style?: TabsItemStyle): TabItem` | Create tab item | `Tabs.Tab("id", "Label", [...])` |
+
+**TabsStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `variant` | `SubtypeExprOrValue<TabsVariantType> \| TabsVariantLiteral` | "line", "subtle", "enclosed", "outline", "plain" |
+| `size` | `SubtypeExprOrValue<TabsSizeType> \| TabsSizeLiteral` | "sm", "md", "lg" |
+| `orientation` | `SubtypeExprOrValue<OrientationType> \| OrientationLiteral` | "horizontal", "vertical" |
+| `fitted` | `SubtypeExprOrValue<BooleanType>` | Whether tabs take equal width |
+| `justify` | `SubtypeExprOrValue<TabsJustifyType> \| TabsJustifyLiteral` | "start", "center", "end" |
+| `colorPalette` | `SubtypeExprOrValue<ColorSchemeType> \| ColorSchemeLiteral` | Color scheme |
+| `lazyMount` | `SubtypeExprOrValue<BooleanType>` | Mount content only when selected |
+
+**TabsItemStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `disabled` | `SubtypeExprOrValue<BooleanType>` | Whether this tab is disabled |
 
 ---
 
 ### Carousel
 
 ```typescript
-import { Carousel, Text } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Carousel, Text, UIComponentType } from "@elaraai/east-ui";
 
-const carousel = Carousel.Root([
-    Text.Root("Slide 1"),
-    Text.Root("Slide 2"),
-], { loop: true, autoplay: true, showIndicators: true });
+const example = East.function([], UIComponentType, $ => {
+    return Carousel.Root([
+        Text.Root("Slide 1"),
+        Text.Root("Slide 2"),
+    ], { loop: true, autoplay: true, showIndicators: true });
+});
 ```
 
 | Signature | Description | Example |
 |-----------|-------------|---------|
 | `Carousel.Root(items: UIComponent[], style?: CarouselStyle): ExprType<UIComponentType>` | Create carousel | `Carousel.Root([...], { loop: true })` |
+
+**CarouselStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `orientation` | `SubtypeExprOrValue<OrientationType> \| OrientationLiteral` | "horizontal", "vertical" |
+| `spacing` | `SubtypeExprOrValue<StringType>` | Gap between slides |
+| `loop` | `SubtypeExprOrValue<BooleanType>` | Enable infinite scrolling |
+| `autoplay` | `SubtypeExprOrValue<BooleanType>` | Enable automatic advancement |
+| `slidesPerView` | `SubtypeExprOrValue<IntegerType>` | Number of visible slides |
+| `showIndicators` | `SubtypeExprOrValue<BooleanType>` | Show dot indicators |
+| `showControls` | `SubtypeExprOrValue<BooleanType>` | Show prev/next controls |
 
 ---
 
@@ -942,88 +1254,152 @@ const carousel = Carousel.Root([
 ### Dialog
 
 ```typescript
-import { Dialog, Button, Text } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Dialog, Button, Text, UIComponentType } from "@elaraai/east-ui";
 
-const dialog = Dialog.Root(
-    Button.Root("Open Dialog"),
-    [Text.Root("Dialog content")],
-    { title: "Confirm Action", size: "md" }
-);
+const example = East.function([], UIComponentType, $ => {
+    return Dialog.Root(
+        Button.Root("Open Dialog"),
+        [Text.Root("Dialog content")],
+        { title: "Confirm Action", size: "md" }
+    );
+});
 ```
 
 | Signature | Description | Example |
 |-----------|-------------|---------|
 | `Dialog.Root(trigger: UIComponent, body: UIComponent[], style?: DialogStyle): ExprType<UIComponentType>` | Create dialog | `Dialog.Root(Button.Root("Open"), [...])` |
 
+**DialogStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `title` | `SubtypeExprOrValue<StringType>` | Dialog title |
+| `description` | `SubtypeExprOrValue<StringType>` | Dialog description |
+| `size` | `SubtypeExprOrValue<DialogSizeType> \| DialogSizeLiteral` | "xs", "sm", "md", "lg", "xl", "cover", "full" |
+| `placement` | `SubtypeExprOrValue<DialogPlacementType> \| DialogPlacementLiteral` | "center", "top", "bottom" |
+| `motionPreset` | `SubtypeExprOrValue<DialogMotionPresetType> \| DialogMotionPresetLiteral` | "scale", "slide-in-bottom", "slide-in-top", "none" |
+| `closeOnInteractOutside` | `SubtypeExprOrValue<BooleanType>` | Close when clicking outside |
+| `closeOnEscape` | `SubtypeExprOrValue<BooleanType>` | Close on escape key |
+
 ---
 
 ### Drawer
 
 ```typescript
-import { Drawer, Button, Text } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Drawer, Button, Text, UIComponentType } from "@elaraai/east-ui";
 
-const drawer = Drawer.Root(
-    Button.Root("Open Drawer"),
-    [Text.Root("Drawer content")],
-    { title: "Settings", placement: "end" }
-);
+const example = East.function([], UIComponentType, $ => {
+    return Drawer.Root(
+        Button.Root("Open Drawer"),
+        [Text.Root("Drawer content")],
+        { title: "Settings", placement: "end" }
+    );
+});
 ```
 
 | Signature | Description | Example |
 |-----------|-------------|---------|
 | `Drawer.Root(trigger: UIComponent, body: UIComponent[], style?: DrawerStyle): ExprType<UIComponentType>` | Create drawer | `Drawer.Root(Button.Root("Open"), [...])` |
 
+**DrawerStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `title` | `SubtypeExprOrValue<StringType>` | Drawer title |
+| `description` | `SubtypeExprOrValue<StringType>` | Drawer description |
+| `size` | `SubtypeExprOrValue<DrawerSizeType> \| DrawerSizeLiteral` | "xs", "sm", "md", "lg", "xl", "full" |
+| `placement` | `SubtypeExprOrValue<DrawerPlacementType> \| DrawerPlacementLiteral` | "start", "end", "top", "bottom" |
+| `contained` | `SubtypeExprOrValue<BooleanType>` | Render within parent container |
+| `closeOnInteractOutside` | `SubtypeExprOrValue<BooleanType>` | Close when clicking outside |
+| `closeOnEscape` | `SubtypeExprOrValue<BooleanType>` | Close on escape key |
+
 ---
 
 ### Tooltip
 
 ```typescript
-import { Tooltip, Button } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Tooltip, Button, UIComponentType } from "@elaraai/east-ui";
 
-const tooltip = Tooltip.Root(Button.Root("Hover me"), "Helpful information");
+const example = East.function([], UIComponentType, $ => {
+    return Tooltip.Root(Button.Root("Hover me"), "Helpful information");
+});
 ```
 
 | Signature | Description | Example |
 |-----------|-------------|---------|
 | `Tooltip.Root(trigger: UIComponent, content: SubtypeExprOrValue<StringType>, style?: TooltipStyle): ExprType<UIComponentType>` | Create tooltip | `Tooltip.Root(Button.Root("?"), "Help text")` |
 
+**TooltipStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `placement` | `SubtypeExprOrValue<PlacementType> \| PlacementLiteral` | "top", "bottom", "left", "right" (with -start/-end variants) |
+| `hasArrow` | `SubtypeExprOrValue<BooleanType>` | Show arrow pointing to trigger |
+
 ---
 
 ### Popover
 
 ```typescript
-import { Popover, Button, Text } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Popover, Button, Text, UIComponentType } from "@elaraai/east-ui";
 
-const popover = Popover.Root(
-    Button.Root("Click me"),
-    [Text.Root("Popover content")],
-    { title: "More Info", placement: "bottom" }
-);
+const example = East.function([], UIComponentType, $ => {
+    return Popover.Root(
+        Button.Root("Click me"),
+        [Text.Root("Popover content")],
+        { title: "More Info", placement: "bottom" }
+    );
+});
 ```
 
 | Signature | Description | Example |
 |-----------|-------------|---------|
 | `Popover.Root(trigger: UIComponent, body: UIComponent[], style?: PopoverStyle): ExprType<UIComponentType>` | Create popover | `Popover.Root(Button.Root("Info"), [...])` |
 
+**PopoverStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `title` | `SubtypeExprOrValue<StringType>` | Popover title |
+| `description` | `SubtypeExprOrValue<StringType>` | Popover description |
+| `size` | `SubtypeExprOrValue<PopoverSizeType> \| PopoverSizeLiteral` | "xs", "sm", "md", "lg" |
+| `placement` | `SubtypeExprOrValue<PlacementType> \| PlacementLiteral` | Position relative to trigger |
+| `hasArrow` | `SubtypeExprOrValue<BooleanType>` | Show arrow pointing to trigger |
+| `closeOnInteractOutside` | `SubtypeExprOrValue<BooleanType>` | Close when clicking outside |
+| `closeOnEscape` | `SubtypeExprOrValue<BooleanType>` | Close on escape key |
+
 ---
 
 ### Menu
 
 ```typescript
-import { Menu, Button } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Menu, Button, UIComponentType } from "@elaraai/east-ui";
 
-const menu = Menu.Root(Button.Root("Actions"), [
-    Menu.Item("edit", "Edit"),
-    Menu.Separator(),
-    Menu.Item("delete", "Delete"),
-]);
+const example = East.function([], UIComponentType, $ => {
+    return Menu.Root(Button.Root("Actions"), [
+        Menu.Item("edit", "Edit"),
+        Menu.Separator(),
+        Menu.Item("delete", "Delete"),
+    ]);
+});
 ```
 
 | Signature | Description | Example |
 |-----------|-------------|---------|
 | `Menu.Root(trigger: UIComponent, items: MenuItem[], style?: MenuStyle): ExprType<UIComponentType>` | Create menu | `Menu.Root(Button.Root("..."), [...])` |
-| `Menu.Item(value: string, label: string, style?: ItemStyle): MenuItem` | Create menu item | `Menu.Item("edit", "Edit")` |
+| `Menu.Item(value: string, label: string, disabled?: boolean): MenuItem` | Create menu item | `Menu.Item("edit", "Edit")` |
 | `Menu.Separator(): MenuItem` | Create separator | `Menu.Separator()` |
+
+**MenuStyle Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `placement` | `SubtypeExprOrValue<PlacementType> \| PlacementLiteral` | Position relative to trigger |
 
 ---
 
@@ -1034,11 +1410,14 @@ const menu = Menu.Root(Button.Root("Actions"), [
 Content card with header and body.
 
 ```typescript
-import { Card, Text } from "@elaraai/east-ui";
+import { East } from "@elaraai/east";
+import { Card, Text, UIComponentType } from "@elaraai/east-ui";
 
-const card = Card.Root([
-    Text.Root("Card content here"),
-], { title: "Card Title", description: "Optional description", variant: "elevated" });
+const example = East.function([], UIComponentType, $ => {
+    return Card.Root([
+        Text.Root("Card content here"),
+    ], { title: "Card Title", description: "Optional description", variant: "elevated" });
+});
 ```
 
 | Signature | Description | Example |

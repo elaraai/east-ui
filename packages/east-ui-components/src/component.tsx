@@ -9,6 +9,13 @@ import { UIComponentType } from "@elaraai/east-ui";
 
 // Import implemented components
 import { EastChakraText } from "./typography/text";
+import { EastChakraCode } from "./typography/code";
+import { EastChakraHeading } from "./typography/heading";
+import { EastChakraLink } from "./typography/link";
+import { EastChakraHighlight } from "./typography/highlight";
+import { EastChakraMark } from "./typography/mark";
+import { EastChakraList } from "./typography/list";
+import { EastChakraCodeBlock } from "./typography/code-block";
 import { EastChakraButton } from "./buttons/button";
 import { EastChakraIconButton } from "./buttons/icon-button";
 import { EastChakraSparkline } from "./charts/sparkline";
@@ -81,6 +88,13 @@ export const EastChakraComponent = memo(function EastChakraComponent({ value }: 
         return match(value, {
             // Typography
             Text: (v) => <EastChakraText value={v} />,
+            Code: (v) => <EastChakraCode value={v} />,
+            Heading: (v) => <EastChakraHeading value={v} />,
+            Link: (v) => <EastChakraLink value={v} />,
+            Highlight: (v) => <EastChakraHighlight value={v} />,
+            Mark: (v) => <EastChakraMark value={v} />,
+            List: (v) => <EastChakraList value={v} />,
+            CodeBlock: (v) => <EastChakraCodeBlock value={v} />,
 
             // Buttons
             Button: (v) => <EastChakraButton value={v} />,

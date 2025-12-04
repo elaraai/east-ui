@@ -1,4 +1,4 @@
-import { East, some, none } from "@elaraai/east";
+import { East, some } from "@elaraai/east";
 import { Chart, UIComponentType, Grid, Box } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -21,7 +21,17 @@ export default East.function(
                         { name: "Linux", value: 300, color: some("pink.solid") },
                         { name: "Other", value: 200, color: some("green.solid") },
                     ]),
-                ], { height: "200px", width: "100%" })
+                ], { height: "200px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Pie([
+                            { name: "Windows", value: 400, color: some("blue.solid") },
+                            { name: "Mac", value: 300, color: some("orange.solid") },
+                            { name: "Linux", value: 300, color: some("pink.solid") },
+                            { name: "Other", value: 200, color: some("green.solid") },
+                        ]),
+                    ], { height: "200px", width: "100%" })
+                `)
             )
         );
 
@@ -44,7 +54,24 @@ export default East.function(
                             tooltip: Chart.Tooltip({ show: true }),
                         }
                     ),
-                ], { height: "220px", width: "100%" })
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Pie(
+                            [
+                                { name: "Windows", value: 400, color: some("blue.solid") },
+                                { name: "Mac", value: 300, color: some("orange.solid") },
+                                { name: "Linux", value: 300, color: some("pink.solid") },
+                                { name: "Other", value: 200, color: some("green.solid") },
+                            ],
+                            {
+                                innerRadius: 60,
+                                outerRadius: 80,
+                                tooltip: Chart.Tooltip({ show: true }),
+                            }
+                        ),
+                    ], { height: "220px", width: "100%" })
+                `)
             )
         );
 
@@ -64,7 +91,21 @@ export default East.function(
                             legend: Chart.Legend({ show: true }),
                         }
                     ),
-                ], { height: "220px", width: "100%" })
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Pie(
+                            [
+                                { name: "Desktop", value: 450, color: some("teal.solid") },
+                                { name: "Mobile", value: 350, color: some("purple.solid") },
+                                { name: "Tablet", value: 200, color: some("orange.solid") },
+                            ],
+                            {
+                                legend: Chart.Legend({ show: true }),
+                            }
+                        ),
+                    ], { height: "220px", width: "100%" })
+                `)
             )
         );
 
@@ -86,7 +127,23 @@ export default East.function(
                             outerRadius: 80,
                         }
                     ),
-                ], { height: "200px", width: "100%" })
+                ], { height: "200px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Pie(
+                            [
+                                { name: "Complete", value: 75, color: some("green.solid") },
+                                { name: "Remaining", value: 25, color: some("gray.solid") },
+                            ],
+                            {
+                                startAngle: 180,
+                                endAngle: 0,
+                                innerRadius: 60,
+                                outerRadius: 80,
+                            }
+                        ),
+                    ], { height: "200px", width: "100%" })
+                `)
             )
         );
 
@@ -109,7 +166,24 @@ export default East.function(
                             outerRadius: 80,
                         }
                     ),
-                ], { height: "200px", width: "100%" })
+                ], { height: "200px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Pie(
+                            [
+                                { name: "Q1", value: 100, color: some("blue.solid") },
+                                { name: "Q2", value: 120, color: some("green.solid") },
+                                { name: "Q3", value: 80, color: some("orange.solid") },
+                                { name: "Q4", value: 150, color: some("purple.solid") },
+                            ],
+                            {
+                                paddingAngle: 5,
+                                innerRadius: 40,
+                                outerRadius: 80,
+                            }
+                        ),
+                    ], { height: "200px", width: "100%" })
+                `)
             )
         );
 
@@ -131,7 +205,23 @@ export default East.function(
                             outerRadius: 70,
                         }
                     ),
-                ], { height: "220px", width: "100%" })
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Pie(
+                            [
+                                { name: "Chrome", value: 65, color: some("blue.solid") },
+                                { name: "Safari", value: 20, color: some("orange.solid") },
+                                { name: "Firefox", value: 10, color: some("pink.solid") },
+                                { name: "Other", value: 5, color: some("gray.solid") },
+                            ],
+                            {
+                                showLabels: true,
+                                outerRadius: 70,
+                            }
+                        ),
+                    ], { height: "220px", width: "100%" })
+                `)
             )
         );
 

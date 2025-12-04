@@ -26,7 +26,7 @@ export { variant } from "@elaraai/east";
 export { Style } from "./style.js";
 
 // Typography
-export { Text } from "./typography/index.js";
+export { Text, Code, Heading, Link, Highlight, Mark, List, CodeBlock } from "./typography/index.js";
 
 // Layout
 export { Box, Stack, Separator, Grid, Splitter } from "./layout/index.js";

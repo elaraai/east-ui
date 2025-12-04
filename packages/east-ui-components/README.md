@@ -90,7 +90,7 @@ All East UI components are supported:
 | Category | Components |
 |----------|------------|
 | **Layout** | Box, Stack, HStack, VStack, Grid, Splitter, Separator |
-| **Typography** | Text |
+| **Typography** | Text, Code, Heading, Link, Highlight, Mark, List, CodeBlock |
 | **Buttons** | Button, IconButton |
 | **Forms** | Input (String, Integer, Float, DateTime), Select, Checkbox, Switch, Slider, Textarea, TagsInput, FileUpload, Field, Fieldset |
 | **Collections** | Table, DataList, TreeView |

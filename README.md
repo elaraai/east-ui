@@ -18,7 +18,7 @@
 ## Features
 
 - **Layout** - Box, Stack, Grid, Splitter, Separator
-- **Typography** - Text with comprehensive styling
+- **Typography** - Text, Code, Heading, Link, Highlight, Mark, List, CodeBlock
 - **Buttons** - Button, IconButton with variants
 - **Forms** - Input, Select, Checkbox, Switch, Slider, Textarea, TagsInput, FileUpload
 - **Collections** - Table, DataList, TreeView

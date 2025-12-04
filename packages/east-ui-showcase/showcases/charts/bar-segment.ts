@@ -24,7 +24,20 @@ export default East.function(
                         sort: { by: "value", direction: "desc" },
                         showLabel: true,
                     }),
-                ], { width: "100%" })
+                ], { width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.BarSegment([
+                            { name: "Google", value: 500000, color: some("teal.solid") },
+                            { name: "Direct", value: 100000, color: some("blue.solid") },
+                            { name: "Bing", value: 200000, color: some("orange.solid") },
+                            { name: "Yandex", value: 100000, color: some("purple.solid") },
+                        ], {
+                            sort: { by: "value", direction: "desc" },
+                            showLabel: true,
+                        }),
+                    ], { width: "100%" })
+                `)
             )
         );
 
@@ -44,7 +57,21 @@ export default East.function(
                         showValue: true,
                         showLabel: true,
                     }),
-                ], { width: "100%" })
+                ], { width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.BarSegment([
+                            { name: "Google", value: 500000, color: some("teal.solid") },
+                            { name: "Direct", value: 100000, color: some("blue.solid") },
+                            { name: "Bing", value: 200000, color: some("orange.solid") },
+                            { name: "Yandex", value: 100000, color: some("purple.solid") },
+                        ], {
+                            sort: { by: "value", direction: "desc" },
+                            showValue: true,
+                            showLabel: true,
+                        }),
+                    ], { width: "100%" })
+                `)
             )
         );
 
@@ -65,7 +92,22 @@ export default East.function(
                         showValue: true,
                         showLabel: true,
                     }),
-                ], { width: "100%" })
+                ], { width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.BarSegment([
+                            { name: "Search", value: 450000, color: some("green.solid") },
+                            { name: "Social", value: 250000, color: some("blue.solid") },
+                            { name: "Email", value: 150000, color: some("orange.solid") },
+                            { name: "Direct", value: 100000, color: some("gray.solid") },
+                            { name: "Referral", value: 50000, color: some("purple.solid") },
+                        ], {
+                            sort: { by: "value", direction: "desc" },
+                            showValue: true,
+                            showLabel: true,
+                        }),
+                    ], { width: "100%" })
+                `)
             )
         );
 
@@ -84,7 +126,20 @@ export default East.function(
                         showLabel: true,
                         showValue: true,
                     }),
-                ], { width: "100%" })
+                ], { width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.BarSegment([
+                            { name: "Development", value: 40, color: some("blue.solid") },
+                            { name: "Marketing", value: 35, color: some("teal.solid") },
+                            { name: "Operations", value: 15, color: some("orange.solid") },
+                            { name: "Other", value: 10, color: some("gray.solid") },
+                        ], {
+                            showLabel: true,
+                            showValue: true,
+                        }),
+                    ], { width: "100%" })
+                `)
             )
         );
 
@@ -103,7 +158,20 @@ export default East.function(
                         showLabel: false,
                         showValue: false,
                     }),
-                ], { width: "100%" })
+                ], { width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.BarSegment([
+                            { name: "A", value: 40, color: some("teal.solid") },
+                            { name: "B", value: 30, color: some("blue.solid") },
+                            { name: "C", value: 20, color: some("orange.solid") },
+                            { name: "D", value: 10, color: some("purple.solid") },
+                        ], {
+                            showLabel: false,
+                            showValue: false,
+                        }),
+                    ], { width: "100%" })
+                `)
             )
         );
 
@@ -123,7 +191,21 @@ export default East.function(
                         showLabel: true,
                         showValue: true,
                     }),
-                ], { width: "100%" })
+                ], { width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.BarSegment([
+                            { name: "Tiny", value: 5, color: some("pink.solid") },
+                            { name: "Small", value: 15, color: some("orange.solid") },
+                            { name: "Medium", value: 30, color: some("yellow.solid") },
+                            { name: "Large", value: 50, color: some("green.solid") },
+                        ], {
+                            sort: { by: "value", direction: "asc" },
+                            showLabel: true,
+                            showValue: true,
+                        }),
+                    ], { width: "100%" })
+                `)
             )
         );
 
