@@ -3,7 +3,7 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East } from "@elaraai/east";
+import { East, some } from "@elaraai/east";
 import {
     UIComponentType,
     Grid,
@@ -28,7 +28,13 @@ export default East.function(
                 Alert.Root("info", {
                     title: "New update available",
                     description: "A new version of the application is ready to install.",
-                })
+                }),
+                some(`
+                    Alert.Root("info", {
+                        title: "New update available",
+                        description: "A new version of the application is ready to install.",
+                    })
+                `)
             )
         );
 
@@ -40,7 +46,13 @@ export default East.function(
                 Alert.Root("success", {
                     title: "Changes saved",
                     description: "Your settings have been updated successfully.",
-                })
+                }),
+                some(`
+                    Alert.Root("success", {
+                        title: "Changes saved",
+                        description: "Your settings have been updated successfully.",
+                    })
+                `)
             )
         );
 
@@ -52,7 +64,13 @@ export default East.function(
                 Alert.Root("warning", {
                     title: "Session expiring",
                     description: "Your session will expire in 5 minutes.",
-                })
+                }),
+                some(`
+                    Alert.Root("warning", {
+                        title: "Session expiring",
+                        description: "Your session will expire in 5 minutes.",
+                    })
+                `)
             )
         );
 
@@ -64,7 +82,13 @@ export default East.function(
                 Alert.Root("error", {
                     title: "Connection failed",
                     description: "Unable to connect to the server. Please try again.",
-                })
+                }),
+                some(`
+                    Alert.Root("error", {
+                        title: "Connection failed",
+                        description: "Unable to connect to the server. Please try again.",
+                    })
+                `)
             )
         );
 
@@ -77,7 +101,14 @@ export default East.function(
                     Alert.Root("info", { title: "Solid variant", variant: "solid" }),
                     Alert.Root("info", { title: "Subtle variant", variant: "subtle" }),
                     Alert.Root("info", { title: "Outline variant", variant: "outline" }),
-                ], { gap: "3", align: "stretch", width: "100%" })
+                ], { gap: "3", align: "stretch", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Alert.Root("info", { title: "Solid variant", variant: "solid" }),
+                        Alert.Root("info", { title: "Subtle variant", variant: "subtle" }),
+                        Alert.Root("info", { title: "Outline variant", variant: "outline" }),
+                    ], { gap: "3", align: "stretch", width: "100%" })
+                `)
             )
         );
 
@@ -89,7 +120,13 @@ export default East.function(
                 Stack.VStack([
                     Alert.Root("success", { title: "File uploaded successfully" }),
                     Alert.Root("error", { title: "Invalid email address" }),
-                ], { gap: "3", align: "stretch", width: "100%" })
+                ], { gap: "3", align: "stretch", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Alert.Root("success", { title: "File uploaded successfully" }),
+                        Alert.Root("error", { title: "Invalid email address" }),
+                    ], { gap: "3", align: "stretch", width: "100%" })
+                `)
             )
         );
 
@@ -98,7 +135,8 @@ export default East.function(
             ShowcaseCard(
                 "Basic Progress",
                 "Simple progress bar",
-                Progress.Root(60.0)
+                Progress.Root(60.0),
+                some(`Progress.Root(60.0)`)
             )
         );
 
@@ -110,7 +148,13 @@ export default East.function(
                 Progress.Root(75.0, {
                     label: "Upload Progress",
                     valueText: "75%",
-                })
+                }),
+                some(`
+                    Progress.Root(75.0, {
+                        label: "Upload Progress",
+                        valueText: "75%",
+                    })
+                `)
             )
         );
 
@@ -124,7 +168,15 @@ export default East.function(
                     Progress.Root(60.0, { colorPalette: "green", label: "Green" }),
                     Progress.Root(40.0, { colorPalette: "orange", label: "Orange" }),
                     Progress.Root(20.0, { colorPalette: "red", label: "Red" }),
-                ], { gap: "4", align: "stretch", width: "100%" })
+                ], { gap: "4", align: "stretch", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Progress.Root(80.0, { colorPalette: "blue", label: "Blue" }),
+                        Progress.Root(60.0, { colorPalette: "green", label: "Green" }),
+                        Progress.Root(40.0, { colorPalette: "orange", label: "Orange" }),
+                        Progress.Root(20.0, { colorPalette: "red", label: "Red" }),
+                    ], { gap: "4", align: "stretch", width: "100%" })
+                `)
             )
         );
 
@@ -138,7 +190,15 @@ export default East.function(
                     Progress.Root(50.0, { size: "sm", colorPalette: "blue" }),
                     Progress.Root(50.0, { size: "md", colorPalette: "blue" }),
                     Progress.Root(50.0, { size: "lg", colorPalette: "blue" }),
-                ], { gap: "4", align: "stretch", width: "100%" })
+                ], { gap: "4", align: "stretch", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Progress.Root(50.0, { size: "xs", colorPalette: "blue" }),
+                        Progress.Root(50.0, { size: "sm", colorPalette: "blue" }),
+                        Progress.Root(50.0, { size: "md", colorPalette: "blue" }),
+                        Progress.Root(50.0, { size: "lg", colorPalette: "blue" }),
+                    ], { gap: "4", align: "stretch", width: "100%" })
+                `)
             )
         );
 
@@ -150,7 +210,13 @@ export default East.function(
                 Stack.VStack([
                     Progress.Root(65.0, { striped: true, colorPalette: "blue" }),
                     Progress.Root(45.0, { striped: true, animated: true, colorPalette: "green" }),
-                ], { gap: "4", align: "stretch", width: "100%" })
+                ], { gap: "4", align: "stretch", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Progress.Root(65.0, { striped: true, colorPalette: "blue" }),
+                        Progress.Root(45.0, { striped: true, animated: true, colorPalette: "green" }),
+                    ], { gap: "4", align: "stretch", width: "100%" })
+                `)
             )
         );
 
@@ -165,7 +231,16 @@ export default East.function(
                     label: "Rating",
                     valueText: "7.5 / 10",
                     colorPalette: "purple",
-                })
+                }),
+                some(`
+                    Progress.Root(7.5, {
+                        min: 0,
+                        max: 10,
+                        label: "Rating",
+                        valueText: "7.5 / 10",
+                        colorPalette: "purple",
+                    })
+                `)
             )
         );
 

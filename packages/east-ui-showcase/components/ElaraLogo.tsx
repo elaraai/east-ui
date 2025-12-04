@@ -5,7 +5,7 @@ interface ElaraLogoProps {
   width?: string | number;
 }
 
-export const ElaraLogo = ({ height = 12, width }: ElaraLogoProps) => {
+export const ElaraLogo = ({ height = 12 }: ElaraLogoProps) => {
   const [fillColor] = useToken('colors', ['text.primary']);
   
   // Full logo with "elara" text

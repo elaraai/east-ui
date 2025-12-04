@@ -3,7 +3,7 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East } from "@elaraai/east";
+import { East, some } from "@elaraai/east";
 import {
     UIComponentType,
     Grid,
@@ -32,7 +32,14 @@ export default East.function(
                     Badge.Root("New"),
                     Badge.Root("Beta", { colorPalette: "purple" }),
                     Badge.Root("Pro", { colorPalette: "blue" }),
-                ], { gap: "2" })
+                ], { gap: "2" }),
+                some(`
+                    Stack.HStack([
+                        Badge.Root("New"),
+                        Badge.Root("Beta", { colorPalette: "purple" }),
+                        Badge.Root("Pro", { colorPalette: "blue" }),
+                    ], { gap: "2" })
+                `)
             )
         );
 
@@ -45,7 +52,14 @@ export default East.function(
                     Badge.Root("Solid", { variant: "solid", colorPalette: "green" }),
                     Badge.Root("Subtle", { variant: "subtle", colorPalette: "green" }),
                     Badge.Root("Outline", { variant: "outline", colorPalette: "green" }),
-                ], { gap: "2" })
+                ], { gap: "2" }),
+                some(`
+                    Stack.HStack([
+                        Badge.Root("Solid", { variant: "solid", colorPalette: "green" }),
+                        Badge.Root("Subtle", { variant: "subtle", colorPalette: "green" }),
+                        Badge.Root("Outline", { variant: "outline", colorPalette: "green" }),
+                    ], { gap: "2" })
+                `)
             )
         );
 
@@ -61,7 +75,17 @@ export default East.function(
                     Badge.Root("Green", { colorPalette: "green", variant: "solid" }),
                     Badge.Root("Blue", { colorPalette: "blue", variant: "solid" }),
                     Badge.Root("Purple", { colorPalette: "purple", variant: "solid" }),
-                ], { gap: "2", wrap: "wrap" })
+                ], { gap: "2", wrap: "wrap" }),
+                some(`
+                    Stack.HStack([
+                        Badge.Root("Red", { colorPalette: "red", variant: "solid" }),
+                        Badge.Root("Orange", { colorPalette: "orange", variant: "solid" }),
+                        Badge.Root("Yellow", { colorPalette: "yellow", variant: "solid" }),
+                        Badge.Root("Green", { colorPalette: "green", variant: "solid" }),
+                        Badge.Root("Blue", { colorPalette: "blue", variant: "solid" }),
+                        Badge.Root("Purple", { colorPalette: "purple", variant: "solid" }),
+                    ], { gap: "2", wrap: "wrap" })
+                `)
             )
         );
 
@@ -74,7 +98,14 @@ export default East.function(
                     Tag.Root("React"),
                     Tag.Root("TypeScript", { colorPalette: "blue" }),
                     Tag.Root("Chakra UI", { colorPalette: "teal" }),
-                ], { gap: "2" })
+                ], { gap: "2" }),
+                some(`
+                    Stack.HStack([
+                        Tag.Root("React"),
+                        Tag.Root("TypeScript", { colorPalette: "blue" }),
+                        Tag.Root("Chakra UI", { colorPalette: "teal" }),
+                    ], { gap: "2" })
+                `)
             )
         );
 
@@ -87,7 +118,14 @@ export default East.function(
                     Tag.Root("Removable", { closable: true, colorPalette: "red" }),
                     Tag.Root("Delete me", { closable: true, colorPalette: "orange" }),
                     Tag.Root("Click X", { closable: true, colorPalette: "blue" }),
-                ], { gap: "2" })
+                ], { gap: "2" }),
+                some(`
+                    Stack.HStack([
+                        Tag.Root("Removable", { closable: true, colorPalette: "red" }),
+                        Tag.Root("Delete me", { closable: true, colorPalette: "orange" }),
+                        Tag.Root("Click X", { closable: true, colorPalette: "blue" }),
+                    ], { gap: "2" })
+                `)
             )
         );
 
@@ -100,7 +138,14 @@ export default East.function(
                     Tag.Root("Solid", { variant: "solid", colorPalette: "cyan" }),
                     Tag.Root("Subtle", { variant: "subtle", colorPalette: "cyan" }),
                     Tag.Root("Outline", { variant: "outline", colorPalette: "cyan" }),
-                ], { gap: "2" })
+                ], { gap: "2" }),
+                some(`
+                    Stack.HStack([
+                        Tag.Root("Solid", { variant: "solid", colorPalette: "cyan" }),
+                        Tag.Root("Subtle", { variant: "subtle", colorPalette: "cyan" }),
+                        Tag.Root("Outline", { variant: "outline", colorPalette: "cyan" }),
+                    ], { gap: "2" })
+                `)
             )
         );
 
@@ -113,7 +158,14 @@ export default East.function(
                     Avatar.Root({ name: "John Doe" }),
                     Avatar.Root({ name: "Jane Smith", colorPalette: "blue" }),
                     Avatar.Root({ name: "Bob Wilson", colorPalette: "green" }),
-                ], { gap: "3" })
+                ], { gap: "3" }),
+                some(`
+                    Stack.HStack([
+                        Avatar.Root({ name: "John Doe" }),
+                        Avatar.Root({ name: "Jane Smith", colorPalette: "blue" }),
+                        Avatar.Root({ name: "Bob Wilson", colorPalette: "green" }),
+                    ], { gap: "3" })
+                `)
             )
         );
 
@@ -127,7 +179,15 @@ export default East.function(
                     Avatar.Root({ name: "SM", size: "sm", colorPalette: "purple" }),
                     Avatar.Root({ name: "MD", size: "md", colorPalette: "purple" }),
                     Avatar.Root({ name: "LG", size: "lg", colorPalette: "purple" }),
-                ], { gap: "3", align: "center" })
+                ], { gap: "3", align: "center" }),
+                some(`
+                    Stack.HStack([
+                        Avatar.Root({ name: "XS", size: "xs", colorPalette: "purple" }),
+                        Avatar.Root({ name: "SM", size: "sm", colorPalette: "purple" }),
+                        Avatar.Root({ name: "MD", size: "md", colorPalette: "purple" }),
+                        Avatar.Root({ name: "LG", size: "lg", colorPalette: "purple" }),
+                    ], { gap: "3", align: "center" })
+                `)
             )
         );
 
@@ -143,7 +203,17 @@ export default East.function(
                     Avatar.Root({ name: "Green User", colorPalette: "green" }),
                     Avatar.Root({ name: "Blue User", colorPalette: "blue" }),
                     Avatar.Root({ name: "Purple User", colorPalette: "purple" }),
-                ], { gap: "2" })
+                ], { gap: "2" }),
+                some(`
+                    Stack.HStack([
+                        Avatar.Root({ name: "Red User", colorPalette: "red" }),
+                        Avatar.Root({ name: "Orange User", colorPalette: "orange" }),
+                        Avatar.Root({ name: "Yellow User", colorPalette: "yellow" }),
+                        Avatar.Root({ name: "Green User", colorPalette: "green" }),
+                        Avatar.Root({ name: "Blue User", colorPalette: "blue" }),
+                        Avatar.Root({ name: "Purple User", colorPalette: "purple" }),
+                    ], { gap: "2" })
+                `)
             )
         );
 
@@ -156,7 +226,14 @@ export default East.function(
                     Stat.Root("Revenue", "$45,231"),
                     Stat.Root("Users", "1,234"),
                     Stat.Root("Orders", "567"),
-                ], { gap: "8" })
+                ], { gap: "8" }),
+                some(`
+                    Stack.HStack([
+                        Stat.Root("Revenue", "$45,231"),
+                        Stat.Root("Users", "1,234"),
+                        Stat.Root("Orders", "567"),
+                    ], { gap: "8" })
+                `)
             )
         );
 
@@ -168,7 +245,13 @@ export default East.function(
                 Stack.HStack([
                     Stat.Root("Total Sales", "$12,345", { helpText: "Last 30 days" }),
                     Stat.Root("New Users", "89", { helpText: "This week" }),
-                ], { gap: "8" })
+                ], { gap: "8" }),
+                some(`
+                    Stack.HStack([
+                        Stat.Root("Total Sales", "$12,345", { helpText: "Last 30 days" }),
+                        Stat.Root("New Users", "89", { helpText: "This week" }),
+                    ], { gap: "8" })
+                `)
             )
         );
 
@@ -180,7 +263,13 @@ export default East.function(
                 Stack.HStack([
                     Stat.Root("Growth", "+23.36%", { helpText: "vs last month", indicator: "up" }),
                     Stat.Root("Bounce Rate", "-12.5%", { helpText: "vs yesterday", indicator: "down" }),
-                ], { gap: "8" })
+                ], { gap: "8" }),
+                some(`
+                    Stack.HStack([
+                        Stat.Root("Growth", "+23.36%", { helpText: "vs last month", indicator: "up" }),
+                        Stat.Root("Bounce Rate", "-12.5%", { helpText: "vs yesterday", indicator: "down" }),
+                    ], { gap: "8" })
+                `)
             )
         );
 
@@ -190,13 +279,23 @@ export default East.function(
                 "Icon",
                 "Font Awesome icons",
                 Stack.HStack([
-                    Icon.Root("solid", "house"),
-                    Icon.Root("solid", "user"),
-                    Icon.Root("solid", "gear"),
-                    Icon.Root("solid", "bell"),
-                    Icon.Root("solid", "heart"),
-                    Icon.Root("solid", "star"),
-                ], { gap: "4" })
+                    Icon.Root('fas', "house"),
+                    Icon.Root('fas', "user"),
+                    Icon.Root('fas', "gear"),
+                    Icon.Root('fas', "bell"),
+                    Icon.Root('fas', "heart"),
+                    Icon.Root('fas', "star"),
+                ], { gap: "4" }),
+                some(`
+                    Stack.HStack([
+                        Icon.Root('fas', "house"),
+                        Icon.Root('fas', "user"),
+                        Icon.Root('fas', "gear"),
+                        Icon.Root('fas', "bell"),
+                        Icon.Root('fas', "heart"),
+                        Icon.Root('fas', "star"),
+                    ], { gap: "4" })
+                `)
             )
         );
 
@@ -206,12 +305,21 @@ export default East.function(
                 "Icon Styles",
                 "Solid, regular, and brands",
                 Stack.HStack([
-                    Icon.Root("solid", "bookmark"),
-                    Icon.Root("regular", "bookmark"),
-                    Icon.Root("brands", "github"),
-                    Icon.Root("brands", "twitter"),
-                    Icon.Root("brands", "react"),
-                ], { gap: "4" })
+                    Icon.Root('far', "bookmark"),
+                    Icon.Root('fas', "bookmark"),
+                    Icon.Root('fab', "github"),
+                    Icon.Root('fab', "twitter"),
+                    Icon.Root('fab', "react"),
+                ], { gap: "4" }),
+                some(`
+                    Stack.HStack([
+                        Icon.Root('far', "bookmark"),
+                        Icon.Root('fas', "bookmark"),
+                        Icon.Root('fab', "github"),
+                        Icon.Root('fab', "twitter"),
+                        Icon.Root('fab', "react"),
+                    ], { gap: "4" })
+                `)
             )
         );
 

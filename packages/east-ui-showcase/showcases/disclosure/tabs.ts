@@ -1,4 +1,4 @@
-import { East } from "@elaraai/east";
+import { East, some } from "@elaraai/east";
 import { Tabs, UIComponentType, Grid, Text, Box, Stack } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -28,7 +28,24 @@ export default East.function(
                     ], {
                         defaultValue: "overview",
                     }),
-                ], { width: "100%" })
+                ], { width: "100%" }),
+                some(`
+                    Box.Root([
+                        Tabs.Root([
+                            Tabs.Item("overview", "Overview", [
+                                Box.Root([Text.Root("Welcome to the overview tab.")], { padding: "4" }),
+                            ]),
+                            Tabs.Item("features", "Features", [
+                                Box.Root([Text.Root("Explore our features in this panel.")], { padding: "4" }),
+                            ]),
+                            Tabs.Item("pricing", "Pricing", [
+                                Box.Root([Text.Root("View pricing information here.")], { padding: "4" }),
+                            ]),
+                        ], {
+                            defaultValue: "overview",
+                        }),
+                    ], { width: "100%" })
+                `)
             )
         );
 
@@ -52,7 +69,25 @@ export default East.function(
                         variant: "line",
                         defaultValue: "tab1",
                     }),
-                ], { width: "100%" })
+                ], { width: "100%" }),
+                some(`
+                    Box.Root([
+                        Tabs.Root([
+                            Tabs.Item("tab1", "Account", [
+                                Box.Root([Text.Root("Manage your account settings and preferences.")], { padding: "4" }),
+                            ]),
+                            Tabs.Item("tab2", "Security", [
+                                Box.Root([Text.Root("Configure security options.")], { padding: "4" }),
+                            ]),
+                            Tabs.Item("tab3", "Billing", [
+                                Box.Root([Text.Root("View billing history.")], { padding: "4" }),
+                            ]),
+                        ], {
+                            variant: "line",
+                            defaultValue: "tab1",
+                        }),
+                    ], { width: "100%" })
+                `)
             )
         );
 
@@ -73,7 +108,22 @@ export default East.function(
                         variant: "enclosed",
                         defaultValue: "general",
                     }),
-                ], { width: "100%" })
+                ], { width: "100%" }),
+                some(`
+                    Box.Root([
+                        Tabs.Root([
+                            Tabs.Item("general", "General", [
+                                Box.Root([Text.Root("General application settings.")], { padding: "4" }),
+                            ]),
+                            Tabs.Item("advanced", "Advanced", [
+                                Box.Root([Text.Root("Advanced configuration options.")], { padding: "4" }),
+                            ]),
+                        ], {
+                            variant: "enclosed",
+                            defaultValue: "general",
+                        }),
+                    ], { width: "100%" })
+                `)
             )
         );
 
@@ -97,7 +147,25 @@ export default East.function(
                         variant: "outline",
                         defaultValue: "all",
                     }),
-                ], { width: "100%" })
+                ], { width: "100%" }),
+                some(`
+                    Box.Root([
+                        Tabs.Root([
+                            Tabs.Item("all", "All Items", [
+                                Box.Root([Text.Root("Showing all items in the list.")], { padding: "4" }),
+                            ]),
+                            Tabs.Item("active", "Active", [
+                                Box.Root([Text.Root("Showing only active items.")], { padding: "4" }),
+                            ]),
+                            Tabs.Item("archived", "Archived", [
+                                Box.Root([Text.Root("Showing archived items.")], { padding: "4" }),
+                            ]),
+                        ], {
+                            variant: "outline",
+                            defaultValue: "all",
+                        }),
+                    ], { width: "100%" })
+                `)
             )
         );
 
@@ -121,7 +189,25 @@ export default East.function(
                         variant: "subtle",
                         defaultValue: "home",
                     }),
-                ], { width: "100%" })
+                ], { width: "100%" }),
+                some(`
+                    Box.Root([
+                        Tabs.Root([
+                            Tabs.Item("home", "Home", [
+                                Box.Root([Text.Root("Welcome to the home tab.")], { padding: "4" }),
+                            ]),
+                            Tabs.Item("profile", "Profile", [
+                                Box.Root([Text.Root("Your profile information.")], { padding: "4" }),
+                            ]),
+                            Tabs.Item("settings", "Settings", [
+                                Box.Root([Text.Root("Application settings.")], { padding: "4" }),
+                            ]),
+                        ], {
+                            variant: "subtle",
+                            defaultValue: "home",
+                        }),
+                    ], { width: "100%" })
+                `)
             )
         );
 
@@ -146,7 +232,26 @@ export default East.function(
                         fitted: true,
                         defaultValue: "week",
                     }),
-                ], { width: "100%" })
+                ], { width: "100%" }),
+                some(`
+                    Box.Root([
+                        Tabs.Root([
+                            Tabs.Item("day", "Day", [
+                                Box.Root([Text.Root("Daily view of your calendar.")], { padding: "4" }),
+                            ]),
+                            Tabs.Item("week", "Week", [
+                                Box.Root([Text.Root("Weekly view of your calendar.")], { padding: "4" }),
+                            ]),
+                            Tabs.Item("month", "Month", [
+                                Box.Root([Text.Root("Monthly view of your calendar.")], { padding: "4" }),
+                            ]),
+                        ], {
+                            variant: "line",
+                            fitted: true,
+                            defaultValue: "week",
+                        }),
+                    ], { width: "100%" })
+                `)
             )
         );
 
@@ -168,7 +273,23 @@ export default East.function(
                         Tabs.Item("lg1", "Large", [Box.Root([Text.Root("Large size tabs")], { padding: "4" })]),
                         Tabs.Item("lg2", "Tabs", [Box.Root([Text.Root("Content")], { padding: "4" })]),
                     ], { size: "lg", defaultValue: "lg1", variant: "line" }),
-                ], { gap: "4", align: "stretch", width: "100%" })
+                ], { gap: "4", align: "stretch", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Tabs.Root([
+                            Tabs.Item("sm1", "Small", [Box.Root([Text.Root("Small size tabs")], { padding: "4" })]),
+                            Tabs.Item("sm2", "Tabs", [Box.Root([Text.Root("Content")], { padding: "4" })]),
+                        ], { size: "sm", defaultValue: "sm1", variant: "line" }),
+                        Tabs.Root([
+                            Tabs.Item("md1", "Medium", [Box.Root([Text.Root("Medium size tabs")], { padding: "4" })]),
+                            Tabs.Item("md2", "Tabs", [Box.Root([Text.Root("Content")], { padding: "4" })]),
+                        ], { size: "md", defaultValue: "md1", variant: "line" }),
+                        Tabs.Root([
+                            Tabs.Item("lg1", "Large", [Box.Root([Text.Root("Large size tabs")], { padding: "4" })]),
+                            Tabs.Item("lg2", "Tabs", [Box.Root([Text.Root("Content")], { padding: "4" })]),
+                        ], { size: "lg", defaultValue: "lg1", variant: "line" }),
+                    ], { gap: "4", align: "stretch", width: "100%" })
+                `)
             )
         );
 
@@ -192,7 +313,25 @@ export default East.function(
                         variant: "line",
                         defaultValue: "enabled1",
                     }),
-                ], { width: "100%" })
+                ], { width: "100%" }),
+                some(`
+                    Box.Root([
+                        Tabs.Root([
+                            Tabs.Item("enabled1", "Enabled", [
+                                Box.Root([Text.Root("This tab is enabled.")], { padding: "4" }),
+                            ]),
+                            Tabs.Item("disabled", "Disabled", [
+                                Box.Root([Text.Root("This content is not accessible.")], { padding: "4" }),
+                            ], { disabled: true }),
+                            Tabs.Item("enabled2", "Also Enabled", [
+                                Box.Root([Text.Root("This tab is also enabled.")], { padding: "4" }),
+                            ]),
+                        ], {
+                            variant: "line",
+                            defaultValue: "enabled1",
+                        }),
+                    ], { width: "100%" })
+                `)
             )
         );
 

@@ -1,4 +1,4 @@
-import { East } from "@elaraai/east";
+import { East, some } from "@elaraai/east";
 import { Button, IconButton, UIComponentType, Stack, Grid } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -14,7 +14,8 @@ export default East.function(
             ShowcaseCard(
                 "Basic Button",
                 "Plain button with default styling",
-                Button.Root("Click Me")
+                Button.Root("Click Me"),
+                some(`Button.Root("Click Me")`)
             )
         );
 
@@ -23,7 +24,8 @@ export default East.function(
             ShowcaseCard(
                 "Solid Primary",
                 "Solid variant with blue color scheme",
-                Button.Root("Primary Action", { variant: "solid", colorPalette: "blue", size: "md" })
+                Button.Root("Primary Action", { variant: "solid", colorPalette: "blue", size: "md" }),
+                some(`Button.Root("Primary Action", { variant: "solid", colorPalette: "blue", size: "md" })`)
             )
         );
 
@@ -32,7 +34,8 @@ export default East.function(
             ShowcaseCard(
                 "Outline Button",
                 "Outline variant with teal color scheme",
-                Button.Root("Outline Style", { variant: "outline", colorPalette: "teal", size: "md" })
+                Button.Root("Outline Style", { variant: "outline", colorPalette: "teal", size: "md" }),
+                some(`Button.Root("Outline Style", { variant: "outline", colorPalette: "teal", size: "md" })`)
             )
         );
 
@@ -41,7 +44,8 @@ export default East.function(
             ShowcaseCard(
                 "Ghost Button",
                 "Ghost variant - transparent until hover",
-                Button.Root("Ghost Button", { variant: "ghost", colorPalette: "purple", size: "md" })
+                Button.Root("Ghost Button", { variant: "ghost", colorPalette: "purple", size: "md" }),
+                some(`Button.Root("Ghost Button", { variant: "ghost", colorPalette: "purple", size: "md" })`)
             )
         );
 
@@ -50,7 +54,8 @@ export default East.function(
             ShowcaseCard(
                 "Subtle Button",
                 "Subtle variant with light background",
-                Button.Root("Subtle Action", { variant: "subtle", colorPalette: "green", size: "md" })
+                Button.Root("Subtle Action", { variant: "subtle", colorPalette: "green", size: "md" }),
+                some(`Button.Root("Subtle Action", { variant: "subtle", colorPalette: "green", size: "md" })`)
             )
         );
 
@@ -64,7 +69,15 @@ export default East.function(
                     Button.Root("SM", { variant: "solid", colorPalette: "cyan", size: "sm" }),
                     Button.Root("MD", { variant: "solid", colorPalette: "cyan", size: "md" }),
                     Button.Root("LG", { variant: "solid", colorPalette: "cyan", size: "lg" }),
-                ], { gap: "3", align: "center" })
+                ], { gap: "3", align: "center" }),
+                some(`
+                    Stack.HStack([
+                        Button.Root("XS", { variant: "solid", colorPalette: "cyan", size: "xs" }),
+                        Button.Root("SM", { variant: "solid", colorPalette: "cyan", size: "sm" }),
+                        Button.Root("MD", { variant: "solid", colorPalette: "cyan", size: "md" }),
+                        Button.Root("LG", { variant: "solid", colorPalette: "cyan", size: "lg" }),
+                    ], { gap: "3", align: "center" })
+                `)
             )
         );
 
@@ -73,7 +86,8 @@ export default East.function(
             ShowcaseCard(
                 "Loading State",
                 "Button showing loading spinner",
-                Button.Root("Processing...", { variant: "solid", colorPalette: "blue", size: "md", loading: true })
+                Button.Root("Processing...", { variant: "solid", colorPalette: "blue", size: "md", loading: true }),
+                some(`Button.Root("Processing...", { variant: "solid", colorPalette: "blue", size: "md", loading: true })`)
             )
         );
 
@@ -82,7 +96,8 @@ export default East.function(
             ShowcaseCard(
                 "Disabled State",
                 "Button in disabled state",
-                Button.Root("Disabled", { variant: "solid", colorPalette: "gray", size: "md", disabled: true })
+                Button.Root("Disabled", { variant: "solid", colorPalette: "gray", size: "md", disabled: true }),
+                some(`Button.Root("Disabled", { variant: "solid", colorPalette: "gray", size: "md", disabled: true })`)
             )
         );
 
@@ -99,7 +114,18 @@ export default East.function(
                     Button.Root("Teal", { variant: "solid", colorPalette: "teal", size: "sm" }),
                     Button.Root("Blue", { variant: "solid", colorPalette: "blue", size: "sm" }),
                     Button.Root("Purple", { variant: "solid", colorPalette: "purple", size: "sm" }),
-                ], { gap: "2", wrap: "wrap" })
+                ], { gap: "2", wrap: "wrap" }),
+                some(`
+                    Stack.HStack([
+                        Button.Root("Red", { variant: "solid", colorPalette: "red", size: "sm" }),
+                        Button.Root("Orange", { variant: "solid", colorPalette: "orange", size: "sm" }),
+                        Button.Root("Yellow", { variant: "solid", colorPalette: "yellow", size: "sm" }),
+                        Button.Root("Green", { variant: "solid", colorPalette: "green", size: "sm" }),
+                        Button.Root("Teal", { variant: "solid", colorPalette: "teal", size: "sm" }),
+                        Button.Root("Blue", { variant: "solid", colorPalette: "blue", size: "sm" }),
+                        Button.Root("Purple", { variant: "solid", colorPalette: "purple", size: "sm" }),
+                    ], { gap: "2", wrap: "wrap" })
+                `)
             )
         );
 
@@ -113,7 +139,15 @@ export default East.function(
                     Button.Root("Outline", { variant: "outline", colorPalette: "blue", size: "sm" }),
                     Button.Root("Ghost", { variant: "ghost", colorPalette: "blue", size: "sm" }),
                     Button.Root("Subtle", { variant: "subtle", colorPalette: "blue", size: "sm" }),
-                ], { gap: "3", wrap: "wrap" })
+                ], { gap: "3", wrap: "wrap" }),
+                some(`
+                    Stack.HStack([
+                        Button.Root("Solid", { variant: "solid", colorPalette: "blue", size: "sm" }),
+                        Button.Root("Outline", { variant: "outline", colorPalette: "blue", size: "sm" }),
+                        Button.Root("Ghost", { variant: "ghost", colorPalette: "blue", size: "sm" }),
+                        Button.Root("Subtle", { variant: "subtle", colorPalette: "blue", size: "sm" }),
+                    ], { gap: "3", wrap: "wrap" })
+                `)
             )
         );
 
@@ -122,7 +156,8 @@ export default East.function(
             ShowcaseCard(
                 "Basic Icon Button",
                 "Simple icon button with default styling",
-                IconButton.Root("fas", "star")
+                IconButton.Root("fas", "star"),
+                some(`IconButton.Root("fas", "star")`)
             )
         );
 
@@ -136,7 +171,15 @@ export default East.function(
                     IconButton.Root("fas", "bookmark", { variant: "outline", colorPalette: "blue" }),
                     IconButton.Root("fas", "gear", { variant: "ghost", colorPalette: "gray" }),
                     IconButton.Root("fas", "bell", { variant: "subtle", colorPalette: "purple" }),
-                ], { gap: "3", align: "center" })
+                ], { gap: "3", align: "center" }),
+                some(`
+                    Stack.HStack([
+                        IconButton.Root("fas", "heart", { variant: "solid", colorPalette: "red" }),
+                        IconButton.Root("fas", "bookmark", { variant: "outline", colorPalette: "blue" }),
+                        IconButton.Root("fas", "gear", { variant: "ghost", colorPalette: "gray" }),
+                        IconButton.Root("fas", "bell", { variant: "subtle", colorPalette: "purple" }),
+                    ], { gap: "3", align: "center" })
+                `)
             )
         );
 
@@ -150,7 +193,15 @@ export default East.function(
                     IconButton.Root("fas", "plus", { variant: "solid", colorPalette: "teal", size: "sm" }),
                     IconButton.Root("fas", "plus", { variant: "solid", colorPalette: "teal", size: "md" }),
                     IconButton.Root("fas", "plus", { variant: "solid", colorPalette: "teal", size: "lg" }),
-                ], { gap: "3", align: "center" })
+                ], { gap: "3", align: "center" }),
+                some(`
+                    Stack.HStack([
+                        IconButton.Root("fas", "plus", { variant: "solid", colorPalette: "teal", size: "xs" }),
+                        IconButton.Root("fas", "plus", { variant: "solid", colorPalette: "teal", size: "sm" }),
+                        IconButton.Root("fas", "plus", { variant: "solid", colorPalette: "teal", size: "md" }),
+                        IconButton.Root("fas", "plus", { variant: "solid", colorPalette: "teal", size: "lg" }),
+                    ], { gap: "3", align: "center" })
+                `)
             )
         );
 
@@ -166,7 +217,17 @@ export default East.function(
                     IconButton.Root("fas", "trash", { variant: "ghost", colorPalette: "red" }),
                     IconButton.Root("fas", "pen", { variant: "ghost", colorPalette: "blue" }),
                     IconButton.Root("fas", "ellipsis-vertical", { variant: "ghost", colorPalette: "gray" }),
-                ], { gap: "2", align: "center" })
+                ], { gap: "2", align: "center" }),
+                some(`
+                    Stack.HStack([
+                        IconButton.Root("fas", "xmark", { variant: "ghost", colorPalette: "gray" }),
+                        IconButton.Root("fas", "bars", { variant: "ghost", colorPalette: "gray" }),
+                        IconButton.Root("fas", "magnifying-glass", { variant: "outline", colorPalette: "gray" }),
+                        IconButton.Root("fas", "trash", { variant: "ghost", colorPalette: "red" }),
+                        IconButton.Root("fas", "pen", { variant: "ghost", colorPalette: "blue" }),
+                        IconButton.Root("fas", "ellipsis-vertical", { variant: "ghost", colorPalette: "gray" }),
+                    ], { gap: "2", align: "center" })
+                `)
             )
         );
 
@@ -178,7 +239,13 @@ export default East.function(
                 Stack.HStack([
                     IconButton.Root("fas", "rotate", { variant: "solid", colorPalette: "blue", loading: true }),
                     IconButton.Root("fas", "check", { variant: "solid", colorPalette: "green", disabled: true }),
-                ], { gap: "3", align: "center" })
+                ], { gap: "3", align: "center" }),
+                some(`
+                    Stack.HStack([
+                        IconButton.Root("fas", "rotate", { variant: "solid", colorPalette: "blue", loading: true }),
+                        IconButton.Root("fas", "check", { variant: "solid", colorPalette: "green", disabled: true }),
+                    ], { gap: "3", align: "center" })
+                `)
             )
         );
 

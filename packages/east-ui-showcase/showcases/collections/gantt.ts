@@ -28,7 +28,19 @@ export default East.function(
                     ],
                     ["task", "owner"],
                     row => [Gantt.Task({ start: row.start, end: row.end })]
-                )
+                ),
+                some(`
+                    Gantt.Root(
+                        [
+                            { task: "Planning", owner: "Alice", start: new Date("2024-01-01"), end: new Date("2024-01-15") },
+                            { task: "Design", owner: "Bob", start: new Date("2024-01-10"), end: new Date("2024-02-01") },
+                            { task: "Development", owner: "Charlie", start: new Date("2024-01-20"), end: new Date("2024-03-15") },
+                            { task: "Testing", owner: "Diana", start: new Date("2024-03-01"), end: new Date("2024-03-30") },
+                        ],
+                        ["task", "owner"],
+                        row => [Gantt.Task({ start: row.start, end: row.end })]
+                    )
+                `)
             )
         );
 
@@ -48,7 +60,21 @@ export default East.function(
                         team: { header: "Team" },
                     },
                     row => [Gantt.Task({ start: row.start, end: row.end, colorPalette: "teal" })]
-                )
+                ),
+                some(`
+                    Gantt.Root(
+                        [
+                            { phase: "Research", team: "R&D", start: new Date("2024-02-01"), end: new Date("2024-02-28") },
+                            { phase: "Prototype", team: "Engineering", start: new Date("2024-02-15"), end: new Date("2024-03-31") },
+                            { phase: "Launch", team: "Marketing", start: new Date("2024-03-15"), end: new Date("2024-04-15") },
+                        ],
+                        {
+                            phase: { header: "Phase" },
+                            team: { header: "Team" },
+                        },
+                        row => [Gantt.Task({ start: row.start, end: row.end, colorPalette: "teal" })]
+                    )
+                `)
             )
         );
 
@@ -68,7 +94,21 @@ export default East.function(
                         Gantt.Task({ start: row.start, end: row.end, colorPalette: "blue" }),
                         Gantt.Milestone({ date: row.release, label: "Release", colorPalette: "green" }),
                     ]
-                )
+                ),
+                some(`
+                    Gantt.Root(
+                        [
+                            { name: "Sprint 1", start: new Date("2024-01-01"), end: new Date("2024-01-14"), release: new Date("2024-01-14") },
+                            { name: "Sprint 2", start: new Date("2024-01-15"), end: new Date("2024-01-28"), release: new Date("2024-01-28") },
+                            { name: "Sprint 3", start: new Date("2024-01-29"), end: new Date("2024-02-11"), release: new Date("2024-02-11") },
+                        ],
+                        { name: { header: "Sprint" } },
+                        row => [
+                            Gantt.Task({ start: row.start, end: row.end, colorPalette: "blue" }),
+                            Gantt.Milestone({ date: row.release, label: "Release", colorPalette: "green" }),
+                        ]
+                    )
+                `)
             )
         );
 
@@ -93,7 +133,26 @@ export default East.function(
                             colorPalette: "purple",
                         }),
                     ]
-                )
+                ),
+                some(`
+                    Gantt.Root(
+                        [
+                            { task: "Backend API", start: new Date("2024-01-01"), end: new Date("2024-02-15"), progress: 100 },
+                            { task: "Frontend UI", start: new Date("2024-01-15"), end: new Date("2024-03-01"), progress: 75 },
+                            { task: "Integration", start: new Date("2024-02-01"), end: new Date("2024-03-15"), progress: 40 },
+                            { task: "QA Testing", start: new Date("2024-02-15"), end: new Date("2024-04-01"), progress: 10 },
+                        ],
+                        { task: { header: "Task" } },
+                        row => [
+                            Gantt.Task({
+                                start: row.start,
+                                end: row.end,
+                                progress: row.progress,
+                                colorPalette: "purple",
+                            }),
+                        ]
+                    )
+                `)
             )
         );
 
@@ -120,7 +179,28 @@ export default East.function(
                             label: row.name,
                         }),
                     ]
-                )
+                ),
+                some(`
+                    Gantt.Root(
+                        [
+                            { type: "Feature", name: "User Auth", start: new Date("2024-01-01"), end: new Date("2024-01-20") },
+                            { type: "Bug Fix", name: "Login Issue", start: new Date("2024-01-10"), end: new Date("2024-01-15") },
+                            { type: "Enhancement", name: "Performance", start: new Date("2024-01-15"), end: new Date("2024-02-01") },
+                            { type: "Feature", name: "Dashboard", start: new Date("2024-01-20"), end: new Date("2024-02-15") },
+                        ],
+                        {
+                            type: { header: "Type" },
+                            name: { header: "Name" },
+                        },
+                        row => [
+                            Gantt.Task({
+                                start: row.start,
+                                end: row.end,
+                                label: row.name,
+                            }),
+                        ]
+                    )
+                `)
             )
         );
 
@@ -147,7 +227,28 @@ export default East.function(
                         interactive: true,
                         showToday: true,
                     }
-                )
+                ),
+                some(`
+                    Gantt.Root(
+                        [
+                            { dept: "Engineering", project: "Platform v2", start: new Date("2024-01-01"), end: new Date("2024-03-31") },
+                            { dept: "Design", project: "UI Refresh", start: new Date("2024-01-15"), end: new Date("2024-02-28") },
+                            { dept: "DevOps", project: "CI/CD Pipeline", start: new Date("2024-02-01"), end: new Date("2024-02-28") },
+                            { dept: "QA", project: "Test Automation", start: new Date("2024-02-15"), end: new Date("2024-04-15") },
+                        ],
+                        {
+                            dept: { header: "Department" },
+                            project: { header: "Project" },
+                        },
+                        row => [Gantt.Task({ start: row.start, end: row.end, colorPalette: "cyan" })],
+                        {
+                            variant: "line",
+                            striped: true,
+                            interactive: true,
+                            showToday: true,
+                        }
+                    )
+                `)
             )
         );
 

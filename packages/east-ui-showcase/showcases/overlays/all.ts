@@ -3,7 +3,7 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East } from "@elaraai/east";
+import { East, some } from "@elaraai/east";
 import {
     UIComponentType,
     Grid,
@@ -40,7 +40,13 @@ export default East.function(
                 Tooltip.Root(
                     Button.Root("Hover me"),
                     "This is a tooltip"
-                )
+                ),
+                some(`
+                    Tooltip.Root(
+                        Button.Root("Hover me"),
+                        "This is a tooltip"
+                    )
+                `)
             )
         );
 
@@ -53,7 +59,14 @@ export default East.function(
                     Button.Root("With Arrow", { variant: "solid", colorPalette: "blue" }),
                     "This tooltip has an arrow",
                     { hasArrow: true }
-                )
+                ),
+                some(`
+                    Tooltip.Root(
+                        Button.Root("With Arrow", { variant: "solid", colorPalette: "blue" }),
+                        "This tooltip has an arrow",
+                        { hasArrow: true }
+                    )
+                `)
             )
         );
 
@@ -70,7 +83,18 @@ export default East.function(
                         Menu.Separator(),
                         Menu.Item("delete", "Delete"),
                     ]
-                )
+                ),
+                some(`
+                    Menu.Root(
+                        Button.Root("Open Menu"),
+                        [
+                            Menu.Item("view", "View"),
+                            Menu.Item("edit", "Edit"),
+                            Menu.Separator(),
+                            Menu.Item("delete", "Delete"),
+                        ]
+                    )
+                `)
             )
         );
 
@@ -87,7 +111,18 @@ export default East.function(
                         Menu.Separator(),
                         Menu.Item("close", "Close"),
                     ]
-                )
+                ),
+                some(`
+                    Menu.Root(
+                        Button.Root("Options", { variant: "outline" }),
+                        [
+                            Menu.Item("new", "New File"),
+                            Menu.Item("save", "Save", true),
+                            Menu.Separator(),
+                            Menu.Item("close", "Close"),
+                        ]
+                    )
+                `)
             )
         );
 
@@ -100,7 +135,14 @@ export default East.function(
                     Button.Root("Open Popover"),
                     [Text.Root("This is the popover content. You can put any UI components here.")],
                     { title: "Popover Title", description: "A helpful description" }
-                )
+                ),
+                some(`
+                    Popover.Root(
+                        Button.Root("Open Popover"),
+                        [Text.Root("Popover content here.")],
+                        { title: "Popover Title", description: "A helpful description" }
+                    )
+                `)
             )
         );
 
@@ -113,25 +155,32 @@ export default East.function(
                     Button.Root("View Stats", { variant: "solid", colorPalette: "blue" }),
                     [
                         Chart.Area(
-                                [
-                                    { day: "Mon", value: 120 },
-                                    { day: "Tue", value: 150 },
-                                    { day: "Wed", value: 180 },
-                                    { day: "Thu", value: 140 },
-                                    { day: "Fri", value: 200 },
-                                ],
-                                {
-                                    value: { color: "blue.solid", },
-                                },
-                                {
-                                    xAxis: Chart.Axis({ dataKey: "day",  }),
-                                    fillOpacity: 0.3,
-                                    margin: Chart.Margin({ top: 30n, right: 0n, bottom: 0n, left: -20n }),
-                                }
-                            ),
+                            [
+                                { day: "Mon", value: 120 },
+                                { day: "Tue", value: 150 },
+                                { day: "Wed", value: 180 },
+                                { day: "Thu", value: 140 },
+                                { day: "Fri", value: 200 },
+                            ],
+                            {
+                                value: { color: "blue.solid", },
+                            },
+                            {
+                                xAxis: Chart.Axis({ dataKey: "day", }),
+                                fillOpacity: 0.3,
+                                margin: Chart.Margin({ top: 30n, right: 0n, bottom: 0n, left: -20n }),
+                            }
+                        ),
                     ],
                     { hasArrow: true, title: "Weekly Sales" }
-                )
+                ),
+                some(`
+                    Popover.Root(
+                        Button.Root("View Stats", { variant: "solid", colorPalette: "blue" }),
+                        [Chart.Area(data, series, { xAxis: Chart.Axis({ dataKey: "day" }) })],
+                        { hasArrow: true, title: "Weekly Sales" }
+                    )
+                `)
             )
         );
 
@@ -144,19 +193,34 @@ export default East.function(
                     Text.Root("@johndoe", { color: "blue.500", fontWeight: "medium" }),
                     [
                         Stack.HStack([
+                            Avatar.Root({ name: "John Doe", size: "lg" }),
+                            Stack.VStack([
+                                Text.Root("John Doe", { fontWeight: "semibold" }),
+                                Text.Root("Software Engineer", { fontSize: "sm", color: "gray.500" }),
+                                Stack.HStack([
+                                    Badge.Root("Pro", { colorPalette: "purple", variant: "solid" }),
+                                    Badge.Root("Verified", { colorPalette: "green", variant: "subtle" }),
+                                ], { gap: "1" }),
+                            ], { gap: "1", align: 'flex-start' }),
+                        ], { gap: "3" }),
+                    ],
+                    { placement: "bottom", openDelay: 200n }
+                ),
+                some(`
+                    HoverCard.Root(
+                        Text.Root("@johndoe", { color: "blue.500", fontWeight: "medium" }),
+                        [
+                            Stack.HStack([
                                 Avatar.Root({ name: "John Doe", size: "lg" }),
                                 Stack.VStack([
                                     Text.Root("John Doe", { fontWeight: "semibold" }),
-                                    Text.Root("Software Engineer", { fontSize: "sm", color: "gray.500" }),
-                                    Stack.HStack([
-                                        Badge.Root("Pro", { colorPalette: "purple", variant: "solid" }),
-                                        Badge.Root("Verified", { colorPalette: "green", variant: "subtle" }),
-                                    ], { gap: "1" }),
+                                    Text.Root("Software Engineer", { fontSize: "sm" }),
                                 ], { gap: "1", align: 'flex-start' }),
                             ], { gap: "3" }),
-                    ],
-                    { placement: "bottom", openDelay: 200n }
-                )
+                        ],
+                        { placement: "bottom", openDelay: 200n }
+                    )
+                `)
             )
         );
 
@@ -174,7 +238,19 @@ export default East.function(
                         ], { gap: "2", padding: "2" }),
                     ],
                     { hasArrow: true }
-                )
+                ),
+                some(`
+                    HoverCard.Root(
+                        Button.Root("View Documentation", { variant: "ghost", colorPalette: "blue" }),
+                        [
+                            Stack.VStack([
+                                Text.Root("East UI Documentation", { fontWeight: "semibold" }),
+                                Text.Root("Guide to building UIs.", { fontSize: "sm" }),
+                            ], { gap: "2", padding: "2" }),
+                        ],
+                        { hasArrow: true }
+                    )
+                `)
             )
         );
 
@@ -193,7 +269,20 @@ export default East.function(
                         ], { gap: "2", justify: "flex-end" }),
                     ],
                     { title: "Confirm Action", description: "Are you sure you want to proceed?" }
-                )
+                ),
+                some(`
+                    Dialog.Root(
+                        Button.Root("Open Dialog"),
+                        [
+                            Text.Root("Dialog content here."),
+                            Stack.HStack([
+                                Button.Root("Cancel", { variant: "outline" }),
+                                Button.Root("Confirm", { variant: "solid", colorPalette: "blue" }),
+                            ], { gap: "2", justify: "flex-end" }),
+                        ],
+                        { title: "Confirm Action", description: "Are you sure?" }
+                    )
+                `)
             )
         );
 
@@ -213,7 +302,19 @@ export default East.function(
                         ], { gap: "4" }),
                     ],
                     { title: "Settings", size: "lg" }
-                )
+                ),
+                some(`
+                    Dialog.Root(
+                        Button.Root("Open Settings", { variant: "outline" }),
+                        [
+                            Stack.VStack([
+                                Text.Root("Configure your preferences."),
+                                Card.Root([Text.Root("Settings content.")], { variant: "outline" }),
+                            ], { gap: "4" }),
+                        ],
+                        { title: "Settings", size: "lg" }
+                    )
+                `)
             )
         );
 
@@ -231,7 +332,18 @@ export default East.function(
                         ], { gap: "4" }),
                     ],
                     { title: "Drawer Title", description: "Slide-in panel", placement: "end", size: "md" }
-                )
+                ),
+                some(`
+                    Drawer.Root(
+                        Button.Root("Open Drawer"),
+                        [
+                            Stack.VStack([
+                                Text.Root("Drawer content here."),
+                            ], { gap: "4" }),
+                        ],
+                        { title: "Drawer Title", placement: "end", size: "md" }
+                    )
+                `)
             )
         );
 
@@ -251,7 +363,19 @@ export default East.function(
                         ], { gap: "1", align: "stretch" }),
                     ],
                     { title: "Navigation", placement: "start" }
-                )
+                ),
+                some(`
+                    Drawer.Root(
+                        Button.Root("Open Navigation", { variant: "outline" }),
+                        [
+                            Stack.VStack([
+                                Button.Root("Dashboard", { variant: "ghost", size: "sm" }),
+                                Button.Root("Projects", { variant: "ghost", size: "sm" }),
+                            ], { gap: "1", align: "stretch" }),
+                        ],
+                        { title: "Navigation", placement: "start" }
+                    )
+                `)
             )
         );
 
@@ -267,7 +391,17 @@ export default East.function(
                         "ToggleTip is an accessible alternative to hover tooltips. Click to toggle!",
                         { placement: "top", hasArrow: true }
                     ),
-                ], { gap: "2", align: "center" })
+                ], { gap: "2", align: "center" }),
+                some(`
+                    Stack.HStack([
+                        Text.Root("What is this?"),
+                        ToggleTip.Root(
+                            Icon.Root("fas", "question-circle", { size: "sm", color: "gray.500" }),
+                            "ToggleTip is an accessible alternative to hover tooltips.",
+                            { placement: "top", hasArrow: true }
+                        ),
+                    ], { gap: "2", align: "center" })
+                `)
             )
         );
 
@@ -280,7 +414,14 @@ export default East.function(
                     Button.Root("?", { variant: "outline", size: "sm" }),
                     "Click the info button for help. This is useful for touch and keyboard users.",
                     { placement: "bottom" }
-                )
+                ),
+                some(`
+                    ToggleTip.Root(
+                        Button.Root("?", { variant: "outline", size: "sm" }),
+                        "Click the info button for help.",
+                        { placement: "bottom" }
+                    )
+                `)
             )
         );
 

@@ -1,0 +1,142 @@
+/**
+ * Copyright (c) 2025 Elara AI Pty Ltd
+ * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
+ */
+
+import { describeEast, assertEast } from "../platforms.spec.js";
+import { Code, Style } from "../../src/index.js";
+
+describeEast("Code", (test) => {
+    // =========================================================================
+    // Basic Creation
+    // =========================================================================
+
+    test("creates code with string value", $ => {
+        const code = $.let(Code.Root("const x = 1"));
+
+        $(assertEast.equal(code.unwrap("Code").value, "const x = 1"));
+    });
+
+    test("creates code with no style - all options are none", $ => {
+        const code = $.let(Code.Root("hello"));
+
+        $(assertEast.equal(code.unwrap("Code").value, "hello"));
+        $(assertEast.equal(code.unwrap("Code").variant.hasTag("none"), true));
+        $(assertEast.equal(code.unwrap("Code").colorPalette.hasTag("none"), true));
+        $(assertEast.equal(code.unwrap("Code").size.hasTag("none"), true));
+    });
+
+    // =========================================================================
+    // Variants
+    // =========================================================================
+
+    test("creates subtle variant code", $ => {
+        const code = $.let(Code.Root("npm install", {
+            variant: "subtle",
+        }));
+
+        $(assertEast.equal(code.unwrap("Code").variant.hasTag("some"), true));
+        $(assertEast.equal(code.unwrap("Code").variant.unwrap("some").hasTag("subtle"), true));
+    });
+
+    test("creates surface variant code", $ => {
+        const code = $.let(Code.Root("npm install", {
+            variant: "surface",
+        }));
+
+        $(assertEast.equal(code.unwrap("Code").variant.unwrap("some").hasTag("surface"), true));
+    });
+
+    test("creates outline variant code", $ => {
+        const code = $.let(Code.Root("npm install", {
+            variant: "outline",
+        }));
+
+        $(assertEast.equal(code.unwrap("Code").variant.unwrap("some").hasTag("outline"), true));
+    });
+
+    // =========================================================================
+    // Color Palette
+    // =========================================================================
+
+    test("creates code with colorPalette", $ => {
+        const code = $.let(Code.Root("const x = 1", {
+            colorPalette: "blue",
+        }));
+
+        $(assertEast.equal(code.unwrap("Code").colorPalette.hasTag("some"), true));
+        $(assertEast.equal(code.unwrap("Code").colorPalette.unwrap("some"), "blue"));
+    });
+
+    // =========================================================================
+    // Size
+    // =========================================================================
+
+    test("creates extra small code", $ => {
+        const code = $.let(Code.Root("xs", {
+            size: "xs",
+        }));
+
+        $(assertEast.equal(code.unwrap("Code").size.hasTag("some"), true));
+        $(assertEast.equal(code.unwrap("Code").size.unwrap("some").hasTag("xs"), true));
+    });
+
+    test("creates small code", $ => {
+        const code = $.let(Code.Root("sm", {
+            size: "sm",
+        }));
+
+        $(assertEast.equal(code.unwrap("Code").size.unwrap("some").hasTag("sm"), true));
+    });
+
+    test("creates medium code", $ => {
+        const code = $.let(Code.Root("md", {
+            size: "md",
+        }));
+
+        $(assertEast.equal(code.unwrap("Code").size.unwrap("some").hasTag("md"), true));
+    });
+
+    test("creates large code", $ => {
+        const code = $.let(Code.Root("lg", {
+            size: "lg",
+        }));
+
+        $(assertEast.equal(code.unwrap("Code").size.unwrap("some").hasTag("lg"), true));
+    });
+
+    test("creates code with Style.Size helper", $ => {
+        const code = $.let(Code.Root("size", {
+            size: Style.Size("md"),
+        }));
+
+        $(assertEast.equal(code.unwrap("Code").size.unwrap("some").hasTag("md"), true));
+    });
+
+    // =========================================================================
+    // Combined Options
+    // =========================================================================
+
+    test("creates code with all options", $ => {
+        const code = $.let(Code.Root("function hello() {}", {
+            variant: "subtle",
+            colorPalette: "purple",
+            size: "sm",
+        }));
+
+        $(assertEast.equal(code.unwrap("Code").value, "function hello() {}"));
+        $(assertEast.equal(code.unwrap("Code").variant.unwrap("some").hasTag("subtle"), true));
+        $(assertEast.equal(code.unwrap("Code").colorPalette.unwrap("some"), "purple"));
+        $(assertEast.equal(code.unwrap("Code").size.unwrap("some").hasTag("sm"), true));
+    });
+
+    test("creates inline code snippet", $ => {
+        const code = $.let(Code.Root("console.log()", {
+            variant: "surface",
+            colorPalette: "gray",
+        }));
+
+        $(assertEast.equal(code.unwrap("Code").value, "console.log()"));
+        $(assertEast.equal(code.unwrap("Code").variant.unwrap("some").hasTag("surface"), true));
+    });
+});

@@ -3,7 +3,7 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East } from "@elaraai/east";
+import { East, some } from "@elaraai/east";
 import {
     UIComponentType,
     Grid,
@@ -32,7 +32,8 @@ export default East.function(
             ShowcaseCard(
                 "String Input",
                 "Text input with placeholder",
-                Input.String("", { placeholder: "Enter your name", variant: "outline" })
+                Input.String("", { placeholder: "Enter your name", variant: "outline" }),
+                some(`Input.String("", { placeholder: "Enter your name", variant: "outline" })`)
             )
         );
 
@@ -41,7 +42,8 @@ export default East.function(
             ShowcaseCard(
                 "Integer Input",
                 "Numeric input with min/max",
-                Input.Integer(0n, { min: 0n, max: 100n, step: 1n })
+                Input.Integer(0n, { min: 0n, max: 100n, step: 1n }),
+                some(`Input.Integer(0n, { min: 0n, max: 100n, step: 1n })`)
             )
         );
 
@@ -50,7 +52,8 @@ export default East.function(
             ShowcaseCard(
                 "Float Input",
                 "Decimal input with precision",
-                Input.Float(0.0, { min: 0, max: 100, step: 0.1, precision: 2n })
+                Input.Float(0.0, { min: 0, max: 100, step: 0.1, precision: 2n }),
+                some(`Input.Float(0.0, { min: 0, max: 100, step: 0.1, precision: 2n })`)
             )
         );
 
@@ -59,7 +62,8 @@ export default East.function(
             ShowcaseCard(
                 "DateTime Input",
                 "Date and time picker",
-                Input.DateTime(new Date(), { showTime: true })
+                Input.DateTime(new Date(), { showTime: true }),
+                some(`Input.DateTime(new Date(), { showTime: true })`)
             )
         );
 
@@ -73,7 +77,15 @@ export default East.function(
                     Input.String("", { placeholder: "Small", size: "sm" }),
                     Input.String("", { placeholder: "Medium", size: "md" }),
                     Input.String("", { placeholder: "Large", size: "lg" }),
-                ], { gap: "2", align: "stretch", width: "100%" })
+                ], { gap: "2", align: "stretch", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Input.String("", { placeholder: "Extra Small", size: "xs" }),
+                        Input.String("", { placeholder: "Small", size: "sm" }),
+                        Input.String("", { placeholder: "Medium", size: "md" }),
+                        Input.String("", { placeholder: "Large", size: "lg" }),
+                    ], { gap: "2", align: "stretch", width: "100%" })
+                `)
             )
         );
 
@@ -86,7 +98,14 @@ export default East.function(
                     Input.String("", { placeholder: "Outline", variant: "outline" }),
                     Input.String("", { placeholder: "Subtle", variant: "subtle" }),
                     Input.String("", { placeholder: "Flushed", variant: "flushed" }),
-                ], { gap: "2", align: "stretch", width: "100%" })
+                ], { gap: "2", align: "stretch", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Input.String("", { placeholder: "Outline", variant: "outline" }),
+                        Input.String("", { placeholder: "Subtle", variant: "subtle" }),
+                        Input.String("", { placeholder: "Flushed", variant: "flushed" }),
+                    ], { gap: "2", align: "stretch", width: "100%" })
+                `)
             )
         );
 
@@ -100,7 +119,15 @@ export default East.function(
                     Checkbox.Root(true, { label: "Checked option", colorPalette: "blue" }),
                     Checkbox.Root(false, { label: "Indeterminate", indeterminate: true }),
                     Checkbox.Root(false, { label: "Disabled", disabled: true }),
-                ], { gap: "3", align: "flex-start" })
+                ], { gap: "3", align: "flex-start" }),
+                some(`
+                    Stack.VStack([
+                        Checkbox.Root(false, { label: "Accept terms" }),
+                        Checkbox.Root(true, { label: "Checked option", colorPalette: "blue" }),
+                        Checkbox.Root(false, { label: "Indeterminate", indeterminate: true }),
+                        Checkbox.Root(false, { label: "Disabled", disabled: true }),
+                    ], { gap: "3", align: "flex-start" })
+                `)
             )
         );
 
@@ -114,7 +141,15 @@ export default East.function(
                     Switch.Root(true, { label: "Dark mode", colorPalette: "blue" }),
                     Switch.Root(false, { label: "Feature flag", colorPalette: "green" }),
                     Switch.Root(false, { label: "Disabled", disabled: true }),
-                ], { gap: "3", align: "flex-start" })
+                ], { gap: "3", align: "flex-start" }),
+                some(`
+                    Stack.VStack([
+                        Switch.Root(false, { label: "Notifications" }),
+                        Switch.Root(true, { label: "Dark mode", colorPalette: "blue" }),
+                        Switch.Root(false, { label: "Feature flag", colorPalette: "green" }),
+                        Switch.Root(false, { label: "Disabled", disabled: true }),
+                    ], { gap: "3", align: "flex-start" })
+                `)
             )
         );
 
@@ -128,7 +163,15 @@ export default East.function(
                     Select.Item("uk", "United Kingdom"),
                     Select.Item("ca", "Canada"),
                     Select.Item("au", "Australia"),
-                ], { placeholder: "Select a country" })
+                ], { placeholder: "Select a country" }),
+                some(`
+                    Select.Root("", [
+                        Select.Item("us", "United States"),
+                        Select.Item("uk", "United Kingdom"),
+                        Select.Item("ca", "Canada"),
+                        Select.Item("au", "Australia"),
+                    ], { placeholder: "Select a country" })
+                `)
             )
         );
 
@@ -141,7 +184,14 @@ export default East.function(
                     Slider.Root(50.0, { min: 0, max: 100, colorPalette: "blue" }),
                     Slider.Root(25.0, { min: 0, max: 100, step: 25, colorPalette: "green" }),
                     Slider.Root(75.0, { min: 0, max: 100, disabled: true }),
-                ], { gap: "4", align: "stretch", width: "100%" })
+                ], { gap: "4", align: "stretch", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Slider.Root(50.0, { min: 0, max: 100, colorPalette: "blue" }),
+                        Slider.Root(25.0, { min: 0, max: 100, step: 25, colorPalette: "green" }),
+                        Slider.Root(75.0, { min: 0, max: 100, disabled: true }),
+                    ], { gap: "4", align: "stretch", width: "100%" })
+                `)
             )
         );
 
@@ -154,7 +204,14 @@ export default East.function(
                     placeholder: "Enter your message...",
                     rows: 4,
                     resize: "vertical",
-                })
+                }),
+                some(`
+                    Textarea.Root("", {
+                        placeholder: "Enter your message...",
+                        rows: 4,
+                        resize: "vertical",
+                    })
+                `)
             )
         );
 
@@ -168,7 +225,15 @@ export default East.function(
                     placeholder: "Add tag...",
                     max: 5,
                     colorPalette: "blue",
-                })
+                }),
+                some(`
+                    TagsInput.Root(["react", "typescript"], {
+                        label: "Technologies",
+                        placeholder: "Add tag...",
+                        max: 5,
+                        colorPalette: "blue",
+                    })
+                `)
             )
         );
 
@@ -183,7 +248,16 @@ export default East.function(
                     triggerText: "Choose files",
                     maxFiles: 5,
                     accept: "image/*",
-                })
+                }),
+                some(`
+                    FileUpload.Root({
+                        label: "Upload Files",
+                        dropzoneText: "or drag and drop",
+                        triggerText: "Choose files",
+                        maxFiles: 5,
+                        accept: "image/*",
+                    })
+                `)
             )
         );
 
@@ -203,7 +277,21 @@ export default East.function(
                         Input.String("", { placeholder: "Enter password" }),
                         { required: true, errorText: "Password is required", invalid: true }
                     ),
-                ], { gap: "4", align: "stretch", width: "100%" })
+                ], { gap: "4", align: "stretch", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Field.Root(
+                            "Email",
+                            Input.String("", { placeholder: "you@example.com" }),
+                            { helperText: "We'll never share your email." }
+                        ),
+                        Field.Root(
+                            "Password",
+                            Input.String("", { placeholder: "Enter password" }),
+                            { required: true, errorText: "Password is required", invalid: true }
+                        ),
+                    ], { gap: "4", align: "stretch", width: "100%" })
+                `)
             )
         );
 
@@ -216,7 +304,14 @@ export default East.function(
                     Checkbox.Root(true, { label: "Small", size: "sm", colorPalette: "blue" }),
                     Checkbox.Root(true, { label: "Medium", size: "md", colorPalette: "blue" }),
                     Checkbox.Root(true, { label: "Large", size: "lg", colorPalette: "blue" }),
-                ], { gap: "4" })
+                ], { gap: "4" }),
+                some(`
+                    Stack.HStack([
+                        Checkbox.Root(true, { label: "Small", size: "sm", colorPalette: "blue" }),
+                        Checkbox.Root(true, { label: "Medium", size: "md", colorPalette: "blue" }),
+                        Checkbox.Root(true, { label: "Large", size: "lg", colorPalette: "blue" }),
+                    ], { gap: "4" })
+                `)
             )
         );
 
@@ -229,7 +324,14 @@ export default East.function(
                     Switch.Root(true, { label: "SM", size: "sm", colorPalette: "green" }),
                     Switch.Root(true, { label: "MD", size: "md", colorPalette: "green" }),
                     Switch.Root(true, { label: "LG", size: "lg", colorPalette: "green" }),
-                ], { gap: "4" })
+                ], { gap: "4" }),
+                some(`
+                    Stack.HStack([
+                        Switch.Root(true, { label: "SM", size: "sm", colorPalette: "green" }),
+                        Switch.Root(true, { label: "MD", size: "md", colorPalette: "green" }),
+                        Switch.Root(true, { label: "LG", size: "lg", colorPalette: "green" }),
+                    ], { gap: "4" })
+                `)
             )
         );
 

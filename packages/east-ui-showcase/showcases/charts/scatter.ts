@@ -1,4 +1,4 @@
-import { East } from "@elaraai/east";
+import { East, some } from "@elaraai/east";
 import { Chart, UIComponentType, Grid, Box } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -30,7 +30,26 @@ export default East.function(
                             grid: Chart.Grid({ show: true }),
                         }
                     ),
-                ], { height: "200px", width: "100%" })
+                ], { height: "200px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Scatter(
+                            [
+                                { temp: 10, sales: 30 },
+                                { temp: 15, sales: 50 },
+                                { temp: 20, sales: 80 },
+                                { temp: 25, sales: 95 },
+                                { temp: 30, sales: 110 },
+                            ],
+                            { temp: { color: "teal.solid" } },
+                            {
+                                xDataKey: "temp",
+                                yDataKey: "sales",
+                                grid: Chart.Grid({ show: true }),
+                            }
+                        ),
+                    ], { height: "200px", width: "100%" })
+                `)
             )
         );
 
@@ -56,7 +75,27 @@ export default East.function(
                             tooltip: Chart.Tooltip({ show: true }),
                         }
                     ),
-                ], { height: "220px", width: "100%" })
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Scatter(
+                            [
+                                { temp: 10, sales: 30 },
+                                { temp: 15, sales: 50 },
+                                { temp: 20, sales: 80 },
+                                { temp: 25, sales: 95 },
+                                { temp: 30, sales: 110 },
+                            ],
+                            { temp: { color: "blue.solid" } },
+                            {
+                                xAxis: Chart.Axis({ dataKey: "temp", label: "Temperature" }),
+                                yAxis: Chart.Axis({ dataKey: "sales", label: "Sales" }),
+                                grid: Chart.Grid({ show: true }),
+                                tooltip: Chart.Tooltip({ show: true }),
+                            }
+                        ),
+                    ], { height: "220px", width: "100%" })
+                `)
             )
         );
 
@@ -80,7 +119,25 @@ export default East.function(
                             grid: Chart.Grid({ show: true }),
                         }
                     ),
-                ], { height: "200px", width: "100%" })
+                ], { height: "200px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Scatter(
+                            [
+                                { x: 10, y: 30 },
+                                { x: 20, y: 40 },
+                                { x: 30, y: 60 },
+                                { x: 40, y: 80 },
+                            ],
+                            { x: { color: "purple.solid" } },
+                            {
+                                xAxis: Chart.Axis({ domain: [0, 50] }),
+                                yAxis: Chart.Axis({ domain: [0, 100] }),
+                                grid: Chart.Grid({ show: true }),
+                            }
+                        ),
+                    ], { height: "200px", width: "100%" })
+                `)
             )
         );
 
@@ -106,7 +163,27 @@ export default East.function(
                             grid: Chart.Grid({ show: true }),
                         }
                     ),
-                ], { height: "200px", width: "100%" })
+                ], { height: "200px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Scatter(
+                            [
+                                { hours: 2, score: 55 },
+                                { hours: 4, score: 65 },
+                                { hours: 6, score: 75 },
+                                { hours: 8, score: 85 },
+                                { hours: 10, score: 90 },
+                            ],
+                            { hours: { color: "green.solid", label: "Study Hours" } },
+                            {
+                                xDataKey: "hours",
+                                yDataKey: "score",
+                                tooltip: Chart.Tooltip({ show: true }),
+                                grid: Chart.Grid({ show: true }),
+                            }
+                        ),
+                    ], { height: "200px", width: "100%" })
+                `)
             )
         );
 

@@ -4,11 +4,11 @@
  */
 
 import { EastFunction } from "@elaraai/east-ui-components";
-import textShowcase from "../showcases/typography/text";
+import typographyShowcase from "../showcases/typography/all";
 
 // Pre-compile IR at module load time
-const textIR = textShowcase.toIR();
+const typographyIR = typographyShowcase.toIR();
 
 export function TypographyPage() {
-    return <EastFunction ir={textIR} />;
+    return <EastFunction ir={typographyIR} />;
 }

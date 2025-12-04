@@ -21,7 +21,7 @@ import {
     TextOverflowType,
     TextTransformType,
     WhiteSpaceType,
-} from "../style.js";
+} from "../../style.js";
 import type {
     BorderStyleLiteral,
     BorderWidthLiteral,
@@ -33,7 +33,7 @@ import type {
     TextOverflowLiteral,
     TextTransformLiteral,
     WhiteSpaceLiteral,
-} from "../style.js";
+} from "../../style.js";
 
 // ============================================================================
 // Text Type

@@ -1,4 +1,4 @@
-import { East } from "@elaraai/east";
+import { East, some } from "@elaraai/east";
 import { Text, UIComponentType, Stack, Grid, Style } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -14,7 +14,8 @@ export default East.function(
             ShowcaseCard(
                 "Basic Text",
                 "Plain text with no styling",
-                Text.Root("Hello World - Basic Text")
+                Text.Root("Hello World - Basic Text"),
+                some(`Text.Root("Hello World - Basic Text")`)
             )
         );
 
@@ -23,7 +24,8 @@ export default East.function(
             ShowcaseCard(
                 "Colored Text",
                 "Text with blue color",
-                Text.Root("Blue colored text", { color: "blue.500" })
+                Text.Root("Blue colored text", { color: "blue.500" }),
+                some(`Text.Root("Blue colored text", { color: "blue.500" })`)
             )
         );
 
@@ -32,7 +34,8 @@ export default East.function(
             ShowcaseCard(
                 "Bold Text",
                 "Text with bold font weight",
-                Text.Root("Bold text", { fontWeight: Style.FontWeight("bold") })
+                Text.Root("Bold text", { fontWeight: Style.FontWeight("bold") }),
+                some(`Text.Root("Bold text", { fontWeight: Style.FontWeight("bold") })`)
             )
         );
 
@@ -41,7 +44,8 @@ export default East.function(
             ShowcaseCard(
                 "Italic Text",
                 "Text with italic font style",
-                Text.Root("Italic text", { fontStyle: Style.FontStyle("italic") })
+                Text.Root("Italic text", { fontStyle: Style.FontStyle("italic") }),
+                some(`Text.Root("Italic text", { fontStyle: Style.FontStyle("italic") })`)
             )
         );
 
@@ -56,7 +60,8 @@ export default East.function(
                     Text.Root("Medium", { fontWeight: Style.FontWeight("medium") }),
                     Text.Root("Semibold", { fontWeight: Style.FontWeight("semibold") }),
                     Text.Root("Bold", { fontWeight: Style.FontWeight("bold") }),
-                ], { gap: "4" })
+                ], { gap: "4" }),
+                some(`Text.Root("Bold", { fontWeight: Style.FontWeight("bold") })`)
             )
         );
 
@@ -69,7 +74,8 @@ export default East.function(
                     Text.Root("uppercase", { textTransform: Style.TextTransform("uppercase") }),
                     Text.Root("LOWERCASE", { textTransform: Style.TextTransform("lowercase") }),
                     Text.Root("capitalize", { textTransform: Style.TextTransform("capitalize") }),
-                ], { gap: "4" })
+                ], { gap: "4" }),
+                some(`Text.Root("uppercase", { textTransform: Style.TextTransform("uppercase") })`)
             )
         );
 
@@ -81,7 +87,13 @@ export default East.function(
                 Text.Root("Highlighted text", {
                     background: "yellow.200",
                     color: "gray.800"
-                })
+                }),
+                some(`
+                    Text.Root("Highlighted text", {
+                        background: "yellow.200",
+                        color: "gray.800"
+                    })
+                `)
             )
         );
 
@@ -94,7 +106,14 @@ export default East.function(
                     borderWidth: Style.BorderWidth("thin"),
                     borderStyle: Style.BorderStyle("solid"),
                     borderColor: "gray.400",
-                })
+                }),
+                some(`
+                    Text.Root("Bordered text", {
+                        borderWidth: Style.BorderWidth("thin"),
+                        borderStyle: Style.BorderStyle("solid"),
+                        borderColor: "gray.400",
+                    })
+                `)
             )
         );
 
@@ -110,7 +129,8 @@ export default East.function(
                     Text.Root("Teal", { color: "teal.500" }),
                     Text.Root("Blue", { color: "blue.500" }),
                     Text.Root("Purple", { color: "purple.500" }),
-                ], { gap: "3" })
+                ], { gap: "3" }),
+                some(`Text.Root("Blue", { color: "blue.500" })`)
             )
         );
 
@@ -124,7 +144,15 @@ export default East.function(
                     fontWeight: Style.FontWeight("bold"),
                     fontStyle: Style.FontStyle("italic"),
                     background: "blue.50",
-                })
+                }),
+                some(`
+                    Text.Root("Styled Text", {
+                        color: "blue.600",
+                        fontWeight: Style.FontWeight("bold"),
+                        fontStyle: Style.FontStyle("italic"),
+                        background: "blue.50",
+                    })
+                `)
             )
         );
 

@@ -1,4 +1,4 @@
-import { East } from "@elaraai/east";
+import { East, some } from "@elaraai/east";
 import { Separator, Text, UIComponentType, Stack, Grid, Box } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -18,7 +18,14 @@ export default East.function(
                     Text.Root("Content above"),
                     Separator.Root({ orientation: "horizontal" }),
                     Text.Root("Content below"),
-                ], { gap: "3", width: "100%" })
+                ], { gap: "3", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Text.Root("Content above"),
+                        Separator.Root({ orientation: "horizontal" }),
+                        Text.Root("Content below"),
+                    ], { gap: "3", width: "100%" }) 
+                `)
             )
         );
 
@@ -33,7 +40,16 @@ export default East.function(
                         Separator.Root({ orientation: "vertical" }),
                     ], { height: "40px" }),
                     Text.Root("Right"),
-                ], { gap: "4", align: "center" })
+                ], { gap: "4", align: "center" }),
+                some(`
+                    Stack.HStack([
+                        Text.Root("Left"),
+                        Box.Root([
+                            Separator.Root({ orientation: "vertical" }),
+                        ], { height: "40px" }),
+                        Text.Root("Right"),
+                    ], { gap: "4", align: "center" })    
+                `)
             )
         );
 
@@ -46,7 +62,14 @@ export default East.function(
                     Text.Root("Above"),
                     Separator.Root({ variant: "solid" }),
                     Text.Root("Below"),
-                ], { gap: "3", width: "100%" })
+                ], { gap: "3", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Text.Root("Above"),
+                        Separator.Root({ variant: "solid" }),
+                        Text.Root("Below"),
+                    ], { gap: "3", width: "100%" })    
+                `)
             )
         );
 
@@ -59,7 +82,14 @@ export default East.function(
                     Text.Root("Above"),
                     Separator.Root({ variant: "dashed" }),
                     Text.Root("Below"),
-                ], { gap: "3", width: "100%" })
+                ], { gap: "3", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Text.Root("Above"),
+                        Separator.Root({ variant: "dashed" }),
+                        Text.Root("Below"),
+                    ], { gap: "3", width: "100%" }) 
+                `)
             )
         );
 
@@ -72,7 +102,14 @@ export default East.function(
                     Text.Root("Above"),
                     Separator.Root({ variant: "dotted" }),
                     Text.Root("Below"),
-                ], { gap: "3", width: "100%" })
+                ], { gap: "3", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Text.Root("Above"),
+                        Separator.Root({ variant: "dotted" }),
+                        Text.Root("Below"),
+                    ], { gap: "3", width: "100%" })
+                `)
             )
         );
 
@@ -85,7 +122,14 @@ export default East.function(
                     Stack.HStack([Text.Root("Small:"), Separator.Root({ size: "sm" })], { gap: "2", width: "100%" }),
                     Stack.HStack([Text.Root("Medium:"), Separator.Root({ size: "md" })], { gap: "2", width: "100%" }),
                     Stack.HStack([Text.Root("Large:"), Separator.Root({ size: "lg" })], { gap: "2", width: "100%" }),
-                ], { gap: "3", width: "100%" })
+                ], { gap: "3", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Stack.HStack([Text.Root("Small:"), Separator.Root({ size: "sm" })], { gap: "2", width: "100%" }),
+                        Stack.HStack([Text.Root("Medium:"), Separator.Root({ size: "md" })], { gap: "2", width: "100%" }),
+                        Stack.HStack([Text.Root("Large:"), Separator.Root({ size: "lg" })], { gap: "2", width: "100%" }),
+                    ], { gap: "3", width: "100%" }) 
+                `)
             )
         );
 
@@ -98,7 +142,14 @@ export default East.function(
                     Text.Root("Sign in with email"),
                     Separator.Root({ label: "OR" }),
                     Text.Root("Continue with social"),
-                ], { gap: "3", width: "100%" })
+                ], { gap: "3", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Text.Root("Sign in with email"),
+                        Separator.Root({ label: "OR" }),
+                        Text.Root("Continue with social"),
+                    ], { gap: "3", width: "100%" })
+                `)
             )
         );
 
@@ -111,7 +162,14 @@ export default East.function(
                     Separator.Root({ color: "blue.400" }),
                     Separator.Root({ color: "green.400" }),
                     Separator.Root({ color: "red.400" }),
-                ], { gap: "4", width: "100%" })
+                ], { gap: "4", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Separator.Root({ color: "blue.400" }),
+                        Separator.Root({ color: "green.400" }),
+                        Separator.Root({ color: "red.400" }),
+                    ], { gap: "4", width: "100%" })
+                `)
             )
         );
 
@@ -127,7 +185,17 @@ export default East.function(
                         color: "gray.400",
                     }),
                     Text.Root("Email and Phone fields..."),
-                ], { gap: "3", width: "100%" })
+                ], { gap: "3", width: "100%" }),
+                some(`
+                    Stack.VStack([
+                        Text.Root("Personal Information"),
+                        Separator.Root({
+                            label: "Contact Details",
+                            color: "gray.400",
+                        }),
+                        Text.Root("Email and Phone fields..."),
+                    ], { gap: "3", width: "100%" })
+                `)
             )
         );
 

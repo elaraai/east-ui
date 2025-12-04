@@ -20,6 +20,7 @@ export default defineConfig({
         '@chakra-ui/react',
         '@elaraai/east',
         '@elaraai/east-ui',
+        'shiki',
       ],
       output: {
         globals: {

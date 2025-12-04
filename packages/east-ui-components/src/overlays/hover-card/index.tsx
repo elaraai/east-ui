@@ -51,7 +51,7 @@ export const EastChakraHoverCard = memo(function EastChakraHoverCard({ value }: 
             </ChakraHoverCard.Trigger>
             <Portal>
                 <ChakraHoverCard.Positioner>
-                    <ChakraHoverCard.Content>
+                    <ChakraHoverCard.Content width="fit-content" maxWidth="unset">
                         {hasArrow && <ChakraHoverCard.Arrow />}
                         {value.body.map((child, index) => (
                             <EastChakraComponent key={index} value={child} />

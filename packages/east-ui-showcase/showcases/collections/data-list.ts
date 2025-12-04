@@ -3,7 +3,7 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East } from "@elaraai/east";
+import { East, some } from "@elaraai/east";
 import { DataList, UIComponentType, Grid } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -23,7 +23,14 @@ export default East.function(
                     DataList.Item("Status", "Active"),
                     DataList.Item("User", "john.doe@example.com"),
                     DataList.Item("Created", "2024-01-15"),
-                ])
+                ]),
+                some(`
+                    DataList.Root([
+                        DataList.Item("Status", "Active"),
+                        DataList.Item("User", "john.doe@example.com"),
+                        DataList.Item("Created", "2024-01-15"),
+                    ])
+                `)
             )
         );
 
@@ -36,7 +43,14 @@ export default East.function(
                     DataList.Item("Price", "$99.00"),
                     DataList.Item("Quantity", "5"),
                     DataList.Item("Total", "$495.00"),
-                ], { orientation: "horizontal" })
+                ], { orientation: "horizontal" }),
+                some(`
+                    DataList.Root([
+                        DataList.Item("Price", "$99.00"),
+                        DataList.Item("Quantity", "5"),
+                        DataList.Item("Total", "$495.00"),
+                    ], { orientation: "horizontal" })
+                `)
             )
         );
 
@@ -49,7 +63,14 @@ export default East.function(
                     DataList.Item("CPU", "Intel i9-14900K"),
                     DataList.Item("RAM", "64GB DDR5"),
                     DataList.Item("Storage", "2TB NVMe SSD"),
-                ], { variant: "bold" })
+                ], { variant: "bold" }),
+                some(`
+                    DataList.Root([
+                        DataList.Item("CPU", "Intel i9-14900K"),
+                        DataList.Item("RAM", "64GB DDR5"),
+                        DataList.Item("Storage", "2TB NVMe SSD"),
+                    ], { variant: "bold" })
+                `)
             )
         );
 
@@ -62,7 +83,14 @@ export default East.function(
                     DataList.Item("ID", "#12345"),
                     DataList.Item("Type", "Premium"),
                     DataList.Item("Status", "Verified"),
-                ], { size: "sm" })
+                ], { size: "sm" }),
+                some(`
+                    DataList.Root([
+                        DataList.Item("ID", "#12345"),
+                        DataList.Item("Type", "Premium"),
+                        DataList.Item("Status", "Verified"),
+                    ], { size: "sm" })
+                `)
             )
         );
 
@@ -75,7 +103,14 @@ export default East.function(
                     DataList.Item("Revenue", "$1,234,567"),
                     DataList.Item("Growth", "+15.2%"),
                     DataList.Item("Customers", "10,432"),
-                ], { size: "lg" })
+                ], { size: "lg" }),
+                some(`
+                    DataList.Root([
+                        DataList.Item("Revenue", "$1,234,567"),
+                        DataList.Item("Growth", "+15.2%"),
+                        DataList.Item("Customers", "10,432"),
+                    ], { size: "lg" })
+                `)
             )
         );
 
@@ -90,7 +125,16 @@ export default East.function(
                     DataList.Item("Department", "Engineering"),
                     DataList.Item("Role", "Senior Developer"),
                     DataList.Item("Location", "San Francisco, CA"),
-                ])
+                ]),
+                some(`
+                    DataList.Root([
+                        DataList.Item("Full Name", "Jane Smith"),
+                        DataList.Item("Email", "jane.smith@company.com"),
+                        DataList.Item("Department", "Engineering"),
+                        DataList.Item("Role", "Senior Developer"),
+                        DataList.Item("Location", "San Francisco, CA"),
+                    ])
+                `)
             )
         );
 
