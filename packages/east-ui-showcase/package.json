@@ -1,6 +1,6 @@
 {
   "name": "@elaraai/east-ui-showcase",
-  "version": "0.0.1-beta.5",
+  "version": "0.0.1-beta.6",
   "private": true,
   "description": "Showcase and development app for East UI components",
   "type": "module",
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^3.0.0",
-    "@elaraai/east": "^0.0.1-beta.1",
+    "@elaraai/east": "^0.0.1-beta.5",
     "@elaraai/east-ui": "*",
     "@elaraai/east-ui-components": "*",
     "@emotion/react": "^11.14.0",

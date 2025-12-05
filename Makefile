@@ -41,7 +41,7 @@ ifndef VERSION
 	$(error VERSION is required. Usage: make set-east-version VERSION=0.0.1-beta.1)
 endif
 	@echo "Updating @elaraai/east to version $(VERSION)..."
-	@find packages -name "package.json" -exec sed -i 's/"@elaraai\/east": "[^"]*"/"@elaraai\/east": "^$(VERSION)"/g' {} \;
+	@find . -name "package.json" -exec sed -i 's/"@elaraai\/east": "[^"]*"/"@elaraai\/east": "^$(VERSION)"/g' {} \;
 	@echo "Done. Run 'npm install' to update dependencies."
 
 # Bump all package versions

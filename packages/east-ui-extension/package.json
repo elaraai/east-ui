@@ -2,7 +2,7 @@
     "name": "east-ui-preview",
     "displayName": "East UI Preview",
     "description": "Live preview of East UI components from TypeScript or IR files",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "publisher": "ElaraAI",
     "license": "SEE LICENSE IN LICENSE",
     "engines": {
@@ -58,7 +58,7 @@
         "lint": "eslint ."
     },
     "dependencies": {
-        "@elaraai/east": "^0.0.1-beta.1",
+        "@elaraai/east": "^0.0.1-beta.5",
         "@elaraai/east-ui": "*"
     },
     "devDependencies": {
