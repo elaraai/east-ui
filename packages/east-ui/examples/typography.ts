@@ -20,7 +20,6 @@ const example: CallableFunctionExpr<[], typeof UIComponentType> = East.function(
     () => {
         return Stack.Root([
             // Basic text
-            Text.Root("Basic Text"),
 
             // Text with background
             Text.Root("Text with Background", {

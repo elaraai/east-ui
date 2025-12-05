@@ -25,6 +25,7 @@ import {
     Sparkline,
     Separator,
     Grid,
+    Box,
 } from "@elaraai/east-ui";
 
 // ============================================================================
@@ -119,9 +120,11 @@ const example = East.function(
                         Sparkline.Root(revenueSparkline, {
                             type: "area",
                             color: "teal.500",
-                        }),
-                    ], { variant: "outline" }),
-                    { colSpan: "1" }
+                            height: '40px',
+                        },)],
+                        { variant: "outline", })
+                    ,
+                    { colSpan: "1", }
                 ),
                 Grid.Item(
                     Card.Root([

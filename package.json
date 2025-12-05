@@ -1,6 +1,6 @@
 {
   "name": "east-ui-monorepo",
-  "version": "0.0.1-beta.5",
+  "version": "0.0.1-beta.6",
   "private": true,
   "description": "East UI - UI component library for the East language",
   "workspaces": [
@@ -50,6 +50,6 @@
     "node": ">=22.0.0"
   },
   "dependencies": {
-    "@elaraai/east": "^0.0.1-beta.0"
+    "@elaraai/east": "^0.0.1-beta.5"
   }
 }
