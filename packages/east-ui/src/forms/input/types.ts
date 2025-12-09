@@ -15,6 +15,7 @@ import {
     DateTimeType,
     BooleanType,
     NullType,
+    FunctionType,
     variant,
     type SubtypeExprOrValue,
 } from "@elaraai/east";
@@ -60,10 +61,14 @@ export type InputVariantLiteral = "outline" | "subtle" | "flushed";
  *
  * @example
  * ```ts
- * import { InputVariant } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Input, UIComponentType } from "@elaraai/east-ui";
  *
- * InputVariant("outline");
- * InputVariant("subtle");
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Input.String("", {
+ *         variant: Input.Variant("outline"),
+ *     });
+ * });
  * ```
  */
 export function InputVariant(inputVariant: "outline" | "subtle" | "flushed"): ExprType<InputVariantType> {
@@ -84,6 +89,9 @@ export function InputVariant(inputVariant: "outline" | "subtle" | "flushed"): Ex
  * @property maxLength - Maximum character count
  * @property pattern - Regex pattern for validation
  * @property disabled - Whether the input is disabled
+ * @property onChange - Callback triggered when value changes
+ * @property onBlur - Callback triggered when input loses focus
+ * @property onFocus - Callback triggered when input gains focus
  */
 export const StringInputType = StructType({
     value: StringType,
@@ -93,17 +101,48 @@ export const StringInputType = StructType({
     maxLength: OptionType(IntegerType),
     pattern: OptionType(StringType),
     disabled: OptionType(BooleanType),
+    onChange: OptionType(FunctionType([StringType], NullType)),
+    onBlur: OptionType(FunctionType([], NullType)),
+    onFocus: OptionType(FunctionType([], NullType)),
 });
 
 export type StringInputType = typeof StringInputType;
 
+/**
+ * TypeScript interface for String input style options.
+ *
+ * @remarks
+ * Use this interface when creating String input components.
+ *
+ * @property placeholder - Placeholder text when empty
+ * @property variant - Input appearance variant
+ * @property size - Size of the input
+ * @property maxLength - Maximum character count
+ * @property pattern - Regex pattern for validation
+ * @property disabled - Whether the input is disabled
+ * @property onChange - Callback triggered when value changes
+ * @property onBlur - Callback triggered when input loses focus
+ * @property onFocus - Callback triggered when input gains focus
+ */
 export interface StringInputStyle {
+    /** Placeholder text when empty */
     placeholder?: SubtypeExprOrValue<StringType>;
+    /** Input appearance variant (outline, subtle, flushed) */
     variant?: SubtypeExprOrValue<InputVariantType> | InputVariantLiteral;
+    /** Size of the input (xs, sm, md, lg) */
     size?: SubtypeExprOrValue<SizeType> | SizeLiteral;
+    /** Maximum character count */
     maxLength?: SubtypeExprOrValue<IntegerType>;
+    /** Regex pattern for validation */
     pattern?: SubtypeExprOrValue<StringType>;
+    /** Whether the input is disabled */
     disabled?: SubtypeExprOrValue<BooleanType>;
+    /** Callback triggered when value changes */
+    onChange?: SubtypeExprOrValue<FunctionType<[StringType], NullType>>;
+    /** Callback triggered when input loses focus */
+    onBlur?: SubtypeExprOrValue<FunctionType<[], NullType>>;
+    /** Callback triggered when input gains focus */
+    onFocus?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 }
 
 // ============================================================================
@@ -120,6 +159,9 @@ export interface StringInputStyle {
  * @property variant - Input appearance variant
  * @property size - Size of the input
  * @property disabled - Whether the input is disabled
+ * @property onChange - Callback triggered when value changes
+ * @property onBlur - Callback triggered when input loses focus
+ * @property onFocus - Callback triggered when input gains focus
  */
 export const IntegerInputType = StructType({
     value: IntegerType,
@@ -129,17 +171,48 @@ export const IntegerInputType = StructType({
     variant: OptionType(InputVariantType),
     size: OptionType(SizeType),
     disabled: OptionType(BooleanType),
+    onChange: OptionType(FunctionType([IntegerType], NullType)),
+    onBlur: OptionType(FunctionType([], NullType)),
+    onFocus: OptionType(FunctionType([], NullType)),
 });
 
 export type IntegerInputType = typeof IntegerInputType;
 
+/**
+ * TypeScript interface for Integer input style options.
+ *
+ * @remarks
+ * Use this interface when creating Integer input components.
+ *
+ * @property min - Minimum allowed value
+ * @property max - Maximum allowed value
+ * @property step - Step increment for stepper controls
+ * @property variant - Input appearance variant
+ * @property size - Size of the input
+ * @property disabled - Whether the input is disabled
+ * @property onChange - Callback triggered when value changes
+ * @property onBlur - Callback triggered when input loses focus
+ * @property onFocus - Callback triggered when input gains focus
+ */
 export interface IntegerInputStyle {
+    /** Minimum allowed value */
     min?: SubtypeExprOrValue<IntegerType>;
+    /** Maximum allowed value */
     max?: SubtypeExprOrValue<IntegerType>;
+    /** Step increment for stepper controls */
     step?: SubtypeExprOrValue<IntegerType>;
+    /** Input appearance variant (outline, subtle, flushed) */
     variant?: SubtypeExprOrValue<InputVariantType> | InputVariantLiteral;
+    /** Size of the input (xs, sm, md, lg) */
     size?: SubtypeExprOrValue<SizeType> | SizeLiteral;
+    /** Whether the input is disabled */
     disabled?: SubtypeExprOrValue<BooleanType>;
+    /** Callback triggered when value changes */
+    onChange?: SubtypeExprOrValue<FunctionType<[IntegerType], NullType>>;
+    /** Callback triggered when input loses focus */
+    onBlur?: SubtypeExprOrValue<FunctionType<[], NullType>>;
+    /** Callback triggered when input gains focus */
+    onFocus?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 }
 
 // ============================================================================
@@ -157,6 +230,9 @@ export interface IntegerInputStyle {
  * @property variant - Input appearance variant
  * @property size - Size of the input
  * @property disabled - Whether the input is disabled
+ * @property onChange - Callback triggered when value changes
+ * @property onBlur - Callback triggered when input loses focus
+ * @property onFocus - Callback triggered when input gains focus
  */
 export const FloatInputType = StructType({
     value: FloatType,
@@ -167,18 +243,51 @@ export const FloatInputType = StructType({
     variant: OptionType(InputVariantType),
     size: OptionType(SizeType),
     disabled: OptionType(BooleanType),
+    onChange: OptionType(FunctionType([FloatType], NullType)),
+    onBlur: OptionType(FunctionType([], NullType)),
+    onFocus: OptionType(FunctionType([], NullType)),
 });
 
 export type FloatInputType = typeof FloatInputType;
 
+/**
+ * TypeScript interface for Float input style options.
+ *
+ * @remarks
+ * Use this interface when creating Float input components.
+ *
+ * @property min - Minimum allowed value
+ * @property max - Maximum allowed value
+ * @property step - Step increment for stepper controls
+ * @property precision - Number of decimal places
+ * @property variant - Input appearance variant
+ * @property size - Size of the input
+ * @property disabled - Whether the input is disabled
+ * @property onChange - Callback triggered when value changes
+ * @property onBlur - Callback triggered when input loses focus
+ * @property onFocus - Callback triggered when input gains focus
+ */
 export interface FloatInputStyle {
+    /** Minimum allowed value */
     min?: SubtypeExprOrValue<FloatType>;
+    /** Maximum allowed value */
     max?: SubtypeExprOrValue<FloatType>;
+    /** Step increment for stepper controls */
     step?: SubtypeExprOrValue<FloatType>;
+    /** Number of decimal places */
     precision?: SubtypeExprOrValue<IntegerType>;
+    /** Input appearance variant (outline, subtle, flushed) */
     variant?: SubtypeExprOrValue<InputVariantType> | InputVariantLiteral;
+    /** Size of the input (xs, sm, md, lg) */
     size?: SubtypeExprOrValue<SizeType> | SizeLiteral;
+    /** Whether the input is disabled */
     disabled?: SubtypeExprOrValue<BooleanType>;
+    /** Callback triggered when value changes */
+    onChange?: SubtypeExprOrValue<FunctionType<[FloatType], NullType>>;
+    /** Callback triggered when input loses focus */
+    onBlur?: SubtypeExprOrValue<FunctionType<[], NullType>>;
+    /** Callback triggered when input gains focus */
+    onFocus?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 }
 
 // ============================================================================
@@ -196,6 +305,9 @@ export interface FloatInputStyle {
  * @property variant - Input appearance variant
  * @property size - Size of the input
  * @property disabled - Whether the input is disabled
+ * @property onChange - Callback triggered when value changes
+ * @property onBlur - Callback triggered when input loses focus
+ * @property onFocus - Callback triggered when input gains focus
  */
 export const DateTimeInputType = StructType({
     value: DateTimeType,
@@ -206,18 +318,51 @@ export const DateTimeInputType = StructType({
     variant: OptionType(InputVariantType),
     size: OptionType(SizeType),
     disabled: OptionType(BooleanType),
+    onChange: OptionType(FunctionType([DateTimeType], NullType)),
+    onBlur: OptionType(FunctionType([], NullType)),
+    onFocus: OptionType(FunctionType([], NullType)),
 });
 
 export type DateTimeInputType = typeof DateTimeInputType;
 
+/**
+ * TypeScript interface for DateTime input style options.
+ *
+ * @remarks
+ * Use this interface when creating DateTime input components.
+ *
+ * @property min - Minimum allowed date/time
+ * @property max - Maximum allowed date/time
+ * @property showTime - Whether to show time picker
+ * @property format - Display format string
+ * @property variant - Input appearance variant
+ * @property size - Size of the input
+ * @property disabled - Whether the input is disabled
+ * @property onChange - Callback triggered when value changes
+ * @property onBlur - Callback triggered when input loses focus
+ * @property onFocus - Callback triggered when input gains focus
+ */
 export interface DateTimeInputStyle {
+    /** Minimum allowed date/time */
     min?: SubtypeExprOrValue<DateTimeType> | Date;
+    /** Maximum allowed date/time */
     max?: SubtypeExprOrValue<DateTimeType> | Date;
+    /** Whether to show time picker */
     showTime?: SubtypeExprOrValue<BooleanType> | boolean;
+    /** Display format string */
     format?: SubtypeExprOrValue<StringType> | string;
+    /** Input appearance variant (outline, subtle, flushed) */
     variant?: SubtypeExprOrValue<InputVariantType> | InputVariantLiteral;
+    /** Size of the input (xs, sm, md, lg) */
     size?: SubtypeExprOrValue<SizeType> | SizeLiteral;
+    /** Whether the input is disabled */
     disabled?: SubtypeExprOrValue<BooleanType> | boolean;
+    /** Callback triggered when value changes */
+    onChange?: SubtypeExprOrValue<FunctionType<[DateTimeType], NullType>>;
+    /** Callback triggered when input loses focus */
+    onBlur?: SubtypeExprOrValue<FunctionType<[], NullType>>;
+    /** Callback triggered when input gains focus */
+    onFocus?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 }
 
 // ============================================================================

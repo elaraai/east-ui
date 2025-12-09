@@ -85,6 +85,15 @@ export type AreaChartType = typeof AreaChartType;
  *
  * @remarks
  * All properties are optional and accept either static values or East expressions.
+ *
+ * @property xAxis - X-axis configuration
+ * @property yAxis - Y-axis configuration
+ * @property curveType - Line curve interpolation type
+ * @property stacked - Enable stacking of series
+ * @property stackOffset - Stack offset mode (none, expand for 100%, etc.)
+ * @property fillOpacity - Fill opacity (0-1, applies to all series unless overridden)
+ * @property connectNulls - Connect line across null data points
+ * @property margin - Chart margin configuration
  */
 export interface AreaChartStyle extends BaseChartStyle {
     /** X-axis configuration */
@@ -106,7 +115,19 @@ export interface AreaChartStyle extends BaseChartStyle {
 }
 
 /**
- * Series configuration for Area charts (used in createAreaChart).
+ * Series configuration for Area charts.
+ *
+ * @remarks
+ * Configures how a data field is rendered as a series in the area chart.
+ *
+ * @property color - Chakra color token (e.g., "teal.solid", "blue.500")
+ * @property stackId - Stack group ID (same stackId = stacked together)
+ * @property label - Display label (defaults to field name)
+ * @property stroke - Stroke/line color (defaults to color)
+ * @property strokeWidth - Stroke/line width in pixels
+ * @property fill - Fill color (defaults to color)
+ * @property fillOpacity - Fill opacity (0-1)
+ * @property strokeDasharray - Dash pattern for dashed lines (e.g., "5 5")
  */
 export interface AreaChartSeriesConfig {
     /** Chakra color token (e.g., "teal.solid", "blue.500") */

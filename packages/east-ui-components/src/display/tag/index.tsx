@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Tag as ChakraTag, type TagRootProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Tag } from "@elaraai/east-ui";
@@ -37,11 +37,20 @@ export interface EastChakraTagProps {
 export const EastChakraTag = memo(function EastChakraTag({ value }: EastChakraTagProps) {
     const props = useMemo(() => toChakraTag(value), [value]);
     const closable = useMemo(() => getSomeorUndefined(value.closable), [value.closable]);
+    const onCloseFn = useMemo(() => getSomeorUndefined(value.onClose), [value.onClose]);
+
+    const handleClose = useCallback(() => {
+        if (onCloseFn) {
+            queueMicrotask(() => onCloseFn());
+        }
+    }, [onCloseFn]);
 
     return (
         <ChakraTag.Root {...props}>
             <ChakraTag.Label>{value.label}</ChakraTag.Label>
-            {closable && <ChakraTag.CloseTrigger />}
+            {closable && (
+                <ChakraTag.CloseTrigger onClick={onCloseFn ? handleClose : undefined} />
+            )}
         </ChakraTag.Root>
     );
 }, (prev, next) => tagEqual(prev.value, next.value));

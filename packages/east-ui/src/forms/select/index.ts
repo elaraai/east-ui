@@ -10,6 +10,8 @@ import {
     StringType,
     ArrayType,
     variant,
+    some,
+    none,
 } from "@elaraai/east";
 
 import { SizeType } from "../../style.js";
@@ -43,14 +45,14 @@ export {
  *
  * @example
  * ```ts
- * import { Select } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Select, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple item
- * const item = Select.Item("us", "United States");
- *
- * // Disabled item
- * const disabled = Select.Item("restricted", "Restricted Option", {
- *   disabled: true,
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Select.Root("", [
+ *         Select.Item("us", "United States"),
+ *         Select.Item("restricted", "Restricted", { disabled: true }),
+ *     ]);
  * });
  * ```
  */
@@ -59,15 +61,10 @@ function createSelectItem(
     label: SubtypeExprOrValue<StringType>,
     style?: SelectItemStyle
 ): ExprType<SelectItemType> {
-    const toBoolOption = (val: SelectItemStyle["disabled"]) => {
-        if (val === undefined) return variant("none", null);
-        return variant("some", val);
-    };
-
     return East.value({
         value: value,
         label: label,
-        disabled: toBoolOption(style?.disabled),
+        disabled: style?.disabled !== undefined ? some(style.disabled) : none,
     }, SelectItemType);
 }
 
@@ -88,14 +85,17 @@ function createSelectItem(
  *
  * @example
  * ```ts
- * import { Select } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Select, UIComponentType } from "@elaraai/east-ui";
  *
- * const countries = Select.Root(null, [
- *   Select.Item("us", "United States"),
- *   Select.Item("uk", "United Kingdom"),
- *   Select.Item("ca", "Canada"),
- * ], {
- *   placeholder: "Select a country",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Select.Root("", [
+ *         Select.Item("us", "United States"),
+ *         Select.Item("uk", "United Kingdom"),
+ *         Select.Item("ca", "Canada"),
+ *     ], {
+ *         placeholder: "Select a country",
+ *     });
  * });
  * ```
  */
@@ -105,13 +105,8 @@ function createSelectRoot(
     style?: SelectStyle
 ): ExprType<UIComponentType> {
     const toStringOption = (val: SubtypeExprOrValue<StringType> | null | undefined) => {
-        if (val === undefined || val === null || val === "") return variant("none", null);
-        return variant("some", val);
-    };
-
-    const toBoolOption = (val: SelectStyle["disabled"]) => {
-        if (val === undefined) return variant("none", null);
-        return variant("some", val);
+        if (val === undefined || val === null || val === "") return none;
+        return some(val);
     };
 
     const sizeValue = style?.size
@@ -124,9 +119,12 @@ function createSelectRoot(
         value: toStringOption(value),
         items: East.value(items, ArrayType(SelectItemType)),
         placeholder: toStringOption(style?.placeholder),
-        multiple: toBoolOption(style?.multiple),
-        disabled: toBoolOption(style?.disabled),
-        size: sizeValue ? variant("some", sizeValue) : variant("none", null),
+        multiple: style?.multiple !== undefined ? some(style.multiple) : none,
+        disabled: style?.disabled !== undefined ? some(style.disabled) : none,
+        size: sizeValue ? some(sizeValue) : none,
+        onChange: style?.onChange ? some(style.onChange) : none,
+        onChangeMultiple: style?.onChangeMultiple ? some(style.onChangeMultiple) : none,
+        onOpenChange: style?.onOpenChange ? some(style.onOpenChange) : none,
     }), UIComponentType);
 }
 

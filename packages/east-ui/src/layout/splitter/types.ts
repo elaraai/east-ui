@@ -9,6 +9,9 @@ import {
     StringType,
     FloatType,
     BooleanType,
+    ArrayType,
+    FunctionType,
+    NullType,
     type SubtypeExprOrValue,
 } from "@elaraai/east";
 import { OrientationType } from "../../style.js";
@@ -75,6 +78,17 @@ export interface SplitterPanelStyle {
 // ============================================================================
 
 /**
+ * Resize details for splitter callbacks.
+ *
+ * @property size - Array of panel sizes as percentages
+ */
+export const SplitterResizeDetailsType = StructType({
+    size: ArrayType(FloatType),
+});
+
+export type SplitterResizeDetailsType = typeof SplitterResizeDetailsType;
+
+/**
  * Style type for Splitter container configuration.
  *
  * @remarks
@@ -82,9 +96,15 @@ export interface SplitterPanelStyle {
  * It controls the layout orientation of the panels.
  *
  * @property orientation - Layout orientation (horizontal or vertical)
+ * @property onResize - Callback triggered when panel sizes change during drag
+ * @property onResizeStart - Callback triggered when drag starts
+ * @property onResizeEnd - Callback triggered when drag ends
  */
 export const SplitterStyleType = StructType({
     orientation: OptionType(OrientationType),
+    onResize: OptionType(FunctionType([SplitterResizeDetailsType], NullType)),
+    onResizeStart: OptionType(FunctionType([], NullType)),
+    onResizeEnd: OptionType(FunctionType([SplitterResizeDetailsType], NullType)),
 });
 
 /**
@@ -100,8 +120,17 @@ export type SplitterStyleType = typeof SplitterStyleType;
  * {@link SplitterRoot} function.
  *
  * @property orientation - Layout orientation (horizontal or vertical)
+ * @property onResize - Callback triggered when panel sizes change during drag
+ * @property onResizeStart - Callback triggered when drag starts
+ * @property onResizeEnd - Callback triggered when drag ends
  */
 export interface SplitterStyle {
     /** Layout orientation (horizontal or vertical) */
     orientation?: SubtypeExprOrValue<OrientationType> | OrientationLiteral;
+    /** Callback triggered when panel sizes change during drag */
+    onResize?: SubtypeExprOrValue<FunctionType<[SplitterResizeDetailsType], NullType>>;
+    /** Callback triggered when drag starts */
+    onResizeStart?: SubtypeExprOrValue<FunctionType<[], NullType>>;
+    /** Callback triggered when drag ends */
+    onResizeEnd?: SubtypeExprOrValue<FunctionType<[SplitterResizeDetailsType], NullType>>;
 }

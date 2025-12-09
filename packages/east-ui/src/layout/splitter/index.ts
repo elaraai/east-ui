@@ -22,12 +22,14 @@ import {
     SplitterStyleType,
     type SplitterStyle,
     type SplitterPanelStyle,
+    SplitterResizeDetailsType,
 } from "./types.js";
 
 // Re-export style types
 export {
     SplitterStyleType,
     SplitterPanelStyleType,
+    SplitterResizeDetailsType,
     type SplitterStyle,
     type SplitterPanelStyle,
 } from "./types.js";
@@ -215,11 +217,16 @@ function SplitterRoot(
             : style.orientation)
         : undefined;
 
+    const hasStyle = orientationValue || style?.onResize !== undefined || style?.onResizeStart !== undefined || style?.onResizeEnd !== undefined;
+
     return East.value(variant("Splitter", {
         panels: panels_expr,
         defaultSize: defaultSize,
-        style: style ? variant("some", East.value({
+        style: hasStyle ? variant("some", East.value({
             orientation: orientationValue ? variant("some", orientationValue) : variant("none", null),
+            onResize: style?.onResize !== undefined ? variant("some", style.onResize) : variant("none", null),
+            onResizeStart: style?.onResizeStart !== undefined ? variant("some", style.onResizeStart) : variant("none", null),
+            onResizeEnd: style?.onResizeEnd !== undefined ? variant("some", style.onResizeEnd) : variant("none", null),
         }, SplitterStyleType)) : variant("none", null),
     }), UIComponentType);
 }
@@ -357,5 +364,14 @@ export const Splitter = {
          * @property orientation - Layout orientation (horizontal or vertical)
          */
         Style: SplitterStyleType,
+        /**
+         * Resize details type for onResize callback.
+         *
+         * @remarks
+         * This struct type contains the size array passed to resize callbacks.
+         *
+         * @property size - Array of panel sizes as percentages
+         */
+        ResizeDetails: SplitterResizeDetailsType,
     }
 } as const;

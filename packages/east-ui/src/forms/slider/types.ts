@@ -13,6 +13,7 @@ import {
     BooleanType,
     NullType,
     VariantType,
+    FunctionType,
     variant,
 } from "@elaraai/east";
 
@@ -26,9 +27,8 @@ import type { SizeLiteral, ColorSchemeLiteral, OrientationLiteral } from "../../
 /**
  * Variant types for Slider visual style.
  *
- * @remarks
- * - outline: Slider with outlined track
- * - subtle: Slider with subtle/filled track
+ * @property outline - Slider with outlined track
+ * @property subtle - Slider with subtle/filled track
  */
 export const SliderVariantType = VariantType({
     /** Slider with outlined track */
@@ -55,10 +55,13 @@ export type SliderVariantLiteral = "outline" | "subtle";
  *
  * @example
  * ```ts
- * import { Slider, SliderVariant } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Slider, UIComponentType } from "@elaraai/east-ui";
  *
- * const slider = Slider.Root(50.0, {
- *   variant: SliderVariant("subtle"),
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Slider.Root(50.0, {
+ *         variant: Slider.Variant("subtle"),
+ *     });
  * });
  * ```
  */
@@ -85,6 +88,8 @@ export function SliderVariant(v: "outline" | "subtle"): ExprType<SliderVariantTy
  * @property size - Size of the slider
  * @property variant - Visual variant (outline or subtle)
  * @property disabled - Whether the slider is disabled
+ * @property onChange - Callback triggered when value changes (during drag)
+ * @property onChangeEnd - Callback triggered when drag ends
  */
 export const SliderType = StructType({
     value: FloatType,
@@ -96,6 +101,8 @@ export const SliderType = StructType({
     size: OptionType(SizeType),
     variant: OptionType(SliderVariantType),
     disabled: OptionType(BooleanType),
+    onChange: OptionType(FunctionType([FloatType], NullType)),
+    onChangeEnd: OptionType(FunctionType([FloatType], NullType)),
 });
 
 /**
@@ -118,6 +125,8 @@ export type SliderType = typeof SliderType;
  * @property size - Size of the slider
  * @property variant - Visual variant (outline or subtle)
  * @property disabled - Whether the slider is disabled
+ * @property onChange - Callback triggered when value changes (during drag)
+ * @property onChangeEnd - Callback triggered when drag ends
  */
 export interface SliderStyle {
     /** Minimum value (defaults to 0) */
@@ -136,4 +145,8 @@ export interface SliderStyle {
     variant?: SubtypeExprOrValue<SliderVariantType> | SliderVariantLiteral;
     /** Whether the slider is disabled */
     disabled?: SubtypeExprOrValue<BooleanType>;
+    /** Callback triggered when value changes (during drag) */
+    onChange?: SubtypeExprOrValue<FunctionType<[FloatType], NullType>>;
+    /** Callback triggered when drag ends */
+    onChangeEnd?: SubtypeExprOrValue<FunctionType<[FloatType], NullType>>;
 }

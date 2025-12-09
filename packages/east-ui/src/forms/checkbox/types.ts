@@ -9,6 +9,8 @@ import {
     StructType,
     StringType,
     BooleanType,
+    NullType,
+    FunctionType,
 } from "@elaraai/east";
 
 import { SizeType, ColorSchemeType } from "../../style.js";
@@ -30,6 +32,7 @@ import type { SizeLiteral, ColorSchemeLiteral } from "../../style.js";
  * @property disabled - Whether the checkbox is disabled
  * @property colorPalette - Color scheme for the checkbox
  * @property size - Size of the checkbox
+ * @property onChange - Callback triggered when checked state changes
  */
 export const CheckboxType = StructType({
     checked: BooleanType,
@@ -38,6 +41,7 @@ export const CheckboxType = StructType({
     disabled: OptionType(BooleanType),
     colorPalette: OptionType(ColorSchemeType),
     size: OptionType(SizeType),
+    onChange: OptionType(FunctionType([BooleanType], NullType)),
 });
 
 /**
@@ -57,6 +61,7 @@ export type CheckboxType = typeof CheckboxType;
  * @property disabled - Whether the checkbox is disabled
  * @property colorPalette - Color scheme for the checkbox
  * @property size - Size of the checkbox
+ * @property onChange - Callback triggered when checked state changes
  */
 export interface CheckboxStyle {
     /** Optional label text displayed next to the checkbox */
@@ -69,4 +74,6 @@ export interface CheckboxStyle {
     colorPalette?: SubtypeExprOrValue<ColorSchemeType> | ColorSchemeLiteral;
     /** Size of the checkbox */
     size?: SubtypeExprOrValue<SizeType> | SizeLiteral;
+    /** Callback triggered when checked state changes (receives new checked value) */
+    onChange?: SubtypeExprOrValue<FunctionType<[BooleanType], NullType>>;
 }

@@ -151,301 +151,15 @@ Avoid `any` as much as possible.
 
 Our development roadmap is found in `/docs/DESIGN.md`.
 
-## Documentation Standards
+## Standards
 
-All public APIs must include TypeDoc comments. Follow these rules:
+**All development MUST follow the mandatory standards defined in [STANDARDS.md](./STANDARDS.md).**
 
-### Classes
+STANDARDS.md contains comprehensive requirements for:
+- TypeDoc documentation (platform functions, grouped exports, types)
+- Testing with East code (using `describeEast` and `Test`)
+- Code quality and compliance
 
-- Include a summary describing the class purpose
-- Document key invariants or design decisions
-- Use `@example` for non-trivial usage patterns
-- Mark internal classes with `@internal`
-
-```typescript
-/**
- * Represents a type-checked table cell with guaranteed type safety.
- *
- * This class wraps the cell IR representation and ensures all type constraints
- * are validated before serialization.
- *
- * @example
- * ```ts
- * const cell = new TableCell(IntegerType, { kind: 'Cell', value: 42 });
- * ```
- */
-export class TableCell { ... }
-```
-
-### Types and Interfaces
-
-- Provide a concise summary of what the type represents
-- Document type parameters with `@typeParam Name - description` for generics
-- Use `@remarks` for important usage notes or constraints
-
-**TypeScript interfaces:** Document properties using `@property` tags in the main JSDoc block AND with inline comments. The main JSDoc provides quick reference; inline comments give detailed hover documentation.
-
-**East StructType/VariantType definitions:** TypeDoc does NOT see inline comments inside function call arguments. Document all properties/variants using `@property` tags in the main JSDoc block only.
-
-```typescript
-/**
- * Style configuration for table cells.
- *
- * @remarks
- * All style properties are optional and accept either static values or East expressions
- * for dynamic styling based on data.
- *
- * @property color - Text color (Chakra UI color token or CSS color)
- * @property background - Background color
- * @property fontWeight - Font weight variant
- */
-export interface TableCellStyle {
-  /** Text color (Chakra UI color token or CSS color) */
-  color?: SubtypeExprOrValue<StringType>;
-  /** Background color */
-  background?: SubtypeExprOrValue<StringType>;
-  /** Font weight variant */
-  fontWeight?: SubtypeExprOrValue<FontWeight>;
-}
-
-/**
- * Font weight variant type for text styling.
- *
- * @remarks
- * Provides type-safe font weight options compatible with CSS and Chakra UI.
- * Create instances using the {@link FontWeight} function.
- *
- * @property normal - Normal font weight (400)
- * @property bold - Bold font weight (700)
- * @property semibold - Semi-bold font weight (600)
- * @property medium - Medium font weight (500)
- * @property light - Light font weight (300)
- */
-export const FontWeightType = VariantType({
-  normal: NullType,
-  bold: NullType,
-  semibold: NullType,
-  medium: NullType,
-  light: NullType,
-});
-
-/**
- * Grid style type containing root-level layout properties.
- *
- * @remarks
- * All properties are optional and wrapped in {@link OptionType}.
- *
- * @property templateColumns - CSS grid-template-columns (e.g., "repeat(3, 1fr)")
- * @property templateRows - CSS grid-template-rows
- * @property gap - Gap between grid items (Chakra spacing token)
- * @property alignItems - Cross-axis alignment of items
- */
-export const GridStyleType = StructType({
-  templateColumns: OptionType(StringType),
-  templateRows: OptionType(StringType),
-  gap: OptionType(StringType),
-  alignItems: OptionType(AlignItemsType),
-});
-```
-
-### Functions
-
-- Start with a verb describing what the function does
-- Document type parameters with `@typeParam Name - description` for generics
-- Document all parameters with `@param name - description` (omit types, TypeScript infers them)
-- Document return value with `@returns description` (omit type, TypeScript infers it)
-- Use `@throws {ErrorType}` for documented error conditions
-- Include `@example` for complex functions
-
-```typescript
-/**
- * Creates a table cell with optional styling.
- *
- * @typeParam T - The East type of the cell value
- * @param value - The cell content as an East expression
- * @param style - Optional styling configuration for the cell
- * @returns A variant representing the styled table cell
- *
- * @example
- * ```ts
- * // Simple cell
- * Table.Cell(row.name);
- *
- * // Cell with static styling
- * Table.Cell(row.price, {
- *   color: "blue.500",
- *   textAlign: variant("right", null)
- * });
- *
- * // Cell with conditional styling
- * Table.Cell(row.balance, {
- *   color: row.balance.less(0).ifElse("red.500", "green.500"),
- *   fontWeight: row.balance.less(0).ifElse(
- *     variant("bold", null),
- *     variant("normal", null)
- *   )
- * });
- * ```
- */
-export function Cell<T extends EastType>(
-  value: ExprType<T>,
-  style?: TableCellStyle
-): ExprType<TableCellType<T>> { ... }
-
-/**
- * Maps each element of a data array to a table row.
- *
- * @typeParam RowData - The East type of elements in the input array
- * @typeParam Fields - Record mapping column names to their East types
- * @param data - The array of data to map over
- * @param rowBuilder - Function to build a table row from each data element
- * @param style - Optional table-level styling configuration
- * @returns An array of table rows
- *
- * @example
- * ```ts
- * const PersonType = StructType({
- *   id: StringType,
- *   name: StringType,
- *   age: IntegerType,
- * });
- *
- * Table.Root(
- *   data,
- *   ($, row) => Table.Row({
- *     name: Table.Cell(row.name),
- *     age: Table.Cell(row.age),
- *   }, {
- *     key: row.id,
- *   }),
- *   {
- *     variant: variant("striped", null),
- *     size: variant("md", null),
- *   }
- * );
- * ```
- */
-export function Root<RowData extends EastType, Fields extends Record<string, EastType>>(
-  data: ExprType<ArrayType<RowData>>,
-  rowBuilder: ($: BlockBuilder<NeverType>, row: ExprType<RowData>) => ExprType<TableRowType<Fields>>,
-  style?: TableStyle
-): ExprType<ArrayType<TableRowType<Fields>>> { ... }
-```
-
-### Methods
-
-- Document purpose relative to the class context
-- Use `@param` and `@returns` without type annotations (rely on TypeScript)
-- Mark deprecated methods with `@deprecated` and alternatives
-
-```typescript
-/**
- * Converts the table structure to East IR for serialization.
- *
- * @returns The IR representation of the table
- */
-toIR(): IR { ... }
-
-/**
- * @deprecated Use `toIR()` instead. This will be removed in v2.0.
- */
-serialize(): IR { ... }
-```
-
-### General Rules
-
-- Write in present tense ("Returns the type" not "Will return the type")
-- Be concise but complete - avoid redundant information
-- Use proper markdown formatting for code references: `Type`, `null`, etc.
-- Use `{@link SymbolName}` to create links to other documented types, functions, or classes
-- Include `@internal` for implementation details not part of public API
-- Group related overloads with a single comment on the first signature
-
-### Linking to Other Documentation
-
-Use `{@link SymbolName}` to reference other documented symbols:
-
-```typescript
-/**
- * Font weight variants for text styling.
- *
- * @remarks
- * This variant type provides type-safe font weight options compatible with
- * CSS and Chakra UI. Use with East's `variant` function to create values.
- * See also {@link FontStyle} for font style variants.
- *
- * @example
- * ```ts
- * import { FontWeight, variant } from "@elaraai/east-ui";
- *
- * // Static weight
- * const boldWeight = variant("bold", null);
- *
- * // Conditional weight
- * const weight = isImportant.ifElse(
- *   variant("bold", null),
- *   variant("normal", null)
- * );
- * ```
- */
-export const FontWeight = VariantType({
-  /** Normal font weight (typically 400 in CSS) */
-  normal: NullType,
-  /** Bold font weight (typically 700 in CSS) */
-  bold: NullType,
-  // ...
-});
-
-/**
- * Type representing font weight variant values.
- *
- * @remarks
- * Create instances using `variant("bold", null)`, `variant("normal", null)`, etc.
- */
-export type FontWeight = typeof FontWeight;
-
-/**
- * Creates a table row from cells.
- *
- * @typeParam Fields - Record mapping column names to their East types
- * @param cells - Record of {@link TableCellType} instances keyed by column name
- * @param rowStyle - Optional row styling configuration
- * @returns A struct containing the cells and optional row style
- *
- * @remarks
- * Rows should include a `key` in the row style for efficient React rendering.
- * See {@link TableRowStyle} for available styling options.
- *
- * @example
- * ```ts
- * // Simple row
- * Table.Row({
- *   name: Table.Cell(row.name),
- *   age: Table.Cell(row.age),
- * });
- *
- * // Row with key for React performance
- * Table.Row({
- *   name: Table.Cell(row.name),
- *   age: Table.Cell(row.age),
- * }, {
- *   key: row.id,
- * });
- *
- * // Row with conditional styling
- * Table.Row({
- *   name: Table.Cell(row.name),
- * }, {
- *   key: row.id,
- *   background: row.status.match({
- *     Active: $ => "green.50",
- *     Inactive: $ => "gray.50",
- *   }),
- * });
- * ```
- */
-export function Row<Fields extends Record<string, EastType>>(...) { ... }
-```
 
 ## Component Architecture
 
@@ -518,6 +232,10 @@ import { FlexDirectionType, AlignItemsType } from "../../style.js";
 
 /**
  * Variant type for component visual style.
+ *
+ * @property solid - Solid filled variant
+ * @property outline - Outlined variant with border
+ * @property subtle - Subtle/light background variant
  */
 export const ComponentVariantType = VariantType({
     solid: NullType,
@@ -528,6 +246,11 @@ export type ComponentVariantType = typeof ComponentVariantType;
 
 /**
  * East StructType for serialized style data.
+ *
+ * @property direction - Flex direction for layout
+ * @property gap - Gap between items (Chakra spacing token)
+ * @property align - Cross-axis alignment of items
+ * @property variant - Visual style variant
  */
 export const ComponentStyleType = StructType({
     direction: OptionType(FlexDirectionType),
@@ -539,11 +262,20 @@ export type ComponentStyleType = typeof ComponentStyleType;
 
 /**
  * TypeScript interface for Component style options.
+ *
+ * @property direction - Flex direction for layout
+ * @property gap - Gap between items (Chakra spacing token)
+ * @property align - Cross-axis alignment of items
+ * @property variant - Visual style variant
  */
 export interface ComponentStyle {
+    /** Flex direction for layout */
     direction?: SubtypeExprOrValue<FlexDirectionType>;
+    /** Gap between items (Chakra spacing token) */
     gap?: SubtypeExprOrValue<StringType>;
+    /** Cross-axis alignment of items */
     align?: SubtypeExprOrValue<AlignItemsType>;
+    /** Visual style variant (solid, outline, subtle) */
     variant?: SubtypeExprOrValue<ComponentVariantType> | "solid" | "outline" | "subtle";
 }
 ```

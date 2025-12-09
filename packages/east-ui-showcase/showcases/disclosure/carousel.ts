@@ -1,5 +1,5 @@
-import { East, some } from "@elaraai/east";
-import { Carousel, UIComponentType, Grid, Text, Box } from "@elaraai/east-ui";
+import { East, some, IntegerType, NullType } from "@elaraai/east";
+import { Carousel, UIComponentType, Grid, Text, Box, Stack, State, Reactive, Badge } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
 /**
@@ -203,6 +203,83 @@ export default East.function(
             )
         );
 
+        // =====================================================================
+        // INTERACTIVE EXAMPLES - Demonstrate callbacks with Reactive.Root
+        // =====================================================================
+
+        // Initialize state for interactive examples
+        $(State.initTyped("carousel_index", 0n, IntegerType)());
+
+        // Interactive Carousel with onIndexChange
+        const interactiveCarousel = $.let(
+            ShowcaseCard(
+                "Interactive Carousel",
+                "Navigate to see onIndexChange callback",
+                Reactive.Root($ => {
+                    const currentIndex = $.let(State.readTyped("carousel_index", IntegerType)());
+
+                    const onIndexChange = East.function(
+                        [IntegerType],
+                        NullType,
+                        ($, newIndex) => {
+                            $(State.writeTyped("carousel_index", some(newIndex), IntegerType)());
+                        }
+                    );
+
+                    return Stack.VStack([
+                        Box.Root([
+                            Carousel.Root([
+                                Box.Root([Text.Root("Welcome!")], { padding: "8", background: "blue.100", borderRadius: "md" }),
+                                Box.Root([Text.Root("Features")], { padding: "8", background: "green.100", borderRadius: "md" }),
+                                Box.Root([Text.Root("Pricing")], { padding: "8", background: "purple.100", borderRadius: "md" }),
+                                Box.Root([Text.Root("Contact")], { padding: "8", background: "orange.100", borderRadius: "md" }),
+                            ], {
+                                showControls: true,
+                                showIndicators: true,
+                                onIndexChange,
+                            }),
+                        ], { width: "100%" }),
+                        Badge.Root(
+                            East.str`Current slide: ${currentIndex.unwrap('some').add(1n)} of 4`,
+                            { colorPalette: "blue", variant: "solid" }
+                        ),
+                    ], { gap: "3", align: "stretch" });
+                }),
+                some(`
+                    Reactive.Root($ => {
+                        const currentIndex = $.let(State.readTyped("carousel_index", IntegerType)());
+
+                        const onIndexChange = East.function(
+                            [IntegerType],
+                            NullType,
+                            ($, newIndex) => {
+                                $(State.writeTyped("carousel_index", some(newIndex), IntegerType)());
+                            }
+                        );
+
+                        return Stack.VStack([
+                            Box.Root([
+                                Carousel.Root([
+                                    Box.Root([Text.Root("Welcome!")], { padding: "8", background: "blue.100", borderRadius: "md" }),
+                                    Box.Root([Text.Root("Features")], { padding: "8", background: "green.100", borderRadius: "md" }),
+                                    Box.Root([Text.Root("Pricing")], { padding: "8", background: "purple.100", borderRadius: "md" }),
+                                    Box.Root([Text.Root("Contact")], { padding: "8", background: "orange.100", borderRadius: "md" }),
+                                ], {
+                                    showControls: true,
+                                    showIndicators: true,
+                                    onIndexChange,
+                                }),
+                            ], { width: "100%" }),
+                            Badge.Root(
+                                East.str\`Current slide: \${currentIndex.unwrap('some').add(1n)} of 4\`,
+                                { colorPalette: "blue", variant: "solid" }
+                            ),
+                        ], { gap: "3", align: "stretch" });
+                    })
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -211,6 +288,7 @@ export default East.function(
                 Grid.Item(noControls),
                 Grid.Item(draggable),
                 Grid.Item(minimal),
+                Grid.Item(interactiveCarousel, { colSpan: "2" }),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

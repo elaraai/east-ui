@@ -17,7 +17,8 @@ export interface GanttTaskProps {
     width: number;
     height: number;
     value: GanttTaskValue;
-    onClick?: () => void;
+    onClick?: (() => void) | undefined;
+    onDoubleClick?: (() => void) | undefined;
 }
 
 export const GanttTask = ({
@@ -27,6 +28,7 @@ export const GanttTask = ({
     height,
     value,
     onClick,
+    onDoubleClick,
 }: GanttTaskProps) => {
     const [isHovered, setIsHovered] = useState(false);
 
@@ -66,9 +68,10 @@ export const GanttTask = ({
                 rx={4}
                 ry={4}
                 onClick={onClick}
+                onDoubleClick={onDoubleClick}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-                style={{ cursor: onClick ? "pointer" : "default" }}
+                style={{ cursor: onClick || onDoubleClick ? "pointer" : "default" }}
             />
 
             {/* Progress indicator */}
@@ -99,7 +102,7 @@ export const GanttTask = ({
                         color="fg.default"
                         opacity={isHovered ? 1 : 0.9}
                         whiteSpace="nowrap"
-                        cursor={onClick ? "pointer" : "default"}
+                        cursor={onClick || onDoubleClick ? "pointer" : "default"}
                         userSelect="none"
                         lineHeight="1"
                         overflow="hidden"
@@ -110,6 +113,7 @@ export const GanttTask = ({
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
                         onClick={onClick}
+                        onDoubleClick={onDoubleClick}
                         m={0}
                         p={0}
                     >

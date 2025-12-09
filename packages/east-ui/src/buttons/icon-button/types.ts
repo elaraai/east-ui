@@ -9,6 +9,8 @@ import {
     StructType,
     BooleanType,
     StringType,
+    FunctionType,
+    NullType,
 } from "@elaraai/east";
 
 import { SizeType, ColorSchemeType } from "../../style.js";
@@ -33,6 +35,7 @@ export { ButtonVariantType, type ButtonVariantLiteral } from "../button/types.js
  * @property size - Size of the button (xs, sm, md, lg)
  * @property loading - Whether the button shows a loading state
  * @property disabled - Whether the button is disabled
+ * @property onClick - Callback triggered when the button is clicked
  */
 export const IconButtonStyleType = StructType({
     variant: OptionType(ButtonVariantType),
@@ -40,6 +43,7 @@ export const IconButtonStyleType = StructType({
     size: OptionType(SizeType),
     loading: OptionType(BooleanType),
     disabled: OptionType(BooleanType),
+    onClick: OptionType(FunctionType([], NullType)),
 });
 
 /**
@@ -58,6 +62,7 @@ export type IconButtonStyleType = typeof IconButtonStyleType;
  * @property size - Size of the button
  * @property loading - Shows loading spinner when true
  * @property disabled - Disables button interaction when true
+ * @property onClick - Callback triggered when the button is clicked
  */
 export interface IconButtonStyle {
     /** Button appearance variant (solid, subtle, outline, ghost) */
@@ -70,6 +75,8 @@ export interface IconButtonStyle {
     loading?: SubtypeExprOrValue<BooleanType>;
     /** Disables button interaction when true */
     disabled?: SubtypeExprOrValue<BooleanType>;
+    /** Callback triggered when the button is clicked */
+    onClick?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 }
 
 // ============================================================================
@@ -82,7 +89,8 @@ export interface IconButtonStyle {
  * @remarks
  * This struct type represents the serializable data structure for an IconButton component.
  *
- * @property icon - The icon to display in the button
+ * @property prefix - The Font Awesome icon prefix
+ * @property name - The Font Awesome icon name
  * @property style - Optional styling configuration wrapped in OptionType
  */
 export const IconButtonType = StructType({

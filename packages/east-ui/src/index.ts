@@ -58,8 +58,16 @@ export { Accordion, Carousel, Tabs } from "./disclosure/index.js";
 // Overlays
 export { Tooltip, Menu, Dialog, Drawer, Popover, HoverCard, ActionBar, ToggleTip } from "./overlays/index.js";
 
+// Reactive (selective re-rendering)
+export { Reactive } from "./reactive/index.js";
+
 // Component Types
 export { UIComponentType } from "./component.js";
 
-// Platform functions (state management)
-export { State, state_read, state_write } from "./platform/index.js";
+// Platform (state management)
+export { State } from "./platform/index.js";
+export { UIStore, createUIStore } from "./platform/index.js";
+export type { UIStoreInterface, UIStoreOptions } from "./platform/index.js";
+
+// Tracking functions for reactive components (used by east-ui-components)
+export { enableTracking, disableTracking, isTracking, trackKey } from "./platform/index.js";

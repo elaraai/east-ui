@@ -93,6 +93,16 @@ export type PieChartType = typeof PieChartType;
  *
  * @remarks
  * All properties are optional and accept either static values or East expressions.
+ *
+ * @property innerRadius - Inner radius (0 = pie, >0 = donut)
+ * @property outerRadius - Outer radius
+ * @property startAngle - Start angle in degrees
+ * @property endAngle - End angle in degrees
+ * @property paddingAngle - Padding between slices in degrees
+ * @property showLabels - Show slice labels
+ * @property tooltip - Tooltip configuration
+ * @property legend - Legend configuration
+ * @property margin - Chart margin configuration
  */
 export interface PieChartStyle {
     /** Inner radius (0 = pie, >0 = donut) */

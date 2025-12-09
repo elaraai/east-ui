@@ -37,24 +37,16 @@ export {
  *
  * @example
  * ```ts
- * import { Fieldset, Field, Input } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Fieldset, Field, Input, UIComponentType } from "@elaraai/east-ui";
  *
- * // Contact form fieldset
- * const contactFieldset = Fieldset.Root([
- *   Field.Root("Email", Input.String("", { placeholder: "you@example.com" })),
- *   Field.Root("Phone", Input.String("", { placeholder: "+1 (555) 000-0000" })),
- * ], {
- *   legend: "Contact Information",
- *   helperText: "Please fill out all required fields.",
- *   size: "md",
- * });
- *
- * // Disabled fieldset
- * const readonlyFieldset = Fieldset.Root([
- *   Field.Root("Name", Input.String("John")),
- * ], {
- *   legend: "Read-only Information",
- *   disabled: true,
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Fieldset.Root([
+ *         Field.Root("First Name", Input.String("", { placeholder: "First name" })),
+ *         Field.Root("Last Name", Input.String("", { placeholder: "Last name" })),
+ *     ], {
+ *         legend: "Personal Information",
+ *     });
  * });
  * ```
  */
@@ -92,28 +84,6 @@ function createFieldset(
  * @remarks
  * Fieldset groups related form fields together with a legend and optional
  * helper/error text. It renders as a native HTML `<fieldset>` element.
- *
- * @example
- * ```ts
- * import { Fieldset, Field, Input } from "@elaraai/east-ui";
- *
- * // Basic fieldset
- * const fieldset = Fieldset.Root([
- *   Field.Root("Username", Input.String("")),
- *   Field.Root("Password", Input.String("")),
- * ], {
- *   legend: "Login",
- * });
- *
- * // Fieldset with validation error
- * const invalidFieldset = Fieldset.Root([
- *   Field.Root("Email", Input.String("invalid")),
- * ], {
- *   legend: "Contact",
- *   invalid: true,
- *   errorText: "Please enter a valid email address.",
- * });
- * ```
  */
 export const Fieldset = {
     /**

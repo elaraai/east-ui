@@ -21,6 +21,7 @@ export interface GanttEventRowProps {
     startDate: Date;
     endDate: Date;
     onEventClick?: ((event: GanttEventValue, rowIndex: number, eventIndex: number) => void) | undefined;
+    onEventDoubleClick?: ((event: GanttEventValue, rowIndex: number, eventIndex: number) => void) | undefined;
 }
 
 const getEventPosition = (
@@ -73,6 +74,7 @@ export const GanttEventRow = ({
     startDate,
     endDate,
     onEventClick,
+    onEventDoubleClick,
 }: GanttEventRowProps) => {
     const renderedEvents = useMemo(() => {
         const eventHeight = height - 24;
@@ -92,6 +94,7 @@ export const GanttEventRow = ({
                         height={eventHeight}
                         value={event.value}
                         onClick={onEventClick ? () => onEventClick(event, rowIndex, eventIndex) : () => {}}
+                        onDoubleClick={onEventDoubleClick ? () => onEventDoubleClick(event, rowIndex, eventIndex) : undefined}
                     />
                 );
             }
@@ -105,10 +108,11 @@ export const GanttEventRow = ({
                     height={eventHeight}
                     value={event.value}
                     onClick={onEventClick ? () => onEventClick(event, rowIndex, eventIndex) : () => {}}
+                    onDoubleClick={onEventDoubleClick ? () => onEventDoubleClick(event, rowIndex, eventIndex) : undefined}
                 />
             );
         }).filter(Boolean);
-    }, [events, rowIndex, y, width, height, startDate, endDate, onEventClick]);
+    }, [events, rowIndex, y, width, height, startDate, endDate, onEventClick, onEventDoubleClick]);
 
     return <g>{renderedEvents}</g>;
 };

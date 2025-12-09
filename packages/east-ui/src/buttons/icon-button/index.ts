@@ -32,7 +32,8 @@ export {
 /**
  * Creates an IconButton component with an icon and optional styling.
  *
- * @param icon - The icon name (Font Awesome icon name) or IconType expression
+ * @param prefix - The Font Awesome icon prefix (e.g., "fas", "far")
+ * @param name - The Font Awesome icon name (e.g., "xmark", "bars")
  * @param style - Optional styling configuration
  * @returns An East expression representing the icon button component
  *
@@ -42,26 +43,14 @@ export {
  *
  * @example
  * ```ts
- * import { IconButton } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { IconButton, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple icon button
- * const closeBtn = IconButton.Root("xmark");
- *
- * // Icon button with styling
- * const menuBtn = IconButton.Root("bars", {
- *   variant: "ghost",
- *   size: "lg",
- * });
- *
- * // Colored icon button
- * const deleteBtn = IconButton.Root("trash", {
- *   variant: "solid",
- *   colorPalette: "red",
- * });
- *
- * // Loading icon button
- * const refreshBtn = IconButton.Root("rotate", {
- *   loading: true,
+ * const example = East.function([], UIComponentType, $ => {
+ *     return IconButton.Root("fas", "xmark", {
+ *         variant: "ghost",
+ *         colorPalette: "red",
+ *     });
  * });
  * ```
  */
@@ -89,7 +78,7 @@ function createIconButton(
         : undefined;
 
     const hasStyle = variantValue || colorPaletteValue || sizeValue ||
-        style?.loading !== undefined || style?.disabled !== undefined;
+        style?.loading !== undefined || style?.disabled !== undefined || style?.onClick !== undefined;
 
     return East.value(variant("IconButton", {
         prefix: prefix,
@@ -101,6 +90,7 @@ function createIconButton(
                 size: sizeValue ? variant("some", sizeValue) : variant("none", null),
                 loading: style?.loading !== undefined ? variant("some", style.loading) : variant("none", null),
                 disabled: style?.disabled !== undefined ? variant("some", style.disabled) : variant("none", null),
+                onClick: style?.onClick !== undefined ? variant("some", style.onClick) : variant("none", null),
             }, IconButtonStyleType))
             : variant("none", null),
     }), UIComponentType);
@@ -110,18 +100,7 @@ function createIconButton(
  * IconButton component for icon-only buttons.
  *
  * @remarks
- * Use `IconButton.Root(icon, style)` to create an icon button, or access `IconButton.Types` for East types.
- *
- * @example
- * ```ts
- * import { IconButton } from "@elaraai/east-ui";
- *
- * // Create an icon button
- * const btn = IconButton.Root("chevron-right", { variant: "ghost" });
- *
- * // Access the type
- * const styleType = IconButton.Types.Style;
- * ```
+ * Use `IconButton.Root(prefix, name, style)` to create an icon button, or access `IconButton.Types` for East types.
  */
 export const IconButton = {
     /**
@@ -177,6 +156,7 @@ export const IconButton = {
          * @property size - Size of the button (xs, sm, md, lg)
          * @property loading - Whether the button shows a loading state
          * @property disabled - Whether the button is disabled
+         * @property onClick - Callback triggered when the button is clicked
          */
         Style: IconButtonStyleType,
         /**

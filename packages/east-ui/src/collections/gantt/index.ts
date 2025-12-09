@@ -11,15 +11,14 @@ import {
     StructType,
     ArrayType,
     DictType,
-    StringType,
-    BooleanType,
-    OptionType,
+    StringType, OptionType,
     DateTimeType,
     FloatType,
     variant,
     type ValueTypeOf,
     type TypeOf,
     some,
+    none
 } from "@elaraai/east";
 
 import { ColorSchemeType } from "../../style.js";
@@ -42,6 +41,11 @@ import {
     TableVariantType,
     TableSizeType,
     type GanttStyle,
+    GanttTaskClickEventType,
+    GanttTaskDragEventType,
+    GanttTaskProgressChangeEventType,
+    GanttMilestoneClickEventType,
+    GanttMilestoneDragEventType,
 } from "./types.js";
 
 // Re-export types
@@ -148,12 +152,21 @@ export interface MilestoneInput {
  *
  * @example
  * ```ts
- * Gantt.Task({
- *   start: new Date("2024-01-01"),
- *   end: new Date("2024-01-15"),
- *   label: "Design Phase",
- *   progress: 75,
- *   colorPalette: "blue",
+ * import { East } from "@elaraai/east";
+ * import { Gantt, UIComponentType } from "@elaraai/east-ui";
+ *
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Gantt.Root(
+ *         [{ name: "Task", start: new Date("2024-01-01"), end: new Date("2024-01-15") }],
+ *         ["name"],
+ *         row => [Gantt.Task({
+ *             start: row.start,
+ *             end: row.end,
+ *             label: "Design Phase",
+ *             progress: 75,
+ *             colorPalette: "blue",
+ *         })]
+ *     );
  * });
  * ```
  */
@@ -181,10 +194,19 @@ function createTask(input: TaskInput): ExprType<GanttEventType> {
  *
  * @example
  * ```ts
- * Gantt.Milestone({
- *   date: new Date("2024-01-15"),
- *   label: "Design Complete",
- *   colorPalette: "green",
+ * import { East } from "@elaraai/east";
+ * import { Gantt, UIComponentType } from "@elaraai/east-ui";
+ *
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Gantt.Root(
+ *         [{ name: "Launch", date: new Date("2024-02-01") }],
+ *         ["name"],
+ *         row => [Gantt.Milestone({
+ *             date: row.date,
+ *             label: "Design Complete",
+ *             colorPalette: "green",
+ *         })]
+ *     );
  * });
  * ```
  */
@@ -209,8 +231,8 @@ function createMilestone(input: MilestoneInput): ExprType<GanttEventType> {
 // Helper types to extract struct fields from array data type
 type ExtractStructFields<T> = T extends ArrayType<infer S>
     ? S extends StructType
-        ? S["fields"]
-        : never
+    ? S["fields"]
+    : never
     : never;
 
 type DataFields<T extends SubtypeExprOrValue<ArrayType<StructType>>> = ExtractStructFields<TypeOf<T>>;
@@ -236,24 +258,20 @@ type ColumnSpec<T extends SubtypeExprOrValue<ArrayType<StructType>>> =
  *
  * @example
  * ```ts
- * import { Gantt } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Gantt, UIComponentType } from "@elaraai/east-ui";
  *
- * const data = [
- *   { name: "Design", start: new Date("2024-01-01"), end: new Date("2024-01-15") },
- *   { name: "Development", start: new Date("2024-01-10"), end: new Date("2024-02-01") },
- * ];
- *
- * // Simple: array of column names, events extracted from row fields
- * Gantt.Root(data, ["name"], row => [
- *   Gantt.Task({ start: row.start, end: row.end }),
- * ]);
- *
- * // With column config and styling
- * Gantt.Root(data, {
- *   name: { header: "Task Name" },
- * }, row => [
- *   Gantt.Task({ start: row.start, end: row.end, colorPalette: "blue" }),
- * ], { variant: "line", showToday: true });
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Gantt.Root(
+ *         [
+ *             { name: "Design", start: new Date("2024-01-01"), end: new Date("2024-01-15") },
+ *             { name: "Development", start: new Date("2024-01-10"), end: new Date("2024-02-01") },
+ *         ],
+ *         ["name"],
+ *         row => [Gantt.Task({ start: row.start, end: row.end })],
+ *         { showToday: true }
+ *     );
+ * });
  * ```
  */
 function createGantt<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
@@ -286,19 +304,19 @@ function createGantt<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
         for (const [col_key, col_config] of Object.entries(columns_obj)) {
             const field_value = (datum as any)[col_key];
             const field_type = field_types[col_key];
-            const value = variant(field_type.type, field_value);
-
-            let content: ValueTypeOf<UIComponentType>;
-            if (col_config.render) {
-                content = col_config.render(field_value) as any;
-            } else {
-                content = Text.Root(East.str`${field_value}`, {
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                }) as any;
-            }
-            $(cells.insert(col_key, { value, content }));
+            $(cells.insert(col_key, {
+                value: variant(field_type.type, field_value),
+                content: East.value(
+                    col_config.render ?
+                        col_config.render(field_value) :
+                        Text.Root(East.str`${field_value}`, {
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                        }),
+                    UIComponentType
+                ),
+            }));
         }
 
         // Get events from the row using the events function
@@ -346,26 +364,34 @@ function createGantt<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
             : style.colorPalette)
         : undefined;
 
-    const toBoolOption = (value: SubtypeExprOrValue<typeof BooleanType> | undefined) => {
-        if (value === undefined) return variant("none", null);
-        return variant("some", value);
-    };
-
     const styleValue = style ? East.value({
-        variant: variantValue ? variant("some", variantValue) : variant("none", null),
-        size: sizeValue ? variant("some", sizeValue) : variant("none", null),
-        striped: toBoolOption(style.striped),
-        interactive: toBoolOption(style.interactive),
-        stickyHeader: toBoolOption(style.stickyHeader),
-        showColumnBorder: toBoolOption(style.showColumnBorder),
-        colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
-        showToday: toBoolOption(style.showToday),
+        variant: variantValue ? some(variantValue) : none,
+        size: sizeValue ? some(sizeValue) : none,
+        striped: style.striped !== undefined ? some(style.striped) : none,
+        interactive: style.interactive !== undefined ? some(style.interactive) : none,
+        stickyHeader: style.stickyHeader !== undefined ? some(style.stickyHeader) : none,
+        showColumnBorder: style.showColumnBorder !== undefined ? some(style.showColumnBorder) : none,
+        colorPalette: colorPaletteValue ? some(colorPaletteValue) : none,
+        showToday: style.showToday !== undefined ? some(style.showToday) : none,
+        onCellClick: style.onCellClick ? some(style.onCellClick) : none,
+        onCellDoubleClick: style.onCellDoubleClick ? some(style.onCellDoubleClick) : none,
+        onRowClick: style.onRowClick ? some(style.onRowClick) : none,
+        onRowDoubleClick: style.onRowDoubleClick ? some(style.onRowDoubleClick) : none,
+        onRowSelectionChange: style.onRowSelectionChange ? some(style.onRowSelectionChange) : none,
+        onSortChange: style.onSortChange ? some(style.onSortChange) : none,
+        onTaskClick: style.onTaskClick ? some(style.onTaskClick) : none,
+        onTaskDoubleClick: style.onTaskDoubleClick ? some(style.onTaskDoubleClick) : none,
+        onTaskDrag: style.onTaskDrag ? some(style.onTaskDrag) : none,
+        onTaskProgressChange: style.onTaskProgressChange ? some(style.onTaskProgressChange) : none,
+        onMilestoneClick: style.onMilestoneClick ? some(style.onMilestoneClick) : none,
+        onMilestoneDoubleClick: style.onMilestoneDoubleClick ? some(style.onMilestoneDoubleClick) : none,
+        onMilestoneDrag: style.onMilestoneDrag ? some(style.onMilestoneDrag) : none,
     }, GanttStyleType) : undefined;
 
     return East.value(variant("Gantt", {
         rows: rows_mapped,
         columns: columns_mapped as ValueTypeOf<typeof GanttRootType>["columns"],
-        style: styleValue ? variant("some", styleValue) : variant("none", null),
+        style: styleValue ? some(styleValue) : none,
     }), UIComponentType);
 }
 
@@ -380,30 +406,6 @@ function createGantt<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
  * Gantt charts display time-based events (tasks and milestones) in rows.
  * Each row has table columns on the left and a timeline with events on the right.
  * The API follows the Table pattern for column configuration.
- *
- * @example
- * ```ts
- * import { Gantt } from "@elaraai/east-ui";
- *
- * const tasks = [
- *   { name: "Design", owner: "Alice", start: new Date("2024-01-01"), end: new Date("2024-01-15") },
- *   { name: "Development", owner: "Bob", start: new Date("2024-01-10"), end: new Date("2024-02-01") },
- * ];
- *
- * const gantt = Gantt.Root(tasks, {
- *   name: { header: "Task" },
- *   owner: { header: "Owner" },
- * }, row => [
- *   Gantt.Task({
- *     start: row.start,
- *     end: row.end,
- *     colorPalette: "blue",
- *   }),
- * ], {
- *   variant: "line",
- *   showToday: true,
- * });
- * ```
  */
 export const Gantt = {
     /**
@@ -595,5 +597,51 @@ export const Gantt = {
          * @property content - Optional UI component content for the cell
          */
         Cell: TableCellType,
+        /**
+         * Event data for task click events.
+         *
+         * @property rowIndex - Row index (0-based)
+         * @property taskIndex - Task index within the row (0-based)
+         * @property taskStart - Start date/time of the task
+         * @property taskEnd - End date/time of the task
+         */
+        TaskClickEvent: GanttTaskClickEventType,
+        /**
+         * Event data for task drag/resize events.
+         *
+         * @property rowIndex - Row index (0-based)
+         * @property taskIndex - Task index within the row (0-based)
+         * @property previousStart - Previous start date/time
+         * @property previousEnd - Previous end date/time
+         * @property newStart - New start date/time
+         * @property newEnd - New end date/time
+         */
+        TaskDragEvent: GanttTaskDragEventType,
+        /**
+         * Event data for task progress change events.
+         *
+         * @property rowIndex - Row index (0-based)
+         * @property taskIndex - Task index within the row (0-based)
+         * @property previousProgress - Previous progress value (0-100)
+         * @property newProgress - New progress value (0-100)
+         */
+        TaskProgressChangeEvent: GanttTaskProgressChangeEventType,
+        /**
+         * Event data for milestone click events.
+         *
+         * @property rowIndex - Row index (0-based)
+         * @property milestoneIndex - Milestone index within the row (0-based)
+         * @property milestoneDate - Date/time of the milestone
+         */
+        MilestoneClickEvent: GanttMilestoneClickEventType,
+        /**
+         * Event data for milestone drag events.
+         *
+         * @property rowIndex - Row index (0-based)
+         * @property milestoneIndex - Milestone index within the row (0-based)
+         * @property previousDate - Previous date/time of the milestone
+         * @property newDate - New date/time of the milestone
+         */
+        MilestoneDragEvent: GanttMilestoneDragEventType,
     },
 } as const;

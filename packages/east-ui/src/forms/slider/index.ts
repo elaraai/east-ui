@@ -8,8 +8,9 @@ import {
     type SubtypeExprOrValue,
     East,
     FloatType,
-    BooleanType,
     variant,
+    some,
+    none,
 } from "@elaraai/east";
 
 import { SizeType, ColorSchemeType, OrientationType } from "../../style.js";
@@ -43,35 +44,16 @@ export {
  *
  * @example
  * ```ts
- * import { Slider } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Slider, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple slider
- * const slider = Slider.Root(50.0);
- *
- * // Slider with range
- * const ranged = Slider.Root(25.0, {
- *   min: 0,
- *   max: 100,
- *   step: 5,
- * });
- *
- * // Styled slider
- * const styled = Slider.Root(75.0, {
- *   colorPalette: "blue",
- *   size: "md",
- *   variant: "subtle",
- * });
- *
- * // Vertical slider
- * const vertical = Slider.Root(50.0, {
- *   orientation: "vertical",
- *   min: 0,
- *   max: 100,
- * });
- *
- * // Disabled slider
- * const disabled = Slider.Root(30.0, {
- *   disabled: true,
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Slider.Root(50.0, {
+ *         min: 0,
+ *         max: 100,
+ *         step: 5,
+ *         colorPalette: "blue",
+ *     });
  * });
  * ```
  */
@@ -79,16 +61,6 @@ function createSlider(
     value: SubtypeExprOrValue<FloatType>,
     style?: SliderStyle
 ): ExprType<UIComponentType> {
-    const toFloatOption = (val: SubtypeExprOrValue<FloatType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        return variant("some", val);
-    };
-
-    const toBoolOption = (val: SubtypeExprOrValue<BooleanType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        return variant("some", val);
-    };
-
     const orientationValue = style?.orientation
         ? (typeof style.orientation === "string"
             ? East.value(variant(style.orientation, null), OrientationType)
@@ -115,14 +87,16 @@ function createSlider(
 
     return East.value(variant("Slider", {
         value: value,
-        min: toFloatOption(style?.min),
-        max: toFloatOption(style?.max),
-        step: toFloatOption(style?.step),
-        orientation: orientationValue ? variant("some", orientationValue) : variant("none", null),
-        colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
-        size: sizeValue ? variant("some", sizeValue) : variant("none", null),
-        variant: variantValue ? variant("some", variantValue) : variant("none", null),
-        disabled: toBoolOption(style?.disabled),
+        min: style?.min !== undefined ? some(style.min) : none,
+        max: style?.max !== undefined ? some(style.max) : none,
+        step: style?.step !== undefined ? some(style.step) : none,
+        orientation: orientationValue ? some(orientationValue) : none,
+        colorPalette: colorPaletteValue ? some(colorPaletteValue) : none,
+        size: sizeValue ? some(sizeValue) : none,
+        variant: variantValue ? some(variantValue) : none,
+        disabled: style?.disabled !== undefined ? some(style.disabled) : none,
+        onChange: style?.onChange ? some(style.onChange) : none,
+        onChangeEnd: style?.onChangeEnd ? some(style.onChangeEnd) : none,
     }), UIComponentType);
 }
 

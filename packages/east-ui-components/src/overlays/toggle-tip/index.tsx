@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Popover as ChakraPopover, Portal } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { ToggleTip } from "@elaraai/east-ui";
@@ -29,8 +29,20 @@ export const EastChakraToggleTip = memo(function EastChakraToggleTip({ value }: 
     const placement = useMemo(() => style ? getSomeorUndefined(style.placement)?.type : undefined, [style]);
     const hasArrow = useMemo(() => style ? getSomeorUndefined(style.hasArrow) : undefined, [style]);
 
+    // Extract callbacks from style
+    const onOpenChangeFn = useMemo(() => style ? getSomeorUndefined(style.onOpenChange) : undefined, [style]);
+
+    const handleOpenChange = useCallback((details: { open: boolean }) => {
+        if (onOpenChangeFn) {
+            queueMicrotask(() => onOpenChangeFn(details.open));
+        }
+    }, [onOpenChangeFn]);
+
     return (
-        <ChakraPopover.Root positioning={placement ? { placement } : undefined}>
+        <ChakraPopover.Root
+            positioning={placement ? { placement } : undefined}
+            onOpenChange={onOpenChangeFn ? handleOpenChange : undefined}
+        >
             <ChakraPopover.Trigger asChild>
                 <span>
                     <EastChakraComponent value={value.trigger} />

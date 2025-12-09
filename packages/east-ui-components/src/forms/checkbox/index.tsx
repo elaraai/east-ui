@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Checkbox as ChakraCheckbox, type CheckboxRootProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Checkbox } from "@elaraai/east-ui";
@@ -40,9 +40,19 @@ export interface EastChakraCheckboxProps {
 export const EastChakraCheckbox = memo(function EastChakraCheckbox({ value }: EastChakraCheckboxProps) {
     const props = useMemo(() => toChakraCheckbox(value), [value]);
     const label = useMemo(() => getSomeorUndefined(value.label), [value.label]);
+    const onChangeFn = useMemo(() => getSomeorUndefined(value.onChange), [value.onChange]);
+
+    const handleCheckedChange = useCallback((e: { checked: boolean | "indeterminate" }) => {
+        if (onChangeFn) {
+            queueMicrotask(() => onChangeFn(e.checked === true));
+        }
+    }, [onChangeFn]);
 
     return (
-        <ChakraCheckbox.Root {...props}>
+        <ChakraCheckbox.Root
+            {...props}
+            onCheckedChange={onChangeFn ? handleCheckedChange : undefined}
+        >
             <ChakraCheckbox.HiddenInput />
             <ChakraCheckbox.Control />
             {label && <ChakraCheckbox.Label>{label}</ChakraCheckbox.Label>}

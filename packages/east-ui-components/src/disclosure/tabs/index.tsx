@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import {
     Tabs as ChakraTabs,
     type TabsRootProps,
@@ -109,9 +109,19 @@ export interface EastChakraTabsProps {
  */
 export const EastChakraTabs = memo(function EastChakraTabs({ value }: EastChakraTabsProps) {
     const props = useMemo(() => toChakraTabsRoot(value), [value]);
+    const onValueChangeFn = useMemo(() => {
+        const style = getSomeorUndefined(value.style);
+        return style ? getSomeorUndefined(style.onValueChange) : undefined;
+    }, [value.style]);
+
+    const handleValueChange = useCallback((details: { value: string }) => {
+        if (onValueChangeFn) {
+            queueMicrotask(() => onValueChangeFn(details.value));
+        }
+    }, [onValueChangeFn]);
 
     return (
-        <ChakraTabs.Root {...props}>
+        <ChakraTabs.Root {...props} onValueChange={onValueChangeFn ? handleValueChange : undefined}>
             <ChakraTabs.List>
                 {value.items.map((item) => (
                     <EastChakraTabsTrigger key={item.value} value={item} />

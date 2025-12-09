@@ -1,5 +1,5 @@
-import { East, some } from "@elaraai/east";
-import { Tabs, UIComponentType, Grid, Text, Box, Stack } from "@elaraai/east-ui";
+import { East, some, StringType, NullType } from "@elaraai/east";
+import { Tabs, UIComponentType, Grid, Text, Box, Stack, State, Reactive, Badge } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
 /**
@@ -335,6 +335,93 @@ export default East.function(
             )
         );
 
+        // =====================================================================
+        // INTERACTIVE EXAMPLES - Demonstrate callbacks with Reactive.Root
+        // =====================================================================
+
+        // Initialize state for interactive examples
+        $(State.initTyped("tabs_selected", "tab1", StringType)());
+
+        // Interactive Tabs with onValueChange
+        const interactiveTabs = $.let(
+            ShowcaseCard(
+                "Interactive Tabs",
+                "Click tabs to see onValueChange callback",
+                Reactive.Root($ => {
+                    const selected = $.let(State.readTyped("tabs_selected", StringType)());
+
+                    const onValueChange = East.function(
+                        [StringType],
+                        NullType,
+                        ($, newValue) => {
+                            $(State.writeTyped("tabs_selected", some(newValue), StringType)());
+                        }
+                    );
+
+                    return Stack.VStack([
+                        Box.Root([
+                            Tabs.Root([
+                                Tabs.Item("tab1", "Dashboard", [
+                                    Box.Root([Text.Root("Dashboard content - view your metrics here.")], { padding: "4" }),
+                                ]),
+                                Tabs.Item("tab2", "Analytics", [
+                                    Box.Root([Text.Root("Analytics content - detailed reports and charts.")], { padding: "4" }),
+                                ]),
+                                Tabs.Item("tab3", "Settings", [
+                                    Box.Root([Text.Root("Settings content - configure your preferences.")], { padding: "4" }),
+                                ]),
+                            ], {
+                                variant: "line",
+                                defaultValue: "tab1",
+                                onValueChange,
+                            }),
+                        ], { width: "100%" }),
+                        Badge.Root(
+                            East.str`Selected tab: ${selected.unwrap('some')}`,
+                            { colorPalette: "blue", variant: "solid" }
+                        ),
+                    ], { gap: "3", align: "stretch" });
+                }),
+                some(`
+                    Reactive.Root($ => {
+                        const selected = $.let(State.readTyped("tabs_selected", StringType)());
+
+                        const onValueChange = East.function(
+                            [StringType],
+                            NullType,
+                            ($, newValue) => {
+                                $(State.writeTyped("tabs_selected", some(newValue), StringType)());
+                            }
+                        );
+
+                        return Stack.VStack([
+                            Box.Root([
+                                Tabs.Root([
+                                    Tabs.Item("tab1", "Dashboard", [
+                                        Box.Root([Text.Root("Dashboard content - view your metrics here.")], { padding: "4" }),
+                                    ]),
+                                    Tabs.Item("tab2", "Analytics", [
+                                        Box.Root([Text.Root("Analytics content - detailed reports and charts.")], { padding: "4" }),
+                                    ]),
+                                    Tabs.Item("tab3", "Settings", [
+                                        Box.Root([Text.Root("Settings content - configure your preferences.")], { padding: "4" }),
+                                    ]),
+                                ], {
+                                    variant: "line",
+                                    defaultValue: "tab1",
+                                    onValueChange,
+                                }),
+                            ], { width: "100%" }),
+                            Badge.Root(
+                                East.str\`Selected tab: \${selected.unwrap('some')}\`,
+                                { colorPalette: "blue", variant: "solid" }
+                            ),
+                        ], { gap: "3", align: "stretch" });
+                    })   
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -345,6 +432,7 @@ export default East.function(
                 Grid.Item(fitted),
                 Grid.Item(sizes, { colSpan: "2" }),
                 Grid.Item(withDisabled),
+                Grid.Item(interactiveTabs),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

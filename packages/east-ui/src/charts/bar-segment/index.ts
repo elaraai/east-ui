@@ -44,20 +44,17 @@ export {
  *
  * @example
  * ```ts
- * import { Chart } from "@elaraai/east-ui";
+ * import { East, some } from "@elaraai/east";
+ * import { Chart, UIComponentType } from "@elaraai/east-ui";
  *
- * Chart.BarSegment(
- *   [
- *     { name: "Google", value: 500000, color: "teal.solid" },
- *     { name: "Direct", value: 100000, color: "blue.solid" },
- *     { name: "Bing", value: 200000, color: "orange.solid" },
- *   ],
- *   {
- *     sort: { by: "value", direction: "desc" },
- *     showValue: true,
- *     showLabel: true,
- *   }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Chart.BarSegment(
+ *         [
+ *             { name: "Completed", value: 75, color: some("green.solid") },
+ *             { name: "Remaining", value: 25, color: some("gray.solid") },
+ *         ],
+ *     );
+ * });
  * ```
  */
 export function createBarSegment(

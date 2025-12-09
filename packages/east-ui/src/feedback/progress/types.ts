@@ -28,8 +28,10 @@ import type { SizeLiteral, ColorSchemeLiteral } from "../../style.js";
  * Variant types for Progress visual style.
  *
  * @remarks
- * - outline: Progress bar with outlined track
- * - subtle: Progress bar with subtle/filled track
+ * Controls the visual appearance of the progress bar track.
+ *
+ * @property outline - Progress bar with outlined track
+ * @property subtle - Progress bar with subtle/filled track
  */
 export const ProgressVariantType = VariantType({
     /** Progress bar with outlined track */
@@ -56,10 +58,13 @@ export type ProgressVariantLiteral = "outline" | "subtle";
  *
  * @example
  * ```ts
- * import { Progress, ProgressVariant } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Progress, UIComponentType } from "@elaraai/east-ui";
  *
- * const progress = Progress.Root(50.0, {
- *   variant: ProgressVariant("subtle"),
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Progress.Root(50.0, {
+ *         variant: Progress.Variant("subtle"),
+ *     });
  * });
  * ```
  */

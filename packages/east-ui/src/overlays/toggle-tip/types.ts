@@ -8,6 +8,8 @@ import {
     OptionType,
     StructType,
     BooleanType,
+    NullType,
+    FunctionType,
 } from "@elaraai/east";
 
 import { PlacementType, type PlacementLiteral } from "../tooltip/types.js";
@@ -24,10 +26,13 @@ export { PlacementType, type PlacementLiteral } from "../tooltip/types.js";
  *
  * @property placement - Position relative to trigger
  * @property hasArrow - Show arrow pointing to trigger
+ * @property onOpenChange - Callback triggered when open state changes
  */
 export const ToggleTipStyleType = StructType({
     placement: OptionType(PlacementType),
     hasArrow: OptionType(BooleanType),
+    /** Callback triggered when open state changes */
+    onOpenChange: OptionType(FunctionType([BooleanType], NullType)),
 });
 
 export type ToggleTipStyleType = typeof ToggleTipStyleType;
@@ -38,6 +43,14 @@ export type ToggleTipStyleType = typeof ToggleTipStyleType;
 
 /**
  * TypeScript interface for ToggleTip style options.
+ *
+ * @property placement - Position relative to trigger
+ * @property hasArrow - Show arrow pointing to trigger
+ * @property open - Controlled open state
+ * @property defaultOpen - Initial open state
+ * @property closeOnInteractOutside - Close when clicking outside
+ * @property closeOnEscape - Close on escape key
+ * @property onOpenChange - Callback triggered when open state changes
  */
 export interface ToggleTipStyle {
     /** Position relative to trigger */
@@ -52,4 +65,6 @@ export interface ToggleTipStyle {
     closeOnInteractOutside?: SubtypeExprOrValue<BooleanType>;
     /** Close on escape key */
     closeOnEscape?: SubtypeExprOrValue<BooleanType>;
+    /** Callback triggered when open state changes */
+    onOpenChange?: SubtypeExprOrValue<FunctionType<[BooleanType], NullType>>;
 }

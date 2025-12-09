@@ -123,6 +123,9 @@ function createTagsInput(
         size: sizeValue ? variant("some", sizeValue) : variant("none", null),
         variant: variantValue ? variant("some", variantValue) : variant("none", null),
         colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
+        onChange: style?.onChange !== undefined ? variant("some", style.onChange) : variant("none", null),
+        onInputChange: style?.onInputChange !== undefined ? variant("some", style.onInputChange) : variant("none", null),
+        onHighlightChange: style?.onHighlightChange !== undefined ? variant("some", style.onHighlightChange) : variant("none", null),
     }), UIComponentType);
 }
 

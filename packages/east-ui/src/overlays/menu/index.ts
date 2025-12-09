@@ -145,6 +145,8 @@ function createMenu(
             : style.placement)
         : undefined;
 
+    // Note: Menu's style properties (onSelect, onOpenChange) are in MenuStyleType but
+    // the Menu component only uses placement directly on the component, not in a style object
     return East.value(variant("Menu", {
         trigger: trigger,
         items: items,

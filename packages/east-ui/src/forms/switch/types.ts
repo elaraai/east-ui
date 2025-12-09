@@ -9,6 +9,8 @@ import {
     StructType,
     StringType,
     BooleanType,
+    NullType,
+    FunctionType,
 } from "@elaraai/east";
 
 import { SizeType, ColorSchemeType } from "../../style.js";
@@ -29,6 +31,7 @@ import type { SizeLiteral, ColorSchemeLiteral } from "../../style.js";
  * @property disabled - Whether the switch is disabled
  * @property colorPalette - Color scheme for the switch
  * @property size - Size of the switch
+ * @property onChange - Callback triggered when switch state changes
  */
 export const SwitchType = StructType({
     checked: BooleanType,
@@ -36,6 +39,7 @@ export const SwitchType = StructType({
     disabled: OptionType(BooleanType),
     colorPalette: OptionType(ColorSchemeType),
     size: OptionType(SizeType),
+    onChange: OptionType(FunctionType([BooleanType], NullType)),
 });
 
 /**
@@ -54,6 +58,7 @@ export type SwitchType = typeof SwitchType;
  * @property disabled - Whether the switch is disabled
  * @property colorPalette - Color scheme for the switch
  * @property size - Size of the switch
+ * @property onChange - Callback triggered when switch state changes
  */
 export interface SwitchStyle {
     /** Optional label text displayed next to the switch */
@@ -64,4 +69,6 @@ export interface SwitchStyle {
     colorPalette?: SubtypeExprOrValue<ColorSchemeType> | ColorSchemeLiteral;
     /** Size of the switch */
     size?: SubtypeExprOrValue<SizeType> | SizeLiteral;
+    /** Callback triggered when switch state changes (receives new checked value) */
+    onChange?: SubtypeExprOrValue<FunctionType<[BooleanType], NullType>>;
 }

@@ -3,12 +3,12 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import {
     TreeView as ChakraTreeView,
     createTreeCollection,
 } from "@chakra-ui/react";
-import { equalFor, match, type OptionType, type VariantType, type ValueTypeOf } from "@elaraai/east";
+import { equalFor, match, some, none, type OptionType, type VariantType, type ValueTypeOf } from "@elaraai/east";
 import { TreeView, Icon } from "@elaraai/east-ui";
 import { getSomeorUndefined } from "../../utils";
 import { EastChakraIcon } from "../../display/icon";
@@ -74,6 +74,33 @@ export const EastChakraTreeView = memo(function EastChakraTreeView({ value }: Ea
     const defaultExpandedValue = getSomeorUndefined(value.defaultExpandedValue);
     const defaultSelectedValue = getSomeorUndefined(value.defaultSelectedValue);
 
+    // Extract callbacks
+    const onExpandedChangeFn = useMemo(() => style ? getSomeorUndefined(style.onExpandedChange) : undefined, [style]);
+    const onSelectionChangeFn = useMemo(() => style ? getSomeorUndefined(style.onSelectionChange) : undefined, [style]);
+    const onFocusChangeFn = useMemo(() => style ? getSomeorUndefined(style.onFocusChange) : undefined, [style]);
+
+    const handleExpandedChange = useCallback((details: { expandedValue: string[] }) => {
+        if (onExpandedChangeFn) {
+            queueMicrotask(() => onExpandedChangeFn(details.expandedValue));
+        }
+    }, [onExpandedChangeFn]);
+
+    const handleSelectionChange = useCallback((details: { selectedValue: string[] }) => {
+        if (onSelectionChangeFn) {
+            queueMicrotask(() => onSelectionChangeFn(details.selectedValue));
+        }
+    }, [onSelectionChangeFn]);
+
+    const handleFocusChange = useCallback((details: { focusedValue: string | null }) => {
+        if (onFocusChangeFn) {
+            // Convert to Option type using East helpers
+            const optionValue = details.focusedValue !== null
+                ? some(details.focusedValue)
+                : none;
+            queueMicrotask(() => onFocusChangeFn(optionValue));
+        }
+    }, [onFocusChangeFn]);
+
     // Convert East nodes to TreeNode interface
     const nodes = useMemo(() => convertNodes(value.nodes), [value.nodes]);
 
@@ -97,6 +124,9 @@ export const EastChakraTreeView = memo(function EastChakraTreeView({ value }: Ea
             defaultExpandedValue={defaultExpandedValue}
             defaultSelectedValue={defaultSelectedValue}
             aria-label={label}
+            onExpandedChange={onExpandedChangeFn ? handleExpandedChange : undefined}
+            onSelectionChange={onSelectionChangeFn ? handleSelectionChange : undefined}
+            onFocusChange={onFocusChangeFn ? handleFocusChange : undefined}
         >
             <ChakraTreeView.Tree>
                 {collection.rootNode.children.map((node, index) => (

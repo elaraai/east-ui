@@ -15,15 +15,15 @@ export default East.function(
     ($) => {
         return Stack.VStack([
             Text.Root("Box", { fontWeight: "bold", fontSize: "lg" }),
-            $(boxShowcase()),
+            boxShowcase(),
             Text.Root("Stack", { fontWeight: "bold", fontSize: "lg" }),
-            $(stackShowcase()),
+            stackShowcase(),
             Text.Root("Separator", { fontWeight: "bold", fontSize: "lg" }),
-            $(separatorShowcase()),
+            separatorShowcase(),
             Text.Root("Grid", { fontWeight: "bold", fontSize: "lg" }),
-            $(gridShowcase()),
+            gridShowcase(),
             Text.Root("Splitter", { fontWeight: "bold", fontSize: "lg" }),
-            $(splitterShowcase()),
+            splitterShowcase(),
         ], { gap: "8", align: "stretch" });
     }
 );

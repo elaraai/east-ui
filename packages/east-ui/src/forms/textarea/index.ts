@@ -110,6 +110,9 @@ function createTextarea(
         required: style?.required !== undefined ? variant("some", style.required) : variant("none", null),
         maxLength: maxLengthValue !== undefined ? variant("some", maxLengthValue) : variant("none", null),
         autoresize: style?.autoresize !== undefined ? variant("some", style.autoresize) : variant("none", null),
+        onChange: style?.onChange !== undefined ? variant("some", style.onChange) : variant("none", null),
+        onBlur: style?.onBlur !== undefined ? variant("some", style.onBlur) : variant("none", null),
+        onFocus: style?.onFocus !== undefined ? variant("some", style.onFocus) : variant("none", null),
     }), UIComponentType);
 }
 

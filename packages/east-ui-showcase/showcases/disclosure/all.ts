@@ -13,11 +13,11 @@ export default East.function(
     ($) => {
         return Stack.VStack([
             Text.Root("Accordion", { fontWeight: "bold", fontSize: "lg" }),
-            $(accordionShowcase()),
+            accordionShowcase(),
             Text.Root("Carousel", { fontWeight: "bold", fontSize: "lg" }),
-            $(carouselShowcase()),
+            carouselShowcase(),
             Text.Root("Tabs", { fontWeight: "bold", fontSize: "lg" }),
-            $(tabsShowcase()),
+            tabsShowcase(),
         ], { gap: "8", align: "stretch" });
     }
 );

@@ -8,132 +8,273 @@ import {
     useContext,
     useEffect,
     useMemo,
-    useReducer,
+    useCallback,
+    useSyncExternalStore,
+    useState,
     type ReactNode,
 } from "react";
-import { IRType, BlobType, encodeBeast2For, printFor, type EastIR } from "@elaraai/east";
-import { EastStore } from "./store.js";
+import { State, type UIStoreInterface, UIComponentType } from "@elaraai/east-ui";
+import { PersistentUIStore } from "./store.js";
 import { EastChakraComponent } from "../component.js";
+import type { EastIR, ValueTypeOf } from "@elaraai/east";
+import { Alert, Box, Code, Text, Stack } from "@chakra-ui/react";
 
-// Encoder for IR values - used to create content-based hash
-const encodeIR = encodeBeast2For(IRType);
-// Printer for blobs - used as the hash key
-const printBlob = printFor(BlobType);
-
-/**
- * React context for the EastStore.
- */
-const EastStoreContext = createContext<EastStore | null>(null);
+// Configure the singleton store to use queueMicrotask for deferred notifications.
+// This avoids "setState during render" errors in React.
+State.store.setScheduler((notify) => queueMicrotask(notify));
 
 /**
- * Props for the EastStoreProvider component.
+ * React context for the UI store.
  */
-export interface EastStoreProviderProps {
-    /** The EastStore instance to provide */
-    store: EastStore;
+const UIStoreContext = createContext<UIStoreInterface | null>(null);
+
+/**
+ * Props for the UIStoreProvider component.
+ */
+export interface UIStoreProviderProps {
+    /**
+     * Custom store instance. If not provided, uses State.store singleton.
+     * Use PersistentUIStore for IndexedDB persistence.
+     */
+    store?: UIStoreInterface;
     /** Child components */
     children: ReactNode;
 }
 
 /**
- * Provides an EastStore to the component tree.
+ * Provides a UI store to the component tree.
+ *
+ * @remarks
+ * By default uses the singleton `State.store` from east-ui.
+ * For persistence, pass a `PersistentUIStore` instance.
  *
  * @example
  * ```tsx
- * const store = createEastStore();
- * store.register("dashboard", dashboardFn.toIR());
+ * import { UIStoreProvider } from "@elaraai/east-ui-components";
+ *
+ * // Use default singleton store
+ * function App() {
+ *     return (
+ *         <UIStoreProvider>
+ *             <MyComponent />
+ *         </UIStoreProvider>
+ *     );
+ * }
+ *
+ * // With persistence
+ * import { PersistentUIStore } from "@elaraai/east-ui-components";
+ *
+ * const persistentStore = new PersistentUIStore("my_app");
+ * await persistentStore.hydrate();
  *
  * function App() {
  *     return (
- *         <EastStoreProvider store={store}>
- *             <EastFunction id="dashboard" />
- *         </EastStoreProvider>
+ *         <UIStoreProvider store={persistentStore}>
+ *             <MyComponent />
+ *         </UIStoreProvider>
  *     );
  * }
  * ```
  */
-export function EastStoreProvider({ store, children }: EastStoreProviderProps) {
+export function UIStoreProvider({ store, children }: UIStoreProviderProps) {
+    const storeInstance = store ?? State.store;
+
+    // Expose store for debugging
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            (window as unknown as Record<string, unknown>).__EAST_UI_STORE__ = storeInstance;
+        }
+        return () => {
+            if (typeof window !== "undefined") {
+                delete (window as unknown as Record<string, unknown>).__EAST_UI_STORE__;
+            }
+        };
+    }, [storeInstance]);
+
     return (
-        <EastStoreContext.Provider value={store}>
+        <UIStoreContext.Provider value={storeInstance}>
             {children}
-        </EastStoreContext.Provider>
+        </UIStoreContext.Provider>
     );
 }
 
 /**
- * Hook to access the EastStore from context.
+ * Hook to access the UI store from context.
  *
- * @returns The EastStore instance
- * @throws Error if used outside of an EastStoreProvider
+ * @returns The UIStore instance
+ * @throws Error if used outside of a UIStoreProvider
  */
-export function useEastStore(): EastStore {
-    const store = useContext(EastStoreContext);
+export function useUIStore(): UIStoreInterface {
+    const store = useContext(UIStoreContext);
     if (!store) {
-        throw new Error("useEastStore must be used within an EastStoreProvider");
+        throw new Error("useUIStore must be used within a UIStoreProvider");
     }
     return store;
+}
+
+/**
+ * Hook to subscribe to store changes using React 18's useSyncExternalStore.
+ *
+ * @param store - The store to subscribe to
+ * @returns The current snapshot version
+ */
+export function useUIStoreSubscription(store: UIStoreInterface): number {
+    const subscribe = useCallback((cb: () => void) => store.subscribe(cb), [store]);
+    const getSnapshot = useCallback(() => store.getSnapshot(), [store]);
+
+    return useSyncExternalStore(subscribe, getSnapshot);
+}
+
+/**
+ * Props for the EastComponent component.
+ */
+export interface EastComponentProps {
+    /** The compiled East function that returns UI component data */
+    render: () => ValueTypeOf<UIComponentType>;
+}
+
+/**
+ * Renders an East UI component once without subscribing to state changes.
+ *
+ * @remarks
+ * Pass a compiled East function that returns UIComponentType data.
+ * This component renders once and does NOT re-render on state changes.
+ * For reactive behavior, use `Reactive.Root` within your East function.
+ *
+ * @example
+ * ```tsx
+ * import { East, IntegerType, NullType, some } from "@elaraai/east";
+ * import { State, Button, Reactive, UIComponentType } from "@elaraai/east-ui";
+ * import { EastComponent, UIStoreProvider } from "@elaraai/east-ui-components";
+ *
+ * // Define an East function with reactive parts
+ * const counter = East.function([], UIComponentType, $ => {
+ *     // Wrap reactive parts in Reactive.Root
+ *     return Reactive.Root($ => {
+ *         const count = $(State.readTyped("counter", IntegerType)());
+ *         return Button.Root(East.str`Count: ${count.unwrap("some")}`, {
+ *             onClick: East.function([], NullType, $ => {
+ *                 const current = $(State.readTyped("counter", IntegerType)());
+ *                 $(State.writeTyped("counter", some(current.unwrap("some").add(1n)), IntegerType)());
+ *             })
+ *         });
+ *     });
+ * });
+ *
+ * // Compile with State.Implementation
+ * const compiled = counter.toIR().compile(State.Implementation);
+ *
+ * function App() {
+ *     return (
+ *         <UIStoreProvider>
+ *             <EastComponent render={compiled} />
+ *         </UIStoreProvider>
+ *     );
+ * }
+ * ```
+ */
+export function EastComponent({ render }: EastComponentProps) {
+    // Render once - no state subscription
+    // For reactivity, use Reactive.Root within the East function
+    const result = useMemo(() => render(), [render]);
+
+    if (result === undefined || result === null) {
+        return null;
+    }
+
+    // Result should be UI component data - render it
+    return <EastChakraComponent value={result} />;
 }
 
 /**
  * Props for the EastFunction component.
  */
 export interface EastFunctionProps {
-    /** The East IR to compile and render */
-    ir: EastIR<[Map<string, Uint8Array>], any>;
+    /**
+     * The IR (intermediate representation) from calling `.toIR()` on an East function.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ir: EastIR<[], UIComponentType>;
 }
 
 /**
- * Renders an East function that takes state and returns a UI component.
- * Automatically registers the function and re-renders when state changes.
+ * Renders a compiled East function that returns a UI component.
  *
- * The function is identified by a content-based hash of its IR,
- * so the same function can be used in multiple places without
- * manual ID management.
+ * @remarks
+ * This component takes an IR (intermediate representation) from an East function,
+ * compiles it with the State.Implementation platform, and renders the result.
+ * The compilation happens once on mount.
+ *
+ * This component renders once and does NOT re-render on state changes.
+ * For reactive behavior, use `Reactive.Root` within your East function.
  *
  * @example
  * ```tsx
- * const counter = East.function(
- *     [DictType(StringType, BlobType)],
- *     UIComponentType,
- *     ($, state) => {
- *         const count = state.get("count").decodeBeast(IntegerType, "v2");
- *         return Text.Root(East.str`Count: ${count}`);
- *     }
- * );
+ * import { East } from "@elaraai/east";
+ * import { EastFunction } from "@elaraai/east-ui-components";
+ * import { Button, Reactive, UIComponentType } from "@elaraai/east-ui";
  *
- * // Use directly - no manual registration needed
- * <EastFunction ir={counter.toIR()} />
+ * // Define the UI function with reactive parts
+ * const myUI = East.function([], UIComponentType, $ => {
+ *     return Reactive.Root($ => {
+ *         return Button.Root("Click me");
+ *     });
+ * });
+ *
+ * // Pre-compile IR at module load time for performance
+ * const myUIIR = myUI.toIR();
+ *
+ * function App() {
+ *     return <EastFunction ir={myUIIR} />;
+ * }
  * ```
  */
 export function EastFunction({ ir }: EastFunctionProps) {
-    const store = useEastStore();
-    const [, forceUpdate] = useReducer((x) => x + 1, 0);
-
-    // Create a content-based hash of the IR for registration
-    const id = useMemo(() => {
-        const encoded = encodeIR(ir.ir);
-        return printBlob(encoded);
+    // Compile IR with State.Implementation once on mount, with error handling
+    const result = useMemo(() => {
+        try {
+            return { compiled: ir.compile(State.Implementation), error: null };
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : String(err);
+            const errorStack = err instanceof Error ? err.stack : undefined;
+            return { compiled: null, error: { message: errorMessage, stack: errorStack } };
+        }
     }, [ir]);
 
-    // Register the function if not already registered
-    useMemo(() => {
-        if (store.getResult(id) === undefined) {
-            store.register(id, ir);
-        }
-    }, [store, id, ir]);
-
-    useEffect(() => {
-        return store.subscribe(forceUpdate);
-    }, [store]);
-
-    const result = store.getResult(id);
-
-    if (result === undefined) {
-        return null;
+    // Show error alert if compilation failed
+    if (result.error) {
+        return (
+            <Alert.Root status="error">
+                <Alert.Indicator />
+                <Stack gap="2" flex="1">
+                    <Alert.Title>East Compilation Error</Alert.Title>
+                    <Alert.Description>
+                        <Box>
+                            <Text fontWeight="medium">{result.error.message}</Text>
+                            {result.error.stack && (
+                                <Code
+                                    display="block"
+                                    whiteSpace="pre-wrap"
+                                    fontSize="xs"
+                                    mt="2"
+                                    p="2"
+                                    bg="red.50"
+                                    _dark={{ bg: "red.900" }}
+                                    borderRadius="md"
+                                    maxHeight="200px"
+                                    overflow="auto"
+                                >
+                                    {result.error.stack}
+                                </Code>
+                            )}
+                        </Box>
+                    </Alert.Description>
+                </Stack>
+            </Alert.Root>
+        );
     }
 
-    // Result should be a UI component value - render it
-    return <EastChakraComponent value={result} />;
+    return <EastComponent render={result.compiled!} />;
 }
 
 /**
@@ -144,19 +285,14 @@ export function EastFunction({ ir }: EastFunctionProps) {
  * @example
  * ```tsx
  * function StateDebugger() {
- *     const state = useEastState();
+ *     const state = useUIState();
  *     return <pre>{JSON.stringify([...state.entries()], null, 2)}</pre>;
  * }
  * ```
  */
-export function useEastState(): Map<string, Uint8Array> {
-    const store = useEastStore();
-    const [, forceUpdate] = useReducer((x) => x + 1, 0);
-
-    useEffect(() => {
-        return store.subscribe(forceUpdate);
-    }, [store]);
-
+export function useUIState(): Map<string, Uint8Array> {
+    const store = useUIStore();
+    useUIStoreSubscription(store);
     return store.getState();
 }
 
@@ -169,22 +305,22 @@ export function useEastState(): Map<string, Uint8Array> {
  * @example
  * ```tsx
  * function CountDisplay() {
- *     const countBlob = useEastKey("count");
+ *     const countBlob = useUIKey("count");
  *     // Decode the blob in your component or pass to East code
  *     return <div>Count blob: {countBlob?.length ?? 0} bytes</div>;
  * }
  * ```
  */
-export function useEastKey(key: string): Uint8Array | undefined {
-    const store = useEastStore();
-    const [, forceUpdate] = useReducer((x) => x + 1, 0);
+export function useUIKey(key: string): Uint8Array | undefined {
+    const store = useUIStore();
 
-    useEffect(() => {
-        return store.subscribe(key, forceUpdate);
-    }, [store, key]);
+    const subscribe = useCallback(
+        (cb: () => void) => store.subscribe(key, cb),
+        [store, key]
+    );
+    const getSnapshot = useCallback(() => store.read(key), [store, key]);
 
-    const value = store.read(key);
-    return value.length > 0 ? value : undefined;
+    return useSyncExternalStore(subscribe, getSnapshot);
 }
 
 /**
@@ -194,18 +330,24 @@ export function useEastKey(key: string): Uint8Array | undefined {
  *
  * @example
  * ```tsx
+ * import { encodeBeast2For } from "@elaraai/east/internal";
+ * import { IntegerType } from "@elaraai/east";
+ *
  * function ResetButton() {
- *     const write = useEastWrite();
+ *     const write = useUIWrite();
  *     const handleReset = () => {
- *         write("count", encodeBeast2(0n));
+ *         write("count", encodeBeast2For(IntegerType)(0n));
  *     };
  *     return <button onClick={handleReset}>Reset</button>;
  * }
  * ```
  */
-export function useEastWrite(): (key: string, value: Uint8Array) => void {
-    const store = useEastStore();
-    return (key: string, value: Uint8Array) => store.write(key, value);
+export function useUIWrite(): (key: string, value: Uint8Array | undefined) => void {
+    const store = useUIStore();
+    return useCallback(
+        (key: string, value: Uint8Array | undefined) => store.write(key, value),
+        [store]
+    );
 }
 
 /**
@@ -216,14 +358,14 @@ export function useEastWrite(): (key: string, value: Uint8Array) => void {
  * @example
  * ```tsx
  * function MultiUpdate() {
- *     const batch = useEastBatch();
- *     const write = useEastWrite();
+ *     const batch = useUIBatch();
+ *     const write = useUIWrite();
  *
  *     const handleUpdate = () => {
  *         batch(() => {
- *             write("a", encodeBeast2(1n));
- *             write("b", encodeBeast2(2n));
- *             write("c", encodeBeast2(3n));
+ *             write("a", encodeBeast2For(IntegerType)(1n));
+ *             write("b", encodeBeast2For(IntegerType)(2n));
+ *             write("c", encodeBeast2For(IntegerType)(3n));
  *         });
  *         // All writes processed, single re-render
  *     };
@@ -232,7 +374,15 @@ export function useEastWrite(): (key: string, value: Uint8Array) => void {
  * }
  * ```
  */
-export function useEastBatch(): <T>(fn: () => T) => T {
-    const store = useEastStore();
-    return <T,>(fn: () => T) => store.batch(fn);
+export function useUIBatch(): <T>(fn: () => T) => T {
+    const store = useUIStore();
+    return useCallback(<T,>(fn: () => T) => store.batch(fn), [store]);
 }
+
+// Legacy aliases for backwards compatibility
+export { UIStoreProvider as EastStoreProvider };
+export { useUIStore as useEastStore };
+export { useUIState as useEastState };
+export { useUIKey as useEastKey };
+export { useUIWrite as useEastWrite };
+export { useUIBatch as useEastBatch };

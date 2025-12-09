@@ -16,7 +16,8 @@ export interface GanttMilestoneProps {
     y: number;
     height: number;
     value: GanttMilestoneValue;
-    onClick?: () => void;
+    onClick?: (() => void) | undefined;
+    onDoubleClick?: (() => void) | undefined;
 }
 
 const makeDiamondPoints = (x: number, y: number, size: number): string => {
@@ -31,6 +32,7 @@ export const GanttMilestone = ({
     height,
     value,
     onClick,
+    onDoubleClick,
 }: GanttMilestoneProps) => {
     const [isHovered, setIsHovered] = useState(false);
 
@@ -64,9 +66,10 @@ export const GanttMilestone = ({
                 strokeWidth={isHovered ? 3 : 2}
                 opacity={isHovered ? 1 : 0.9}
                 onClick={onClick}
+                onDoubleClick={onDoubleClick}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-                style={{ cursor: onClick ? "pointer" : "default" }}
+                style={{ cursor: onClick || onDoubleClick ? "pointer" : "default" }}
             />
 
             {/* Label */}
@@ -83,7 +86,7 @@ export const GanttMilestone = ({
                         color="fg.default"
                         opacity={isHovered ? 1 : 0.9}
                         whiteSpace="nowrap"
-                        cursor={onClick ? "pointer" : "default"}
+                        cursor={onClick || onDoubleClick ? "pointer" : "default"}
                         userSelect="none"
                         lineHeight="1"
                         display="flex"
@@ -92,6 +95,7 @@ export const GanttMilestone = ({
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeave}
                         onClick={onClick}
+                        onDoubleClick={onDoubleClick}
                         m={0}
                         p={0}
                     >

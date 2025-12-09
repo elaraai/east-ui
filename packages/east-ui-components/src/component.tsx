@@ -71,6 +71,7 @@ import {
     EastChakraActionBar,
     EastChakraToggleTip,
 } from "./overlays";
+import { EastReactiveComponent } from "./reactive";
 
 // Pre-define the equality function at module level
 const uiComponentEqual = equalFor(UIComponentType);
@@ -168,6 +169,9 @@ export const EastChakraComponent = memo(function EastChakraComponent({ value }: 
             Drawer: (v) => <EastChakraDrawer value={v} />,
             ActionBar: (v) => <EastChakraActionBar value={v} />,
             ToggleTip: (v) => <EastChakraToggleTip value={v} />,
+
+            // Reactive
+            ReactiveComponent: (v) => <EastReactiveComponent value={v} />,
         });
     }, [value]);
 

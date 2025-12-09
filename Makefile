@@ -18,8 +18,7 @@ lint:
 
 # Run the showcase dev server
 dev:
-	rm -rf packages/east-ui-showcase/node_modules/.vite
-	. ${NVM_DIR}/nvm.sh && nvm use && npm run dev
+	rm -rf ./packages/east-ui-showcase/node_modules/.vite && . ${NVM_DIR}/nvm.sh && nvm use && npm run dev
 
 # Build and package the VSCode extension
 extension:
@@ -56,3 +55,22 @@ version-minor:
 
 version-major:
 	. ${NVM_DIR}/nvm.sh && nvm use && npm run version:all:major
+
+# Link local east package for development/testing
+# Usage: make link-local-east EAST_PATH=../east
+link-local-east:
+ifndef EAST_PATH
+	$(error EAST_PATH is required. Usage: make link-local-east EAST_PATH=../east)
+endif
+	@echo "Linking local east from $(EAST_PATH)..."
+	cd $(EAST_PATH) && npm link
+	npm link @elaraai/east
+	@echo ""
+	@echo "Now using LOCAL east from $(EAST_PATH). Remember to 'make unlink-local-east' when done!"
+
+# Unlink local east and restore npm version
+unlink-local-east:
+	@echo "Restoring npm version of east..."
+	npm install @elaraai/east
+	@echo ""
+	@echo "Now using NPM east."

@@ -8,8 +8,9 @@ import {
     type SubtypeExprOrValue,
     East,
     StringType,
-    BooleanType,
     variant,
+    some,
+    none,
 } from "@elaraai/east";
 
 import { ColorSchemeType, StyleVariantType } from "../../style.js";
@@ -36,36 +37,21 @@ export { TagType, TagSizeType, type TagStyle, type TagSizeLiteral } from "./type
  *
  * @example
  * ```ts
- * import { Tag } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Tag, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple tag
- * const tag = Tag.Root("JavaScript");
- *
- * // Styled tag
- * const styled = Tag.Root("Featured", {
- *   colorPalette: "blue",
- *   variant: "solid",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Tag.Root("Featured", {
+ *         colorPalette: "blue",
+ *         variant: "solid",
+ *     });
  * });
- *
- * // Closable tag
- * const closable = Tag.Root("React", {
- *   colorPalette: "cyan",
- *   closable: true,
- * });
- *
- * // Access the type
- * const tagType = Tag.Types.Tag;
  * ```
  */
 function createTag(
     label: SubtypeExprOrValue<StringType>,
     style?: TagStyle
 ): ExprType<UIComponentType> {
-    const toBoolOption = (val: SubtypeExprOrValue<BooleanType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        return variant("some", val);
-    };
-
     const variantValue = style?.variant
         ? (typeof style.variant === "string"
             ? East.value(variant(style.variant, null), StyleVariantType)
@@ -86,10 +72,11 @@ function createTag(
 
     return East.value(variant("Tag", {
         label: label,
-        variant: variantValue ? variant("some", variantValue) : variant("none", null),
-        colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
-        size: sizeValue ? variant("some", sizeValue) : variant("none", null),
-        closable: toBoolOption(style?.closable),
+        variant: variantValue ? some(variantValue) : none,
+        colorPalette: colorPaletteValue ? some(colorPaletteValue) : none,
+        size: sizeValue ? some(sizeValue) : none,
+        closable: style?.closable !== undefined ? some(style.closable) : none,
+        onClose: style?.onClose ? some(style.onClose) : none,
     }), UIComponentType);
 }
 
@@ -98,17 +85,6 @@ function createTag(
  *
  * @remarks
  * Use `Tag.Root(label, style)` to create a tag, or access `Tag.Types.Tag` for the East type.
- *
- * @example
- * ```ts
- * import { Tag } from "@elaraai/east-ui";
- *
- * // Create a tag
- * const tag = Tag.Root("JavaScript", { colorPalette: "yellow" });
- *
- * // Access the type
- * const tagType = Tag.Types.Tag;
- * ```
  */
 export const Tag = {
     /**

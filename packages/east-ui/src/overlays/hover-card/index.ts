@@ -115,16 +115,20 @@ function createHoverCard(
             : style.placement)
         : undefined;
 
+    const hasStyle = sizeValue || placementValue || style?.hasArrow !== undefined ||
+        style?.openDelay !== undefined || style?.closeDelay !== undefined || style?.onOpenChange !== undefined;
+
     return East.value(variant("HoverCard", {
         trigger: trigger,
         body: body,
-        style: sizeValue || placementValue || style?.hasArrow !== undefined || style?.openDelay !== undefined || style?.closeDelay !== undefined
+        style: hasStyle
             ? variant("some", East.value({
                 size: sizeValue ? variant("some", sizeValue) : variant("none", null),
                 placement: placementValue ? variant("some", placementValue) : variant("none", null),
                 hasArrow: style?.hasArrow !== undefined ? variant("some", style.hasArrow) : variant("none", null),
                 openDelay: style?.openDelay !== undefined ? variant("some", style.openDelay) : variant("none", null),
                 closeDelay: style?.closeDelay !== undefined ? variant("some", style.closeDelay) : variant("none", null),
+                onOpenChange: style?.onOpenChange !== undefined ? variant("some", style.onOpenChange) : variant("none", null),
             }, HoverCardStyleType))
             : variant("none", null),
     }), UIComponentType);

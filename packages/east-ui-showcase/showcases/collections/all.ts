@@ -14,13 +14,13 @@ export default East.function(
     ($) => {
         return Stack.VStack([
             Text.Root("DataList", { fontWeight: "bold", fontSize: "lg" }),
-            $(dataListShowcase()),
+            dataListShowcase(),
             Text.Root("Table", { fontWeight: "bold", fontSize: "lg" }),
-            $(tableShowcase()),
+            tableShowcase(),
             Text.Root("TreeView", { fontWeight: "bold", fontSize: "lg" }),
-            $(treeViewShowcase()),
+            treeViewShowcase(),
             Text.Root("Gantt", { fontWeight: "bold", fontSize: "lg" }),
-            $(ganttShowcase()),
+            ganttShowcase(),
         ], { gap: "8", align: "stretch" });
     }
 );

@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import {
     Carousel as ChakraCarousel,
     type CarouselRootProps,
@@ -59,9 +59,19 @@ export const EastChakraCarousel = memo(function EastChakraCarousel({ value }: Ea
     const props = useMemo(() => toChakraCarousel(value), [value]);
     const showControls = getSomeorUndefined(value.showControls) ?? true;
     const showIndicators = getSomeorUndefined(value.showIndicators) ?? true;
+    const onIndexChangeFn = useMemo(() => {
+        const style = getSomeorUndefined(value.style);
+        return style ? getSomeorUndefined(style.onIndexChange) : undefined;
+    }, [value.style]);
+
+    const handlePageChange = useCallback((details: { page: number }) => {
+        if (onIndexChangeFn) {
+            queueMicrotask(() => onIndexChangeFn(BigInt(details.page)));
+        }
+    }, [onIndexChangeFn]);
 
     return (
-        <ChakraCarousel.Root {...props}>
+        <ChakraCarousel.Root {...props} onPageChange={onIndexChangeFn ? handlePageChange : undefined}>
             <ChakraCarousel.ItemGroup>
                 {value.items.map((item, index) => (
                     <ChakraCarousel.Item key={index} index={index}>

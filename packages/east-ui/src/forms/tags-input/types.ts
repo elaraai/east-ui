@@ -13,6 +13,7 @@ import {
     ArrayType,
     VariantType,
     NullType,
+    FunctionType,
 } from "@elaraai/east";
 
 import { SizeType } from "../../style.js";
@@ -83,6 +84,9 @@ export type TagsInputBlurBehaviorLiteral = "clear" | "add";
  * @property size - Size of the input
  * @property variant - Visual style variant
  * @property colorPalette - Color scheme for tags
+ * @property onChange - Callback triggered when tags change
+ * @property onInputChange - Callback triggered when input text changes
+ * @property onHighlightChange - Callback triggered when highlighted tag changes
  */
 export const TagsInputRootType = StructType({
     /** Array of current tag values */
@@ -124,6 +128,13 @@ export const TagsInputRootType = StructType({
     variant: OptionType(InputVariantType),
     /** Color scheme for tags */
     colorPalette: OptionType(ColorSchemeType),
+
+    /** Callback triggered when tags change */
+    onChange: OptionType(FunctionType([ArrayType(StringType)], NullType)),
+    /** Callback triggered when input text changes */
+    onInputChange: OptionType(FunctionType([StringType], NullType)),
+    /** Callback triggered when highlighted tag changes */
+    onHighlightChange: OptionType(FunctionType([OptionType(StringType)], NullType)),
 });
 
 /**
@@ -154,6 +165,9 @@ export type TagsInputRootType = typeof TagsInputRootType;
  * @property size - Size of the input
  * @property variant - Visual style variant
  * @property colorPalette - Color scheme for tags
+ * @property onChange - Callback triggered when tags change
+ * @property onInputChange - Callback triggered when input text changes
+ * @property onHighlightChange - Callback triggered when highlighted tag changes
  */
 export interface TagsInputStyle {
     /** Initial tag values */
@@ -188,4 +202,10 @@ export interface TagsInputStyle {
     variant?: SubtypeExprOrValue<InputVariantType> | InputVariantLiteral;
     /** Color scheme for tags */
     colorPalette?: SubtypeExprOrValue<ColorSchemeType> | ColorSchemeLiteral;
+    /** Callback triggered when tags change */
+    onChange?: SubtypeExprOrValue<FunctionType<[ArrayType<typeof StringType>], NullType>>;
+    /** Callback triggered when input text changes */
+    onInputChange?: SubtypeExprOrValue<FunctionType<[typeof StringType], NullType>>;
+    /** Callback triggered when highlighted tag changes */
+    onHighlightChange?: SubtypeExprOrValue<FunctionType<[OptionType<typeof StringType>], NullType>>;
 }

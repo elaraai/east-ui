@@ -98,13 +98,16 @@ function createToggleTip(
             : style.placement)
         : undefined;
 
+    const hasStyle = placementValue || style?.hasArrow !== undefined || style?.onOpenChange !== undefined;
+
     return East.value(variant("ToggleTip", {
         trigger: trigger,
         content: content,
-        style: placementValue || style?.hasArrow !== undefined
+        style: hasStyle
             ? variant("some", East.value({
                 placement: placementValue ? variant("some", placementValue) : variant("none", null),
                 hasArrow: style?.hasArrow !== undefined ? variant("some", style.hasArrow) : variant("none", null),
+                onOpenChange: style?.onOpenChange !== undefined ? variant("some", style.onOpenChange) : variant("none", null),
             }, ToggleTipStyleType))
             : variant("none", null),
     }), UIComponentType);

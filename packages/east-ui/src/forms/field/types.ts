@@ -20,7 +20,6 @@ import {
  * Field wraps a form control (Input, Select, Checkbox, etc.) with
  * a label and optional helper/error text.
  *
- * @property label - Label text for the field
  * @property helperText - Optional descriptive help text
  * @property errorText - Optional validation error message
  * @property required - Whether the field is required

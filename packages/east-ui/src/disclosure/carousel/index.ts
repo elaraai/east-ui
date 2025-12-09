@@ -84,31 +84,19 @@ export type CarouselRootType = typeof CarouselRootType;
  *
  * @example
  * ```ts
- * import { Carousel, Box, Text } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Carousel, Box, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple image carousel
- * const carousel = Carousel.Root([
- *   Carousel.Item(Box.Root([Text.Root("Slide 1")])),
- *   Carousel.Item(Box.Root([Text.Root("Slide 2")])),
- *   Carousel.Item(Box.Root([Text.Root("Slide 3")])),
- * ], {
- *   loop: true,
- *   showIndicators: true,
- *   showControls: true,
- * });
- *
- * // Multi-slide carousel
- * const multiSlide = Carousel.Root(items, {
- *   slidesPerView: 3n,
- *   slidesPerMove: 1n,
- *   spacing: "4",
- * });
- *
- * // Autoplay carousel
- * const autoplay = Carousel.Root(banners, {
- *   autoplay: true,
- *   loop: true,
- *   allowMouseDrag: true,
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Carousel.Root([
+ *         Box.Root([Text.Root("Slide 1")]),
+ *         Box.Root([Text.Root("Slide 2")]),
+ *         Box.Root([Text.Root("Slide 3")]),
+ *     ], {
+ *         loop: true,
+ *         showIndicators: true,
+ *         showControls: true,
+ *     });
  * });
  * ```
  */
@@ -124,11 +112,13 @@ function createCarousel(
         : undefined;
 
     // Build style object if any style properties are provided
-    const styleValue = (orientationValue || style?.spacing || style?.padding)
+    const hasStyleProps = orientationValue || style?.spacing || style?.padding || style?.onIndexChange !== undefined;
+    const styleValue = hasStyleProps
         ? variant("some", East.value({
             orientation: orientationValue ? variant("some", orientationValue) : variant("none", null),
             spacing: style?.spacing !== undefined ? variant("some", style.spacing) : variant("none", null),
             padding: style?.padding !== undefined ? variant("some", style.padding) : variant("none", null),
+            onIndexChange: style?.onIndexChange !== undefined ? variant("some", style.onIndexChange) : variant("none", null),
         }, CarouselStyleType))
         : variant("none", null);
 
@@ -156,27 +146,6 @@ function createCarousel(
  *
  * @remarks
  * Carousel provides a slideshow component for cycling through content.
- *
- * @example
- * ```ts
- * import { Carousel, Box, Text } from "@elaraai/east-ui";
- *
- * // Basic carousel with indicators
- * const carousel = Carousel.Root([
- *   Carousel.Item(Box.Root([Text.Root("Slide 1")])),
- *   Carousel.Item(Box.Root([Text.Root("Slide 2")])),
- * ], {
- *   showIndicators: true,
- *   showControls: true,
- *   loop: true,
- * });
- *
- * // Vertical carousel
- * const vertical = Carousel.Root(items, {
- *   orientation: "vertical",
- *   slidesPerView: 1n,
- * });
- * ```
  */
 export const Carousel = {
     /**

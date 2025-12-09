@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import {
     Accordion as ChakraAccordion,
     type AccordionRootProps,
@@ -83,9 +83,19 @@ export interface EastChakraAccordionProps {
  */
 export const EastChakraAccordion = memo(function EastChakraAccordion({ value }: EastChakraAccordionProps) {
     const props = useMemo(() => toChakraAccordionRoot(value), [value]);
+    const onValueChangeFn = useMemo(() => {
+        const style = getSomeorUndefined(value.style);
+        return style ? getSomeorUndefined(style.onValueChange) : undefined;
+    }, [value.style]);
+
+    const handleValueChange = useCallback((details: { value: string[] }) => {
+        if (onValueChangeFn) {
+            queueMicrotask(() => onValueChangeFn(details.value));
+        }
+    }, [onValueChangeFn]);
 
     return (
-        <ChakraAccordion.Root {...props}>
+        <ChakraAccordion.Root {...props} onValueChange={onValueChangeFn ? handleValueChange : undefined}>
             {value.items.map((item, index) => (
                 <EastChakraAccordionItem key={item.value || index} value={item} />
             ))}

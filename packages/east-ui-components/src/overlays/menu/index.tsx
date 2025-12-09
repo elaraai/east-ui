@@ -29,6 +29,10 @@ export interface EastChakraMenuProps {
 export const EastChakraMenu = memo(function EastChakraMenu({ value }: EastChakraMenuProps) {
     const placement = useMemo(() => getSomeorUndefined(value.placement)?.type, [value.placement]);
 
+    // Note: Menu callbacks (onSelect, onOpenChange) are defined in east-ui MenuStyleType
+    // but the Menu component type doesn't currently include a style property.
+    // The Menu.Root factory would need to be updated to include style.
+
     return (
         <ChakraMenu.Root positioning={placement ? { placement } : undefined}>
             <ChakraMenu.Trigger asChild>

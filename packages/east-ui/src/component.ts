@@ -13,7 +13,8 @@ import {
     IntegerType,
     FloatType,
     BooleanType,
-    DictType
+    DictType,
+    FunctionType
 } from "@elaraai/east";
 
 // Typography
@@ -90,7 +91,7 @@ import { DialogStyleType } from "./overlays/dialog/types.js";
 import { DrawerStyleType } from "./overlays/drawer/types.js";
 import { PopoverStyleType } from "./overlays/popover/types.js";
 import { HoverCardStyleType } from "./overlays/hover-card/types.js";
-import { ActionBarItemType } from "./overlays/action-bar/types.js";
+import { ActionBarItemType, ActionBarStyleType } from "./overlays/action-bar/types.js";
 import { ToggleTipStyleType } from "./overlays/toggle-tip/types.js";
 
 /**
@@ -382,13 +383,19 @@ export const UIComponentType = RecursiveType(node => VariantType({
         items: ArrayType(ActionBarItemType),
         selectionCount: OptionType(IntegerType),
         selectionLabel: OptionType(StringType),
-        style: OptionType(StructType({})),
+        style: OptionType(ActionBarStyleType),
     }),
 
     ToggleTip: StructType({
         trigger: node,
         content: StringType,
         style: OptionType(ToggleTipStyleType),
+    }),
+
+    // Reactive - for selective re-rendering
+    ReactiveComponent: StructType({
+        /** The render function to execute - returns UIComponentType */
+        render: FunctionType([], node),
     }),
 }));
 

@@ -116,16 +116,21 @@ function createDrawer(
             : style.placement)
         : undefined;
 
+    const hasStyle = sizeValue || placementValue || style?.contained !== undefined ||
+        style?.onOpenChange !== undefined || style?.onExitComplete !== undefined;
+
     return East.value(variant("Drawer", {
         trigger: trigger,
         body: body,
         title: style?.title !== undefined ? variant("some", style.title) : variant("none", null),
         description: style?.description !== undefined ? variant("some", style.description) : variant("none", null),
-        style: sizeValue || placementValue || style?.contained !== undefined
+        style: hasStyle
             ? variant("some", East.value({
                 size: sizeValue ? variant("some", sizeValue) : variant("none", null),
                 placement: placementValue ? variant("some", placementValue) : variant("none", null),
                 contained: style?.contained !== undefined ? variant("some", style.contained) : variant("none", null),
+                onOpenChange: style?.onOpenChange !== undefined ? variant("some", style.onOpenChange) : variant("none", null),
+                onExitComplete: style?.onExitComplete !== undefined ? variant("some", style.onExitComplete) : variant("none", null),
             }, DrawerStyleType))
             : variant("none", null),
     }), UIComponentType);

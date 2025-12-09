@@ -7,9 +7,10 @@ import {
     type ExprType,
     type SubtypeExprOrValue,
     East,
-    StringType,
     BooleanType,
     variant,
+    some,
+    none,
 } from "@elaraai/east";
 
 import { SizeType, ColorSchemeType } from "../../style.js";
@@ -64,16 +65,6 @@ function createSwitch(
     checked: SubtypeExprOrValue<BooleanType>,
     style?: SwitchStyle
 ): ExprType<UIComponentType> {
-    const toStringOption = (val: SubtypeExprOrValue<StringType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        return variant("some", val);
-    };
-
-    const toBoolOption = (val: SubtypeExprOrValue<BooleanType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        return variant("some", val);
-    };
-
     const colorPaletteValue = style?.colorPalette
         ? (typeof style.colorPalette === "string"
             ? East.value(variant(style.colorPalette, null), ColorSchemeType)
@@ -88,10 +79,11 @@ function createSwitch(
 
     return East.value(variant("Switch", {
         checked: checked,
-        label: toStringOption(style?.label),
-        disabled: toBoolOption(style?.disabled),
-        colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
-        size: sizeValue ? variant("some", sizeValue) : variant("none", null),
+        label: style?.label ? some(style.label) : none,
+        disabled: style?.disabled !== undefined ? some(style.disabled) : none,
+        colorPalette: colorPaletteValue ? some(colorPaletteValue) : none,
+        size: sizeValue ? some(sizeValue) : none,
+        onChange: style?.onChange ? some(style.onChange) : none,
     }), UIComponentType);
 }
 

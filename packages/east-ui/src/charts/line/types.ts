@@ -80,6 +80,14 @@ export type LineChartType = typeof LineChartType;
  *
  * @remarks
  * All properties are optional and accept either static values or East expressions.
+ *
+ * @property xAxis - X-axis configuration
+ * @property yAxis - Y-axis configuration
+ * @property curveType - Line curve interpolation type
+ * @property showDots - Show dots at data points
+ * @property strokeWidth - Line stroke width in pixels
+ * @property connectNulls - Connect line across null data points
+ * @property margin - Chart margin configuration
  */
 export interface LineChartStyle extends BaseChartStyle {
     /** X-axis configuration */
@@ -99,7 +107,16 @@ export interface LineChartStyle extends BaseChartStyle {
 }
 
 /**
- * Series configuration for Line charts (used in createLineChart).
+ * Series configuration for Line charts.
+ *
+ * @remarks
+ * Configures how a data field is rendered as a series in the line chart.
+ *
+ * @property color - Chakra color token (e.g., "teal.solid", "blue.500")
+ * @property label - Display label (defaults to field name)
+ * @property stroke - Stroke/line color (defaults to color)
+ * @property strokeWidth - Stroke/line width in pixels
+ * @property strokeDasharray - Dash pattern for dashed lines (e.g., "5 5")
  */
 export interface LineChartSeriesConfig {
     /** Chakra color token (e.g., "teal.solid", "blue.500") */

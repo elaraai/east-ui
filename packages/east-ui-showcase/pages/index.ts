@@ -13,5 +13,6 @@ export { LayoutPage } from "./LayoutPage";
 export { DisclosurePage } from "./DisclosurePage";
 export { CollectionsPage } from "./CollectionsPage";
 export { PlatformPage } from "./PlatformPage";
+export { ReactivePage } from "./ReactivePage";
 export { ContainerPage } from "./ContainerPage";
 export { OverlaysPage } from "./OverlaysPage";

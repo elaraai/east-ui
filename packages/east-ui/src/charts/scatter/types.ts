@@ -75,6 +75,12 @@ export type ScatterChartType = typeof ScatterChartType;
  *
  * @remarks
  * All properties are optional and accept either static values or East expressions.
+ *
+ * @property xAxis - X-axis configuration
+ * @property yAxis - Y-axis configuration
+ * @property xDataKey - Data key for X values
+ * @property yDataKey - Data key for Y values
+ * @property pointSize - Size of scatter points
  */
 export interface ScatterChartStyle extends BaseChartStyle {
     /** X-axis configuration */
@@ -90,7 +96,14 @@ export interface ScatterChartStyle extends BaseChartStyle {
 }
 
 /**
- * Series configuration for Scatter charts (used in createScatterChart).
+ * Series configuration for Scatter charts.
+ *
+ * @remarks
+ * Configures how a data field is rendered as a series in the scatter chart.
+ *
+ * @property color - Chakra color token (e.g., "teal.solid", "blue.500")
+ * @property label - Display label (defaults to name)
+ * @property fill - Fill color for points
  */
 export interface ScatterChartSeriesConfig {
     /** Chakra color token (e.g., "teal.solid", "blue.500") */

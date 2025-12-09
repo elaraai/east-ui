@@ -25,10 +25,9 @@ import type { SizeLiteral } from "../../style.js";
 /**
  * Variant types for Card visual style.
  *
- * @remarks
- * - elevated: Card with shadow/elevation
- * - outline: Card with border outline
- * - subtle: Card with subtle background
+ * @property elevated - Card with shadow/elevation
+ * @property outline - Card with border outline
+ * @property subtle - Card with subtle background
  */
 export const CardVariantType = VariantType({
     /** Card with shadow/elevation */

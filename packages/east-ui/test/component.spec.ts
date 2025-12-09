@@ -210,6 +210,7 @@ describeEast("UIComponentType - Nested Components", (test) => {
                                     colorPalette: variant("some", variant("blue", null)),
                                     size: variant("none", null),
                                     closable: variant("none", null),
+                                    onClose: variant("none", null),
                                 }),
                                 variant("Tag", {
                                     label: "Reports",
@@ -217,6 +218,7 @@ describeEast("UIComponentType - Nested Components", (test) => {
                                     colorPalette: variant("some", variant("purple", null)),
                                     size: variant("none", null),
                                     closable: variant("none", null),
+                                    onClose: variant("none", null),
                                 }),
                                 variant("Tag", {
                                     label: "Settings",
@@ -224,6 +226,7 @@ describeEast("UIComponentType - Nested Components", (test) => {
                                     colorPalette: variant("some", variant("gray", null)),
                                     size: variant("none", null),
                                     closable: variant("none", null),
+                                    onClose: variant("none", null),
                                 }),
                             ],
                             style: variant("some", {

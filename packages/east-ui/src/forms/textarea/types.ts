@@ -12,6 +12,7 @@ import {
     BooleanType,
     VariantType,
     NullType,
+    FunctionType,
 } from "@elaraai/east";
 
 import { SizeType } from "../../style.js";
@@ -106,6 +107,12 @@ export const TextareaType = StructType({
     maxLength: OptionType(IntegerType),
     /** Whether to auto-resize based on content */
     autoresize: OptionType(BooleanType),
+    /** Callback triggered when value changes */
+    onChange: OptionType(FunctionType([StringType], NullType)),
+    /** Callback triggered when textarea loses focus */
+    onBlur: OptionType(FunctionType([], NullType)),
+    /** Callback triggered when textarea gains focus */
+    onFocus: OptionType(FunctionType([], NullType)),
 });
 
 /**
@@ -155,4 +162,10 @@ export interface TextareaStyle {
     maxLength?: SubtypeExprOrValue<IntegerType> | number;
     /** Whether to auto-resize based on content */
     autoresize?: SubtypeExprOrValue<BooleanType>;
+    /** Callback triggered when value changes */
+    onChange?: SubtypeExprOrValue<FunctionType<[StringType], NullType>>;
+    /** Callback triggered when textarea loses focus */
+    onBlur?: SubtypeExprOrValue<FunctionType<[], NullType>>;
+    /** Callback triggered when textarea gains focus */
+    onFocus?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 }

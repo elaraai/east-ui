@@ -12,6 +12,7 @@ import {
     IntegerType,
     VariantType,
     StringType,
+    FunctionType,
 } from "@elaraai/east";
 
 import { PlacementType, type PlacementLiteral } from "../tooltip/types.js";
@@ -52,12 +53,15 @@ export type PopoverSizeLiteral = "xs" | "sm" | "md" | "lg";
  * @property placement - Position relative to trigger
  * @property hasArrow - Show arrow pointing to trigger
  * @property gutter - Offset from trigger in pixels
+ * @property onOpenChange - Callback triggered when open state changes
  */
 export const PopoverStyleType = StructType({
     size: OptionType(PopoverSizeType),
     placement: OptionType(PlacementType),
     hasArrow: OptionType(BooleanType),
     gutter: OptionType(IntegerType),
+    /** Callback triggered when open state changes */
+    onOpenChange: OptionType(FunctionType([BooleanType], NullType)),
 });
 
 export type PopoverStyleType = typeof PopoverStyleType;
@@ -68,6 +72,22 @@ export type PopoverStyleType = typeof PopoverStyleType;
 
 /**
  * TypeScript interface for Popover style options.
+ *
+ * @property size - Popover size variant
+ * @property placement - Position relative to trigger
+ * @property hasArrow - Show arrow pointing to trigger
+ * @property gutter - Offset from trigger in pixels
+ * @property title - Popover title
+ * @property description - Popover description
+ * @property open - Controlled open state
+ * @property defaultOpen - Initial open state
+ * @property modal - Enable modal mode
+ * @property closeOnInteractOutside - Close when clicking outside
+ * @property closeOnEscape - Close on escape key
+ * @property autoFocus - Auto-focus first focusable element
+ * @property lazyMount - Delay mounting until first open
+ * @property unmountOnExit - Unmount when closed
+ * @property onOpenChange - Callback triggered when open state changes
  */
 export interface PopoverStyle {
     /** Popover size variant */
@@ -98,4 +118,6 @@ export interface PopoverStyle {
     lazyMount?: SubtypeExprOrValue<BooleanType>;
     /** Unmount when closed */
     unmountOnExit?: SubtypeExprOrValue<BooleanType>;
+    /** Callback triggered when open state changes */
+    onOpenChange?: SubtypeExprOrValue<FunctionType<[BooleanType], NullType>>;
 }

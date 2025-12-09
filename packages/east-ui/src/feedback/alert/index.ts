@@ -52,36 +52,15 @@ export {
  *
  * @example
  * ```ts
- * import { Alert, AlertStatus } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Alert, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple success alert
- * const success = Alert.Root(AlertStatus("success"));
- *
- * // Alert with title
- * const titled = Alert.Root(AlertStatus("info"), {
- *   title: "New update available",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Alert.Root("warning", {
+ *         title: "Warning",
+ *         description: "Your session will expire in 5 minutes",
+ *     });
  * });
- *
- * // Alert with title and description
- * const detailed = Alert.Root(AlertStatus("warning"), {
- *   title: "Warning",
- *   description: "Your session will expire in 5 minutes",
- * });
- *
- * // Error alert with styling
- * const error = Alert.Root(AlertStatus("error"), {
- *   title: "Error",
- *   description: "Failed to save changes",
- *   variant: "solid",
- * });
- *
- * // Using string status directly
- * const infoAlert = Alert.Root("info", {
- *   title: "Information",
- * });
- *
- * // Access the type
- * const alertType = Alert.Types.Alert;
  * ```
  */
 function createAlert(
@@ -116,17 +95,6 @@ function createAlert(
  *
  * @remarks
  * Use `Alert.Root(status, style)` to create an alert, or access `Alert.Types.Alert` for the East type.
- *
- * @example
- * ```ts
- * import { Alert, AlertStatus } from "@elaraai/east-ui";
- *
- * // Create an alert
- * const alert = Alert.Root(AlertStatus("success"), { title: "Saved!" });
- *
- * // Access the type
- * const alertType = Alert.Types.Alert;
- * ```
  */
 export const Alert = {
     /**

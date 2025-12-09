@@ -22,9 +22,8 @@ import type { OrientationLiteral } from "../../style.js";
 /**
  * Variant types for DataList visual style.
  *
- * @remarks
- * - subtle: Light/subtle styling
- * - bold: Bold/emphasized styling
+ * @property subtle - Light/subtle styling
+ * @property bold - Bold/emphasized styling
  */
 export const DataListVariantType = VariantType({
     /** Light/subtle styling */
@@ -51,10 +50,15 @@ export type DataListVariantLiteral = "subtle" | "bold";
  *
  * @example
  * ```ts
- * import { DataList, DataListVariant } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { DataList, DataListVariant, UIComponentType } from "@elaraai/east-ui";
  *
- * const list = DataList.Root([...], {
- *   variant: DataListVariant("bold"),
+ * const example = East.function([], UIComponentType, $ => {
+ *     return DataList.Root([
+ *         DataList.Item("Status", "Active"),
+ *     ], {
+ *         variant: DataListVariant("bold"),
+ *     });
  * });
  * ```
  */

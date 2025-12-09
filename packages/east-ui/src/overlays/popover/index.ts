@@ -118,17 +118,21 @@ function createPopover(
             : style.placement)
         : undefined;
 
+    const hasStyle = sizeValue || placementValue || style?.hasArrow !== undefined ||
+        style?.gutter !== undefined || style?.onOpenChange !== undefined;
+
     return East.value(variant("Popover", {
         trigger: trigger,
         body: body,
         title: style?.title !== undefined ? variant("some", style.title) : variant("none", null),
         description: style?.description !== undefined ? variant("some", style.description) : variant("none", null),
-        style: sizeValue || placementValue || style?.hasArrow !== undefined || style?.gutter !== undefined
+        style: hasStyle
             ? variant("some", East.value({
                 size: sizeValue ? variant("some", sizeValue) : variant("none", null),
                 placement: placementValue ? variant("some", placementValue) : variant("none", null),
                 hasArrow: style?.hasArrow !== undefined ? variant("some", style.hasArrow) : variant("none", null),
                 gutter: style?.gutter !== undefined ? variant("some", style.gutter) : variant("none", null),
+                onOpenChange: style?.onOpenChange !== undefined ? variant("some", style.onOpenChange) : variant("none", null),
             }, PopoverStyleType))
             : variant("none", null),
     }), UIComponentType);

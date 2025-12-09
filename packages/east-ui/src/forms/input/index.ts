@@ -13,6 +13,8 @@ import {
     DateTimeType,
     BooleanType,
     variant,
+    some,
+    none,
 } from "@elaraai/east";
 
 import { SizeType } from "../../style.js";
@@ -54,21 +56,6 @@ function StringInput(
     value: SubtypeExprOrValue<StringType>,
     style?: StringInputStyle
 ): ExprType<UIComponentType> {
-    const toStringOption = (val: SubtypeExprOrValue<StringType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        return variant("some", val);
-    };
-
-    const toIntegerOption = (val: SubtypeExprOrValue<IntegerType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        return variant("some", val);
-    };
-
-    const toBoolOption = (val: SubtypeExprOrValue<BooleanType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        return variant("some", val);
-    };
-
     const variantValue = style?.variant
         ? (typeof style.variant === "string"
             ? East.value(variant(style.variant, null), InputVariantType)
@@ -83,12 +70,15 @@ function StringInput(
 
     return East.value(variant("StringInput", {
         value: value,
-        placeholder: toStringOption(style?.placeholder),
-        variant: variantValue ? variant("some", variantValue) : variant("none", null),
-        size: sizeValue ? variant("some", sizeValue) : variant("none", null),
-        maxLength: toIntegerOption(style?.maxLength),
-        pattern: toStringOption(style?.pattern),
-        disabled: toBoolOption(style?.disabled),
+        placeholder: style?.placeholder ? some(style.placeholder) : none,
+        variant: variantValue ? some(variantValue) : none,
+        size: sizeValue ? some(sizeValue) : none,
+        maxLength: style?.maxLength !== undefined ? some(style.maxLength) : none,
+        pattern: style?.pattern ? some(style.pattern) : none,
+        disabled: style?.disabled !== undefined ? some(style.disabled) : none,
+        onChange: style?.onChange ? some(style.onChange) : none,
+        onBlur: style?.onBlur ? some(style.onBlur) : none,
+        onFocus: style?.onFocus ? some(style.onFocus) : none,
     }), UIComponentType);
 }
 
@@ -97,16 +87,8 @@ function IntegerInput(
     style?: IntegerInputStyle
 ): ExprType<UIComponentType> {
     const toIntegerOption = (val: SubtypeExprOrValue<IntegerType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        if (typeof val === "number") return variant("some", BigInt(val));
-        if (typeof val === "bigint") return variant("some", val);
-        return variant("some", val);
-    };
-
-    const toBoolOption = (val: SubtypeExprOrValue<BooleanType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        if (typeof val === "boolean") return variant("some", val);
-        return variant("some", val);
+        if (val === undefined) return none;
+        return some(val);
     };
 
     const variantValue = style?.variant
@@ -126,9 +108,12 @@ function IntegerInput(
         min: toIntegerOption(style?.min),
         max: toIntegerOption(style?.max),
         step: toIntegerOption(style?.step),
-        variant: variantValue ? variant("some", variantValue) : variant("none", null),
-        size: sizeValue ? variant("some", sizeValue) : variant("none", null),
-        disabled: toBoolOption(style?.disabled),
+        variant: variantValue ? some(variantValue) : none,
+        size: sizeValue ? some(sizeValue) : none,
+        disabled: style?.disabled !== undefined ? some(style.disabled) : none,
+        onChange: style?.onChange ? some(style.onChange) : none,
+        onBlur: style?.onBlur ? some(style.onBlur) : none,
+        onFocus: style?.onFocus ? some(style.onFocus) : none,
     }), UIComponentType);
 }
 
@@ -137,22 +122,13 @@ function FloatInput(
     style?: FloatInputStyle
 ): ExprType<UIComponentType> {
     const toFloatOption = (val: SubtypeExprOrValue<FloatType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        if (typeof val === "number") return variant("some", val);
-        return variant("some", val);
+        if (val === undefined) return none;
+        return some(val);
     };
 
     const toIntegerOption = (val: SubtypeExprOrValue<IntegerType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        if (typeof val === "number") return variant("some", BigInt(val));
-        if (typeof val === "bigint") return variant("some", val);
-        return variant("some", val);
-    };
-
-    const toBoolOption = (val: SubtypeExprOrValue<BooleanType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        if (typeof val === "boolean") return variant("some", val);
-        return variant("some", val);
+        if (val === undefined) return none;
+        return some(val);
     };
 
     const variantValue = style?.variant
@@ -173,9 +149,12 @@ function FloatInput(
         max: toFloatOption(style?.max),
         step: toFloatOption(style?.step),
         precision: toIntegerOption(style?.precision),
-        variant: variantValue ? variant("some", variantValue) : variant("none", null),
-        size: sizeValue ? variant("some", sizeValue) : variant("none", null),
-        disabled: toBoolOption(style?.disabled),
+        variant: variantValue ? some(variantValue) : none,
+        size: sizeValue ? some(sizeValue) : none,
+        disabled: style?.disabled !== undefined ? some(style.disabled) : none,
+        onChange: style?.onChange ? some(style.onChange) : none,
+        onBlur: style?.onBlur ? some(style.onBlur) : none,
+        onFocus: style?.onFocus ? some(style.onFocus) : none,
     }), UIComponentType);
 }
 
@@ -183,22 +162,20 @@ function DateTimeInput(
     value: SubtypeExprOrValue<DateTimeType>,
     style?: DateTimeInputStyle
 ): ExprType<UIComponentType> {
-    const toDateTimeOption = (val: SubtypeExprOrValue<DateTimeType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        if (val instanceof Date) return variant("some", val);
-        return variant("some", val);
+    const toDateTimeOption = (val: SubtypeExprOrValue<DateTimeType> | Date | undefined) => {
+        if (val === undefined) return none;
+        if (val instanceof Date) return some(val);
+        return some(val);
     };
 
-    const toBoolOption = (val: SubtypeExprOrValue<BooleanType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        if (typeof val === "boolean") return variant("some", val);
-        return variant("some", val);
+    const toStringOption = (val: SubtypeExprOrValue<StringType> | string | undefined) => {
+        if (val === undefined) return none;
+        return some(val);
     };
 
-    const toStringOption = (val: SubtypeExprOrValue<StringType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        if (typeof val === "string") return variant("some", val);
-        return variant("some", val);
+    const toBoolOption = (val: SubtypeExprOrValue<BooleanType> | boolean | undefined) => {
+        if (val === undefined) return none;
+        return some(val);
     };
 
     const variantValue = style?.variant
@@ -219,10 +196,13 @@ function DateTimeInput(
         max: toDateTimeOption(style?.max),
         showTime: toBoolOption(style?.showTime),
         format: toStringOption(style?.format),
-        variant: variantValue ? variant("some", variantValue) : variant("none", null),
-        size: sizeValue ? variant("some", sizeValue) : variant("none", null),
+        variant: variantValue ? some(variantValue) : none,
+        size: sizeValue ? some(sizeValue) : none,
         disabled: toBoolOption(style?.disabled),
-     }), UIComponentType);
+        onChange: style?.onChange ? some(style.onChange) : none,
+        onBlur: style?.onBlur ? some(style.onBlur) : none,
+        onFocus: style?.onFocus ? some(style.onFocus) : none,
+    }), UIComponentType);
 }
 
 /**
@@ -283,10 +263,14 @@ export const Input = {
      *
      * @example
      * ```ts
-     * import { InputVariant } from "@elaraai/east-ui";
+     * import { East } from "@elaraai/east";
+     * import { Input, UIComponentType } from "@elaraai/east-ui";
      *
-     * InputVariant("outline");
-     * InputVariant("subtle");
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Input.String("", {
+     *         variant: Input.Variant("outline"),
+     *     });
+     * });
      * ```
      */
     Variant: InputVariant,

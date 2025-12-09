@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Textarea as ChakraTextarea, type TextareaProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Textarea } from "@elaraai/east-ui";
@@ -48,5 +48,35 @@ export interface EastChakraTextareaProps {
 export const EastChakraTextarea = memo(function EastChakraTextarea({ value }: EastChakraTextareaProps) {
     const props = useMemo(() => toChakraTextarea(value), [value]);
 
-    return <ChakraTextarea {...props} />;
+    // Extract callbacks
+    const onChangeFn = useMemo(() => getSomeorUndefined(value.onChange), [value.onChange]);
+    const onBlurFn = useMemo(() => getSomeorUndefined(value.onBlur), [value.onBlur]);
+    const onFocusFn = useMemo(() => getSomeorUndefined(value.onFocus), [value.onFocus]);
+
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        if (onChangeFn) {
+            queueMicrotask(() => onChangeFn(e.target.value));
+        }
+    }, [onChangeFn]);
+
+    const handleBlur = useCallback(() => {
+        if (onBlurFn) {
+            queueMicrotask(() => onBlurFn());
+        }
+    }, [onBlurFn]);
+
+    const handleFocus = useCallback(() => {
+        if (onFocusFn) {
+            queueMicrotask(() => onFocusFn());
+        }
+    }, [onFocusFn]);
+
+    return (
+        <ChakraTextarea
+            {...props}
+            onChange={onChangeFn ? handleChange : undefined}
+            onBlur={onBlurFn ? handleBlur : undefined}
+            onFocus={onFocusFn ? handleFocus : undefined}
+        />
+    );
 }, (prev, next) => textareaEqual(prev.value, next.value));

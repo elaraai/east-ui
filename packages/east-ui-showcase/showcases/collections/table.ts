@@ -3,8 +3,8 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East, some } from "@elaraai/east";
-import { Table, UIComponentType, Grid, Badge } from "@elaraai/east-ui";
+import { East, some, StringType, IntegerType, NullType, ArrayType } from "@elaraai/east";
+import { Table, UIComponentType, Grid, Badge, State, Reactive, Stack, Text } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
 /**
@@ -228,6 +228,193 @@ export default East.function(
             )
         );
 
+        // =====================================================================
+        // INTERACTIVE EXAMPLES - Demonstrate callbacks with Reactive.Root
+        // =====================================================================
+
+        // Initialize state for interactive examples
+        $(State.initTyped("table_last_event", "", StringType)());
+
+        // Interactive Table with all callbacks
+        const interactiveCallbacks = $.let(
+            ShowcaseCard(
+                "All Callbacks",
+                "Click, double-click rows/cells, or click headers to sort",
+                Reactive.Root($ => {
+                    const lastEvent = $.let(State.readTyped("table_last_event", StringType)());
+
+                    const onRowClick = East.function(
+                        [Table.Types.RowClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("table_last_event", some(East.str`onRowClick: row ${event.rowIndex}`), StringType)());
+                        }
+                    );
+
+                    const onRowDoubleClick = East.function(
+                        [Table.Types.RowClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("table_last_event", some(East.str`onRowDoubleClick: row ${event.rowIndex}`), StringType)());
+                        }
+                    );
+
+                    const onCellClick = East.function(
+                        [Table.Types.CellClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("table_last_event", some(East.str`onCellClick: row ${event.rowIndex}, col ${event.columnKey}`), StringType)());
+                        }
+                    );
+
+                    const onCellDoubleClick = East.function(
+                        [Table.Types.CellClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("table_last_event", some(East.str`onCellDoubleClick: row ${event.rowIndex}, col ${event.columnKey}`), StringType)());
+                        }
+                    );
+
+                    const onRowSelectionChange = East.function(
+                        [Table.Types.RowSelectionEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("table_last_event", some(
+                                event.selected.ifElse(
+                                    _$ => East.str`onRowSelectionChange: selected row ${event.rowIndex}`,
+                                    _$ => East.str`onRowSelectionChange: deselected row ${event.rowIndex}`
+                                )
+                            ), StringType)());
+                        }
+                    );
+
+                    const onSortChange = East.function(
+                        [Table.Types.SortEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("table_last_event", some(East.str`onSortChange: ${event.columnKey} - ${event.sortDirection.getTag()}`), StringType)());
+                        }
+                    );
+
+                    return Stack.VStack([
+                        Table.Root(
+                            [
+                                { name: "Alice", role: "Admin", score: 95n },
+                                { name: "Bob", role: "User", score: 88n },
+                                { name: "Charlie", role: "User", score: 92n },
+                            ],
+                            {
+                                name: { header: "Name" },
+                                role: { header: "Role" },
+                                score: { header: "Score" },
+                            },
+                            {
+                                interactive: true,
+                                striped: true,
+                                onRowClick,
+                                onRowDoubleClick,
+                                onCellClick,
+                                onCellDoubleClick,
+                                onRowSelectionChange,
+                                onSortChange,
+                            }
+                        ),
+                        Badge.Root(
+                            East.equal(lastEvent.unwrap('some').length(), 0n).ifElse(_$ => "Interact with the table", _$ => lastEvent.unwrap('some')),
+                            { colorPalette: "blue", variant: "outline" }
+                        ),
+                    ], { gap: "3", align: "stretch" });
+                }),
+                some(`
+                Reactive.Root($ => {
+                    const lastEvent = $.let(State.readTyped("table_last_event", StringType)());
+
+                    const onRowClick = East.function(
+                        [Table.Types.RowClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("table_last_event", some(East.str\`onRowClick: row \${event.rowIndex}\`), StringType)());
+                        }
+                    );
+
+                    const onRowDoubleClick = East.function(
+                        [Table.Types.RowClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("table_last_event", some(East.str\`onRowDoubleClick: row \${event.rowIndex}\`), StringType)());
+                        }
+                    );
+
+                    const onCellClick = East.function(
+                        [Table.Types.CellClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("table_last_event", some(East.str\`onCellClick: row \${event.rowIndex}, col \${event.columnKey}\`), StringType)());
+                        }
+                    );
+
+                    const onCellDoubleClick = East.function(
+                        [Table.Types.CellClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("table_last_event", some(East.str\`onCellDoubleClick: row \${event.rowIndex}, col \${event.columnKey}\`), StringType)());
+                        }
+                    );
+
+                    const onRowSelectionChange = East.function(
+                        [Table.Types.RowSelectionEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("table_last_event", some(
+                                event.selected.ifElse(
+                                    _$ => East.str\`onRowSelectionChange: selected row \${event.rowIndex}\`,
+                                    _$ => East.str\`onRowSelectionChange: deselected row \${event.rowIndex}\`
+                                )
+                            ), StringType)());
+                        }
+                    );
+
+                    const onSortChange = East.function(
+                        [Table.Types.SortEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("table_last_event", some(East.str\`onSortChange: \${event.columnKey} - \${event.sortDirection.getTag()}\`), StringType)());
+                        }
+                    );
+
+                    return Stack.VStack([
+                        Table.Root(
+                            [
+                                { name: "Alice", role: "Admin", score: 95n },
+                                { name: "Bob", role: "User", score: 88n },
+                                { name: "Charlie", role: "User", score: 92n },
+                            ],
+                            {
+                                name: { header: "Name" },
+                                role: { header: "Role" },
+                                score: { header: "Score" },
+                            },
+                            {
+                                interactive: true,
+                                striped: true,
+                                onRowClick,
+                                onRowDoubleClick,
+                                onCellClick,
+                                onCellDoubleClick,
+                                onRowSelectionChange,
+                                onSortChange,
+                            }
+                        ),
+                        Badge.Root(
+                            East.equal(lastEvent.unwrap('some').length(), 0n).ifElse(_$ => "Interact with the table", _$ => lastEvent.unwrap('some')),
+                            { colorPalette: "blue", variant: "outline" }
+                        ),
+                    ], { gap: "3", align: "stretch" });
+                })
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -236,6 +423,8 @@ export default East.function(
                 Grid.Item(interactive),
                 Grid.Item(withBadge),
                 Grid.Item(fullStyled),
+                // Interactive example with all callbacks
+                Grid.Item(interactiveCallbacks, { colSpan: "2" }),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

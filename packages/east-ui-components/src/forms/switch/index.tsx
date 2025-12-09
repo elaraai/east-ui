@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Switch as ChakraSwitch, type SwitchRootProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Switch } from "@elaraai/east-ui";
@@ -38,9 +38,19 @@ export interface EastChakraSwitchProps {
 export const EastChakraSwitch = memo(function EastChakraSwitch({ value }: EastChakraSwitchProps) {
     const props = useMemo(() => toChakraSwitch(value), [value]);
     const label = useMemo(() => getSomeorUndefined(value.label), [value.label]);
+    const onChangeFn = useMemo(() => getSomeorUndefined(value.onChange), [value.onChange]);
+
+    const handleCheckedChange = useCallback((e: { checked: boolean }) => {
+        if (onChangeFn) {
+            queueMicrotask(() => onChangeFn(e.checked));
+        }
+    }, [onChangeFn]);
 
     return (
-        <ChakraSwitch.Root {...props}>
+        <ChakraSwitch.Root
+            {...props}
+            onCheckedChange={onChangeFn ? handleCheckedChange : undefined}
+        >
             <ChakraSwitch.HiddenInput />
             <ChakraSwitch.Control />
             {label && <ChakraSwitch.Label>{label}</ChakraSwitch.Label>}

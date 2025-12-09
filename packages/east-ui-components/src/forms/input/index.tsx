@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback, type ChangeEvent, type FocusEvent } from "react";
 import { Input as ChakraInput, type InputProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Input } from "@elaraai/east-ui";
@@ -88,28 +88,37 @@ export function toChakraFloatInput(value: FloatInputValue): InputProps {
 }
 
 /**
+ * Formats a Date to local datetime-local or date input format.
+ * Unlike toISOString(), this preserves the local timezone.
+ */
+function formatDateLocal(d: Date, includeTime: boolean): string {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+
+    if (includeTime) {
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+    return `${year}-${month}-${day}`;
+}
+
+/**
  * Converts an East UI DateTimeInput value to Chakra UI Input props.
  */
 export function toChakraDateTimeInput(value: DateTimeInputValue): InputProps {
     const showTime = getSomeorUndefined(value.showTime);
     const dateValue = value.value instanceof Date ? value.value : new Date(value.value);
 
-    // Format the date for the input
-    const formatDate = (d: Date) => {
-        if (showTime) {
-            return d.toISOString().slice(0, 16); // datetime-local format
-        }
-        return d.toISOString().slice(0, 10); // date format
-    };
-
     return {
         type: showTime ? "datetime-local" : "date",
-        value: formatDate(dateValue),
+        value: formatDateLocal(dateValue, !!showTime),
         min: getSomeorUndefined(value.min)
-            ? formatDate(new Date(getSomeorUndefined(value.min)!))
+            ? formatDateLocal(new Date(getSomeorUndefined(value.min)!), !!showTime)
             : undefined,
         max: getSomeorUndefined(value.max)
-            ? formatDate(new Date(getSomeorUndefined(value.max)!))
+            ? formatDateLocal(new Date(getSomeorUndefined(value.max)!), !!showTime)
             : undefined,
         variant: getSomeorUndefined(value.variant)?.type,
         size: getSomeorUndefined(value.size)?.type,
@@ -138,7 +147,36 @@ export interface EastChakraDateTimeInputProps {
  */
 export const EastChakraStringInput = memo(function EastChakraStringInput({ value }: EastChakraStringInputProps) {
     const props = useMemo(() => toChakraStringInput(value), [value]);
-    return <ChakraInput {...props} />;
+    const onChangeFn = useMemo(() => getSomeorUndefined(value.onChange), [value.onChange]);
+    const onBlurFn = useMemo(() => getSomeorUndefined(value.onBlur), [value.onBlur]);
+    const onFocusFn = useMemo(() => getSomeorUndefined(value.onFocus), [value.onFocus]);
+
+    const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+        if (onChangeFn) {
+            queueMicrotask(() => onChangeFn(e.target.value));
+        }
+    }, [onChangeFn]);
+
+    const handleBlur = useCallback((_e: FocusEvent<HTMLInputElement>) => {
+        if (onBlurFn) {
+            queueMicrotask(() => onBlurFn());
+        }
+    }, [onBlurFn]);
+
+    const handleFocus = useCallback((_e: FocusEvent<HTMLInputElement>) => {
+        if (onFocusFn) {
+            queueMicrotask(() => onFocusFn());
+        }
+    }, [onFocusFn]);
+
+    return (
+        <ChakraInput
+            {...props}
+            onChange={onChangeFn ? handleChange : undefined}
+            onBlur={onBlurFn ? handleBlur : undefined}
+            onFocus={onFocusFn ? handleFocus : undefined}
+        />
+    );
 }, (prev, next) => stringInputEqual(prev.value, next.value));
 
 /**
@@ -146,7 +184,36 @@ export const EastChakraStringInput = memo(function EastChakraStringInput({ value
  */
 export const EastChakraIntegerInput = memo(function EastChakraIntegerInput({ value }: EastChakraIntegerInputProps) {
     const props = useMemo(() => toChakraIntegerInput(value), [value]);
-    return <ChakraInput {...props} />;
+    const onChangeFn = useMemo(() => getSomeorUndefined(value.onChange), [value.onChange]);
+    const onBlurFn = useMemo(() => getSomeorUndefined(value.onBlur), [value.onBlur]);
+    const onFocusFn = useMemo(() => getSomeorUndefined(value.onFocus), [value.onFocus]);
+
+    const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+        if (onChangeFn) {
+            queueMicrotask(() => onChangeFn(BigInt(e.target.value || "0")));
+        }
+    }, [onChangeFn]);
+
+    const handleBlur = useCallback((_e: FocusEvent<HTMLInputElement>) => {
+        if (onBlurFn) {
+            queueMicrotask(() => onBlurFn());
+        }
+    }, [onBlurFn]);
+
+    const handleFocus = useCallback((_e: FocusEvent<HTMLInputElement>) => {
+        if (onFocusFn) {
+            queueMicrotask(() => onFocusFn());
+        }
+    }, [onFocusFn]);
+
+    return (
+        <ChakraInput
+            {...props}
+            onChange={onChangeFn ? handleChange : undefined}
+            onBlur={onBlurFn ? handleBlur : undefined}
+            onFocus={onFocusFn ? handleFocus : undefined}
+        />
+    );
 }, (prev, next) => integerInputEqual(prev.value, next.value));
 
 /**
@@ -154,7 +221,36 @@ export const EastChakraIntegerInput = memo(function EastChakraIntegerInput({ val
  */
 export const EastChakraFloatInput = memo(function EastChakraFloatInput({ value }: EastChakraFloatInputProps) {
     const props = useMemo(() => toChakraFloatInput(value), [value]);
-    return <ChakraInput {...props} />;
+    const onChangeFn = useMemo(() => getSomeorUndefined(value.onChange), [value.onChange]);
+    const onBlurFn = useMemo(() => getSomeorUndefined(value.onBlur), [value.onBlur]);
+    const onFocusFn = useMemo(() => getSomeorUndefined(value.onFocus), [value.onFocus]);
+
+    const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+        if (onChangeFn) {
+            queueMicrotask(() => onChangeFn(parseFloat(e.target.value) || 0));
+        }
+    }, [onChangeFn]);
+
+    const handleBlur = useCallback((_e: FocusEvent<HTMLInputElement>) => {
+        if (onBlurFn) {
+            queueMicrotask(() => onBlurFn());
+        }
+    }, [onBlurFn]);
+
+    const handleFocus = useCallback((_e: FocusEvent<HTMLInputElement>) => {
+        if (onFocusFn) {
+            queueMicrotask(() => onFocusFn());
+        }
+    }, [onFocusFn]);
+
+    return (
+        <ChakraInput
+            {...props}
+            onChange={onChangeFn ? handleChange : undefined}
+            onBlur={onBlurFn ? handleBlur : undefined}
+            onFocus={onFocusFn ? handleFocus : undefined}
+        />
+    );
 }, (prev, next) => floatInputEqual(prev.value, next.value));
 
 /**
@@ -162,5 +258,34 @@ export const EastChakraFloatInput = memo(function EastChakraFloatInput({ value }
  */
 export const EastChakraDateTimeInput = memo(function EastChakraDateTimeInput({ value }: EastChakraDateTimeInputProps) {
     const props = useMemo(() => toChakraDateTimeInput(value), [value]);
-    return <ChakraInput {...props} />;
+    const onChangeFn = useMemo(() => getSomeorUndefined(value.onChange), [value.onChange]);
+    const onBlurFn = useMemo(() => getSomeorUndefined(value.onBlur), [value.onBlur]);
+    const onFocusFn = useMemo(() => getSomeorUndefined(value.onFocus), [value.onFocus]);
+
+    const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+        if (onChangeFn) {
+            queueMicrotask(() => onChangeFn(new Date(e.target.value)));
+        }
+    }, [onChangeFn]);
+
+    const handleBlur = useCallback((_e: FocusEvent<HTMLInputElement>) => {
+        if (onBlurFn) {
+            queueMicrotask(() => onBlurFn());
+        }
+    }, [onBlurFn]);
+
+    const handleFocus = useCallback((_e: FocusEvent<HTMLInputElement>) => {
+        if (onFocusFn) {
+            queueMicrotask(() => onFocusFn());
+        }
+    }, [onFocusFn]);
+
+    return (
+        <ChakraInput
+            {...props}
+            onChange={onChangeFn ? handleChange : undefined}
+            onBlur={onBlurFn ? handleBlur : undefined}
+            onFocus={onFocusFn ? handleFocus : undefined}
+        />
+    );
 }, (prev, next) => dateTimeInputEqual(prev.value, next.value));

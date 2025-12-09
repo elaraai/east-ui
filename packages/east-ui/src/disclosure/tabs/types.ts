@@ -12,6 +12,8 @@ import {
     StructType,
     BooleanType,
     VariantType,
+    StringType,
+    FunctionType,
     variant,
 } from "@elaraai/east";
 
@@ -181,6 +183,7 @@ export type TabsSizeLiteral = "sm" | "md" | "lg";
  * @property lazyMount - Mount content only when selected
  * @property unmountOnExit - Unmount when deselected
  * @property colorPalette - Color scheme for the tabs
+ * @property onValueChange - Callback triggered when selected tab changes
  */
 export const TabsStyleType = StructType({
     variant: OptionType(TabsVariantType),
@@ -192,6 +195,7 @@ export const TabsStyleType = StructType({
     lazyMount: OptionType(BooleanType),
     unmountOnExit: OptionType(BooleanType),
     colorPalette: OptionType(ColorSchemeType),
+    onValueChange: OptionType(FunctionType([StringType], NullType)),
 });
 
 /**
@@ -227,6 +231,7 @@ export interface TabsItemStyle {
  * @property colorPalette - Color scheme for the tabs
  * @property defaultValue - Initial selected tab value
  * @property value - Controlled selected tab value
+ * @property onValueChange - Callback triggered when selected tab changes
  */
 export interface TabsStyle {
     /** Visual variant (line, subtle, enclosed, outline, plain) */
@@ -251,4 +256,6 @@ export interface TabsStyle {
     defaultValue?: SubtypeExprOrValue<typeof import("@elaraai/east").StringType>;
     /** Controlled selected tab value */
     value?: SubtypeExprOrValue<typeof import("@elaraai/east").StringType>;
+    /** Callback triggered when selected tab changes */
+    onValueChange?: SubtypeExprOrValue<FunctionType<[typeof StringType], NullType>>;
 }

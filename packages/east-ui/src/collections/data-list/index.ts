@@ -91,9 +91,14 @@ export type DataListRootType = typeof DataListRootType;
  *
  * @example
  * ```ts
- * import { DataList } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { DataList, UIComponentType } from "@elaraai/east-ui";
  *
- * const item = DataList.Item("Status", "Active");
+ * const example = East.function([], UIComponentType, $ => {
+ *     return DataList.Root([
+ *         DataList.Item("Status", "Active"),
+ *     ]);
+ * });
  * ```
  */
 function DataListItem(
@@ -131,30 +136,18 @@ function DataListItem(
  *
  * @example
  * ```ts
- * import { DataList, Style } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { DataList, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple data list
- * const details = DataList.Root([
- *   DataList.Item("Status", "Active"),
- *   DataList.Item("Created", "Jan 1, 2024"),
- *   DataList.Item("Updated", "Dec 15, 2024"),
- * ]);
- *
- * // Horizontal data list
- * const horizontal = DataList.Root([
- *   DataList.Item("Name", "John Doe"),
- *   DataList.Item("Role", "Admin"),
- * ], {
- *   orientation: "horizontal",
- * });
- *
- * // Styled data list
- * const styled = DataList.Root([
- *   DataList.Item("Price", "$99.99"),
- *   DataList.Item("Quantity", "5"),
- * ], {
- *   variant: "bold",
- *   size: "md",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return DataList.Root([
+ *         DataList.Item("Status", "Active"),
+ *         DataList.Item("Created", "Jan 1, 2024"),
+ *         DataList.Item("Updated", "Dec 15, 2024"),
+ *     ], {
+ *         orientation: "horizontal",
+ *         variant: "bold",
+ *     });
  * });
  * ```
  */
@@ -198,20 +191,6 @@ function DataListRoot(
  * @remarks
  * Use `DataList.Root` to create the container and `DataList.Item` for each
  * label-value pair.
- *
- * @example
- * ```ts
- * import { DataList } from "@elaraai/east-ui";
- *
- * const userDetails = DataList.Root([
- *   DataList.Item("Name", "Alice Smith"),
- *   DataList.Item("Email", "alice@example.com"),
- *   DataList.Item("Role", "Administrator"),
- * ], {
- *   orientation: "vertical",
- *   variant: "subtle",
- * });
- * ```
  */
 export const DataList = {
     /**

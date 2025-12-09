@@ -10,6 +10,8 @@ import {
     StringType,
     IntegerType,
     BooleanType,
+    FunctionType,
+    NullType,
 } from "@elaraai/east";
 
 import { OrientationType } from "../../style.js";
@@ -31,6 +33,7 @@ export { OrientationType, type OrientationLiteral } from "../../style.js";
  * @property orientation - Slide direction (horizontal or vertical)
  * @property spacing - Gap between slides (Chakra spacing token)
  * @property padding - Viewport padding
+ * @property onIndexChange - Callback triggered when active slide changes
  */
 export const CarouselStyleType = StructType({
     /** Slide direction (horizontal or vertical) */
@@ -39,6 +42,8 @@ export const CarouselStyleType = StructType({
     spacing: OptionType(StringType),
     /** Viewport padding */
     padding: OptionType(StringType),
+    /** Callback triggered when active slide changes */
+    onIndexChange: OptionType(FunctionType([IntegerType], NullType)),
 });
 
 /**
@@ -65,6 +70,7 @@ export type CarouselStyleType = typeof CarouselStyleType;
  * @property allowMouseDrag - Whether to allow mouse drag navigation
  * @property showIndicators - Whether to show dot indicators
  * @property showControls - Whether to show prev/next controls
+ * @property onIndexChange - Callback triggered when active slide changes
  */
 export interface CarouselStyle {
     /** Slide direction (horizontal or vertical) */
@@ -91,4 +97,6 @@ export interface CarouselStyle {
     showIndicators?: SubtypeExprOrValue<BooleanType>;
     /** Whether to show prev/next controls */
     showControls?: SubtypeExprOrValue<BooleanType>;
+    /** Callback triggered when active slide changes */
+    onIndexChange?: SubtypeExprOrValue<FunctionType<[IntegerType], NullType>>;
 }

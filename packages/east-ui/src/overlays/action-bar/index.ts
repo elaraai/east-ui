@@ -138,11 +138,18 @@ function createActionBar(
     items: SubtypeExprOrValue<ArrayType<ActionBarItemType>>,
     style?: ActionBarStyle
 ): ExprType<UIComponentType> {
+    const hasStyle = style?.onSelect !== undefined || style?.onOpenChange !== undefined;
+
     return East.value(variant("ActionBar", {
         items: items,
         selectionCount: style?.selectionCount !== undefined ? variant("some", style.selectionCount) : variant("none", null),
         selectionLabel: style?.selectionLabel !== undefined ? variant("some", style.selectionLabel) : variant("none", null),
-        style: variant("some", East.value({}, ActionBarStyleType)),
+        style: hasStyle
+            ? variant("some", East.value({
+                onSelect: style?.onSelect !== undefined ? variant("some", style.onSelect) : variant("none", null),
+                onOpenChange: style?.onOpenChange !== undefined ? variant("some", style.onOpenChange) : variant("none", null),
+            }, ActionBarStyleType))
+            : variant("none", null),
     }), UIComponentType);
 }
 

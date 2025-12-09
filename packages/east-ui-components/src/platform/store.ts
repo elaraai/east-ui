@@ -3,227 +3,216 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import type { PlatformFunction, EastIR } from "@elaraai/east/internal";
-import { state_write, state_read } from "@elaraai/east-ui";
+// Re-export UIStore and related types from east-ui
+export {
+    UIStore,
+    createUIStore,
+    type UIStoreInterface,
+    type UIStoreOptions,
+} from "@elaraai/east-ui";
+
+// Import for use in PersistentUIStore
+import { UIStore, type UIStoreInterface, type UIStoreOptions } from "@elaraai/east-ui";
 
 /**
- * Options for creating an EastStore.
- */
-export interface EastStoreOptions {
-    /** Initial state as a Map of string keys to Beast2-encoded blobs */
-    initialState?: Map<string, Uint8Array> | undefined;
-}
-
-/**
- * A registered function with its compiled form and last result.
- */
-interface Registration {
-    compiled: (state: Map<string, Uint8Array>) => any;
-    lastResult: any;
-}
-
-/**
- * A reactive state store for East UI applications.
+ * Persistent store with IndexedDB backing.
  *
- * State is stored as Beast2-encoded blobs, allowing any East type to be stored.
- * When state changes, registered functions are re-executed and subscribers notified.
- */
-export class EastStore {
-    private state: Map<string, Uint8Array>;
-    private registrations: Map<string, Registration> = new Map();
-    private keySubscribers: Map<string, Set<() => void>> = new Map();
-    private globalSubscribers: Set<() => void> = new Set();
-    private batchDepth: number = 0;
-    private changedKeys: Set<string> = new Set();
-
-    constructor(options?: EastStoreOptions) {
-        this.state = options?.initialState ?? new Map();
-    }
-
-    /**
-     * Register an East function for reactive execution.
-     * The function will be compiled and executed immediately with current state.
-     * When state changes, it will be re-executed automatically.
-     *
-     * @param id - Unique identifier for this registration
-     * @param ir - The East IR to compile and register
-     */
-    register(id: string, ir: EastIR<[Map<string, Uint8Array>], any>): void {
-        const shortId = id.slice(0, 16);
-
-        console.time(`[EastStore] compile ${shortId}`);
-        const compiled = ir.compile(this.createPlatform());
-        console.timeEnd(`[EastStore] compile ${shortId}`);
-
-        console.time(`[EastStore] execute ${shortId}`);
-        const result = compiled(this.state);
-        console.timeEnd(`[EastStore] execute ${shortId}`);
-
-        this.registrations.set(id, { compiled, lastResult: result });
-    }
-
-    /**
-     * Get the last result of a registered function.
-     *
-     * @param id - The registration identifier
-     * @returns The last computed result, or undefined if not registered
-     */
-    getResult(id: string): any {
-        return this.registrations.get(id)?.lastResult;
-    }
-
-    /**
-     * Write a Beast2-encoded value to state.
-     * Triggers re-execution of registered functions and notifies subscribers.
-     *
-     * @param key - The string key to write to
-     * @param value - The Beast2-encoded blob value
-     */
-    write(key: string, value: Uint8Array): void {
-        this.state.set(key, value);
-        this.changedKeys.add(key);
-
-        if (this.batchDepth === 0) {
-            this.flush();
-        }
-    }
-
-    /**
-     * Read a Beast2-encoded value from state.
-     * Returns an empty Uint8Array if the key doesn't exist.
-     *
-     * @param key - The string key to read from
-     * @returns The Beast2-encoded blob value
-     */
-    read(key: string): Uint8Array {
-        return this.state.get(key) ?? new Uint8Array();
-    }
-
-    /**
-     * Get the current state as a Map.
-     *
-     * @returns The current state
-     */
-    getState(): Map<string, Uint8Array> {
-        return this.state;
-    }
-
-    /**
-     * Batch multiple writes together.
-     * Re-execution and notifications happen only once at the end.
-     *
-     * @param fn - Function containing multiple write operations
-     * @returns The return value of the function
-     */
-    batch<T>(fn: () => T): T {
-        this.batchDepth++;
-        try {
-            return fn();
-        } finally {
-            this.batchDepth--;
-            if (this.batchDepth === 0) {
-                this.flush();
-            }
-        }
-    }
-
-    /**
-     * Subscribe to all state changes.
-     *
-     * @param callback - Function to call when state changes
-     * @returns Unsubscribe function
-     */
-    subscribe(callback: () => void): () => void;
-    /**
-     * Subscribe to changes for a specific key.
-     *
-     * @param key - The key to subscribe to
-     * @param callback - Function to call when the key changes
-     * @returns Unsubscribe function
-     */
-    subscribe(key: string, callback: () => void): () => void;
-    subscribe(keyOrCallback: string | (() => void), callback?: () => void): () => void {
-        if (typeof keyOrCallback === "function") {
-            // Global subscription
-            this.globalSubscribers.add(keyOrCallback);
-            return () => this.globalSubscribers.delete(keyOrCallback);
-        } else {
-            // Key-specific subscription
-            const key = keyOrCallback;
-            const cb = callback!;
-            let subs = this.keySubscribers.get(key);
-            if (!subs) {
-                subs = new Set();
-                this.keySubscribers.set(key, subs);
-            }
-            subs.add(cb);
-            return () => {
-                subs!.delete(cb);
-                if (subs!.size === 0) {
-                    this.keySubscribers.delete(key);
-                }
-            };
-        }
-    }
-
-    /**
-     * Create platform function implementations bound to this store.
-     *
-     * @returns Array of platform functions for use with ir.compile()
-     */
-    createPlatform(): PlatformFunction[] {
-        return [
-            state_write.implement((key, value) => {
-                this.write(key, value);
-            }),
-            state_read.implement((key) => {
-                return this.read(key);
-            }),
-        ];
-    }
-
-    /**
-     * Flush pending changes: re-execute registered functions and notify subscribers.
-     */
-    private flush(): void {
-        if (this.changedKeys.size === 0) return;
-
-        // Re-execute all registered functions
-        for (const [, reg] of this.registrations) {
-            reg.lastResult = reg.compiled(this.state);
-        }
-
-        // Notify key-specific subscribers
-        for (const key of this.changedKeys) {
-            const subs = this.keySubscribers.get(key);
-            if (subs) {
-                for (const cb of subs) cb();
-            }
-        }
-
-        // Notify global subscribers
-        for (const cb of this.globalSubscribers) cb();
-
-        this.changedKeys.clear();
-    }
-}
-
-/**
- * Create a new EastStore with optional initial state.
- *
- * @param initialState - Optional initial state as a plain object
- * @returns A new EastStore instance
+ * @remarks
+ * Extends UIStore with IndexedDB persistence.
+ * Writes are batched and flushed asynchronously to reduce I/O.
  *
  * @example
  * ```ts
- * const store = createEastStore({
- *     count: encodeBeast2(0n),
- *     name: encodeBeast2("Alice"),
- * });
+ * import { PersistentUIStore } from "@elaraai/east-ui-components";
+ *
+ * const store = new PersistentUIStore("my_app");
+ * await store.hydrate();
+ * // Now store is ready to use
  * ```
  */
-export function createEastStore(initialState?: Record<string, Uint8Array>): EastStore {
-    return new EastStore({
+export class PersistentUIStore implements UIStoreInterface {
+    private inner: UIStore;
+    private dbName: string;
+    private storeName: string = "ui_state";
+    private db: IDBDatabase | null = null;
+    private pendingWrites: Map<string, Uint8Array | undefined> = new Map();
+    private flushScheduled: boolean = false;
+
+    constructor(dbName: string = "east_ui", options?: UIStoreOptions) {
+        this.dbName = dbName;
+        this.inner = new UIStore(options);
+    }
+
+    /**
+     * Initialize and hydrate from IndexedDB.
+     *
+     * @remarks
+     * Must be called before using the store to load persisted state.
+     */
+    async hydrate(): Promise<void> {
+        this.db = await this.openDatabase();
+        const entries = await this.loadAll();
+        for (const [key, value] of entries) {
+            this.inner.write(key, value);
+        }
+    }
+
+    read(key: string): Uint8Array | undefined {
+        return this.inner.read(key);
+    }
+
+    write(key: string, value: Uint8Array | undefined): void {
+        this.inner.write(key, value);
+        this.pendingWrites.set(key, value);
+        this.scheduleFlush();
+    }
+
+    has(key: string): boolean {
+        return this.inner.has(key);
+    }
+
+    subscribe(callback: () => void): () => void;
+    subscribe(key: string, callback: () => void): () => void;
+    subscribe(keyOrCallback: string | (() => void), callback?: () => void): () => void {
+        if (typeof keyOrCallback === "function") {
+            return this.inner.subscribe(keyOrCallback);
+        }
+        return this.inner.subscribe(keyOrCallback, callback!);
+    }
+
+    batch<T>(fn: () => T): T {
+        return this.inner.batch(fn);
+    }
+
+    markActive(key: string): void {
+        this.inner.markActive(key);
+    }
+
+    beginRender(): void {
+        this.inner.beginRender();
+    }
+
+    endRender(): void {
+        this.inner.endRender();
+        // Also delete orphaned keys from IndexedDB
+        for (const key of this.inner.getActiveKeys()) {
+            if (!this.inner.has(key)) {
+                this.deleteFromDb(key);
+            }
+        }
+    }
+
+    getSnapshot(): number {
+        return this.inner.getSnapshot();
+    }
+
+    getState(): Map<string, Uint8Array> {
+        return this.inner.getState();
+    }
+
+    setScheduler(scheduler: ((notify: () => void) => void) | undefined): void {
+        this.inner.setScheduler(scheduler);
+    }
+
+    getKeyVersion(key: string): number {
+        return this.inner.getKeyVersion(key);
+    }
+
+    private scheduleFlush(): void {
+        if (this.flushScheduled) return;
+        this.flushScheduled = true;
+        setTimeout(() => this.flushToDb(), 100);
+    }
+
+    private async flushToDb(): Promise<void> {
+        this.flushScheduled = false;
+        if (!this.db || this.pendingWrites.size === 0) return;
+
+        const writes = new Map(this.pendingWrites);
+        this.pendingWrites.clear();
+
+        const tx = this.db.transaction(this.storeName, "readwrite");
+        const store = tx.objectStore(this.storeName);
+
+        for (const [key, value] of writes) {
+            if (value === undefined) {
+                store.delete(key);
+            } else {
+                store.put(value, key);
+            }
+        }
+
+        await new Promise<void>((resolve, reject) => {
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error);
+        });
+    }
+
+    private async deleteFromDb(key: string): Promise<void> {
+        if (!this.db) return;
+
+        const tx = this.db.transaction(this.storeName, "readwrite");
+        const store = tx.objectStore(this.storeName);
+        store.delete(key);
+
+        await new Promise<void>((resolve, reject) => {
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error);
+        });
+    }
+
+    private openDatabase(): Promise<IDBDatabase> {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(this.dbName, 1);
+
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => resolve(request.result);
+
+            request.onupgradeneeded = (event) => {
+                const db = (event.target as IDBOpenDBRequest).result;
+                if (!db.objectStoreNames.contains(this.storeName)) {
+                    db.createObjectStore(this.storeName);
+                }
+            };
+        });
+    }
+
+    private async loadAll(): Promise<[string, Uint8Array][]> {
+        if (!this.db) return [];
+
+        const tx = this.db.transaction(this.storeName, "readonly");
+        const store = tx.objectStore(this.storeName);
+
+        return new Promise((resolve, reject) => {
+            const entries: [string, Uint8Array][] = [];
+            const request = store.openCursor();
+
+            request.onerror = () => reject(request.error);
+            request.onsuccess = (event) => {
+                const cursor = (event.target as IDBRequest).result;
+                if (cursor) {
+                    entries.push([cursor.key as string, cursor.value]);
+                    cursor.continue();
+                } else {
+                    resolve(entries);
+                }
+            };
+        });
+    }
+}
+
+/**
+ * Create a persistent UIStore with IndexedDB backing.
+ *
+ * @param dbName - Database name for IndexedDB
+ * @param initialState - Optional initial state
+ * @returns A new PersistentUIStore instance (must call hydrate() before use)
+ */
+export function createPersistentUIStore(
+    dbName: string = "east_ui",
+    initialState?: Record<string, Uint8Array>
+): PersistentUIStore {
+    return new PersistentUIStore(dbName, {
         initialState: initialState ? new Map(Object.entries(initialState)) : undefined,
     });
 }

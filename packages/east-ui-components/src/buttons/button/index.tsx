@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Button as ChakraButton, type ButtonProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Button } from "@elaraai/east-ui";
@@ -16,13 +16,13 @@ const buttonEqual = equalFor(Button.Types.Button);
 export type ButtonValue = ValueTypeOf<typeof Button.Types.Button>;
 
 /**
- * Converts an East UI Button value to Chakra UI Button props.
+ * Converts an East UI Button value to Chakra UI Button props (excluding callbacks).
  * Pure function - easy to test independently.
  *
  * @param value - The East Button value
  * @returns Chakra Button props
  */
-export function toChakraButton(value: ButtonValue): ButtonProps {
+export function toChakraButton(value: ButtonValue): Omit<ButtonProps, "onClick"> {
     const style = getSomeorUndefined(value.style);
 
     return {
@@ -43,9 +43,19 @@ export interface EastChakraButtonProps {
  */
 export const EastChakraButton = memo(function EastChakraButton({ value }: EastChakraButtonProps) {
     const props = useMemo(() => toChakraButton(value), [value]);
+    const onClickFn = useMemo(() => {
+        const style = getSomeorUndefined(value.style);
+        return style ? getSomeorUndefined(style.onClick) : undefined;
+    }, [value.style]);
+
+    const handleClick = useCallback(() => {
+        if (onClickFn) {
+            queueMicrotask(() => onClickFn());
+        }
+    }, [onClickFn]);
 
     return (
-        <ChakraButton {...props}>
+        <ChakraButton {...props} onClick={onClickFn ? handleClick : undefined}>
             {value.label}
         </ChakraButton>
     );

@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Slider as ChakraSlider, type ConditionalValue, type SliderRootProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Slider } from "@elaraai/east-ui";
@@ -42,9 +42,27 @@ export interface EastChakraSliderProps {
  */
 export const EastChakraSlider = memo(function EastChakraSlider({ value }: EastChakraSliderProps) {
     const props = useMemo(() => toChakraSlider(value), [value]);
+    const onChangeFn = useMemo(() => getSomeorUndefined(value.onChange), [value.onChange]);
+    const onChangeEndFn = useMemo(() => getSomeorUndefined(value.onChangeEnd), [value.onChangeEnd]);
+
+    const handleValueChange = useCallback((details: { value: number[] }) => {
+        if (onChangeFn && details.value.length > 0) {
+            queueMicrotask(() => onChangeFn(details.value[0]!));
+        }
+    }, [onChangeFn]);
+
+    const handleValueChangeEnd = useCallback((details: { value: number[] }) => {
+        if (onChangeEndFn && details.value.length > 0) {
+            queueMicrotask(() => onChangeEndFn(details.value[0]!));
+        }
+    }, [onChangeEndFn]);
 
     return (
-        <ChakraSlider.Root {...props}>
+        <ChakraSlider.Root
+            {...props}
+            onValueChange={onChangeFn ? handleValueChange : undefined}
+            onValueChangeEnd={onChangeEndFn ? handleValueChangeEnd : undefined}
+        >
             <ChakraSlider.Control>
                 <ChakraSlider.Track>
                     <ChakraSlider.Range />

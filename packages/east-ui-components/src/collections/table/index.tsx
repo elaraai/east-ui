@@ -25,8 +25,9 @@ import {
     type SortingState,
     type ColumnResizeMode,
     type ColumnDef,
+    type RowSelectionState,
 } from "@tanstack/react-table";
-import { equalFor, printFor, type ValueTypeOf } from "@elaraai/east";
+import { equalFor, printFor, variant, type ValueTypeOf } from "@elaraai/east";
 import { Table } from "@elaraai/east-ui";
 import { getSomeorUndefined } from "../../utils";
 import { EastChakraComponent } from "../../component";
@@ -123,6 +124,15 @@ export const EastChakraTable = memo(function EastChakraTable({
     const props = useMemo(() => toChakraTableRoot(value), [value]);
     const tableContainerRef = useRef<HTMLDivElement>(null);
 
+    // Extract East-side callbacks from style
+    const style = useMemo(() => getSomeorUndefined(value.style), [value.style]);
+    const onCellClickFn = useMemo(() => style ? getSomeorUndefined(style.onCellClick) : undefined, [style]);
+    const onCellDoubleClickFn = useMemo(() => style ? getSomeorUndefined(style.onCellDoubleClick) : undefined, [style]);
+    const onRowClickFn = useMemo(() => style ? getSomeorUndefined(style.onRowClick) : undefined, [style]);
+    const onRowDoubleClickFn = useMemo(() => style ? getSomeorUndefined(style.onRowDoubleClick) : undefined, [style]);
+    const onSortChangeFn = useMemo(() => style ? getSomeorUndefined(style.onSortChange) : undefined, [style]);
+    const onRowSelectionChangeFn = useMemo(() => style ? getSomeorUndefined(style.onRowSelectionChange) : undefined, [style]);
+
     // Row state management for loading indicators
     const [rowStateManager] = useState(() => new RowStateManager());
     const [rowStates, setRowStates] = useState<Map<RowKey, RowState>>(new Map());
@@ -170,6 +180,51 @@ export const EastChakraTable = memo(function EastChakraTable({
     // Sorting state
     const [sorting, setSorting] = useState<SortingState>([]);
 
+    // Row selection state
+    const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+
+    // Handle row selection changes
+    const handleRowSelectionChange = useCallback((updater: RowSelectionState | ((prev: RowSelectionState) => RowSelectionState)) => {
+        setRowSelection(prev => {
+            const newSelection = typeof updater === 'function' ? updater(prev) : updater;
+
+            // Find what changed
+            if (onRowSelectionChangeFn) {
+                const selectedIndices = Object.keys(newSelection)
+                    .filter(key => newSelection[key])
+                    .map(key => BigInt(parseInt(key, 10)));
+
+                // Find which row changed by comparing with previous state
+                const prevSelected = new Set(Object.keys(prev).filter(key => prev[key]));
+                const newSelected = new Set(Object.keys(newSelection).filter(key => newSelection[key]));
+
+                // Find newly selected or deselected rows
+                for (const key of newSelected) {
+                    if (!prevSelected.has(key)) {
+                        const rowIndex = BigInt(parseInt(key, 10));
+                        queueMicrotask(() => onRowSelectionChangeFn({
+                            rowIndex,
+                            selected: true,
+                            selectedRowsIndices: selectedIndices,
+                        }));
+                    }
+                }
+                for (const key of prevSelected) {
+                    if (!newSelected.has(key)) {
+                        const rowIndex = BigInt(parseInt(key, 10));
+                        queueMicrotask(() => onRowSelectionChangeFn({
+                            rowIndex,
+                            selected: false,
+                            selectedRowsIndices: selectedIndices,
+                        }));
+                    }
+                }
+            }
+
+            return newSelection;
+        });
+    }, [onRowSelectionChangeFn]);
+
     // Handle sorting changes and notify parent
     const handleSortingChange = useCallback((updater: SortingState | ((prev: SortingState) => SortingState)) => {
         setSorting(prev => {
@@ -182,9 +237,48 @@ export const EastChakraTable = memo(function EastChakraTable({
             }));
             onSortChange?.(sorts);
 
+            // Also call East-side callback if present - called once per sort column
+            if (onSortChangeFn) {
+                newSorting.forEach((s, index) => {
+                    queueMicrotask(() => onSortChangeFn({
+                        columnKey: s.id,
+                        sortIndex: BigInt(index),
+                        sortDirection: s.desc ? variant('desc', null) : variant('asc', null),
+                    }));
+                });
+            }
+
             return newSorting;
         });
-    }, [onSortChange]);
+    }, [onSortChange, onSortChangeFn]);
+
+    // Handle cell click
+    const handleCellClick = useCallback((rowIndex: bigint, columnKey: string, cellValue: TableCellValue | undefined) => {
+        if (onCellClickFn) {
+            queueMicrotask(() => onCellClickFn({ rowIndex, columnKey, cellValue: cellValue?.value! }));
+        }
+    }, [onCellClickFn]);
+
+    // Handle cell double click
+    const handleCellDoubleClick = useCallback((rowIndex: bigint, columnKey: string, cellValue: TableCellValue | undefined) => {
+        if (onCellDoubleClickFn) {
+            queueMicrotask(() => onCellDoubleClickFn({ rowIndex, columnKey, cellValue: cellValue?.value! }));
+        }
+    }, [onCellDoubleClickFn]);
+
+    // Handle row click
+    const handleRowClick = useCallback((rowIndex: bigint) => {
+        if (onRowClickFn) {
+            queueMicrotask(() => onRowClickFn({ rowIndex }));
+        }
+    }, [onRowClickFn]);
+
+    // Handle row double click
+    const handleRowDoubleClick = useCallback((rowIndex: bigint) => {
+        if (onRowDoubleClickFn) {
+            queueMicrotask(() => onRowDoubleClickFn({ rowIndex }));
+        }
+    }, [onRowDoubleClickFn]);
 
     // Column sizing state
     const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
@@ -196,9 +290,11 @@ export const EastChakraTable = memo(function EastChakraTable({
         state: {
             sorting,
             columnSizing,
+            rowSelection,
         },
         onSortingChange: handleSortingChange,
         onColumnSizingChange: setColumnSizing,
+        onRowSelectionChange: handleRowSelectionChange,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         enableMultiSort,
@@ -206,6 +302,7 @@ export const EastChakraTable = memo(function EastChakraTable({
         maxMultiSortColCount: maxSortColumns,
         enableColumnResizing,
         columnResizeMode: 'onChange' as ColumnResizeMode,
+        enableRowSelection: true,
     });
 
     // Get sorted rows from table
@@ -435,6 +532,8 @@ export const EastChakraTable = memo(function EastChakraTable({
                         const rowState = rowStates.get(rowKey) || { status: 'unloaded' };
                         const isRowLoading = !rowStateManager.isRowLoaded(rowKey) || rowState.status === 'loading';
 
+                        const rowIndex = BigInt(virtualRow.index);
+
                         return (
                             <ChakraTable.Row
                                 key={row.id}
@@ -446,16 +545,30 @@ export const EastChakraTable = memo(function EastChakraTable({
                                     width: '100%',
                                     height: `${virtualRow.size}px`,
                                     transform: `translateY(${virtualRow.start}px)`,
+                                    cursor: (onRowClickFn || onRowDoubleClickFn) ? 'pointer' : undefined,
                                 }}
+                                onClick={onRowClickFn ? () => handleRowClick(rowIndex) : undefined}
+                                onDoubleClick={onRowDoubleClickFn ? () => handleRowDoubleClick(rowIndex) : undefined}
                             >
                                 {row.getVisibleCells().map((cell) => {
                                     const cellValue = cell.getValue() as TableCellValue | undefined;
                                     const meta = cell.column.columnDef.meta;
+                                    const columnKey = meta?.columnKey ?? cell.column.id;
 
                                     const cellStyle = {
                                         width: `var(--col-${cell.column.id}-size)`,
                                         flex: columnSizing[cell.column.id] ? 'none' : 1,
                                     };
+
+                                    const cellClickHandler = onCellClickFn ? (e: React.MouseEvent) => {
+                                        e.stopPropagation();
+                                        handleCellClick(rowIndex, columnKey, cellValue);
+                                    } : undefined;
+
+                                    const cellDoubleClickHandler = onCellDoubleClickFn ? (e: React.MouseEvent) => {
+                                        e.stopPropagation();
+                                        handleCellDoubleClick(rowIndex, columnKey, cellValue);
+                                    } : undefined;
 
                                     if (isRowLoading) {
                                         return (
@@ -467,20 +580,35 @@ export const EastChakraTable = memo(function EastChakraTable({
 
                                     if (cellValue == null) {
                                         return (
-                                            <ChakraTable.Cell key={cell.id} style={cellStyle} />
+                                            <ChakraTable.Cell
+                                                key={cell.id}
+                                                style={cellStyle}
+                                                onClick={cellClickHandler}
+                                                onDoubleClick={cellDoubleClickHandler}
+                                            />
                                         );
                                     }
 
                                     if (cellValue.content != null) {
                                         return (
-                                            <ChakraTable.Cell key={cell.id} style={cellStyle}>
+                                            <ChakraTable.Cell
+                                                key={cell.id}
+                                                style={cellStyle}
+                                                onClick={cellClickHandler}
+                                                onDoubleClick={cellDoubleClickHandler}
+                                            >
                                                 <EastChakraComponent value={cellValue.content} />
                                             </ChakraTable.Cell>
                                         );
                                     }
 
                                     return (
-                                        <ChakraTable.Cell key={cell.id} style={cellStyle}>
+                                        <ChakraTable.Cell
+                                            key={cell.id}
+                                            style={cellStyle}
+                                            onClick={cellClickHandler}
+                                            onDoubleClick={cellDoubleClickHandler}
+                                        >
                                             <Text>{meta?.print?.(cellValue.value.value) ?? null}</Text>
                                         </ChakraTable.Cell>
                                     );

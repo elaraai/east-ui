@@ -77,6 +77,13 @@ export type BarSegmentType = typeof BarSegmentType;
 
 /**
  * TypeScript interface for Bar segment style options.
+ *
+ * @remarks
+ * All properties are optional for configuring the bar segment appearance.
+ *
+ * @property sort - Sort configuration for ordering segments
+ * @property showValue - Show value text on segments
+ * @property showLabel - Show label text on segments
  */
 export interface BarSegmentStyle {
     /** Sort configuration */

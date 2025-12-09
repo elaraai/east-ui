@@ -48,39 +48,16 @@ export {
  *
  * @example
  * ```ts
- * import { Progress } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Progress, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple progress (accepts plain numbers)
- * const progress = Progress.Root(50.0);
- *
- * // Progress with custom range
- * const ranged = Progress.Root(75.0, {
- *   min: 0,
- *   max: 100,
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Progress.Root(60.0, {
+ *         colorPalette: "green",
+ *         size: "md",
+ *         striped: true,
+ *     });
  * });
- *
- * // Styled progress
- * const styled = Progress.Root(60.0, {
- *   colorPalette: "green",
- *   size: "md",
- *   variant: "subtle",
- * });
- *
- * // Striped and animated
- * const active = Progress.Root(30.0, {
- *   striped: true,
- *   animated: true,
- *   colorPalette: "blue",
- * });
- *
- * // With label and value text
- * const labeled = Progress.Root(75.0, {
- *   label: "Upload Progress",
- *   valueText: "75%",
- * });
- *
- * // Access the type
- * const progressType = Progress.Types.Progress;
  * ```
  */
 function createProgress(
@@ -139,17 +116,6 @@ function createProgress(
  *
  * @remarks
  * Use `Progress.Root(value, style)` to create a progress bar, or access `Progress.Types.Progress` for the East type.
- *
- * @example
- * ```ts
- * import { Progress } from "@elaraai/east-ui";
- *
- * // Create a progress bar
- * const bar = Progress.Root(myValue, { colorPalette: "green" });
- *
- * // Access the type
- * const progressType = Progress.Types.Progress;
- * ```
  */
 export const Progress = {
     /**

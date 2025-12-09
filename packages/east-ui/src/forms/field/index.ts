@@ -74,32 +74,16 @@ export type FieldType = typeof FieldType;
  *
  * @example
  * ```ts
- * import { Field, Input } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Field, Input, UIComponentType } from "@elaraai/east-ui";
  *
- * // Basic field with helper text
- * const emailField = Field.Root(
- *   "Email",
- *   Input.String({ placeholder: "you@example.com" }),
- *   { helperText: "We'll never share your email." }
- * );
- *
- * // Required field with validation error
- * const passwordField = Field.Root(
- *   "Password",
- *   Input.String({ placeholder: "Enter password" }),
- *   {
- *     required: true,
- *     invalid: hasError,
- *     errorText: "Password is required",
- *   }
- * );
- *
- * // Read-only field
- * const readOnlyField = Field.Root(
- *   "Account ID",
- *   Input.String({ value: accountId }),
- *   { readOnly: true }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Field.Root(
+ *         "Email",
+ *         Input.String("", { placeholder: "Enter email" }),
+ *         { helperText: "We'll never share your email" }
+ *     );
+ * });
  * ```
  */
 function createField(
@@ -135,24 +119,6 @@ function createField(
  * @remarks
  * Use `Field.Root(label, control, style)` to create a field wrapper.
  * The control can be any form component like Input, Select, Checkbox, etc.
- *
- * @example
- * ```ts
- * import { Field, Input, Checkbox } from "@elaraai/east-ui";
- *
- * // Text input field
- * const nameField = Field.Root(
- *   "Full Name",
- *   Input.String({ placeholder: "Enter your name" }),
- *   { required: true }
- * );
- *
- * // Checkbox field
- * const termsField = Field.Root(
- *   "Terms",
- *   Checkbox.Root(accepted, { label: "I accept the terms" })
- * );
- * ```
  */
 export const Field = {
     /**

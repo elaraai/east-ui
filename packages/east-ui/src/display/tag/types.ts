@@ -11,6 +11,7 @@ import {
     OptionType,
     StructType,
     VariantType,
+    FunctionType,
 } from "@elaraai/east";
 
 import { ColorSchemeType, StyleVariantType } from "../../style.js";
@@ -64,6 +65,7 @@ export type TagSizeLiteral = "sm" | "md" | "lg" | "xl";
  * @property colorPalette - Color scheme for the tag
  * @property size - Size of the tag (sm, md, lg, xl)
  * @property closable - Whether the tag shows a close button
+ * @property onClose - Callback triggered when close button is clicked
  */
 export const TagType = StructType({
     label: StringType,
@@ -71,6 +73,7 @@ export const TagType = StructType({
     colorPalette: OptionType(ColorSchemeType),
     size: OptionType(TagSizeType),
     closable: OptionType(BooleanType),
+    onClose: OptionType(FunctionType([], NullType)),
 });
 
 /**
@@ -89,6 +92,7 @@ export type TagType = typeof TagType;
  * @property colorPalette - Color scheme for the tag
  * @property size - Size of the tag (sm, md, lg, xl)
  * @property closable - Whether the tag shows a close button
+ * @property onClose - Callback triggered when close button is clicked
  */
 export interface TagStyle {
     /** Visual variant (solid, subtle, outline) */
@@ -99,4 +103,6 @@ export interface TagStyle {
     size?: SubtypeExprOrValue<TagSizeType> | TagSizeLiteral;
     /** Whether the tag shows a close button */
     closable?: SubtypeExprOrValue<BooleanType>;
+    /** Callback triggered when close button is clicked */
+    onClose?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 }

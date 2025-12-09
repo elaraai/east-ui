@@ -52,27 +52,12 @@ export {
  *
  * @example
  * ```ts
- * import { Icon } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Icon, UIComponentType } from "@elaraai/east-ui";
  *
- * // Solid user icon
- * const userIcon = Icon.Root("fas", "user");
- *
- * // Regular heart icon (outlined)
- * const heartIcon = Icon.Root("far", "heart");
- *
- * // Brand icon (GitHub logo)
- * const githubIcon = Icon.Root("fab", "github");
- *
- * // Icon with size and color
- * const coloredIcon = Icon.Root("fas", "heart", {
- *   color: "red.500",
- *   size: "xl",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Icon.Root("fas", "user");
  * });
- *
- * // Tree view icons
- * const folderIcon = Icon.Root("fas", "folder", { color: "yellow.500" });
- * const fileIcon = Icon.Root("far", "file");
- * const codeIcon = Icon.Root("fas", "file-code", { color: "blue.500" });
  * ```
  */
 function createIcon(
@@ -120,23 +105,6 @@ function createIcon(
  * @remarks
  * Icon displays Font Awesome icons with typesafe icon names.
  * Use the `variant` prop to select icon style (solid, regular, brands, etc.).
- *
- * @example
- * ```ts
- * import { Icon } from "@elaraai/east-ui";
- *
- * // Navigation icons
- * const homeIcon = Icon.Root("home", { size: "lg" });
- * const menuIcon = Icon.Root("bars", { variant: "solid" });
- *
- * // Status icons
- * const checkIcon = Icon.Root("check", { color: "green.500" });
- * const warningIcon = Icon.Root("triangle-exclamation", { color: "yellow.500" });
- *
- * // Tree view icons
- * const folderIcon = Icon.Root("folder", { variant: "solid" });
- * const fileIcon = Icon.Root("file", { variant: "regular" });
- * ```
  */
 export const Icon = {
     /**

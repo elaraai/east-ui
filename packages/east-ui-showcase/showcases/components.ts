@@ -61,7 +61,13 @@ export const ShowcaseCard = East.function(
                 }),
                 HoverCard.Root(
                     Icon.Root("fas", "code", { color: "gray.400", size: "sm" }),
-                    [Box.Root([CodeBlock.Root(dedent(codeString), { language: "typescript", showCopyButton: true, title })], { width: "auto" })],
+                    [Box.Root([
+                        CodeBlock.Root(dedent(codeString), { 
+                            language: "typescript", 
+                            showCopyButton: true, 
+                            title 
+                        })], { width: "md", height: "md", })
+                    ],
                     { placement: "left", openDelay: 100n, size: 'lg' }
                 ),
             ], { gap: "2", justify: "space-between", width: "100%" })),

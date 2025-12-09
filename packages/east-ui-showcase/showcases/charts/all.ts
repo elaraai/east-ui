@@ -19,23 +19,23 @@ export default East.function(
     ($) => {
         return Stack.VStack([
             Text.Root("Sparkline", { fontWeight: "bold", fontSize: "lg" }),
-            $(sparklineShowcase()),
+            sparklineShowcase(),
             Text.Root("Area Chart", { fontWeight: "bold", fontSize: "lg" }),
-            $(areaShowcase()),
+            areaShowcase(),
             Text.Root("Bar Chart", { fontWeight: "bold", fontSize: "lg" }),
-            $(barShowcase()),
+            barShowcase(),
             Text.Root("Line Chart", { fontWeight: "bold", fontSize: "lg" }),
-            $(lineShowcase()),
+            lineShowcase(),
             Text.Root("Scatter Chart", { fontWeight: "bold", fontSize: "lg" }),
-            $(scatterShowcase()),
+            scatterShowcase(),
             Text.Root("Pie Chart", { fontWeight: "bold", fontSize: "lg" }),
-            $(pieShowcase()),
+            pieShowcase(),
             Text.Root("Radar Chart", { fontWeight: "bold", fontSize: "lg" }),
-            $(radarShowcase()),
+            radarShowcase(),
             Text.Root("Bar List", { fontWeight: "bold", fontSize: "lg" }),
-            $(barListShowcase()),
+            barListShowcase(),
             Text.Root("Bar Segment", { fontWeight: "bold", fontSize: "lg" }),
-            $(barSegmentShowcase()),
+            barSegmentShowcase(),
         ], { gap: "8", align: "stretch" });
     }
 );

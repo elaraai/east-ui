@@ -1,5 +1,5 @@
-import { East, some } from "@elaraai/east";
-import { Accordion, UIComponentType, Grid, Text, Box } from "@elaraai/east-ui";
+import { East, some, StringType, NullType, ArrayType } from "@elaraai/east";
+import { Accordion, UIComponentType, Grid, Text, Box, Stack, State, Reactive, Badge } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
 /**
@@ -233,6 +233,97 @@ export default East.function(
             )
         );
 
+        // =====================================================================
+        // INTERACTIVE EXAMPLES - Demonstrate callbacks with Reactive.Root
+        // =====================================================================
+
+        // Initialize state for interactive examples
+        $(State.initTyped("accordion_expanded", [] as string[], ArrayType(StringType))());
+
+        // Interactive Accordion with onValueChange
+        const interactiveAccordion = $.let(
+            ShowcaseCard(
+                "Interactive Accordion",
+                "Expand/collapse to see onValueChange callback",
+                Reactive.Root($ => {
+                    const expanded = $.let(State.readTyped("accordion_expanded", ArrayType(StringType))());
+
+                    const onValueChange = East.function(
+                        [ArrayType(StringType)],
+                        NullType,
+                        ($, newValue) => {
+                            $(State.writeTyped("accordion_expanded", some(newValue), ArrayType(StringType))());
+                        }
+                    );
+
+                    return Stack.VStack([
+                        Box.Root([
+                            Accordion.Root([
+                                Accordion.Item("intro", "Introduction", [
+                                    Box.Root([Text.Root("Welcome! This is the introduction section.")], { padding: "4" }),
+                                ]),
+                                Accordion.Item("features", "Features", [
+                                    Box.Root([Text.Root("Explore the amazing features available.")], { padding: "4" }),
+                                ]),
+                                Accordion.Item("help", "Help & Support", [
+                                    Box.Root([Text.Root("Get help and support for any issues.")], { padding: "4" }),
+                                ]),
+                            ], {
+                                multiple: true,
+                                collapsible: true,
+                                variant: "enclosed",
+                                onValueChange,
+                            }),
+                        ], { width: "100%" }),
+                        Badge.Root(
+                            East.str`Expanded: ${expanded.unwrap('some').size()}`,
+                            { colorPalette: "green", variant: "solid" }
+                        ),
+                        Text.Root(East.str`Sections expanded: ${expanded.unwrap('some').size()}`),
+                    ], { gap: "3", align: "stretch" });
+                }),
+                some(`
+                    Reactive.Root($ => {
+                        const expanded = $.let(State.readTyped("accordion_expanded", ArrayType(StringType))());
+
+                        const onValueChange = East.function(
+                            [ArrayType(StringType)],
+                            NullType,
+                            ($, newValue) => {
+                                $(State.writeTyped("accordion_expanded", some(newValue), ArrayType(StringType))());
+                            }
+                        );
+
+                        return Stack.VStack([
+                            Box.Root([
+                                Accordion.Root([
+                                    Accordion.Item("intro", "Introduction", [
+                                        Box.Root([Text.Root("Welcome! This is the introduction section.")], { padding: "4" }),
+                                    ]),
+                                    Accordion.Item("features", "Features", [
+                                        Box.Root([Text.Root("Explore the amazing features available.")], { padding: "4" }),
+                                    ]),
+                                    Accordion.Item("help", "Help & Support", [
+                                        Box.Root([Text.Root("Get help and support for any issues.")], { padding: "4" }),
+                                    ]),
+                                ], {
+                                    multiple: true,
+                                    collapsible: true,
+                                    variant: "enclosed",
+                                    onValueChange,
+                                }),
+                            ], { width: "100%" }),
+                            Badge.Root(
+                                East.str\`Expanded: \${expanded.unwrap('some').size()}\`,
+                                { colorPalette: "green", variant: "solid" }
+                            ),
+                            Text.Root(East.str\`Sections expanded: \${expanded.unwrap('some').size()}\`),
+                        ], { gap: "3", align: "stretch" });
+                    })
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -241,6 +332,7 @@ export default East.function(
                 Grid.Item(enclosed),
                 Grid.Item(subtle),
                 Grid.Item(plain),
+                Grid.Item(interactiveAccordion, { colSpan: "2" }),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

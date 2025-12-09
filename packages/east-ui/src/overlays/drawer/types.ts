@@ -11,6 +11,7 @@ import {
     BooleanType,
     VariantType,
     StringType,
+    FunctionType,
 } from "@elaraai/east";
 
 // ============================================================================
@@ -71,11 +72,17 @@ export type DrawerPlacementLiteral = "start" | "end" | "top" | "bottom";
  * @property size - Drawer size variant
  * @property placement - Edge placement
  * @property contained - Render within parent container
+ * @property onOpenChange - Callback triggered when open state changes
+ * @property onExitComplete - Callback triggered when exit animation completes
  */
 export const DrawerStyleType = StructType({
     size: OptionType(DrawerSizeType),
     placement: OptionType(DrawerPlacementType),
     contained: OptionType(BooleanType),
+    /** Callback triggered when open state changes */
+    onOpenChange: OptionType(FunctionType([BooleanType], NullType)),
+    /** Callback triggered when exit animation completes */
+    onExitComplete: OptionType(FunctionType([], NullType)),
 });
 
 export type DrawerStyleType = typeof DrawerStyleType;
@@ -86,6 +93,20 @@ export type DrawerStyleType = typeof DrawerStyleType;
 
 /**
  * TypeScript interface for Drawer style options.
+ *
+ * @property size - Drawer size variant
+ * @property placement - Edge placement
+ * @property contained - Render within parent container
+ * @property title - Drawer title
+ * @property description - Drawer description
+ * @property open - Controlled open state
+ * @property defaultOpen - Initial open state
+ * @property closeOnInteractOutside - Close when clicking outside
+ * @property closeOnEscape - Close on escape key
+ * @property lazyMount - Delay mounting until first open
+ * @property unmountOnExit - Unmount when closed
+ * @property onOpenChange - Callback triggered when open state changes
+ * @property onExitComplete - Callback triggered when exit animation completes
  */
 export interface DrawerStyle {
     /** Drawer size variant */
@@ -110,4 +131,8 @@ export interface DrawerStyle {
     lazyMount?: SubtypeExprOrValue<BooleanType>;
     /** Unmount when closed */
     unmountOnExit?: SubtypeExprOrValue<BooleanType>;
+    /** Callback triggered when open state changes */
+    onOpenChange?: SubtypeExprOrValue<FunctionType<[BooleanType], NullType>>;
+    /** Callback triggered when exit animation completes */
+    onExitComplete?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 }

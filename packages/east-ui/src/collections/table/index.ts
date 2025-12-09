@@ -11,11 +11,14 @@ import {
     StructType,
     ArrayType,
     DictType,
-    StringType,
-    BooleanType,
-    OptionType,
+    StringType, OptionType,
     variant,
-    type TypeOf, some, type ValueTypeOf
+    type TypeOf,
+    some,
+    none,
+    type ValueTypeOf,
+    FunctionType,
+    NullType
 } from "@elaraai/east";
 
 import {
@@ -30,7 +33,12 @@ import {
     type TableStyle,
     TableValueLiteral,
     type TableValueType,
-    TableValueTypeType
+    TableValueTypeType,
+    TableCellClickEventType,
+    TableRowClickEventType,
+    TableRowSelectionEventType,
+    TableSortEventType,
+    TableSortDirectionType
 } from "./types.js";
 import { UIComponentType } from "../../component.js";
 import { Text } from "../../typography/index.js";
@@ -102,12 +110,21 @@ export type TableRootType = typeof TableRootType;
  *
  * @property header - Column header text (defaults to column key)
  * @property render - Function to render the cell content from field value
+ * @property onCellClick - Optional cell click handler
+ * @property onCellDoubleClick - Optional cell double-click handler
+ * @property onSortChange - Optional sort change handler
  */
 export interface TableColumnConfig<FieldType extends TableValueType = TableValueType> {
     /** Column header text (defaults to column key if not provided) */
     header?: SubtypeExprOrValue<StringType>;
     /** Optional render function - defaults to Text.Root (with auto string conversion for non-strings) */
     render?: (value: ExprType<FieldType>) => ExprType<UIComponentType>;
+    /** Optional cell click handler */
+    onCellClick?: SubtypeExprOrValue<FunctionType<[TableCellClickEventType], NullType>>,
+    /** Optional cell double-click handler */
+    onCellDoubleClick?: SubtypeExprOrValue<FunctionType<[TableCellClickEventType], NullType>>,
+    /** Optional sort change handler */
+    onSortChange?: SubtypeExprOrValue<FunctionType<[TableSortEventType], NullType>>,
 }
 
 /**
@@ -129,21 +146,18 @@ export interface TableColumnConfig<FieldType extends TableValueType = TableValue
  *
  * @example
  * ```ts
- * import { Table, Text, Badge } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Table, UIComponentType } from "@elaraai/east-ui";
  *
- * const data = [
- *   { name: "Alice", age: 30, role: "Admin" },
- *   { name: "Bob", age: 25, role: "User" },
- * ];
- *
- * // Simple: array of field names (uses field name as header)
- * Table.Root(data, ["name", "age", "role"]);
- *
- * // With headers and optional custom rendering
- * Table.Root(data, {
- *   name: { header: "Name" },
- *   age: { header: "Age", render: value => Text.Root(value, { textAlign: "right" }) },
- *   role: { header: "Role", render: value => Badge.Root(value) },
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Table.Root(
+ *         [
+ *             { name: "Alice", age: 30n, role: "Admin" },
+ *             { name: "Bob", age: 25n, role: "User" },
+ *         ],
+ *         ["name", "age", "role"],
+ *         { variant: "line", striped: true }
+ *     );
  * });
  * ```
  */
@@ -174,45 +188,46 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
     const columns_obj: Record<string, TableColumnConfig & { type: ValueTypeOf<typeof TableValueTypeType> }> = Array.isArray(columns)
         ? Object.fromEntries((columns as string[]).map(key => [key, {
             type: variant(field_types[key as keyof typeof field_types].type, null)
-        }]))  as Record<string, TableColumnConfig & { type: ValueTypeOf<typeof TableValueTypeType> }>
+        }])) as Record<string, TableColumnConfig & { type: ValueTypeOf<typeof TableValueTypeType> }>
         : Object.fromEntries((Object.entries(columns)).map(([key, value]) => [key, {
             ...value,
             type: variant(field_types[key as keyof typeof field_types].type, null)
         }])) as Record<string, TableColumnConfig & { type: ValueTypeOf<typeof TableValueTypeType> }>;
     // Map each data row to a Dict<String, UIComponentType> by calling render functions
     const rows_mapped = data_expr.map(($, datum) => {
-        const ret = $.let(new Map(), DictType(StringType, StructType({
+        const cells = $.let(new Map(), DictType(StringType, StructType({
             value: TableValueLiteral,
-            content: UIComponentType
+            content: UIComponentType,
         })));
         for (const [col_key, col_config] of Object.entries(columns_obj)) {
             const field_value = (datum as any)[col_key];
             const field_type = field_types[col_key];
-            let value = variant(field_type.type, field_value);
-            // Use custom render if provided, otherwise default to Text with ellipsis overflow
-            let content: ValueTypeOf<UIComponentType>;
-            if (col_config.render) {
-                content = col_config.render(field_value) as any
-            } else {
-                content = Text.Root(East.str`${field_value}`, {
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                }) as any
-            }
-            $(ret.insert(col_key, { value, content }));
+            $(cells.insert(col_key, {
+                value: variant(field_type.type, field_value),
+                content: East.value(
+                    col_config.render ?
+                        col_config.render(field_value) :
+                        Text.Root(East.str`${field_value}`, {
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                        }),
+                    UIComponentType
+                ),
+            }));
         }
-        return ret;
+        return cells
     });
 
     // Create columns array from the columns config
     const columns_mapped: ValueTypeOf<ArrayType<typeof TableColumnType>> = []
-    for(const [key, config] of Object.entries(columns_obj)) {
-        if(config.type.type !== "Boolean" &&
-           config.type.type !== "Integer" &&
-           config.type.type !== "Float" &&
-           config.type.type !== "String" &&
-           config.type.type !== "DateTime") {
+
+    for (const [key, config] of Object.entries(columns_obj)) {
+        if (config.type.type !== "Boolean" &&
+            config.type.type !== "Integer" &&
+            config.type.type !== "Float" &&
+            config.type.type !== "String" &&
+            config.type.type !== "DateTime") {
             throw new Error(`Table column type for key "${key}" must be one of Boolean, Integer, Float, String, or DateTime.`);
         }
         columns_mapped.push({
@@ -240,23 +255,24 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
             : style.colorPalette)
         : undefined;
 
-    const toBoolOption = (value: SubtypeExprOrValue<typeof BooleanType> | undefined) => {
-        if (value === undefined) return variant("none", null);
-        return variant("some", value);
-    };
-
     return East.value(variant("Table", {
         rows: rows_mapped,
         columns: columns_mapped as ValueTypeOf<typeof TableRootType>["columns"],
-        style: style ? variant("some", East.value({
-            variant: variantValue ? variant("some", variantValue) : variant("none", null),
-            size: sizeValue ? variant("some", sizeValue) : variant("none", null),
-            striped: toBoolOption(style.striped),
-            interactive: toBoolOption(style.interactive),
-            stickyHeader: toBoolOption(style.stickyHeader),
-            showColumnBorder: toBoolOption(style.showColumnBorder),
-            colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
-        }, TableStyleType)) : variant("none", null),
+        style: style ? some(East.value({
+            variant: variantValue ? some(variantValue) : none,
+            size: sizeValue ? some(sizeValue) : none,
+            striped: style.striped !== undefined ? some(style.striped) : none,
+            interactive: style.interactive !== undefined ? some(style.interactive) : none,
+            stickyHeader: style.stickyHeader !== undefined ? some(style.stickyHeader) : none,
+            showColumnBorder: style.showColumnBorder !== undefined ? some(style.showColumnBorder) : none,
+            colorPalette: colorPaletteValue ? some(colorPaletteValue) : none,
+            onCellClick: style.onCellClick ? some(style.onCellClick) : none,
+            onCellDoubleClick: style.onCellDoubleClick ? some(style.onCellDoubleClick) : none,
+            onRowClick: style.onRowClick ? some(style.onRowClick) : none,
+            onRowDoubleClick: style.onRowDoubleClick ? some(style.onRowDoubleClick) : none,
+            onRowSelectionChange: style.onRowSelectionChange ? some(style.onRowSelectionChange) : none,
+            onSortChange: style.onSortChange ? some(style.onSortChange) : none,
+        }, TableStyleType)) : none,
     }), UIComponentType);
 }
 
@@ -266,26 +282,6 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
  * @remarks
  * Pass data as an array of structs and configure columns with either
  * an array of field names or an object with optional header/render config.
- *
- * @example
- * ```ts
- * import { Table, Text, Badge } from "@elaraai/east-ui";
- *
- * const data = [
- *   { name: "Alice", age: 30, role: "Admin" },
- *   { name: "Bob", age: 25, role: "User" },
- * ];
- *
- * // Simple: array of field names
- * Table.Root(data, ["name", "age", "role"]);
- *
- * // With config
- * Table.Root(data, {
- *   name: { header: "Name" },
- *   age: { header: "Age" },
- *   role: { header: "Role", render: value => Badge.Root(value) },
- * }, { variant: "line" });
- * ```
  */
 export const Table = {
     /**
@@ -396,5 +392,39 @@ export const Table = {
          * @property lg - Large table
          */
         Size: TableSizeType,
+        /**
+         * Event type for row click callbacks.
+         *
+         * @property rowIndex - The index of the clicked row
+         */
+        RowClickEvent: TableRowClickEventType,
+        /**
+         * Event type for cell click callbacks.
+         *
+         * @property rowIndex - The row index
+         * @property columnKey - The column key
+         * @property cellValue - The cell value
+         */
+        CellClickEvent: TableCellClickEventType,
+        /**
+         * Event type for row selection change callbacks.
+         *
+         * @property rowIndex - The row index
+         * @property selected - Whether the row is selected
+         * @property selectedRowsIndices - Array of all selected row indices
+         */
+        RowSelectionEvent: TableRowSelectionEventType,
+        /**
+         * Event type for sort change callbacks.
+         *
+         * @property columnKey - The column key being sorted
+         * @property sortIndex - The sort index (for multi-column sorting)
+         * @property sortDirection - The sort direction
+         */
+        SortEvent: TableSortEventType,
+        /**
+         * Sort direction type (asc or desc).
+         */
+        SortDirection: TableSortDirectionType,
     },
 } as const;

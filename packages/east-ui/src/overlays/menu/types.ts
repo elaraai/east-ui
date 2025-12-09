@@ -11,7 +11,7 @@ import {
     NullType,
     BooleanType,
     VariantType,
-    // FunctionType,
+    FunctionType,
 } from "@elaraai/east";
 
 import { PlacementType, type PlacementLiteral } from "../tooltip/types.js";
@@ -64,9 +64,15 @@ export type MenuItemType = typeof MenuItemType;
  * Contains optional styling properties for the menu.
  *
  * @property placement - Where to position the menu relative to the trigger
+ * @property onSelect - Callback triggered when a menu item is selected
+ * @property onOpenChange - Callback triggered when open state changes
  */
 export const MenuStyleType = StructType({
     placement: OptionType(PlacementType),
+    /** Callback triggered when a menu item is selected */
+    onSelect: OptionType(FunctionType([StringType], NullType)),
+    /** Callback triggered when open state changes */
+    onOpenChange: OptionType(FunctionType([BooleanType], NullType)),
 });
 
 /**
@@ -82,8 +88,14 @@ export type MenuStyleType = typeof MenuStyleType;
  * TypeScript interface for Menu style options.
  *
  * @property placement - Where to position the menu relative to the trigger
+ * @property onSelect - Callback triggered when a menu item is selected
+ * @property onOpenChange - Callback triggered when open state changes
  */
 export interface MenuStyle {
     /** Where to position the menu relative to the trigger */
     placement?: SubtypeExprOrValue<PlacementType> | PlacementLiteral;
+    /** Callback triggered when a menu item is selected */
+    onSelect?: SubtypeExprOrValue<FunctionType<[StringType], NullType>>;
+    /** Callback triggered when open state changes */
+    onOpenChange?: SubtypeExprOrValue<FunctionType<[BooleanType], NullType>>;
 }
