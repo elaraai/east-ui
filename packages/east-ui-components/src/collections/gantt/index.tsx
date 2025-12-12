@@ -147,7 +147,10 @@ export const EastChakraGantt = memo(function EastChakraGantt({
     const onMilestoneClickFn = useMemo(() => style ? getSomeorUndefined(style.onMilestoneClick) : undefined, [style]);
     const onMilestoneDoubleClickFn = useMemo(() => style ? getSomeorUndefined(style.onMilestoneDoubleClick) : undefined, [style]);
     const onMilestoneDragFn = useMemo(() => style ? getSomeorUndefined(style.onMilestoneDrag) : undefined, [style]);
+    const onTaskDurationChangeFn = useMemo(() => style ? getSomeorUndefined(style.onTaskDurationChange) : undefined, [style]);
     const onRowSelectionChangeFn = useMemo(() => style ? getSomeorUndefined(style.onRowSelectionChange) : undefined, [style]);
+    const dragStepValue = useMemo(() => style ? getSomeorUndefined(style.dragStep) : undefined, [style]);
+    const durationStepValue = useMemo(() => style ? getSomeorUndefined(style.durationStep) : undefined, [style]);
     const [gridLineColor] = useToken("colors", ["gray.300"]);
     const tableContainerRef = useRef<HTMLDivElement>(null);
     const timelineContainerRef = useRef<HTMLDivElement>(null);
@@ -384,6 +387,18 @@ export const EastChakraGantt = memo(function EastChakraGantt({
         }
     }, [onMilestoneDragFn]);
 
+    // Handle task duration change (East-side callback)
+    const handleTaskDurationChange = useCallback((
+        rowIndex: bigint,
+        taskIndex: bigint,
+        previousEnd: Date,
+        newEnd: Date
+    ) => {
+        if (onTaskDurationChangeFn) {
+            queueMicrotask(() => onTaskDurationChangeFn({ rowIndex, taskIndex, previousEnd, newEnd }));
+        }
+    }, [onTaskDurationChangeFn]);
+
     // Wrap the onEventClick to also call East callbacks
     const handleEventClick = useCallback((event: GanttEventValue, rowIndex: number, eventIndex: number) => {
         onEventClick?.(event, rowIndex, eventIndex);
@@ -422,6 +437,59 @@ export const EastChakraGantt = memo(function EastChakraGantt({
             );
         }
     }, [onTaskDoubleClickFn, onMilestoneDoubleClickFn, handleTaskDoubleClick, handleMilestoneDoubleClick]);
+
+    // Handle task drag from GanttEventRow
+    const handleEventTaskDrag = useCallback((
+        rowIndex: number,
+        eventIndex: number,
+        previousStart: Date,
+        previousEnd: Date,
+        newStart: Date,
+        newEnd: Date
+    ) => {
+        handleTaskDrag(BigInt(rowIndex), BigInt(eventIndex), previousStart, previousEnd, newStart, newEnd);
+    }, [handleTaskDrag]);
+
+    // Handle milestone drag from GanttEventRow
+    const handleEventMilestoneDrag = useCallback((
+        rowIndex: number,
+        eventIndex: number,
+        previousDate: Date,
+        newDate: Date
+    ) => {
+        handleMilestoneDrag(BigInt(rowIndex), BigInt(eventIndex), previousDate, newDate);
+    }, [handleMilestoneDrag]);
+
+    // Handle task duration change from GanttEventRow
+    const handleEventTaskDurationChange = useCallback((
+        rowIndex: number,
+        eventIndex: number,
+        previousEnd: Date,
+        newEnd: Date
+    ) => {
+        handleTaskDurationChange(BigInt(rowIndex), BigInt(eventIndex), previousEnd, newEnd);
+    }, [handleTaskDurationChange]);
+
+    // Handle task progress change from GanttEventRow
+    const handleEventTaskProgressChange = useCallback((
+        rowIndex: number,
+        eventIndex: number,
+        previousProgress: number,
+        newProgress: number
+    ) => {
+        handleTaskProgressChange(BigInt(rowIndex), BigInt(eventIndex), previousProgress, newProgress);
+    }, [handleTaskProgressChange]);
+
+    // Convert East TimeStep variant values to TimeStep interface for components
+    const dragStep = useMemo(() => {
+        if (!dragStepValue) return undefined;
+        return { type: dragStepValue.type as "minutes" | "hours" | "days" | "weeks" | "months", value: dragStepValue.value };
+    }, [dragStepValue]);
+
+    const durationStep = useMemo(() => {
+        if (!durationStepValue) return undefined;
+        return { type: durationStepValue.type as "minutes" | "hours" | "days" | "weeks" | "months", value: durationStepValue.value };
+    }, [durationStepValue]);
 
     // Column sizing state
     const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
@@ -903,6 +971,12 @@ export const EastChakraGantt = memo(function EastChakraGantt({
                                                     endDate={dateRange.end}
                                                     onEventClick={handleEventClick}
                                                     onEventDoubleClick={handleEventDoubleClick}
+                                                    onTaskDrag={handleEventTaskDrag}
+                                                    onTaskDurationChange={handleEventTaskDurationChange}
+                                                    onTaskProgressChange={handleEventTaskProgressChange}
+                                                    onMilestoneDrag={handleEventMilestoneDrag}
+                                                    dragStep={dragStep}
+                                                    durationStep={durationStep}
                                                 />
                                             </svg>
                                         </ChakraTable.Cell>

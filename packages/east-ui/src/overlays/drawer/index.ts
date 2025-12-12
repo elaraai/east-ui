@@ -78,25 +78,16 @@ export type DrawerType = typeof DrawerType;
  *
  * @example
  * ```ts
- * import { Drawer, Button, Text } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Drawer, Button, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple drawer
- * const drawer = Drawer.Root(
- *   Button.Root("Open Menu"),
- *   [Text.Root("Menu content")],
- *   { title: "Navigation" }
- * );
- *
- * // Drawer from left side
- * const leftDrawer = Drawer.Root(
- *   Button.Root("Settings"),
- *   [Text.Root("Settings panel")],
- *   {
- *     title: "Settings",
- *     placement: "start",
- *     size: "md",
- *   }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Drawer.Root(
+ *         Button.Root("Open Menu"),
+ *         [Text.Root("Menu content")],
+ *         { title: "Navigation", placement: "start" }
+ *     );
+ * });
  * ```
  */
 function createDrawer(
@@ -141,21 +132,6 @@ function createDrawer(
  *
  * @remarks
  * Use `Drawer.Root(trigger, body, style)` to create a drawer, or access `Drawer.Types` for East types.
- *
- * @example
- * ```ts
- * import { Drawer, Button, Text } from "@elaraai/east-ui";
- *
- * // Create a drawer
- * const drawer = Drawer.Root(
- *   Button.Root("Open"),
- *   [Text.Root("Content")],
- *   { title: "My Drawer", placement: "end" }
- * );
- *
- * // Access the type
- * const styleType = Drawer.Types.Style;
- * ```
  */
 export const Drawer = {
     /**

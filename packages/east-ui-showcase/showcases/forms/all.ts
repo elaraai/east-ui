@@ -66,8 +66,8 @@ export default East.function(
             ShowcaseCard(
                 "DateTime Input",
                 "Date and time picker",
-                Input.DateTime(new Date(), { showTime: true }),
-                some(`Input.DateTime(new Date(), { showTime: true })`)
+                Input.DateTime(new Date(), { precision: 'datetime' }),
+                some(`Input.DateTime(new Date(), { precision: 'datetime' })`)
             )
         );
 
@@ -271,28 +271,28 @@ export default East.function(
                 "Field",
                 "Wraps controls with labels and messages",
                 Stack.VStack([
-                    Field.Root(
+                    Field.StringInput(
                         "Email",
-                        Input.String("", { placeholder: "you@example.com" }),
-                        { helperText: "We'll never share your email." }
+                        "",
+                        { helperText: "We'll never share your email.", placeholder: "you@example.com" }
                     ),
-                    Field.Root(
+                    Field.StringInput(
                         "Password",
-                        Input.String("", { placeholder: "Enter password" }),
-                        { required: true, errorText: "Password is required", invalid: true }
+                        "",
+                        { required: true, errorText: "Password is required", invalid: true, placeholder: "Enter password" }
                     ),
                 ], { gap: "4", align: "stretch", width: "100%" }),
                 some(`
                     Stack.VStack([
-                        Field.Root(
+                        Field.StringInput(
                             "Email",
-                            Input.String("", { placeholder: "you@example.com" }),
-                            { helperText: "We'll never share your email." }
+                            "",
+                            { helperText: "We'll never share your email.", placeholder: "you@example.com" }
                         ),
-                        Field.Root(
+                        Field.StringInput(
                             "Password",
-                            Input.String("", { placeholder: "Enter password" }),
-                            { required: true, errorText: "Password is required", invalid: true }
+                            "",
+                            { required: true, errorText: "Password is required", invalid: true, placeholder: "Enter password" }
                         ),
                     ], { gap: "4", align: "stretch", width: "100%" })
                 `)
@@ -344,7 +344,7 @@ export default East.function(
         // =====================================================================
 
         // Initialize state for interactive examples
-        $(State.initTyped("form_text", "", StringType)());
+        $(State.initTyped("form_string_input", "hello", StringType)());
         $(State.initTyped("form_integer", 0n, IntegerType)());
         $(State.initTyped("form_float", 50.0, FloatType)());
         $(State.initTyped("form_checkbox", false, BooleanType)());
@@ -357,7 +357,7 @@ export default East.function(
         $(State.initTyped("form_blur_count", 0n, IntegerType)());
         $(State.initTyped("form_integer_input", 0n, IntegerType)());
         $(State.initTyped("form_float_input", 0.0, FloatType)());
-        $(State.initTyped("form_datetime", new Date(), DateTimeType)());
+        $(State.initTyped("form_datetime_input", new Date(), DateTimeType)());
 
         // Interactive String Input
         const interactiveStringInput = $.let(
@@ -365,12 +365,12 @@ export default East.function(
                 "Interactive Input",
                 "Type to see live updates via onChange callback",
                 Reactive.Root($ => {
-                    const text = $.let(State.readTyped("form_text", StringType)());
+                    const text = $.let(State.readTyped("form_string_input", StringType)());
                     const focusCount = $.let(State.readTyped("form_focus_count", IntegerType)());
                     const blurCount = $.let(State.readTyped("form_blur_count", IntegerType)());
 
                     const onChange = East.function([StringType], NullType, ($, newValue) => {
-                        $(State.writeTyped("form_text", some(newValue), StringType)());
+                        $(State.writeTyped("form_string_input", some(newValue), StringType)());
                     });
                     const onFocus = East.function([], NullType, $ => {
                         const current = $.let(State.readTyped("form_focus_count", IntegerType)());
@@ -398,12 +398,12 @@ export default East.function(
                 }),
                 some(`
                 Reactive.Root($ => {
-                    const text = $.let(State.readTyped("form_text", StringType)());
+                    const text = $.let(State.readTyped("form_string_input", StringType)());
                     const focusCount = $.let(State.readTyped("form_focus_count", IntegerType)());
                     const blurCount = $.let(State.readTyped("form_blur_count", IntegerType)());
 
                     const onChange = East.function([StringType], NullType, ($, newValue) => {
-                        $(State.writeTyped("form_text", some(newValue), StringType)());
+                        $(State.writeTyped("form_string_input", some(newValue), StringType)());
                     });
                     const onFocus = East.function([], NullType, $ => {
                         const current = $.let(State.readTyped("form_focus_count", IntegerType)());
@@ -813,14 +813,13 @@ export default East.function(
                 "Interactive DateTime Input",
                 "Date picker with live value display",
                 Reactive.Root($ => {
-                    const value = $.let(State.readTyped("form_datetime", DateTimeType)());
+                    const value = $.let(State.readTyped("form_datetime_input", DateTimeType)());
                     const onChange = East.function([DateTimeType], NullType, ($, newValue) => {
-                        $(State.writeTyped("form_datetime", some(newValue), DateTimeType)());
+                        $(State.writeTyped("form_datetime_input", some(newValue), DateTimeType)());
                     });
 
                     return Stack.VStack([
                         Input.DateTime(value.unwrap('some'), {
-                            showTime: true,
                             onChange
                         }),
                         Text.Root(East.str`Year: ${value.unwrap('some').getYear()}`),
@@ -830,9 +829,9 @@ export default East.function(
                 }),
                 some(`
                     Reactive.Root($ => {
-                        const value = $.let(State.readTyped("form_datetime", DateTimeType)());
+                        const value = $.let(State.readTyped("form_datetime_input", DateTimeType)());
                         const onChange = East.function([DateTimeType], NullType, ($, newValue) => {
-                            $(State.writeTyped("form_datetime", some(newValue), DateTimeType)());
+                            $(State.writeTyped("form_datetime_input", some(newValue), DateTimeType)());
                         });
 
                         return Stack.VStack([

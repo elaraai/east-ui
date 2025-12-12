@@ -19,6 +19,7 @@ import {
     JustifyContentType,
     AlignItemsType,
     FlexWrapType,
+    OverflowType,
 } from "../../style.js";
 import { UIComponentType } from "../../component.js";
 import { StackStyleType, type StackStyle } from "./types.js";
@@ -60,22 +61,17 @@ export type StackType = typeof StackType;
  *
  * @example
  * ```ts
- * import { Stack, Text, Style } from "@elaraai/east-ui";
- * import { East, variant, ArrayType } from "@elaraai/east";
+ * import { East } from "@elaraai/east";
+ * import { Stack, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * // Vertical stack (default)
- * const vstack = Stack(East.value([
- *   variant("Text", Text(East.value(variant("String", "Item 1"), LiteralValueType))),
- *   variant("Text", Text(East.value(variant("String", "Item 2"), LiteralValueType))),
- * ], ArrayType(UIComponentType)), {
- *   gap: "4",
- * });
- *
- * // Horizontal stack
- * const hstack = Stack(East.value([...children], ArrayType(UIComponentType)), {
- *   direction: Style.FlexDirection("row"),
- *   gap: "4",
- *   align: Style.AlignItems("center"),
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Stack.Root([
+ *         Text.Root("Item 1"),
+ *         Text.Root("Item 2"),
+ *     ], {
+ *         gap: "4",
+ *         direction: "column",
+ *     });
  * });
  * ```
  */
@@ -120,13 +116,31 @@ function createStack(
 
     const marginValue = style?.margin
         ? (typeof style.margin === "string"
-            ? East.value({ 
-                top: some(style.margin), 
-                right: some(style.margin), 
-                bottom: some(style.margin), 
-                left: some(style.margin) 
+            ? East.value({
+                top: some(style.margin),
+                right: some(style.margin),
+                bottom: some(style.margin),
+                left: some(style.margin)
             }, MarginType)
             : style.margin)
+        : undefined;
+
+    const overflowValue = style?.overflow
+        ? (typeof style.overflow === "string"
+            ? East.value(variant(style.overflow, null), OverflowType)
+            : style.overflow)
+        : undefined;
+
+    const overflowXValue = style?.overflowX
+        ? (typeof style.overflowX === "string"
+            ? East.value(variant(style.overflowX, null), OverflowType)
+            : style.overflowX)
+        : undefined;
+
+    const overflowYValue = style?.overflowY
+        ? (typeof style.overflowY === "string"
+            ? East.value(variant(style.overflowY, null), OverflowType)
+            : style.overflowY)
         : undefined;
 
     return East.value(variant("Stack", {
@@ -142,6 +156,13 @@ function createStack(
             background: style.background ? variant("some", style.background) : variant("none", null),
             width: style.width ? variant("some", style.width) : variant("none", null),
             height: style.height ? variant("some", style.height) : variant("none", null),
+            minHeight: style.minHeight ? variant("some", style.minHeight) : variant("none", null),
+            minWidth: style.minWidth ? variant("some", style.minWidth) : variant("none", null),
+            maxHeight: style.maxHeight ? variant("some", style.maxHeight) : variant("none", null),
+            maxWidth: style.maxWidth ? variant("some", style.maxWidth) : variant("none", null),
+            overflow: overflowValue ? variant("some", overflowValue) : variant("none", null),
+            overflowX: overflowXValue ? variant("some", overflowXValue) : variant("none", null),
+            overflowY: overflowYValue ? variant("some", overflowYValue) : variant("none", null),
         }, StackStyleType)) : variant("none", null),
     }), UIComponentType);
 }
@@ -155,9 +176,16 @@ function createStack(
  *
  * @example
  * ```ts
- * const hstack = HStack(East.value([...children], ArrayType(UIComponentType)), {
- *   gap: "4",
- *   align: Style.AlignItems("center"),
+ * import { East } from "@elaraai/east";
+ * import { Stack, Button, UIComponentType } from "@elaraai/east-ui";
+ *
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Stack.HStack([
+ *         Button.Root("Cancel"),
+ *         Button.Root("Submit", { colorPalette: "blue" }),
+ *     ], {
+ *         gap: "2",
+ *     });
  * });
  * ```
  */
@@ -180,9 +208,17 @@ function createHStack(
  *
  * @example
  * ```ts
- * const vstack = VStack(East.value([...children], ArrayType(UIComponentType)), {
- *   gap: "4",
- *   align: Style.AlignItems("stretch"),
+ * import { East } from "@elaraai/east";
+ * import { Stack, Text, UIComponentType } from "@elaraai/east-ui";
+ *
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Stack.VStack([
+ *         Text.Root("Title"),
+ *         Text.Root("Subtitle"),
+ *     ], {
+ *         gap: "1",
+ *         align: "flex-start",
+ *     });
  * });
  * ```
  */

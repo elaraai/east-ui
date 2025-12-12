@@ -1,6 +1,7 @@
 import { East } from "@elaraai/east";
 import { UIComponentType, Stack, Text } from "@elaraai/east-ui";
 import boxShowcase from "./box";
+import flexShowcase from "./flex";
 import stackShowcase from "./stack";
 import separatorShowcase from "./separator";
 import gridShowcase from "./grid";
@@ -16,6 +17,8 @@ export default East.function(
         return Stack.VStack([
             Text.Root("Box", { fontWeight: "bold", fontSize: "lg" }),
             boxShowcase(),
+            Text.Root("Flex", { fontWeight: "bold", fontSize: "lg" }),
+            flexShowcase(),
             Text.Root("Stack", { fontWeight: "bold", fontSize: "lg" }),
             stackShowcase(),
             Text.Root("Separator", { fontWeight: "bold", fontSize: "lg" }),

@@ -4,6 +4,7 @@
  */
 
 export { Box } from "./box/index.js";
+export { Flex } from "./flex/index.js";
 export { Stack } from "./stack/index.js";
 export { Separator } from "./separator/index.js";
 export { Grid } from "./grid/index.js";

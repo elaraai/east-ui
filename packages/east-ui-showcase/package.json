@@ -6,13 +6,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run validate:showcases && vite build",
     "preview": "vite preview",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "validate:showcases": "tsc --noEmit -p tsconfig.showcases.json && tsx scripts/validate-showcases.ts"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.0.0",
-    "@elaraai/east": "^0.0.1-beta.5",
+    "@elaraai/east": "^0.0.1-beta.9",
     "@elaraai/east-ui": "*",
     "@elaraai/east-ui-components": "*",
     "@emotion/react": "^11.14.0",
@@ -29,6 +30,7 @@
     "@vitejs/plugin-react": "^4.3.0",
     "eslint": "^9.34.0",
     "eslint-plugin-react-hooks": "^5.0.0",
+    "tsx": "^4.19.2",
     "typescript": "~5.9.2",
     "vite": "^6.0.0"
   },

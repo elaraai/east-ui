@@ -24,7 +24,7 @@ export function toChakraTextarea(value: TextareaValue): TextareaProps {
     const maxLength = getSomeorUndefined(value.maxLength);
 
     return {
-        value: value.value,
+        defaultValue: value.value,
         placeholder: getSomeorUndefined(value.placeholder),
         variant: getSomeorUndefined(value.variant)?.type,
         size: getSomeorUndefined(value.size)?.type,

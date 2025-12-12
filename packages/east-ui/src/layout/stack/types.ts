@@ -15,12 +15,14 @@ import {
     JustifyContentType,
     AlignItemsType,
     FlexWrapType,
+    OverflowType,
 } from "../../style.js";
 import type {
     FlexDirectionLiteral,
     JustifyContentLiteral,
     AlignItemsLiteral,
     FlexWrapLiteral,
+    OverflowLiteral,
 } from "../../style.js";
 import { PaddingType, MarginType } from "../style.js";
 
@@ -41,6 +43,13 @@ import { PaddingType, MarginType } from "../style.js";
  * @property background - Background color (Chakra UI color token or CSS color)
  * @property width - Width (Chakra UI size token or CSS value)
  * @property height - Height (Chakra UI size token or CSS value)
+ * @property minHeight - Min height (Chakra UI size token or CSS value)
+ * @property minWidth - Min width (Chakra UI size token or CSS value)
+ * @property maxHeight - Max height (Chakra UI size token or CSS value)
+ * @property maxWidth - Max width (Chakra UI size token or CSS value)
+ * @property overflow - Overflow behavior for both axes (visible, hidden, scroll, auto)
+ * @property overflowX - Horizontal overflow behavior (visible, hidden, scroll, auto)
+ * @property overflowY - Vertical overflow behavior (visible, hidden, scroll, auto)
  */
 export type StackStyle = {
     /** Stack direction (row or column) */
@@ -63,6 +72,20 @@ export type StackStyle = {
     width?: SubtypeExprOrValue<StringType>;
     /** Height (Chakra UI size token or CSS value) */
     height?: SubtypeExprOrValue<StringType>;
+    /** Min height (Chakra UI size token or CSS value) */
+    minHeight?: SubtypeExprOrValue<StringType>;
+    /** Min width (Chakra UI size token or CSS value) */
+    minWidth?: SubtypeExprOrValue<StringType>;
+    /** Max height (Chakra UI size token or CSS value) */
+    maxHeight?: SubtypeExprOrValue<StringType>;
+    /** Max width (Chakra UI size token or CSS value) */
+    maxWidth?: SubtypeExprOrValue<StringType>;
+    /** Overflow behavior for both axes (visible, hidden, scroll, auto) */
+    overflow?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Horizontal overflow behavior (visible, hidden, scroll, auto) */
+    overflowX?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Vertical overflow behavior (visible, hidden, scroll, auto) */
+    overflowY?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
 };
 
 /**
@@ -81,6 +104,13 @@ export type StackStyle = {
  * @property background - Background color (Chakra UI color token or CSS color)
  * @property width - Width (Chakra UI size token or CSS value)
  * @property height - Height (Chakra UI size token or CSS value)
+ * @property minHeight - Min height (Chakra UI size token or CSS value)
+ * @property minWidth - Min width (Chakra UI size token or CSS value)
+ * @property maxHeight - Max height (Chakra UI size token or CSS value)
+ * @property maxWidth - Max width (Chakra UI size token or CSS value)
+ * @property overflow - Overflow behavior for both axes (visible, hidden, scroll, auto)
+ * @property overflowX - Horizontal overflow behavior (visible, hidden, scroll, auto)
+ * @property overflowY - Vertical overflow behavior (visible, hidden, scroll, auto)
  */
 export const StackStyleType = StructType({
     direction: OptionType(FlexDirectionType),
@@ -93,6 +123,13 @@ export const StackStyleType = StructType({
     background: OptionType(StringType),
     width: OptionType(StringType),
     height: OptionType(StringType),
+    minHeight: OptionType(StringType),
+    minWidth: OptionType(StringType),
+    maxHeight: OptionType(StringType),
+    maxWidth: OptionType(StringType),
+    overflow: OptionType(OverflowType),
+    overflowX: OptionType(OverflowType),
+    overflowY: OptionType(OverflowType),
 });
 
 /**

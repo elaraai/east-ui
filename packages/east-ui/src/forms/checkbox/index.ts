@@ -49,10 +49,10 @@ export { CheckboxType, type CheckboxStyle } from "./types.js";
  * });
  * ```
  */
-function createCheckbox(
+export function createCheckbox_(
     checked: SubtypeExprOrValue<BooleanType>,
     style?: CheckboxStyle
-): ExprType<UIComponentType> {
+): ExprType<CheckboxType> {
     const colorPaletteValue = style?.colorPalette
         ? (typeof style.colorPalette === "string"
             ? East.value(variant(style.colorPalette, null), ColorSchemeType)
@@ -65,7 +65,7 @@ function createCheckbox(
             : style.size)
         : undefined;
 
-    return East.value(variant("Checkbox", {
+    return East.value( {
         checked: checked,
         label: style?.label ? some(style.label) : none,
         indeterminate: style?.indeterminate !== undefined ? some(style.indeterminate) : none,
@@ -73,7 +73,14 @@ function createCheckbox(
         colorPalette: colorPaletteValue ? some(colorPaletteValue) : none,
         size: sizeValue ? some(sizeValue) : none,
         onChange: style?.onChange ? some(style.onChange) : none,
-    }), UIComponentType);
+    }, CheckboxType);
+}
+
+function createCheckbox(
+    checked: SubtypeExprOrValue<BooleanType>,
+    style?: CheckboxStyle
+): ExprType<UIComponentType> {
+    return East.value(variant("Checkbox", createCheckbox_(checked, style)), UIComponentType);
 }
 
 /**

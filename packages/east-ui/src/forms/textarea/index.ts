@@ -41,35 +41,28 @@ export {
  * @param style - Optional style and configuration options
  * @returns An East expression representing the Textarea component
  *
+ * @remarks
+ * Textarea is a multi-line text input control for longer text content.
+ * It supports features like auto-resize, row configuration, and character limits.
+ *
  * @example
  * ```ts
- * import { Textarea } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Textarea, UIComponentType } from "@elaraai/east-ui";
  *
- * // Basic textarea
- * const textarea = Textarea.Root("", {
- *   placeholder: "Enter description...",
- *   rows: 4,
- * });
- *
- * // Auto-resizing textarea
- * const autoResizeTextarea = Textarea.Root("", {
- *   placeholder: "Start typing...",
- *   autoresize: true,
- *   variant: "outline",
- * });
- *
- * // Fixed size textarea
- * const fixedTextarea = Textarea.Root("", {
- *   rows: 6,
- *   resize: "none",
- *   maxLength: 500,
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Textarea.Root("", {
+ *         placeholder: "Enter description...",
+ *         rows: 4n,
+ *         maxLength: 500n,
+ *     });
  * });
  * ```
  */
-function createTextarea(
+export function createTextarea_(
     value: SubtypeExprOrValue<typeof StringType>,
     style?: TextareaStyle
-): ExprType<UIComponentType> {
+): ExprType<TextareaType> {
     // Convert string literal variants to East values
     const variantValue = style?.variant
         ? (typeof style.variant === "string"
@@ -97,7 +90,7 @@ function createTextarea(
         ? (typeof style.maxLength === "number" ? BigInt(style.maxLength) : style.maxLength)
         : undefined;
 
-    return East.value(variant("Textarea", {
+    return East.value({
         value: value,
         placeholder: style?.placeholder !== undefined ? variant("some", style.placeholder) : variant("none", null),
         variant: variantValue ? variant("some", variantValue) : variant("none", null),
@@ -106,49 +99,33 @@ function createTextarea(
         rows: rowsValue !== undefined ? variant("some", rowsValue) : variant("none", null),
         disabled: style?.disabled !== undefined ? variant("some", style.disabled) : variant("none", null),
         readOnly: style?.readOnly !== undefined ? variant("some", style.readOnly) : variant("none", null),
-        invalid: style?.invalid !== undefined ? variant("some", style.invalid) : variant("none", null),
         required: style?.required !== undefined ? variant("some", style.required) : variant("none", null),
         maxLength: maxLengthValue !== undefined ? variant("some", maxLengthValue) : variant("none", null),
         autoresize: style?.autoresize !== undefined ? variant("some", style.autoresize) : variant("none", null),
+        onValidate: style?.onValidate !== undefined ? variant("some", style.onValidate) : variant("none", null),
         onChange: style?.onChange !== undefined ? variant("some", style.onChange) : variant("none", null),
         onBlur: style?.onBlur !== undefined ? variant("some", style.onBlur) : variant("none", null),
         onFocus: style?.onFocus !== undefined ? variant("some", style.onFocus) : variant("none", null),
-    }), UIComponentType);
+    }, TextareaType);
 }
+
+function createTextarea(
+    value: SubtypeExprOrValue<typeof StringType>,
+    style?: TextareaStyle
+): ExprType<UIComponentType> {
+    return East.value(variant("Textarea", createTextarea_(value, style)), UIComponentType);
+}
+
 
 // ============================================================================
 // Textarea Namespace Export
 // ============================================================================
 
 /**
- * Textarea component namespace.
+ * Textarea component for multi-line text input.
  *
  * @remarks
- * Textarea provides a multi-line text input control for longer text content.
- *
- * @example
- * ```ts
- * import { Textarea } from "@elaraai/east-ui";
- *
- * // Simple textarea
- * const textarea = Textarea.Root("", {
- *   placeholder: "Enter your message...",
- * });
- *
- * // Textarea with constraints
- * const constrainedTextarea = Textarea.Root("", {
- *   rows: 5,
- *   maxLength: 1000,
- *   resize: "vertical",
- * });
- *
- * // Styled textarea
- * const styledTextarea = Textarea.Root("", {
- *   variant: "flushed",
- *   size: "lg",
- *   placeholder: "Notes...",
- * });
- * ```
+ * Use `Textarea.Root(value, style)` to create a textarea, or access `Textarea.Types.Textarea` for the East type.
  */
 export const Textarea = {
     /**

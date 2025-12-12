@@ -65,10 +65,11 @@ export const ShowcaseCard = East.function(
                         CodeBlock.Root(dedent(codeString), { 
                             language: "typescript", 
                             showCopyButton: true, 
-                            title 
-                        })], { width: "md", height: "md", })
+                            title, 
+                            wordWrap: true,
+                        })], { maxHeight: "400px", maxWidth: "650px", overflow: "auto" })
                     ],
-                    { placement: "left", openDelay: 100n, size: 'lg' }
+                    { placement: "left", openDelay: 100n }
                 ),
             ], { gap: "2", justify: "space-between", width: "100%" })),
         });

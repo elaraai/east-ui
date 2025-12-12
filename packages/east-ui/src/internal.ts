@@ -40,7 +40,6 @@ export * from "./forms/switch/types.js";
 export * from "./forms/select/types.js";
 export * from "./forms/slider/types.js";
 export * from "./forms/field/types.js";
-export * from "./forms/fieldset/types.js";
 export * from "./forms/file-upload/types.js";
 export * from "./forms/textarea/types.js";
 export * from "./forms/tags-input/types.js";

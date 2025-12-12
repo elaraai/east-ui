@@ -29,13 +29,13 @@ export { Style } from "./style.js";
 export { Text, Code, Heading, Link, Highlight, Mark, List, CodeBlock } from "./typography/index.js";
 
 // Layout
-export { Box, Stack, Separator, Grid, Splitter } from "./layout/index.js";
+export { Box, Flex, Stack, Separator, Grid, Splitter } from "./layout/index.js";
 
 // Buttons
 export { Button, IconButton } from "./buttons/index.js";
 
 // Forms
-export { Input, Checkbox, Switch, Select, Slider, Field, FileUpload, Fieldset, Textarea, TagsInput } from "./forms/index.js";
+export { Input, Checkbox, Switch, Select, Slider, Field, FileUpload, Textarea, TagsInput } from "./forms/index.js";
 
 // Feedback
 export { Progress, Alert } from "./feedback/index.js";

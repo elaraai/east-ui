@@ -12,7 +12,7 @@
 - **📦 Layout Components** - Box, Stack, Grid, Splitter, Separator
 - **📝 Typography** - Text, Code, Heading, Link, Highlight, Mark, List, CodeBlock
 - **🔘 Buttons** - Button, IconButton with variants and states
-- **📋 Forms** - Input, Select, Checkbox, Switch, Slider, Textarea, TagsInput, FileUpload
+- **📋 Forms** - Field, Input, Select, Checkbox, Switch, Slider, Textarea, TagsInput, FileUpload
 - **📊 Collections** - Table, Gantt, DataList, TreeView
 - **📈 Charts** - Area, Bar, Line, Pie, Radar, Scatter, Sparkline, BarList, BarSegment
 - **💬 Feedback** - Alert, Progress
@@ -57,7 +57,7 @@ const ir = MyComponent.toIR();
 | **Layout** | `Box`, `Stack`, `Grid`, `Splitter`, `Separator` | Container and layout components |
 | **Typography** | `Text`, `Code`, `Heading`, `Link`, `Highlight`, `Mark`, `List`, `CodeBlock` | Text and typography components |
 | **Buttons** | `Button`, `IconButton` | Interactive button components |
-| **Forms** | `Input`, `Select`, `Checkbox`, `Switch`, `Slider`, `Textarea`, `TagsInput`, `FileUpload`, `Field`, `Fieldset` | Form input components |
+| **Forms** | `Input`, `Select`, `Checkbox`, `Switch`, `Slider`, `Textarea`, `TagsInput`, `FileUpload`, `Field` | Form input components |
 | **Collections** | `Table`, `Gantt`, `DataList`, `TreeView` | Data display components |
 | **Charts** | `Chart.Area`, `Chart.Bar`, `Chart.Line`, `Chart.Pie`, `Chart.Radar`, `Chart.Scatter`, `Chart.BarList`, `Chart.BarSegment`, `Sparkline` | Data visualization |
 | **Display** | `Badge`, `Tag`, `Avatar`, `Stat`, `Icon` | Visual display components |

@@ -12,7 +12,7 @@
  */
 
 import { East } from "@elaraai/east";
-import { Checkbox, Field, Fieldset, FileUpload, Input, Select, Slider, UIComponentType } from "../src/index.js";
+import { Checkbox, Field, FileUpload, Input, Select, Slider, Switch, TagsInput, Textarea, UIComponentType } from "../src/index.js";
 
 // ============================================================================
 // INPUT
@@ -52,7 +52,6 @@ inputFloatExample.toIR().compile([])();
 // Export: Input.DateTime
 const inputDateTimeExample = East.function([], UIComponentType, $ => {
     return Input.DateTime(new Date(), {
-        showTime: true,
         format: "yyyy-MM-dd HH:mm",
     });
 });
@@ -186,52 +185,124 @@ checkboxRootExample.toIR().compile([])();
 // File: src/forms/field/index.ts
 // Export: createField (private function)
 const fieldExample = East.function([], UIComponentType, $ => {
-    return Field.Root(
+    return Field.StringInput(
         "Email",
-        Input.String("", { placeholder: "Enter email" }),
-        { helperText: "We'll never share your email" }
+        "",
+        { placeholder: "Enter email", helperText: "We'll never share your email" }
     );
 });
 fieldExample.toIR().compile([])();
 
 // File: src/forms/field/index.ts
-// Export: Field.Root
-const fieldRootExample = East.function([], UIComponentType, $ => {
-    return Field.Root(
-        "Email",
-        Input.String("", { placeholder: "Enter email" }),
-        { helperText: "We'll never share your email" }
+// Export: Field.StringInput (createStringInputField)
+const fieldStringInputExample = East.function([], UIComponentType, $ => {
+    return Field.StringInput("Email", "", {
+        placeholder: "Enter email",
+        helperText: "We'll never share your email",
+    });
+});
+fieldStringInputExample.toIR().compile([])();
+
+// File: src/forms/field/index.ts
+// Export: Field.Checkbox (createCheckboxField)
+const fieldCheckboxExample = East.function([], UIComponentType, $ => {
+    return Field.Checkbox(
+        "Accept terms",
+        false,
+        { helperText: "You must accept to continue" }
     );
 });
-fieldRootExample.toIR().compile([])();
+fieldCheckboxExample.toIR().compile([])();
 
-// ============================================================================
-// FIELDSET
-// ============================================================================
-
-// File: src/forms/fieldset/index.ts
-// Export: createFieldset (private function)
-const fieldsetExample = East.function([], UIComponentType, $ => {
-    return Fieldset.Root([
-        Field.Root("First Name", Input.String("", { placeholder: "First name" })),
-        Field.Root("Last Name", Input.String("", { placeholder: "Last name" })),
-    ], {
-        legend: "Personal Information",
+// File: src/forms/field/index.ts
+// Export: Field.FileUpload (createFileUploadField)
+const fieldFileUploadExample = East.function([], UIComponentType, $ => {
+    return Field.FileUpload("Documents", {
+        accept: "application/pdf",
+        helperText: "Upload PDF files only",
     });
 });
-fieldsetExample.toIR().compile([])();
+fieldFileUploadExample.toIR().compile([])();
 
-// File: src/forms/fieldset/index.ts
-// Export: Fieldset.Root
-const fieldsetRootExample = East.function([], UIComponentType, $ => {
-    return Fieldset.Root([
-        Field.Root("First Name", Input.String("", { placeholder: "First name" })),
-        Field.Root("Last Name", Input.String("", { placeholder: "Last name" })),
-    ], {
-        legend: "Personal Information",
+// File: src/forms/field/index.ts
+// Export: Field.Select (createSelectField)
+const fieldSelectExample = East.function([], UIComponentType, $ => {
+    return Field.Select("Country", "", [
+        Select.Item("us", "United States"),
+        Select.Item("uk", "United Kingdom"),
+    ], { helperText: "Select your country" });
+});
+fieldSelectExample.toIR().compile([])();
+
+// File: src/forms/field/index.ts
+// Export: Field.DateTimeInput (createDatetimeInputField)
+const fieldDateTimeInputExample = East.function([], UIComponentType, $ => {
+    return Field.DateTimeInput("Birth Date", new Date(), {
+        helperText: "Enter your date of birth",
     });
 });
-fieldsetRootExample.toIR().compile([])();
+fieldDateTimeInputExample.toIR().compile([])();
+
+// File: src/forms/field/index.ts
+// Export: Field.FloatInput (createFloatInputField)
+const fieldFloatInputExample = East.function([], UIComponentType, $ => {
+    return Field.FloatInput("Price", 0.0, {
+        min: 0,
+        helperText: "Enter price in dollars",
+    });
+});
+fieldFloatInputExample.toIR().compile([])();
+
+// File: src/forms/field/index.ts
+// Export: Field.IntegerInput (createIntegerInputField)
+const fieldIntegerInputExample = East.function([], UIComponentType, $ => {
+    return Field.IntegerInput("Quantity", 1n, {
+        min: 1n,
+        max: 100n,
+        helperText: "Enter quantity",
+    });
+});
+fieldIntegerInputExample.toIR().compile([])();
+
+// File: src/forms/field/index.ts
+// Export: Field.Slider (createSliderField)
+const fieldSliderExample = East.function([], UIComponentType, $ => {
+    return Field.Slider("Volume", 50.0, {
+        min: 0,
+        max: 100,
+        helperText: "Adjust volume level",
+    });
+});
+fieldSliderExample.toIR().compile([])();
+
+// File: src/forms/field/index.ts
+// Export: Field.Switch (createSwitch)
+const fieldSwitchExample = East.function([], UIComponentType, $ => {
+    return Field.Switch("Enable notifications", true, {
+        helperText: "Toggle to enable or disable",
+    });
+});
+fieldSwitchExample.toIR().compile([])();
+
+// File: src/forms/field/index.ts
+// Export: Field.TagsInput (createTags)
+const fieldTagsInputExample = East.function([], UIComponentType, $ => {
+    return Field.TagsInput("Skills", ["TypeScript", "React"], {
+        helperText: "Add your skills",
+    });
+});
+fieldTagsInputExample.toIR().compile([])();
+
+// File: src/forms/field/index.ts
+// Export: Field.Textarea (createTextareaField)
+const fieldTextareaExample = East.function([], UIComponentType, $ => {
+    return Field.Textarea("Description", "", {
+        placeholder: "Enter description",
+        rows: 4,
+        helperText: "Maximum 500 characters",
+    });
+});
+fieldTextareaExample.toIR().compile([])();
 
 // ============================================================================
 // FILE UPLOAD
@@ -281,5 +352,121 @@ const fileUploadCaptureExample = East.function([], UIComponentType, $ => {
     });
 });
 fileUploadCaptureExample.toIR().compile([])();
+
+// ============================================================================
+// TAGS-INPUT
+// ============================================================================
+
+// File: src/forms/tags-input/index.ts
+// Export: createTagsInput_ (private function)
+const tagsInputExample = East.function([], UIComponentType, $ => {
+    return TagsInput.Root(["React", "TypeScript"], {
+        placeholder: "Add tag...",
+        max: 5n,
+        colorPalette: "blue",
+    });
+});
+tagsInputExample.toIR().compile([])();
+
+// File: src/forms/tags-input/index.ts
+// Export: TagsInput.Root
+const tagsInputRootExample = East.function([], UIComponentType, $ => {
+    return TagsInput.Root(["React", "TypeScript"], {
+        placeholder: "Add tag...",
+        max: 5n,
+    });
+});
+tagsInputRootExample.toIR().compile([])();
+
+// File: src/forms/tags-input/index.ts
+// Export: TagsInput.Root (with callback)
+const tagsInputCallbackExample = East.function([], UIComponentType, $ => {
+    return TagsInput.Root(["initial"], {
+        placeholder: "Add skill...",
+        onChange: ($, _newTags) => {
+            // Callback receives new array of tags
+            $.return(null);
+        },
+    });
+});
+tagsInputCallbackExample.toIR().compile([])();
+
+// ============================================================================
+// TEXTAREA
+// ============================================================================
+
+// File: src/forms/textarea/index.ts
+// Export: createTextarea_ (private function)
+const textareaExample = East.function([], UIComponentType, $ => {
+    return Textarea.Root("", {
+        placeholder: "Enter description...",
+        rows: 4n,
+        maxLength: 500n,
+    });
+});
+textareaExample.toIR().compile([])();
+
+// File: src/forms/textarea/index.ts
+// Export: Textarea.Root
+const textareaRootExample = East.function([], UIComponentType, $ => {
+    return Textarea.Root("Hello world", {
+        placeholder: "Enter description",
+        rows: 4n,
+    });
+});
+textareaRootExample.toIR().compile([])();
+
+// File: src/forms/textarea/index.ts
+// Export: Textarea.Root (with callback)
+const textareaCallbackExample = East.function([], UIComponentType, $ => {
+    return Textarea.Root("", {
+        placeholder: "Type here...",
+        rows: 3n,
+        onChange: ($, _newValue) => {
+            // Callback receives new text value
+            $.return(null);
+        },
+    });
+});
+textareaCallbackExample.toIR().compile([])();
+
+// ============================================================================
+// SWITCH
+// ============================================================================
+
+// File: src/forms/switch/index.ts
+// Export: createSwitch_ (private function)
+const switchExample = East.function([], UIComponentType, $ => {
+    return Switch.Root(true, {
+        label: "Dark mode",
+        colorPalette: "blue",
+        size: "md",
+    });
+});
+switchExample.toIR().compile([])();
+
+// File: src/forms/switch/index.ts
+// Export: Switch.Root
+const switchRootExample = East.function([], UIComponentType, $ => {
+    return Switch.Root(true, {
+        label: "Dark mode",
+        colorPalette: "blue",
+    });
+});
+switchRootExample.toIR().compile([])();
+
+// File: src/forms/switch/index.ts
+// Export: Switch.Root (with callback)
+const switchCallbackExample = East.function([], UIComponentType, $ => {
+    return Switch.Root(false, {
+        label: "Enable notifications",
+        colorPalette: "green",
+        onChange: ($, _newValue) => {
+            // Callback receives new checked value
+            $.return(null);
+        },
+    });
+});
+switchCallbackExample.toIR().compile([])();
 
 console.log("Forms TypeDoc examples compiled and executed successfully!");

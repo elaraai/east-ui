@@ -84,26 +84,16 @@ export type DialogType = typeof DialogType;
  *
  * @example
  * ```ts
- * import { Dialog, Button, Text } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Dialog, Button, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple dialog
- * const dialog = Dialog.Root(
- *   Button.Root("Open Dialog"),
- *   [Text.Root("Dialog content here")],
- *   { title: "My Dialog" }
- * );
- *
- * // Dialog with size and placement
- * const largeDialog = Dialog.Root(
- *   Button.Root("Settings"),
- *   [Text.Root("Settings content")],
- *   {
- *     title: "Settings",
- *     size: "lg",
- *     placement: "center",
- *     closeOnEscape: true,
- *   }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Dialog.Root(
+ *         Button.Root("Open Dialog"),
+ *         [Text.Root("Dialog content here")],
+ *         { title: "My Dialog" }
+ *     );
+ * });
  * ```
  */
 function createDialog(
@@ -171,21 +161,6 @@ function createDialog(
  *
  * @remarks
  * Use `Dialog.Root(trigger, body, style)` to create a dialog, or access `Dialog.Types` for East types.
- *
- * @example
- * ```ts
- * import { Dialog, Button, Text } from "@elaraai/east-ui";
- *
- * // Create a dialog
- * const dialog = Dialog.Root(
- *   Button.Root("Open"),
- *   [Text.Root("Content")],
- *   { title: "My Dialog" }
- * );
- *
- * // Access the type
- * const styleType = Dialog.Types.Style;
- * ```
  */
 export const Dialog = {
     /**

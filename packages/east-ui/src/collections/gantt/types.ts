@@ -41,6 +41,32 @@ export {
 } from "../table/types.js";
 
 // ============================================================================
+// Time Step Type
+// ============================================================================
+
+/**
+ * Time step variant type for drag/duration snapping.
+ *
+ * @remarks
+ * Each variant contains a float value representing the step size in that unit.
+ *
+ * @property minutes - Step size in minutes (e.g., 15 for 15-minute intervals)
+ * @property hours - Step size in hours (e.g., 1 for hourly)
+ * @property days - Step size in days (e.g., 1 for daily, 0.5 for half-day)
+ * @property weeks - Step size in weeks (e.g., 1 for weekly)
+ * @property months - Step size in months (e.g., 1 for monthly)
+ */
+export const TimeStepType = VariantType({
+    minutes: FloatType,
+    hours: FloatType,
+    days: FloatType,
+    weeks: FloatType,
+    months: FloatType,
+});
+
+export type TimeStepType = typeof TimeStepType;
+
+// ============================================================================
 // Gantt Event Types
 // ============================================================================
 
@@ -169,6 +195,23 @@ export const GanttTaskProgressChangeEventType = StructType({
 export type GanttTaskProgressChangeEventType = typeof GanttTaskProgressChangeEventType;
 
 /**
+ * Event data for task duration change events (dragging task end).
+ *
+ * @property rowIndex - Row index (0-based)
+ * @property taskIndex - Task index within the row (0-based)
+ * @property previousEnd - Previous end date/time
+ * @property newEnd - New end date/time
+ */
+export const GanttTaskDurationChangeEventType = StructType({
+    rowIndex: IntegerType,
+    taskIndex: IntegerType,
+    previousEnd: DateTimeType,
+    newEnd: DateTimeType,
+});
+
+export type GanttTaskDurationChangeEventType = typeof GanttTaskDurationChangeEventType;
+
+/**
  * Event data for milestone click events.
  *
  * @property rowIndex - Row index (0-based)
@@ -224,11 +267,14 @@ export type GanttMilestoneDragEventType = typeof GanttMilestoneDragEventType;
  * @property onTaskClick - Callback triggered when a task is clicked
  * @property onTaskDoubleClick - Callback triggered when a task is double-clicked
  * @property onTaskDrag - Callback triggered when a task is dragged/resized
+ * @property onTaskDurationChange - Callback triggered when task duration changes (dragging task end)
  * @property onTaskProgressChange - Callback triggered when task progress changes
  * @property onMilestoneClick - Callback triggered when a milestone is clicked
  * @property onMilestoneDoubleClick - Callback triggered when a milestone is double-clicked
  * @property onMilestoneDrag - Callback triggered when a milestone is dragged
- * 
+ * @property dragStep - Optional time step for drag snapping (e.g., variant("days", 1) for daily)
+ * @property durationStep - Optional time step for duration change snapping
+ *
  */
 export const GanttStyleType = StructType({
     variant: OptionType(TableVariantType),
@@ -239,6 +285,8 @@ export const GanttStyleType = StructType({
     showColumnBorder: OptionType(BooleanType),
     colorPalette: OptionType(ColorSchemeType),
     showToday: OptionType(BooleanType),
+    dragStep: OptionType(TimeStepType),
+    durationStep: OptionType(TimeStepType),
     onCellClick: OptionType(FunctionType([TableCellClickEventType], NullType)),
     onCellDoubleClick: OptionType(FunctionType([TableCellClickEventType], NullType)),
     onRowClick: OptionType(FunctionType([TableRowClickEventType], NullType)),
@@ -248,6 +296,7 @@ export const GanttStyleType = StructType({
     onTaskClick: OptionType(FunctionType([GanttTaskClickEventType], NullType)),
     onTaskDoubleClick: OptionType(FunctionType([GanttTaskClickEventType], NullType)),
     onTaskDrag: OptionType(FunctionType([GanttTaskDragEventType], NullType)),
+    onTaskDurationChange: OptionType(FunctionType([GanttTaskDurationChangeEventType], NullType)),
     onTaskProgressChange: OptionType(FunctionType([GanttTaskProgressChangeEventType], NullType)),
     onMilestoneClick: OptionType(FunctionType([GanttMilestoneClickEventType], NullType)),
     onMilestoneDoubleClick: OptionType(FunctionType([GanttMilestoneClickEventType], NullType)),
@@ -273,6 +322,8 @@ export type GanttStyleType = typeof GanttStyleType;
  * @property showColumnBorder - Whether to show borders between columns
  * @property colorPalette - Default color scheme for events
  * @property showToday - Whether to show a today marker line
+ * @property dragStep - Optional time step for drag snapping
+ * @property durationStep - Optional time step for duration change snapping
  * @property onCellClick - Callback triggered when a cell is clicked
  * @property onCellDoubleClick - Callback triggered when a cell is double-clicked
  * @property onRowClick - Callback triggered when a row is clicked
@@ -282,6 +333,7 @@ export type GanttStyleType = typeof GanttStyleType;
  * @property onTaskClick - Callback triggered when a task is clicked
  * @property onTaskDoubleClick - Callback triggered when a task is double-clicked
  * @property onTaskDrag - Callback triggered when a task is dragged/resized
+ * @property onTaskDurationChange - Callback triggered when task duration changes (dragging task end)
  * @property onTaskProgressChange - Callback triggered when task progress changes
  * @property onMilestoneClick - Callback triggered when a milestone is clicked
  * @property onMilestoneDoubleClick - Callback triggered when a milestone is double-clicked
@@ -304,6 +356,10 @@ export interface GanttStyle {
     colorPalette?: SubtypeExprOrValue<ColorSchemeType> | ColorSchemeLiteral;
     /** Whether to show a today marker line */
     showToday?: SubtypeExprOrValue<BooleanType>;
+    /** Optional time step for drag snapping (e.g., variant("days", 1) for daily) */
+    dragStep?: SubtypeExprOrValue<TimeStepType>;
+    /** Optional time step for duration change snapping */
+    durationStep?: SubtypeExprOrValue<TimeStepType>;
     /** Callback triggered when a cell is clicked */
     onCellClick?: SubtypeExprOrValue<FunctionType<[TableCellClickEventType], NullType>>;
     /** Callback triggered when a cell is double-clicked */
@@ -322,6 +378,8 @@ export interface GanttStyle {
     onTaskDoubleClick?: SubtypeExprOrValue<FunctionType<[GanttTaskClickEventType], NullType>>;
     /** Callback triggered when a task is dragged/resized */
     onTaskDrag?: SubtypeExprOrValue<FunctionType<[GanttTaskDragEventType], NullType>>;
+    /** Callback triggered when task duration changes (dragging task end) */
+    onTaskDurationChange?: SubtypeExprOrValue<FunctionType<[GanttTaskDurationChangeEventType], NullType>>;
     /** Callback triggered when task progress changes */
     onTaskProgressChange?: SubtypeExprOrValue<FunctionType<[GanttTaskProgressChangeEventType], NullType>>;
     /** Callback triggered when a milestone is clicked */

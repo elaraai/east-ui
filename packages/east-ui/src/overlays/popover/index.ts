@@ -77,28 +77,16 @@ export type PopoverType = typeof PopoverType;
  *
  * @example
  * ```ts
- * import { Popover, Button, Text, StringInput } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Popover, Button, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple popover
- * const popover = Popover.Root(
- *   Button.Root("Edit"),
- *   [Text.Root("Edit your profile")],
- *   { title: "Edit Profile" }
- * );
- *
- * // Popover with form content
- * const formPopover = Popover.Root(
- *   Button.Root("Settings"),
- *   [
- *     StringInput.Root("name", { placeholder: "Enter name" }),
- *     Button.Root("Save"),
- *   ],
- *   {
- *     title: "Quick Settings",
- *     placement: "bottom-start",
- *     closeOnInteractOutside: true,
- *   }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Popover.Root(
+ *         Button.Root("Edit"),
+ *         [Text.Root("Edit your profile")],
+ *         { title: "Edit Profile" }
+ *     );
+ * });
  * ```
  */
 function createPopover(
@@ -143,21 +131,6 @@ function createPopover(
  *
  * @remarks
  * Use `Popover.Root(trigger, body, style)` to create a popover, or access `Popover.Types` for East types.
- *
- * @example
- * ```ts
- * import { Popover, Button, Text } from "@elaraai/east-ui";
- *
- * // Create a popover
- * const popover = Popover.Root(
- *   Button.Root("Open"),
- *   [Text.Root("Content")],
- *   { title: "My Popover", placement: "bottom" }
- * );
- *
- * // Access the type
- * const styleType = Popover.Types.Style;
- * ```
  */
 export const Popover = {
     /**

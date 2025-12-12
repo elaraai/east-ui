@@ -87,11 +87,13 @@ const blobEqual = equalFor(BlobType)
  *
  * @example
  * ```ts
- * import { UIStore, StateImpl } from "@elaraai/east-ui";
+ * import { UIStore, State } from "@elaraai/east-ui";
  *
+ * // Use the singleton store via State.Implementation
+ * const compiled = counterFn.toIR().compile(State.Implementation);
+ *
+ * // Or create a custom store for isolation
  * const store = new UIStore();
- * const platform = StateImpl(store);
- * const compiled = counterFn.toIR().compile(platform);
  * ```
  */
 export class UIStore implements UIStoreInterface {

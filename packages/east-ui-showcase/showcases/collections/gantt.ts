@@ -3,8 +3,8 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East, some, StringType, NullType } from "@elaraai/east";
-import { Gantt, UIComponentType, Grid, State, Reactive, Stack, Badge, Table } from "@elaraai/east-ui";
+import { East, some, StringType, NullType, DateTimeType, variant } from "@elaraai/east";
+import { Gantt, UIComponentType, Grid, State, Reactive, Stack, Badge, Table, Text } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
 /**
@@ -333,6 +333,14 @@ export default East.function(
                         }
                     );
 
+                    const onTaskDurationChange = East.function(
+                        [Gantt.Types.TaskDurationChangeEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str`onTaskDurationChange: row ${event.rowIndex}, task ${event.taskIndex}, new end date`), StringType)());
+                        }
+                    );
+
                     const onTaskProgressChange = East.function(
                         [Gantt.Types.TaskProgressChangeEvent],
                         NullType,
@@ -389,6 +397,7 @@ export default East.function(
                                 onTaskClick,
                                 onTaskDoubleClick,
                                 onTaskDrag,
+                                onTaskDurationChange,
                                 onTaskProgressChange,
                                 onMilestoneClick,
                                 onMilestoneDoubleClick,
@@ -471,6 +480,14 @@ export default East.function(
                         }
                     );
 
+                    const onTaskDurationChange = East.function(
+                        [Gantt.Types.TaskDurationChangeEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str\`onTaskDurationChange: row \${event.rowIndex}, task \${event.taskIndex}, new end date\`), StringType)());
+                        }
+                    );
+
                     const onTaskProgressChange = East.function(
                         [Gantt.Types.TaskProgressChangeEvent],
                         NullType,
@@ -527,6 +544,7 @@ export default East.function(
                                 onTaskClick,
                                 onTaskDoubleClick,
                                 onTaskDrag,
+                                onTaskDurationChange,
                                 onTaskProgressChange,
                                 onMilestoneClick,
                                 onMilestoneDoubleClick,
@@ -543,6 +561,84 @@ export default East.function(
             )
         );
 
+        // =====================================================================
+        // REACTIVE DRAG EXAMPLE - Task dates stored in state and updated on drag
+        // =====================================================================
+
+        // Initialize state for the draggable task's start date
+        $(State.initTyped("gantt_task_start", new Date("2024-01-15"), DateTimeType)());
+
+        const reactiveDrag = $.let(
+            ShowcaseCard(
+                "Reactive Drag",
+                "Drag task to update state - position persists after re-render",
+                Reactive.Root($ => {
+                    // Read task start date from state
+                    const taskStart = $.let(State.readTyped("gantt_task_start", DateTimeType)());
+                    // Calculate end date (14 days after start)
+                    const taskEnd = $.let(taskStart.unwrap('some').addDays(14));
+
+                    // Callback to update start date when dragged
+                    const onTaskDrag = East.function(
+                        [Gantt.Types.TaskDragEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_task_start", some(event.newStart), DateTimeType)());
+                        }
+                    );
+
+                    return Stack.VStack([
+                        Gantt.Root(
+                            [{ name: "Draggable Task" }],
+                            { name: { header: "Task" } },
+                            _row => [
+                                Gantt.Task({
+                                    start: taskStart.unwrap('some'),
+                                    end: taskEnd,
+                                    label: "Drag me!",
+                                    colorPalette: "orange",
+                                }),
+                            ],
+                            {
+                                interactive: true,
+                                onTaskDrag,
+                                // Snap to 1-day increments when dragging
+                                dragStep: variant("days", 1),
+                                durationStep: variant("days", 1),
+                            }
+                        ),
+                        Text.Root(East.str`Start: ${taskStart.unwrap('some')}`, { fontSize: "sm", color: "fg.muted" }),
+                    ], { gap: "3", align: "stretch" });
+                }),
+                some(`
+                // Initialize state with task start date
+                $(State.initTyped("gantt_task_start", new Date("2024-01-15"), DateTimeType)());
+
+                Reactive.Root($ => {
+                    // Read from state
+                    const taskStart = $.let(State.readTyped("gantt_task_start", DateTimeType)());
+                    const taskEnd = $.let(East.datetime.addDays(taskStart, 14n));
+
+                    // Update state on drag
+                    const onTaskDrag = East.function(
+                        [Gantt.Types.TaskDragEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_task_start", some(event.newStart), DateTimeType)());
+                        }
+                    );
+
+                    return Gantt.Root(
+                        [{ name: "Draggable Task" }],
+                        { name: { header: "Task" } },
+                        _row => [Gantt.Task({ start: taskStart, end: taskEnd, label: "Drag me!" })],
+                        { interactive: true, onTaskDrag, dragStep: variant("days", 1) }
+                    );
+                })
+            `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -553,6 +649,8 @@ export default East.function(
                 Grid.Item(styled),
                 // Interactive example with all callbacks
                 Grid.Item(interactiveCallbacks, { colSpan: "2" }),
+                // Reactive drag example
+                Grid.Item(reactiveDrag, { colSpan: "2" }),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

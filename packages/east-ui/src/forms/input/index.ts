@@ -15,6 +15,7 @@ import {
     variant,
     some,
     none,
+    ArrayType,
 } from "@elaraai/east";
 
 import { SizeType } from "../../style.js";
@@ -30,7 +31,9 @@ import {
     type IntegerInputStyle,
     type FloatInputStyle,
     type DateTimeInputStyle,
+    DateTimePrecisionType,
 } from "./types.js";
+import { DateTimeFormatTokenType, tokenizeDateTimeFormat } from "@elaraai/east/internal";
 
 // Re-export types
 export {
@@ -40,7 +43,6 @@ export {
     IntegerInputType,
     FloatInputType,
     DateTimeInputType,
-    InputRootType,
     type StringInputStyle,
     type IntegerInputStyle,
     type FloatInputStyle,
@@ -52,10 +54,10 @@ export {
 // Input Functions
 // ============================================================================
 
-function StringInput(
+export function StringInput_(
     value: SubtypeExprOrValue<StringType>,
     style?: StringInputStyle
-): ExprType<UIComponentType> {
+): ExprType<StringInputType> {
     const variantValue = style?.variant
         ? (typeof style.variant === "string"
             ? East.value(variant(style.variant, null), InputVariantType)
@@ -68,7 +70,7 @@ function StringInput(
             : style.size)
         : undefined;
 
-    return East.value(variant("StringInput", {
+    return East.value({
         value: value,
         placeholder: style?.placeholder ? some(style.placeholder) : none,
         variant: variantValue ? some(variantValue) : none,
@@ -79,13 +81,20 @@ function StringInput(
         onChange: style?.onChange ? some(style.onChange) : none,
         onBlur: style?.onBlur ? some(style.onBlur) : none,
         onFocus: style?.onFocus ? some(style.onFocus) : none,
-    }), UIComponentType);
+    }, StringInputType);
 }
 
-function IntegerInput(
+function StringInput(
+    value: SubtypeExprOrValue<StringType>,
+    style?: StringInputStyle
+): ExprType<UIComponentType> {
+    return East.value(variant("StringInput", StringInput_(value, style)), UIComponentType);
+}
+
+export function IntegerInput_(
     value: SubtypeExprOrValue<IntegerType>,
     style?: IntegerInputStyle
-): ExprType<UIComponentType> {
+): ExprType<IntegerInputType> {
     const toIntegerOption = (val: SubtypeExprOrValue<IntegerType> | undefined) => {
         if (val === undefined) return none;
         return some(val);
@@ -103,7 +112,7 @@ function IntegerInput(
             : style.size)
         : undefined;
 
-    return East.value(variant("IntegerInput", {
+    return East.value({
         value: value,
         min: toIntegerOption(style?.min),
         max: toIntegerOption(style?.max),
@@ -114,13 +123,21 @@ function IntegerInput(
         onChange: style?.onChange ? some(style.onChange) : none,
         onBlur: style?.onBlur ? some(style.onBlur) : none,
         onFocus: style?.onFocus ? some(style.onFocus) : none,
-    }), UIComponentType);
+    }, IntegerInputType);
 }
 
-function FloatInput(
+function IntegerInput(
+    value: SubtypeExprOrValue<IntegerType>,
+    style?: IntegerInputStyle
+): ExprType<UIComponentType> {
+    return East.value(variant("IntegerInput", IntegerInput_(value, style)), UIComponentType);
+}
+
+
+export function FloatInput_(
     value: SubtypeExprOrValue<FloatType>,
     style?: FloatInputStyle
-): ExprType<UIComponentType> {
+): ExprType<FloatInputType> {
     const toFloatOption = (val: SubtypeExprOrValue<FloatType> | undefined) => {
         if (val === undefined) return none;
         return some(val);
@@ -143,7 +160,7 @@ function FloatInput(
             : style.size)
         : undefined;
 
-    return East.value(variant("FloatInput", {
+    return East.value({
         value: value,
         min: toFloatOption(style?.min),
         max: toFloatOption(style?.max),
@@ -155,21 +172,24 @@ function FloatInput(
         onChange: style?.onChange ? some(style.onChange) : none,
         onBlur: style?.onBlur ? some(style.onBlur) : none,
         onFocus: style?.onFocus ? some(style.onFocus) : none,
-    }), UIComponentType);
+    }, FloatInputType);
 }
 
-function DateTimeInput(
+function FloatInput(
+    value: SubtypeExprOrValue<FloatType>,
+    style?: FloatInputStyle
+): ExprType<UIComponentType> {
+    return East.value(variant("FloatInput", FloatInput_(value, style)), UIComponentType);
+}
+
+
+export function DateTimeInput_(
     value: SubtypeExprOrValue<DateTimeType>,
     style?: DateTimeInputStyle
-): ExprType<UIComponentType> {
+): ExprType<DateTimeInputType> {
     const toDateTimeOption = (val: SubtypeExprOrValue<DateTimeType> | Date | undefined) => {
         if (val === undefined) return none;
         if (val instanceof Date) return some(val);
-        return some(val);
-    };
-
-    const toStringOption = (val: SubtypeExprOrValue<StringType> | string | undefined) => {
-        if (val === undefined) return none;
         return some(val);
     };
 
@@ -190,19 +210,39 @@ function DateTimeInput(
             : style.size)
         : undefined;
 
-    return East.value(variant("DateTimeInput", {
+    const precisionValue = style?.precision
+        ? (typeof style.precision === "string"
+            ? East.value(variant(style.precision, null), DateTimePrecisionType)
+            : style.precision)
+        : undefined;
+
+    const formatValue = style?.format
+        ? (typeof style.format === "string"
+            ? East.value(tokenizeDateTimeFormat(style.format), ArrayType(DateTimeFormatTokenType))
+            : style.format)
+        : undefined;
+
+
+    return East.value({
         value: value,
         min: toDateTimeOption(style?.min),
         max: toDateTimeOption(style?.max),
-        showTime: toBoolOption(style?.showTime),
-        format: toStringOption(style?.format),
+        precision: precisionValue ? some(precisionValue) : none,
+        format: formatValue ? some(formatValue) : none,
         variant: variantValue ? some(variantValue) : none,
         size: sizeValue ? some(sizeValue) : none,
         disabled: toBoolOption(style?.disabled),
         onChange: style?.onChange ? some(style.onChange) : none,
         onBlur: style?.onBlur ? some(style.onBlur) : none,
         onFocus: style?.onFocus ? some(style.onFocus) : none,
-    }), UIComponentType);
+    }, DateTimeInputType);
+}
+
+function DateTimeInput(
+    value: SubtypeExprOrValue<DateTimeType>,
+    style?: DateTimeInputStyle
+): ExprType<UIComponentType> {
+    return East.value(variant("DateTimeInput", DateTimeInput_(value, style)), UIComponentType);
 }
 
 /**
@@ -325,6 +365,16 @@ export const Input = {
          * @property disabled - Whether the input is disabled
          */
         DateTime: DateTimeInputType,
+        /** Variant type for DateTime precision options.
+         *
+         * @remarks
+         * Create instances using the {@link DateTimePrecision} function.
+         *
+         * @property date - Date only (no time)
+         * @property time - Time only (no date)
+         * @property datetime - Full date and time
+         */
+        DateTimePrecision: DateTimePrecisionType,
         /**
          * Variant type for Input appearance styles.
          *

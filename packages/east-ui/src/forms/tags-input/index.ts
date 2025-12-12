@@ -42,36 +42,29 @@ export {
  * @param style - Optional style and configuration options
  * @returns An East expression representing the TagsInput component
  *
+ * @remarks
+ * TagsInput is a multi-tag input control for entering and managing
+ * a collection of string tags. It supports features like maximum tag count,
+ * character limits, paste parsing, and editable tags.
+ *
  * @example
  * ```ts
- * import { TagsInput } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { TagsInput, UIComponentType } from "@elaraai/east-ui";
  *
- * // Basic tags input
- * const tagsInput = TagsInput.Root([], {
- *   label: "Skills",
- *   placeholder: "Add skill...",
- *   max: 5,
- * });
- *
- * // Comma-delimited with paste support
- * const techTags = TagsInput.Root(["react", "typescript"], {
- *   label: "Technologies",
- *   delimiter: ",",
- *   addOnPaste: true,
- * });
- *
- * // Editable tags with color
- * const coloredTags = TagsInput.Root(row.tags, {
- *   editable: true,
- *   maxLength: 20,
- *   colorPalette: "blue",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return TagsInput.Root(["React", "TypeScript"], {
+ *         placeholder: "Add tag...",
+ *         max: 5n,
+ *         colorPalette: "blue",
+ *     });
  * });
  * ```
  */
-function createTagsInput(
+export function createTagsInput_(
     value: SubtypeExprOrValue<ArrayType<typeof StringType>>,
     style?: TagsInputStyle
-): ExprType<UIComponentType> {
+): ExprType<TagsInputRootType> {
     // Convert string literal variants to East values
     const variantValue = style?.variant
         ? (typeof style.variant === "string"
@@ -105,7 +98,7 @@ function createTagsInput(
         ? (typeof style.maxLength === "number" ? BigInt(style.maxLength) : style.maxLength)
         : undefined;
 
-    return East.value(variant("TagsInput", {
+    return East.value({
         value: value,
         defaultValue: style?.defaultValue !== undefined ? variant("some", style.defaultValue) : variant("none", null),
         max: maxValue !== undefined ? variant("some", maxValue) : variant("none", null),
@@ -126,7 +119,14 @@ function createTagsInput(
         onChange: style?.onChange !== undefined ? variant("some", style.onChange) : variant("none", null),
         onInputChange: style?.onInputChange !== undefined ? variant("some", style.onInputChange) : variant("none", null),
         onHighlightChange: style?.onHighlightChange !== undefined ? variant("some", style.onHighlightChange) : variant("none", null),
-    }), UIComponentType);
+    }, TagsInputRootType);
+}
+
+function createTagsInput(
+    value: SubtypeExprOrValue<ArrayType<typeof StringType>>,
+    style?: TagsInputStyle
+): ExprType<UIComponentType> {
+    return East.value(variant("TagsInput", createTagsInput_(value, style)), UIComponentType);
 }
 
 // ============================================================================
@@ -134,37 +134,10 @@ function createTagsInput(
 // ============================================================================
 
 /**
- * TagsInput component namespace.
+ * TagsInput component for managing collections of string tags.
  *
  * @remarks
- * TagsInput provides a multi-tag input control for entering and managing
- * a collection of string tags.
- *
- * @example
- * ```ts
- * import { TagsInput } from "@elaraai/east-ui";
- *
- * // Basic tags input
- * const tagsInput = TagsInput.Root([], {
- *   label: "Skills",
- *   placeholder: "Add skill...",
- * });
- *
- * // With constraints
- * const constrained = TagsInput.Root(["tag1"], {
- *   max: 10,
- *   maxLength: 20,
- *   delimiter: ",",
- *   addOnPaste: true,
- * });
- *
- * // Styled tags
- * const styled = TagsInput.Root(["react", "vue"], {
- *   variant: "subtle",
- *   size: "lg",
- *   colorPalette: "blue",
- * });
- * ```
+ * Use `TagsInput.Root(value, style)` to create a tags input, or access `TagsInput.Types.Root` for the East type.
  */
 export const TagsInput = {
     /**

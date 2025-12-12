@@ -86,12 +86,21 @@ export type PlacementLiteral =
  * @param placement - The placement string
  * @returns An East expression representing the placement
  *
+ * @remarks
+ * Use this helper to create placement values programmatically.
+ * In most cases, you can pass string literals directly to the style property.
+ *
  * @example
  * ```ts
- * import { Tooltip, Placement } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Tooltip, Button, UIComponentType } from "@elaraai/east-ui";
  *
- * const tooltip = Tooltip.Root(trigger, "Help text", {
- *   placement: Placement("top"),
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Tooltip.Root(
+ *         Button.Root("Hover"),
+ *         "Help text",
+ *         { placement: Tooltip.Placement("top") }
+ *     );
  * });
  * ```
  */

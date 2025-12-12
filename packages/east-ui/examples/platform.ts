@@ -12,8 +12,8 @@
  *   - Export property (e.g., State.read, State.write)
  */
 
-import { East, IntegerType, NullType, some } from "@elaraai/east";
-import { State, UIComponentType, Button } from "../src/index.js";
+import { East, IntegerType, NullType, some, none } from "@elaraai/east";
+import { State, UIComponentType, Button, Text } from "../src/index.js";
 import { encodeBeast2For, decodeBeast2For } from "@elaraai/east/internal";
 
 // Helper to read current counter value from store
@@ -144,5 +144,80 @@ for (let i = 1n; i <= 5n; i++) {
     incrementCompiled();
     assertCounter(i, `After increment ${i}`);
 }
+
+// ============================================================================
+// STATE.READTYPED
+// ============================================================================
+
+// File: src/platform/index.ts
+// Export: State.readTyped
+console.log("\nTesting State.readTyped...");
+const stateReadTypedExample = East.function([], UIComponentType, $ => {
+    // Read typed value - returns Option<Integer>
+    const count = $(State.readTyped("counter", IntegerType)());
+
+    // Unwrap with default if not set
+    const value = $.let(0n);
+    $.match(count, {
+        some: ($, v) => $.assign(value, v),
+    });
+    return Text.Root(East.str`Count: ${value}`);
+});
+stateReadTypedExample.toIR().compile(State.Implementation)();
+console.log("  ✓ State.readTyped example compiled and executed");
+
+// ============================================================================
+// STATE.WRITETYPED
+// ============================================================================
+
+// File: src/platform/index.ts
+// Export: State.writeTyped
+console.log("\nTesting State.writeTyped...");
+const stateWriteTypedExample = East.function([], NullType, $ => {
+    // Write a typed value
+    $(State.writeTyped("counter", some(42n), IntegerType)());
+
+    // Delete the key
+    $(State.writeTyped("counter", none, IntegerType)());
+});
+stateWriteTypedExample.toIR().compile(State.Implementation)();
+console.log("  ✓ State.writeTyped example compiled and executed");
+
+// ============================================================================
+// STATE.HAS
+// ============================================================================
+
+// File: src/platform/index.ts
+// Export: State.has
+console.log("\nTesting State.has...");
+const stateHasExample = East.function([], NullType, $ => {
+    $.if($(State.has("counter")), $ => {
+        // Key exists, do something
+    });
+});
+stateHasExample.toIR().compile(State.Implementation)();
+console.log("  ✓ State.has example compiled and executed");
+
+// ============================================================================
+// STATE.INITTYPED
+// ============================================================================
+
+// File: src/platform/index.ts
+// Export: State.initTyped
+console.log("\nTesting State.initTyped...");
+const stateInitTypedExample = East.function([], UIComponentType, $ => {
+    // Initialize to 0 only if not already set (safe for re-renders)
+    $(State.initTyped("counter", 0n, IntegerType)());
+
+    // Read and display
+    const count = $(State.readTyped("counter", IntegerType)());
+    const value = $.let(0n);
+    $.match(count, {
+        some: ($, v) => $.assign(value, v),
+    });
+    return Text.Root(East.str`Count: ${value}`);
+});
+stateInitTypedExample.toIR().compile(State.Implementation)();
+console.log("  ✓ State.initTyped example compiled and executed");
 
 console.log("\n=== Platform TypeDoc examples compiled and executed successfully! ===\n");

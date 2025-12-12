@@ -151,6 +151,7 @@ export {
     type EastChakraIntegerInputProps,
     type EastChakraFloatInputProps,
     type EastChakraDateTimeInputProps,
+    type ChakraDateTimeInputProps,
     // Checkbox
     EastChakraCheckbox,
     toChakraCheckbox,
@@ -177,11 +178,6 @@ export {
     toChakraField,
     type FieldValue,
     type EastChakraFieldProps,
-    // Fieldset
-    EastChakraFieldset,
-    toChakraFieldset,
-    type FieldsetValue,
-    type EastChakraFieldsetProps,
     // Textarea
     EastChakraTextarea,
     toChakraTextarea,

@@ -7,7 +7,6 @@ export {
     Input,
     InputVariant,
     InputVariantType,
-    InputRootType,
     StringInputType,
     IntegerInputType,
     FloatInputType,
@@ -59,12 +58,6 @@ export {
     type FileUploadStyle,
     type FileCaptureLiteral,
 } from "./file-upload/index.js";
-
-export {
-    Fieldset,
-    FieldsetStyleType,
-    type FieldsetStyle,
-} from "./fieldset/index.js";
 
 export {
     Textarea,

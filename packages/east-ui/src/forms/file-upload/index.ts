@@ -47,9 +47,9 @@ export {
  * });
  * ```
  */
-function createFileUpload(
+export function createFileUpload_(
     style?: FileUploadStyle
-): ExprType<UIComponentType> {
+): ExprType<FileUploadType> {
     // Convert number to bigint for IntegerType fields
     const maxFilesValue = style?.maxFiles !== undefined
         ? (typeof style.maxFiles === "number" ? BigInt(style.maxFiles) : style.maxFiles)
@@ -68,7 +68,7 @@ function createFileUpload(
             : style.capture)
         : undefined;
 
-    return East.value(variant("FileUpload", {
+    return East.value({
         accept: style?.accept !== undefined ? variant("some", style.accept) : variant("none", null),
         maxFiles: maxFilesValue !== undefined ? variant("some", maxFilesValue) : variant("none", null),
         maxFileSize: maxFileSizeValue !== undefined ? variant("some", maxFileSizeValue) : variant("none", null),
@@ -84,7 +84,14 @@ function createFileUpload(
         triggerText: style?.triggerText !== undefined ? variant("some", style.triggerText) : variant("none", null),
         onFileAccept: style?.onFileAccept !== undefined ? variant("some", style.onFileAccept) : variant("none", null),
         onFileReject: style?.onFileReject !== undefined ? variant("some", style.onFileReject) : variant("none", null),
-    }), UIComponentType);
+    }, FileUploadType);
+}
+
+
+function createFileUpload(
+    style?: FileUploadStyle
+): ExprType<UIComponentType> {
+    return East.value(variant("FileUpload", createFileUpload_(style)), UIComponentType);
 }
 
 // ============================================================================

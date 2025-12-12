@@ -28,6 +28,7 @@ import { EastChakraRadarChart } from "./charts/radar";
 import { EastChakraBarList } from "./charts/bar-list";
 import { EastChakraBarSegment } from "./charts/bar-segment";
 import { EastChakraBox } from "./layout/box";
+import { EastChakraFlex } from "./layout/flex";
 import { EastChakraStack } from "./layout/stack";
 import { EastChakraSeparator } from "./layout/separator";
 import { EastChakraGrid } from "./layout/grid";
@@ -54,7 +55,6 @@ import {
     EastChakraSelect,
     EastChakraSlider,
     EastChakraField,
-    EastChakraFieldset,
     EastChakraTextarea,
     EastChakraTagsInput,
     EastChakraFileUpload,
@@ -103,6 +103,7 @@ export const EastChakraComponent = memo(function EastChakraComponent({ value }: 
 
             // Layout
             Box: (v) => <EastChakraBox value={v} />,
+            Flex: (v) => <EastChakraFlex value={v} />,
             Stack: (v) => <EastChakraStack value={v} />,
             Separator: (v) => <EastChakraSeparator value={v} />,
             Grid: (v) => <EastChakraGrid value={v} />,
@@ -119,7 +120,6 @@ export const EastChakraComponent = memo(function EastChakraComponent({ value }: 
             Slider: (v) => <EastChakraSlider value={v} />,
             FileUpload: (v) => <EastChakraFileUpload value={v} />,
             Field: (v) => <EastChakraField value={v} />,
-            Fieldset: (v) => <EastChakraFieldset value={v} />,
             Textarea: (v) => <EastChakraTextarea value={v} />,
             TagsInput: (v) => <EastChakraTagsInput value={v} />,
 

@@ -90,6 +90,7 @@ export type CodeLanguage =
  * @property highlightLines - Line numbers to highlight
  * @property maxHeight - Maximum height with scroll
  * @property showCopyButton - Whether to show copy-to-clipboard button
+ * @property wordWrap - Whether to enable word wrapping
  * @property title - Optional title displayed in the header (e.g., filename)
  */
 export const CodeBlockType = StructType({
@@ -99,6 +100,7 @@ export const CodeBlockType = StructType({
     highlightLines: OptionType(ArrayType(IntegerType)),
     maxHeight: OptionType(StringType),
     showCopyButton: OptionType(BooleanType),
+    wordWrap: OptionType(BooleanType),
     title: OptionType(StringType),
 });
 
@@ -122,6 +124,8 @@ export type CodeBlockStyle = {
     maxHeight?: SubtypeExprOrValue<StringType>;
     /** Whether to show copy-to-clipboard button */
     showCopyButton?: SubtypeExprOrValue<BooleanType> | boolean;
+    /** Whether to enable word wrapping */
+    wordWrap?: SubtypeExprOrValue<BooleanType> | boolean;
     /** Optional title displayed in the header (e.g., filename) */
     title?: SubtypeExprOrValue<StringType>;
 };

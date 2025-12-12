@@ -29,6 +29,7 @@ import { CodeBlockType } from "./typography/code-block/types.js";
 
 // Layout
 import { BoxStyleType } from "./layout/box/types.js";
+import { FlexStyleType } from "./layout/flex/types.js";
 import { StackStyleType } from "./layout/stack/types.js";
 import { SeparatorStyleType } from "./layout/separator/types.js";
 import { GridStyleType } from "./layout/grid/types.js";
@@ -41,11 +42,11 @@ import { IconButtonType } from "./buttons/icon-button/types.js";
 // Forms
 import { StringInputType, IntegerInputType, FloatInputType, DateTimeInputType } from "./forms/input/types.js";
 import { CheckboxType } from "./forms/checkbox/types.js";
+import { FieldType } from "./forms/field/types.js";
 import { SwitchType } from "./forms/switch/types.js";
 import { SelectRootType } from "./forms/select/types.js";
 import { SliderType } from "./forms/slider/types.js";
 import { FileUploadType } from "./forms/file-upload/types.js";
-import { FieldsetStyleType } from "./forms/fieldset/types.js";
 import { TextareaType } from "./forms/textarea/types.js";
 import { TagsInputRootType } from "./forms/tags-input/types.js";
 
@@ -159,6 +160,11 @@ export const UIComponentType = RecursiveType(node => VariantType({
         style: OptionType(BoxStyleType),
     }),
 
+    Flex: StructType({
+        children: ArrayType(node),
+        style: OptionType(FlexStyleType),
+    }),
+
     Stack: StructType({
         children: ArrayType(node),
         style: OptionType(StackStyleType),
@@ -203,25 +209,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
     Select: SelectRootType,
     Slider: SliderType,
     FileUpload: FileUploadType,
-    Field: StructType({
-        label: StringType,
-        control: node,
-        helperText: OptionType(StringType),
-        errorText: OptionType(StringType),
-        required: OptionType(BooleanType),
-        disabled: OptionType(BooleanType),
-        invalid: OptionType(BooleanType),
-        readOnly: OptionType(BooleanType),
-    }),
-    Fieldset: StructType({
-        legend: OptionType(StringType),
-        helperText: OptionType(StringType),
-        errorText: OptionType(StringType),
-        content: ArrayType(node),
-        disabled: OptionType(BooleanType),
-        invalid: OptionType(BooleanType),
-        style: OptionType(FieldsetStyleType),
-    }),
+    Field: FieldType,
     Textarea: TextareaType,
     TagsInput: TagsInputRootType,
 

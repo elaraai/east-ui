@@ -18,7 +18,11 @@ import {
     FunctionType,
     variant,
     type SubtypeExprOrValue,
+    ArrayType,
 } from "@elaraai/east";
+import {
+  DateTimeFormatTokenType
+} from "@elaraai/east/internal";
 
 import { SizeType } from "../../style.js";
 import type { SizeLiteral } from "../../style.js";
@@ -88,7 +92,7 @@ export function InputVariant(inputVariant: "outline" | "subtle" | "flushed"): Ex
  * @property size - Size of the input
  * @property maxLength - Maximum character count
  * @property pattern - Regex pattern for validation
- * @property disabled - Whether the input is disabled
+ * @property disabled - Whether the input is disabled\
  * @property onChange - Callback triggered when value changes
  * @property onBlur - Callback triggered when input loses focus
  * @property onFocus - Callback triggered when input gains focus
@@ -295,13 +299,29 @@ export interface FloatInputStyle {
 // ============================================================================
 
 /**
+ * Variant type for DateTime format tokens.
+ *
+ * @remarks
+ * Create instances using the {@link DateTimeFormatToken} function.
+ */
+export const DateTimePrecisionType = VariantType({
+    date: NullType,
+    time: NullType,
+    datetime: NullType,
+});
+/** Variant type for DateTime precision options. */
+export type DateTimePrecisionType = typeof DateTimePrecisionType;
+/** String literal type for DateTime precision options. */
+export type DateTimePrecisionLiteral = "date" | "time" | "datetime";
+
+/**
  * Type for DateTime input component data.
  *
  * @property value - The current DateTime value
  * @property min - Minimum allowed date/time
  * @property max - Maximum allowed date/time
- * @property showTime - Whether to show time picker
- * @property format - Display format string
+ * @property precision - Whether to show time picker
+ * @property format - Display format token
  * @property variant - Input appearance variant
  * @property size - Size of the input
  * @property disabled - Whether the input is disabled
@@ -313,8 +333,8 @@ export const DateTimeInputType = StructType({
     value: DateTimeType,
     min: OptionType(DateTimeType),
     max: OptionType(DateTimeType),
-    showTime: OptionType(BooleanType),
-    format: OptionType(StringType),
+    precision: OptionType(DateTimePrecisionType),
+    format: OptionType(ArrayType(DateTimeFormatTokenType)),
     variant: OptionType(InputVariantType),
     size: OptionType(SizeType),
     disabled: OptionType(BooleanType),
@@ -333,30 +353,31 @@ export type DateTimeInputType = typeof DateTimeInputType;
  *
  * @property min - Minimum allowed date/time
  * @property max - Maximum allowed date/time
- * @property showTime - Whether to show time picker
- * @property format - Display format string
+ * @property precision - Whether to show time picker
+ * @property format - Display format token
  * @property variant - Input appearance variant
  * @property size - Size of the input
  * @property disabled - Whether the input is disabled
+ * @property invalid - Whether the input value is invalid
  * @property onChange - Callback triggered when value changes
  * @property onBlur - Callback triggered when input loses focus
  * @property onFocus - Callback triggered when input gains focus
  */
 export interface DateTimeInputStyle {
     /** Minimum allowed date/time */
-    min?: SubtypeExprOrValue<DateTimeType> | Date;
+    min?: SubtypeExprOrValue<DateTimeType>;
     /** Maximum allowed date/time */
-    max?: SubtypeExprOrValue<DateTimeType> | Date;
+    max?: SubtypeExprOrValue<DateTimeType>;
     /** Whether to show time picker */
-    showTime?: SubtypeExprOrValue<BooleanType> | boolean;
-    /** Display format string */
-    format?: SubtypeExprOrValue<StringType> | string;
+    precision?: SubtypeExprOrValue<typeof DateTimePrecisionType> | DateTimePrecisionLiteral;
+    /** Display format token */
+    format?: SubtypeExprOrValue<ArrayType<typeof DateTimeFormatTokenType>> | string;
     /** Input appearance variant (outline, subtle, flushed) */
     variant?: SubtypeExprOrValue<InputVariantType> | InputVariantLiteral;
     /** Size of the input (xs, sm, md, lg) */
     size?: SubtypeExprOrValue<SizeType> | SizeLiteral;
     /** Whether the input is disabled */
-    disabled?: SubtypeExprOrValue<BooleanType> | boolean;
+    disabled?: SubtypeExprOrValue<BooleanType>;
     /** Callback triggered when value changes */
     onChange?: SubtypeExprOrValue<FunctionType<[DateTimeType], NullType>>;
     /** Callback triggered when input loses focus */
@@ -364,24 +385,3 @@ export interface DateTimeInputStyle {
     /** Callback triggered when input gains focus */
     onFocus?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 }
-
-// ============================================================================
-// Input Root Type
-// ============================================================================
-
-/**
- * Unified Input type as a variant of all input types.
- *
- * @property String - String text input
- * @property Integer - Integer number input
- * @property Float - Float number input
- * @property DateTime - Date/time picker input
- */
-export const InputRootType = VariantType({
-    String: StringInputType,
-    Integer: IntegerInputType,
-    Float: FloatInputType,
-    DateTime: DateTimeInputType,
-});
-
-export type InputRootType = typeof InputRootType;

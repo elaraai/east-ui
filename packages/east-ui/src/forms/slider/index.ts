@@ -57,10 +57,10 @@ export {
  * });
  * ```
  */
-function createSlider(
+export function createSlider_(
     value: SubtypeExprOrValue<FloatType>,
     style?: SliderStyle
-): ExprType<UIComponentType> {
+): ExprType<SliderType> {
     const orientationValue = style?.orientation
         ? (typeof style.orientation === "string"
             ? East.value(variant(style.orientation, null), OrientationType)
@@ -85,7 +85,7 @@ function createSlider(
             : style.variant)
         : undefined;
 
-    return East.value(variant("Slider", {
+    return East.value({
         value: value,
         min: style?.min !== undefined ? some(style.min) : none,
         max: style?.max !== undefined ? some(style.max) : none,
@@ -97,7 +97,14 @@ function createSlider(
         disabled: style?.disabled !== undefined ? some(style.disabled) : none,
         onChange: style?.onChange ? some(style.onChange) : none,
         onChangeEnd: style?.onChangeEnd ? some(style.onChangeEnd) : none,
-    }), UIComponentType);
+    }, SliderType);
+}
+
+function createSlider(
+    value: SubtypeExprOrValue<FloatType>,
+    style?: SliderStyle
+): ExprType<UIComponentType> {
+    return East.value(variant("Slider", createSlider_(value, style)), UIComponentType);
 }
 
 /**

@@ -14,6 +14,13 @@ export {
 } from "./box/index.js";
 
 export {
+    toChakraFlex,
+    EastChakraFlex,
+    type FlexValue,
+    type EastChakraFlexProps,
+} from "./flex/index.js";
+
+export {
     toChakraStack,
     EastChakraStack,
     type StackValue,

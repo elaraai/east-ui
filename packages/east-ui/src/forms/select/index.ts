@@ -99,11 +99,11 @@ function createSelectItem(
  * });
  * ```
  */
-function createSelectRoot(
+export function createSelectRoot_(
     value: SubtypeExprOrValue<StringType>,
     items: SubtypeExprOrValue<ArrayType<SelectItemType>>,
     style?: SelectStyle
-): ExprType<UIComponentType> {
+): ExprType<SelectRootType> {
     const toStringOption = (val: SubtypeExprOrValue<StringType> | null | undefined) => {
         if (val === undefined || val === null || val === "") return none;
         return some(val);
@@ -115,7 +115,7 @@ function createSelectRoot(
             : style.size)
         : undefined;
 
-    return East.value(variant("Select", {
+    return East.value({
         value: toStringOption(value),
         items: East.value(items, ArrayType(SelectItemType)),
         placeholder: toStringOption(style?.placeholder),
@@ -125,7 +125,15 @@ function createSelectRoot(
         onChange: style?.onChange ? some(style.onChange) : none,
         onChangeMultiple: style?.onChangeMultiple ? some(style.onChangeMultiple) : none,
         onOpenChange: style?.onOpenChange ? some(style.onOpenChange) : none,
-    }), UIComponentType);
+    }, SelectRootType);
+}
+
+function createSelectRoot(
+    value: SubtypeExprOrValue<StringType>,
+    items: SubtypeExprOrValue<ArrayType<SelectItemType>>,
+    style?: SelectStyle
+): ExprType<UIComponentType> {
+    return East.value(variant("Select", createSelectRoot_(value, items, style)), UIComponentType);
 }
 
 // ============================================================================

@@ -4,7 +4,7 @@
  */
 
 import { describeEast, assertEast } from "../platforms.spec.js";
-import { Field, Input, Checkbox } from "../../src/index.js";
+import { Field } from "../../src/index.js";
 
 describeEast("Field", (test) => {
     // =========================================================================
@@ -12,9 +12,10 @@ describeEast("Field", (test) => {
     // =========================================================================
 
     test("creates field with label and control", $ => {
-        const field = $.let(Field.Root(
+        const field = $.let(Field.StringInput(
             "Email",
-            Input.String("", { placeholder: "you@example.com" })
+            "",
+            { placeholder: "you@example.com" }
         ));
 
         $(assertEast.equal(field.unwrap("Field").label, "Email"));
@@ -22,14 +23,13 @@ describeEast("Field", (test) => {
         $(assertEast.equal(field.unwrap("Field").errorText.hasTag("none"), true));
         $(assertEast.equal(field.unwrap("Field").required.hasTag("none"), true));
         $(assertEast.equal(field.unwrap("Field").disabled.hasTag("none"), true));
-        $(assertEast.equal(field.unwrap("Field").invalid.hasTag("none"), true));
         $(assertEast.equal(field.unwrap("Field").readOnly.hasTag("none"), true));
     });
 
     test("creates field with checkbox control", $ => {
-        const field = $.let(Field.Root(
+        const field = $.let(Field.Checkbox(
             "Accept Terms",
-            Checkbox.Root(false, { label: "I agree to the terms" })
+            false
         ));
 
         $(assertEast.equal(field.unwrap("Field").label, "Accept Terms"));
@@ -42,10 +42,10 @@ describeEast("Field", (test) => {
     // =========================================================================
 
     test("creates field with helper text", $ => {
-        const field = $.let(Field.Root(
+        const field = $.let(Field.StringInput(
             "Email",
-            Input.String("", { placeholder: "you@example.com" }),
-            { helperText: "We'll never share your email." }
+            "",
+            { placeholder: "you@example.com", helperText: "We'll never share your email." }
         ));
 
         $(assertEast.equal(field.unwrap("Field").helperText.hasTag("some"), true));
@@ -53,9 +53,9 @@ describeEast("Field", (test) => {
     });
 
     test("creates field with long helper text", $ => {
-        const field = $.let(Field.Root(
+        const field = $.let(Field.StringInput(
             "Password",
-            Input.String(""),
+            "",
             { helperText: "Must be at least 8 characters with one uppercase, one lowercase, and one number." }
         ));
 
@@ -67,9 +67,9 @@ describeEast("Field", (test) => {
     // =========================================================================
 
     test("creates field with error text", $ => {
-        const field = $.let(Field.Root(
+        const field = $.let(Field.StringInput(
             "Email",
-            Input.String(""),
+            "",
             { errorText: "Email is required" }
         ));
 
@@ -77,29 +77,15 @@ describeEast("Field", (test) => {
         $(assertEast.equal(field.unwrap("Field").errorText.unwrap("some"), "Email is required"));
     });
 
-    test("creates field with error text and invalid state", $ => {
-        const field = $.let(Field.Root(
-            "Email",
-            Input.String(""),
-            {
-                errorText: "Please enter a valid email address",
-                invalid: true,
-            }
-        ));
-
-        $(assertEast.equal(field.unwrap("Field").errorText.unwrap("some"), "Please enter a valid email address"));
-        $(assertEast.equal(field.unwrap("Field").invalid.unwrap("some"), true));
-    });
-
     // =========================================================================
     // Required State
     // =========================================================================
 
     test("creates required field", $ => {
-        const field = $.let(Field.Root(
+        const field = $.let(Field.StringInput(
             "Username",
-            Input.String("", { placeholder: "Enter username" }),
-            { required: true }
+            "",
+            { placeholder: "Enter username", required: true }
         ));
 
         $(assertEast.equal(field.unwrap("Field").required.hasTag("some"), true));
@@ -107,9 +93,9 @@ describeEast("Field", (test) => {
     });
 
     test("creates non-required field explicitly", $ => {
-        const field = $.let(Field.Root(
+        const field = $.let(Field.StringInput(
             "Middle Name",
-            Input.String(""),
+            "",
             { required: false }
         ));
 
@@ -121,9 +107,9 @@ describeEast("Field", (test) => {
     // =========================================================================
 
     test("creates disabled field", $ => {
-        const field = $.let(Field.Root(
+        const field = $.let(Field.StringInput(
             "Email",
-            Input.String(""),
+            "",
             { disabled: true }
         ));
 
@@ -132,9 +118,9 @@ describeEast("Field", (test) => {
     });
 
     test("creates enabled field explicitly", $ => {
-        const field = $.let(Field.Root(
+        const field = $.let(Field.StringInput(
             "Email",
-            Input.String(""),
+            "",
             { disabled: false }
         ));
 
@@ -142,38 +128,13 @@ describeEast("Field", (test) => {
     });
 
     // =========================================================================
-    // Invalid State
-    // =========================================================================
-
-    test("creates invalid field", $ => {
-        const field = $.let(Field.Root(
-            "Email",
-            Input.String(""),
-            { invalid: true }
-        ));
-
-        $(assertEast.equal(field.unwrap("Field").invalid.hasTag("some"), true));
-        $(assertEast.equal(field.unwrap("Field").invalid.unwrap("some"), true));
-    });
-
-    test("creates valid field explicitly", $ => {
-        const field = $.let(Field.Root(
-            "Email",
-            Input.String(""),
-            { invalid: false }
-        ));
-
-        $(assertEast.equal(field.unwrap("Field").invalid.unwrap("some"), false));
-    });
-
-    // =========================================================================
     // ReadOnly State
     // =========================================================================
 
     test("creates read-only field", $ => {
-        const field = $.let(Field.Root(
+        const field = $.let(Field.StringInput(
             "Account ID",
-            Input.String(""),
+            "",
             { readOnly: true }
         ));
 
@@ -182,9 +143,9 @@ describeEast("Field", (test) => {
     });
 
     test("creates editable field explicitly", $ => {
-        const field = $.let(Field.Root(
+        const field = $.let(Field.StringInput(
             "Email",
-            Input.String(""),
+            "",
             { readOnly: false }
         ));
 
@@ -196,15 +157,15 @@ describeEast("Field", (test) => {
     // =========================================================================
 
     test("creates field with all options", $ => {
-        const field = $.let(Field.Root(
+        const field = $.let(Field.StringInput(
             "Password",
-            Input.String("", { placeholder: "Enter password" }),
+            "",
             {
+                placeholder: "Enter password",
                 helperText: "Must be at least 8 characters",
                 errorText: "Password is too short",
                 required: true,
                 disabled: false,
-                invalid: true,
                 readOnly: false,
             }
         ));
@@ -214,15 +175,15 @@ describeEast("Field", (test) => {
         $(assertEast.equal(field.unwrap("Field").errorText.unwrap("some"), "Password is too short"));
         $(assertEast.equal(field.unwrap("Field").required.unwrap("some"), true));
         $(assertEast.equal(field.unwrap("Field").disabled.unwrap("some"), false));
-        $(assertEast.equal(field.unwrap("Field").invalid.unwrap("some"), true));
         $(assertEast.equal(field.unwrap("Field").readOnly.unwrap("some"), false));
     });
 
     test("creates email field with validation", $ => {
-        const field = $.let(Field.Root(
+        const field = $.let(Field.StringInput(
             "Email Address",
-            Input.String("", { placeholder: "user@company.com" }),
+            "",
             {
+                placeholder: "user@company.com",
                 helperText: "Enter your work email",
                 required: true,
             }
@@ -234,9 +195,9 @@ describeEast("Field", (test) => {
     });
 
     test("creates read-only display field", $ => {
-        const field = $.let(Field.Root(
+        const field = $.let(Field.StringInput(
             "User ID",
-            Input.String(""),
+            "",
             {
                 readOnly: true,
                 helperText: "This value cannot be changed",
@@ -248,9 +209,9 @@ describeEast("Field", (test) => {
     });
 
     test("creates disabled field with explanation", $ => {
-        const field = $.let(Field.Root(
+        const field = $.let(Field.Checkbox(
             "Premium Feature",
-            Checkbox.Root(false),
+            false,
             {
                 disabled: true,
                 helperText: "Upgrade to enable this feature",

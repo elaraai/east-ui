@@ -43,9 +43,11 @@ import {
     type GanttStyle,
     GanttTaskClickEventType,
     GanttTaskDragEventType,
+    GanttTaskDurationChangeEventType,
     GanttTaskProgressChangeEventType,
     GanttMilestoneClickEventType,
     GanttMilestoneDragEventType,
+    TimeStepType,
 } from "./types.js";
 
 // Re-export types
@@ -54,6 +56,7 @@ export {
     GanttTaskType,
     GanttMilestoneType,
     GanttStyleType,
+    TimeStepType,
     type GanttStyle,
 } from "./types.js";
 
@@ -373,6 +376,8 @@ function createGantt<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
         showColumnBorder: style.showColumnBorder !== undefined ? some(style.showColumnBorder) : none,
         colorPalette: colorPaletteValue ? some(colorPaletteValue) : none,
         showToday: style.showToday !== undefined ? some(style.showToday) : none,
+        dragStep: style.dragStep ? some(style.dragStep) : none,
+        durationStep: style.durationStep ? some(style.durationStep) : none,
         onCellClick: style.onCellClick ? some(style.onCellClick) : none,
         onCellDoubleClick: style.onCellDoubleClick ? some(style.onCellDoubleClick) : none,
         onRowClick: style.onRowClick ? some(style.onRowClick) : none,
@@ -382,6 +387,7 @@ function createGantt<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
         onTaskClick: style.onTaskClick ? some(style.onTaskClick) : none,
         onTaskDoubleClick: style.onTaskDoubleClick ? some(style.onTaskDoubleClick) : none,
         onTaskDrag: style.onTaskDrag ? some(style.onTaskDrag) : none,
+        onTaskDurationChange: style.onTaskDurationChange ? some(style.onTaskDurationChange) : none,
         onTaskProgressChange: style.onTaskProgressChange ? some(style.onTaskProgressChange) : none,
         onMilestoneClick: style.onMilestoneClick ? some(style.onMilestoneClick) : none,
         onMilestoneDoubleClick: style.onMilestoneDoubleClick ? some(style.onMilestoneDoubleClick) : none,
@@ -626,6 +632,15 @@ export const Gantt = {
          * @property newProgress - New progress value (0-100)
          */
         TaskProgressChangeEvent: GanttTaskProgressChangeEventType,
+        /**
+         * Event data for task duration change events.
+         *
+         * @property rowIndex - Row index (0-based)
+         * @property taskIndex - Task index within the row (0-based)
+         * @property previousEnd - Previous end date/time
+         * @property newEnd - New end date/time
+         */
+        TaskDurationChangeEvent: GanttTaskDurationChangeEventType,
         /**
          * Event data for milestone click events.
          *

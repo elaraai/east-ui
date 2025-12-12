@@ -41,56 +41,20 @@ import { OutOfScopeException } from "@elaraai/east/internal";
  *
  * @example
  * ```ts
- * import { East, IntegerType, NullType, some } from "@elaraai/east";
- * import { Reactive, State, Stat, Button, Stack, UIComponentType } from "@elaraai/east-ui";
+ * import { East, IntegerType } from "@elaraai/east";
+ * import { Reactive, State, Text, UIComponentType } from "@elaraai/east-ui";
  *
  * const app = East.function([], UIComponentType, $ => {
- *     return Stack.VStack([
- *         // This re-renders only when "counter" changes (auto-detected)
- *         Reactive.Root($ => {
- *             const count = $(State.readTyped("counter", IntegerType)());
- *             return Stat.Root("Counter", East.str`${count.unwrap("some")}`);
- *         }),
- *
- *         // This button doesn't re-render when counter changes
- *         Button.Root("Increment", {
- *             onClick: East.function([], NullType, $ => {
- *                 const current = $(State.readTyped("counter", IntegerType)());
- *                 $(State.writeTyped("counter", some(current.unwrap("some").add(1n)), IntegerType)());
- *             })
- *         }),
- *     ]);
- * });
- * ```
- *
- * @example
- * ```ts
- * // Dynamic keys work - detected at runtime
- * Reactive.Root($ => {
- *     const userId = $(State.readTyped("currentUser", StringType)());
- *     const userData = $(State.readTyped(East.str`user_${userId.unwrap("some")}`, UserType)());
- *     return Text.Root(userData.name);
- * })
- * ```
- *
- * @example
- * ```ts
- * // ERROR: This will throw because it captures `multiplier` from parent scope
- * East.function([], UIComponentType, $ => {
- *     const multiplier = $let(5);
- *
+ *     // This component re-renders only when "counter" changes
  *     return Reactive.Root($ => {
- *         const count = $(State.readTyped("counter", IntegerType)());
- *         // ERROR: `multiplier` is captured from parent!
- *         return Text.Root(East.str`${count.unwrap("some").multiply(multiplier)}`);
+ *         const count = $.let(State.readTyped("counter", IntegerType)());
+ *         const value = $.let(0n);
+ *         $.match(count, {
+ *             some: ($, v) => $.assign(value, v),
+ *         });
+ *         return Text.Root(East.str`Count: ${value}`);
  *     });
  * });
- * // Instead, read multiplier inside the Reactive body:
- * Reactive.Root($ => {
- *     const multiplier = $(State.readTyped("multiplier", IntegerType)());
- *     const count = $(State.readTyped("counter", IntegerType)());
- *     return Text.Root(East.str`${count.unwrap("some").multiply(multiplier)}`);
- * })
  * ```
  */
 function createReactive(
@@ -126,19 +90,8 @@ function createReactive(
  * @remarks
  * Use `Reactive.Root(body)` to create a reactive component that re-renders
  * independently when its state dependencies change. Dependencies are automatically
- * detected at runtime.
- *
- * @example
- * ```ts
- * import { Reactive, State, Text } from "@elaraai/east-ui";
- * import { IntegerType } from "@elaraai/east";
- *
- * // Create a reactive component
- * Reactive.Root($ => {
- *     const count = $(State.readTyped("counter", IntegerType)());
- *     return Text.Root(East.str`Count: ${count.unwrap("some")}`);
- * })
- * ```
+ * detected at runtime. The body function must be a free function with no captures
+ * from parent East scope.
  */
 export const Reactive = {
     /**
