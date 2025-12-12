@@ -66,10 +66,18 @@ export type GridAutoFlowLiteral = "row" | "column" | "dense" | "row dense" | "co
  *
  * @example
  * ```ts
- * import { GridAutoFlow } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Grid, GridAutoFlow, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * GridAutoFlow("row");
- * GridAutoFlow("dense");
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Grid.Root([
+ *         Grid.Item(Text.Root("Cell 1")),
+ *         Grid.Item(Text.Root("Cell 2")),
+ *     ], {
+ *         templateColumns: "repeat(2, 1fr)",
+ *         autoFlow: GridAutoFlow("row"),
+ *     });
+ * });
  * ```
  */
 export function GridAutoFlow(flow: "row" | "column" | "dense" | "row dense" | "column dense"): ExprType<GridAutoFlowType> {

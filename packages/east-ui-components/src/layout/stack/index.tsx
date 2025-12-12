@@ -42,9 +42,17 @@ export function toChakraStack(value: StackValue): StackProps {
         mt: margin ? getSomeorUndefined(margin.top) : undefined,
         mr: margin ? getSomeorUndefined(margin.right) : undefined,
         mb: margin ? getSomeorUndefined(margin.bottom) : undefined,
-        ml: margin ? getSomeorUndefined(margin.left) : undefined, background: style ? getSomeorUndefined(style.background) : undefined,
+        ml: margin ? getSomeorUndefined(margin.left) : undefined, 
+        background: style ? getSomeorUndefined(style.background) : undefined,
         width: style ? getSomeorUndefined(style.width) : undefined,
         height: style ? getSomeorUndefined(style.height) : undefined,
+        minHeight: style ? getSomeorUndefined(style.minHeight) : undefined,
+        minWidth: style ? getSomeorUndefined(style.minWidth) : undefined,
+        maxHeight: style ? getSomeorUndefined(style.maxHeight) : undefined,
+        maxWidth: style ? getSomeorUndefined(style.maxWidth) : undefined,
+        overflow: style ? getSomeorUndefined(style.overflow)?.type : undefined,
+        overflowX: style ? getSomeorUndefined(style.overflowX)?.type : undefined,
+        overflowY: style ? getSomeorUndefined(style.overflowY)?.type : undefined,
     };
 }
 

@@ -12,6 +12,7 @@ import {
     BooleanType,
     VariantType,
     NullType,
+    FunctionType,
 } from "@elaraai/east";
 
 import { SizeType } from "../../style.js";
@@ -76,10 +77,13 @@ export type TextareaResizeLiteral = "none" | "vertical" | "horizontal" | "both";
  * @property rows - Number of visible text rows
  * @property disabled - Whether the textarea is disabled
  * @property readOnly - Whether the textarea is read-only
- * @property invalid - Whether the textarea is in invalid state
  * @property required - Whether the textarea is required
  * @property maxLength - Maximum number of characters
  * @property autoresize - Whether to auto-resize based on content
+ * @property onValidate - Callback triggered for validation
+ * @property onChange - Callback triggered when value changes
+ * @property onBlur - Callback triggered when textarea loses focus
+ * @property onFocus - Callback triggered when textarea gains focus
  */
 export const TextareaType = StructType({
     /** Current text value */
@@ -98,14 +102,20 @@ export const TextareaType = StructType({
     disabled: OptionType(BooleanType),
     /** Whether the textarea is read-only */
     readOnly: OptionType(BooleanType),
-    /** Whether the textarea is in invalid state */
-    invalid: OptionType(BooleanType),
     /** Whether the textarea is required */
     required: OptionType(BooleanType),
     /** Maximum number of characters */
     maxLength: OptionType(IntegerType),
     /** Whether to auto-resize based on content */
     autoresize: OptionType(BooleanType),
+    /** Whether the textarea is in invalid state */
+    onValidate: OptionType(FunctionType([StringType], NullType)),
+    /** Callback triggered when value changes */
+    onChange: OptionType(FunctionType([StringType], NullType)),
+    /** Callback triggered when textarea loses focus */
+    onBlur: OptionType(FunctionType([], NullType)),
+    /** Callback triggered when textarea gains focus */
+    onFocus: OptionType(FunctionType([], NullType)),
 });
 
 /**
@@ -131,6 +141,10 @@ export type TextareaType = typeof TextareaType;
  * @property required - Whether the textarea is required
  * @property maxLength - Maximum number of characters
  * @property autoresize - Whether to auto-resize based on content
+ * @property onValidate - Callback triggered for validation
+ * @property onChange - Callback triggered when value changes
+ * @property onBlur - Callback triggered when textarea loses focus
+ * @property onFocus - Callback triggered when textarea gains focus
  */
 export interface TextareaStyle {
     /** Placeholder text when empty */
@@ -155,4 +169,12 @@ export interface TextareaStyle {
     maxLength?: SubtypeExprOrValue<IntegerType> | number;
     /** Whether to auto-resize based on content */
     autoresize?: SubtypeExprOrValue<BooleanType>;
+    /** Callback triggered for validation */
+    onValidate?: SubtypeExprOrValue<FunctionType<[StringType], NullType>>;
+    /** Callback triggered when value changes */
+    onChange?: SubtypeExprOrValue<FunctionType<[StringType], NullType>>;
+    /** Callback triggered when textarea loses focus */
+    onBlur?: SubtypeExprOrValue<FunctionType<[], NullType>>;
+    /** Callback triggered when textarea gains focus */
+    onFocus?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 }

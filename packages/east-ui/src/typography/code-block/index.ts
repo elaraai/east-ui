@@ -58,6 +58,7 @@ function createCodeBlock(
         highlightLines: style?.highlightLines ? variant("some", style.highlightLines) : variant("none", null),
         maxHeight: style?.maxHeight ? variant("some", style.maxHeight) : variant("none", null),
         showCopyButton: showCopyButtonValue !== undefined ? variant("some", showCopyButtonValue) : variant("none", null),
+        wordWrap: style?.wordWrap !== undefined ? variant("some", style.wordWrap) : variant("none", null),
         title: style?.title ? variant("some", style.title) : variant("none", null),
     }), UIComponentType);
 }
@@ -80,7 +81,7 @@ function createCodeBlock(
  *         {
  *             language: "typescript",
  *             showLineNumbers: true,
- *             highlightLines: [2],
+ *             highlightLines: [2n],
  *         }
  *     );
  * });

@@ -34,30 +34,16 @@ export { AvatarType, type AvatarStyle } from "./types.js";
  *
  * @example
  * ```ts
- * import { Avatar } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Avatar, UIComponentType } from "@elaraai/east-ui";
  *
- * // Avatar with image
- * const withImage = Avatar.Root({
- *   src: "https://example.com/avatar.jpg",
- *   name: "John Doe",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Avatar.Root({
+ *         name: "Jane Smith",
+ *         colorPalette: "blue",
+ *         size: "lg",
+ *     });
  * });
- *
- * // Avatar with name only (shows initials)
- * const initials = Avatar.Root({
- *   name: "Jane Smith",
- *   colorPalette: "blue",
- * });
- *
- * // Styled avatar
- * const styled = Avatar.Root({
- *   name: "Alice",
- *   size: "lg",
- *   variant: "solid",
- *   colorPalette: "purple",
- * });
- *
- * // Access the type
- * const avatarType = Avatar.Types.Avatar;
  * ```
  */
 function createAvatar(style?: AvatarStyle): ExprType<UIComponentType> {
@@ -98,17 +84,6 @@ function createAvatar(style?: AvatarStyle): ExprType<UIComponentType> {
  *
  * @remarks
  * Use `Avatar.Root(style)` to create an avatar, or access `Avatar.Types.Avatar` for the East type.
- *
- * @example
- * ```ts
- * import { Avatar } from "@elaraai/east-ui";
- *
- * // Create an avatar
- * const avatar = Avatar.Root({ name: "John Doe", colorPalette: "blue" });
- *
- * // Access the type
- * const avatarType = Avatar.Types.Avatar;
- * ```
  */
 export const Avatar = {
     /**

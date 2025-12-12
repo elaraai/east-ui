@@ -204,15 +204,6 @@ describeEast("Textarea", (test) => {
         $(assertEast.equal(textarea.unwrap("Textarea").readOnly.unwrap("some"), true));
     });
 
-    test("creates invalid textarea", $ => {
-        const textarea = $.let(Textarea.Root("", {
-            invalid: true,
-        }));
-
-        $(assertEast.equal(textarea.unwrap("Textarea").invalid.hasTag("some"), true));
-        $(assertEast.equal(textarea.unwrap("Textarea").invalid.unwrap("some"), true));
-    });
-
     test("creates required textarea", $ => {
         const textarea = $.let(Textarea.Root("", {
             required: true,
@@ -245,7 +236,6 @@ describeEast("Textarea", (test) => {
             maxLength: 1000,
             disabled: false,
             readOnly: false,
-            invalid: false,
             required: true,
             autoresize: false,
         }));
@@ -259,7 +249,6 @@ describeEast("Textarea", (test) => {
         $(assertEast.equal(textarea.unwrap("Textarea").maxLength.unwrap("some"), 1000n));
         $(assertEast.equal(textarea.unwrap("Textarea").disabled.unwrap("some"), false));
         $(assertEast.equal(textarea.unwrap("Textarea").readOnly.unwrap("some"), false));
-        $(assertEast.equal(textarea.unwrap("Textarea").invalid.unwrap("some"), false));
         $(assertEast.equal(textarea.unwrap("Textarea").required.unwrap("some"), true));
         $(assertEast.equal(textarea.unwrap("Textarea").autoresize.unwrap("some"), false));
     });

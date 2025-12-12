@@ -25,7 +25,6 @@ export interface EastChakraStatProps {
 export const EastChakraStat = memo(function EastChakraStat({ value }: EastChakraStatProps) {
     const helpText = useMemo(() => getSomeorUndefined(value.helpText), [value.helpText]);
     const indicator = useMemo(() => getSomeorUndefined(value.indicator)?.type, [value.indicator]);
-
     return (
         <ChakraStat.Root>
             <ChakraStat.Label>{value.label}</ChakraStat.Label>

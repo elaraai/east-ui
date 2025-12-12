@@ -41,26 +41,14 @@ export type SeparatorType = typeof SeparatorType;
  *
  * @example
  * ```ts
- * import { Separator, Style } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Separator, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple horizontal separator
- * const hr = Separator();
- *
- * // Labeled separator
- * const labeled = Separator({
- *   label: "OR",
- * });
- *
- * // Vertical separator
- * const vertical = Separator({
- *   orientation: Style.Orientation("vertical"),
- * });
- *
- * // Styled separator
- * const styled = Separator({
- *   variant: variant("dashed", null),
- *   color: "gray.300",
- *   size: Style.Size("sm"),
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Separator.Root({
+ *         orientation: "horizontal",
+ *         variant: "solid",
+ *     });
  * });
  * ```
  */

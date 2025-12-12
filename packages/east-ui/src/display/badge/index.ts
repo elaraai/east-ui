@@ -35,19 +35,15 @@ export { BadgeType, type BadgeStyle } from "./types.js";
  *
  * @example
  * ```ts
- * import { Badge } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Badge, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple badge
- * const badge = Badge.Root("New");
- *
- * // Styled badge
- * const status = Badge.Root("Active", {
- *   colorPalette: "green",
- *   variant: "solid",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Badge.Root("Active", {
+ *         colorPalette: "green",
+ *         variant: "solid",
+ *     });
  * });
- *
- * // Access the type
- * const type = Badge.Types.Badge;
  * ```
  */
 function createBadge(
@@ -85,17 +81,6 @@ function createBadge(
  *
  * @remarks
  * Use `Badge.Root(value, style)` to create a badge, or access `Badge.Types.Badge` for the East type.
- *
- * @example
- * ```ts
- * import { Badge } from "@elaraai/east-ui";
- *
- * // Create a badge
- * const badge = Badge.Root("New", { colorPalette: "green" });
- *
- * // Access the type
- * const badgeType = Badge.Types.Badge;
- * ```
  */
 export const Badge = {
     /**

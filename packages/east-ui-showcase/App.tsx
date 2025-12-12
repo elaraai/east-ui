@@ -10,7 +10,7 @@ import {
     Tabs,
     Text,
 } from "@chakra-ui/react";
-import { EastStoreProvider, createEastStore } from "@elaraai/east-ui-components";
+import { UIStoreProvider, State } from "@elaraai/east-ui-components";
 import { ElaraLogo } from "./components/ElaraLogo";
 import {
     TypographyPage,
@@ -23,11 +23,13 @@ import {
     DisclosurePage,
     CollectionsPage,
     PlatformPage,
+    ReactivePage,
     ContainerPage,
     OverlaysPage,
 } from "./pages";
 
-const store = createEastStore();
+// Use State.store singleton - same store that State.Implementation writes to
+const store = State.store;
 
 const tabs = [
     { key: "typography", label: "Typography" },
@@ -42,11 +44,12 @@ const tabs = [
     { key: "collections", label: "Collections" },
     { key: "charts", label: "Charts" },
     { key: "platform", label: "Platform" },
+    { key: "reactive", label: "Reactive" },
 ];
 
 export function App() {
     return (
-        <EastStoreProvider store={store}>
+        <UIStoreProvider store={store}>
             <Box bg="gray.50" _dark={{ bg: "gray.900" }} minH="100vh">
                 {/* Header */}
                 <Box
@@ -68,7 +71,7 @@ export function App() {
 
                 {/* Tabs */}
                 <Container maxW="container.xl" py={6}>
-                    <Tabs.Root defaultValue="typography" variant="enclosed">
+                    <Tabs.Root defaultValue="typography" variant="enclosed" lazyMount={true}>
                         <Tabs.List>
                             {tabs.map((tab) => (
                                 <Tabs.Trigger key={tab.key} value={tab.key}>
@@ -114,10 +117,13 @@ export function App() {
                             <Tabs.Content value="platform">
                                 <PlatformPage />
                             </Tabs.Content>
+                            <Tabs.Content value="reactive">
+                                <ReactivePage />
+                            </Tabs.Content>
                         </Box>
                     </Tabs.Root>
                 </Container>
             </Box>
-        </EastStoreProvider>
+        </UIStoreProvider>
     );
 }

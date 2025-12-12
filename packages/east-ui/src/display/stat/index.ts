@@ -35,30 +35,15 @@ export { type StatStyle, type StatIndicatorLiteral } from "./types.js";
  *
  * @example
  * ```ts
- * import { Stat, StatIndicator } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Stat, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple stat
- * const revenue = Stat.Root("Revenue", "$45,231");
- *
- * // Stat with help text
- * const users = Stat.Root("Total Users", "1,234", {
- *   helpText: "From last month",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Stat.Root("Growth", "+23.36%", {
+ *         helpText: "From last week",
+ *         indicator: "up",
+ *     });
  * });
- *
- * // Stat with positive trend
- * const growth = Stat.Root("Growth", "+23.36%", {
- *   helpText: "From last week",
- *   indicator: "up",
- * });
- *
- * // Stat with negative trend
- * const bounce = Stat.Root("Bounce Rate", "-12.5%", {
- *   helpText: "Compared to yesterday",
- *   indicator: "down",
- * });
- *
- * // Access the type
- * const statType = Stat.Types.Stat;
  * ```
  */
 function createStat(
@@ -90,17 +75,6 @@ function createStat(
  *
  * @remarks
  * Use `Stat.Root(label, value, style)` to create a stat, or access `Stat.Types.Stat` for the East type.
- *
- * @example
- * ```ts
- * import { Stat } from "@elaraai/east-ui";
- *
- * // Create a stat
- * const stat = Stat.Root("Revenue", "$45,231", { indicator: "up" });
- *
- * // Access the type
- * const statType = Stat.Types.Stat;
- * ```
  */
 export const Stat = {
     /**
@@ -135,16 +109,20 @@ export const Stat = {
      * @param direction - The indicator direction ("up" or "down")
      * @returns An East expression representing the stat indicator
      *
+     * @remarks
+     * Use this helper to create indicator values programmatically. In most cases,
+     * you can pass string literals directly to the style property.
+     *
      * @example
      * ```ts
-     * import { Stat } from "@elaraai/east-ui";
+     * import { East } from "@elaraai/east";
+     * import { Stat, UIComponentType } from "@elaraai/east-ui";
      *
-     * // Dynamic indicator based on value
-     * const stat = Stat.Root("Profit", value, {
-     *   indicator: condition.ifElse(
-     *     $ => Stat.Indicator("up"),
-     *     $ => Stat.Indicator("down")
-     *   ),
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Stat.Root("Revenue", "$45,231", {
+     *         helpText: "+20.1%",
+     *         indicator: Stat.Indicator("up"),
+     *     });
      * });
      * ```
      */

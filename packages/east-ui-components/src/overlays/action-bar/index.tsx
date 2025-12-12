@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { ActionBar as ChakraActionBar, Portal, Button } from "@chakra-ui/react";
 import { equalFor, match, type ValueTypeOf } from "@elaraai/east";
 import { ActionBar } from "@elaraai/east-ui";
@@ -28,10 +28,32 @@ export interface EastChakraActionBarProps {
 export const EastChakraActionBar = memo(function EastChakraActionBar({ value }: EastChakraActionBarProps) {
     const selectionCount = useMemo(() => getSomeorUndefined(value.selectionCount), [value.selectionCount]);
     const selectionLabel = useMemo(() => getSomeorUndefined(value.selectionLabel), [value.selectionLabel]);
+    const style = useMemo(() => getSomeorUndefined(value.style), [value.style]);
     const open = selectionCount !== undefined && selectionCount > 0;
 
+    // Extract callbacks from style
+    const onSelectFn = useMemo(() => style ? getSomeorUndefined(style.onSelect) : undefined, [style]);
+    const onOpenChangeFn = useMemo(() => style ? getSomeorUndefined(style.onOpenChange) : undefined, [style]);
+
+    const handleOpenChange = useCallback((details: { open: boolean }) => {
+        if (onOpenChangeFn) {
+            queueMicrotask(() => onOpenChangeFn(details.open));
+        }
+    }, [onOpenChangeFn]);
+
+    const createSelectHandler = useCallback((actionValue: string) => {
+        return () => {
+            if (onSelectFn) {
+                queueMicrotask(() => onSelectFn(actionValue));
+            }
+        };
+    }, [onSelectFn]);
+
     return (
-        <ChakraActionBar.Root open={open}>
+        <ChakraActionBar.Root
+            open={open}
+            onOpenChange={onOpenChangeFn ? handleOpenChange : undefined}
+        >
             <Portal>
                 <ChakraActionBar.Positioner>
                     <ChakraActionBar.Content>
@@ -47,6 +69,7 @@ export const EastChakraActionBar = memo(function EastChakraActionBar({ value }: 
                                         variant="outline"
                                         size="sm"
                                         disabled={getSomeorUndefined(v.disabled)}
+                                        onClick={onSelectFn ? createSelectHandler(v.value) : undefined}
                                     >
                                         {v.label}
                                     </Button>

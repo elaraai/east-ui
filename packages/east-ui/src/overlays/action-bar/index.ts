@@ -108,41 +108,37 @@ function createSeparator(): ExprType<ActionBarItemType> {
  *
  * @example
  * ```ts
- * import { ActionBar } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { ActionBar, UIComponentType } from "@elaraai/east-ui";
  *
- * // Action bar with common actions
- * const actionBar = ActionBar.Root(
- *   [
- *     ActionBar.Action("delete", "Delete"),
- *     ActionBar.Separator(),
- *     ActionBar.Action("archive", "Archive"),
- *     ActionBar.Action("export", "Export"),
- *   ],
- *   {
- *     selectionCount: 5,
- *     selectionLabel: "items selected",
- *   }
- * );
- *
- * // Action bar with disabled action
- * const conditionalBar = ActionBar.Root(
- *   [
- *     ActionBar.Action("edit", "Edit", false),
- *     ActionBar.Action("delete", "Delete", isReadOnly),
- *   ],
- *   { selectionCount: selectedItems.length() }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return ActionBar.Root([
+ *         ActionBar.Action("delete", "Delete"),
+ *         ActionBar.Separator(),
+ *         ActionBar.Action("archive", "Archive"),
+ *     ], {
+ *         selectionCount: 5n,
+ *         selectionLabel: "items selected",
+ *     });
+ * });
  * ```
  */
 function createActionBar(
     items: SubtypeExprOrValue<ArrayType<ActionBarItemType>>,
     style?: ActionBarStyle
 ): ExprType<UIComponentType> {
+    const hasStyle = style?.onSelect !== undefined || style?.onOpenChange !== undefined;
+
     return East.value(variant("ActionBar", {
         items: items,
         selectionCount: style?.selectionCount !== undefined ? variant("some", style.selectionCount) : variant("none", null),
         selectionLabel: style?.selectionLabel !== undefined ? variant("some", style.selectionLabel) : variant("none", null),
-        style: variant("some", East.value({}, ActionBarStyleType)),
+        style: hasStyle
+            ? variant("some", East.value({
+                onSelect: style?.onSelect !== undefined ? variant("some", style.onSelect) : variant("none", null),
+                onOpenChange: style?.onOpenChange !== undefined ? variant("some", style.onOpenChange) : variant("none", null),
+            }, ActionBarStyleType))
+            : variant("none", null),
     }), UIComponentType);
 }
 
@@ -152,23 +148,6 @@ function createActionBar(
  * @remarks
  * Use `ActionBar.Root(items, style)` to create an action bar, or use
  * `ActionBar.Action()` and `ActionBar.Separator()` to create items.
- *
- * @example
- * ```ts
- * import { ActionBar } from "@elaraai/east-ui";
- *
- * // Create an action bar
- * const actionBar = ActionBar.Root(
- *   [
- *     ActionBar.Action("delete", "Delete"),
- *     ActionBar.Action("export", "Export"),
- *   ],
- *   { selectionCount: 3 }
- * );
- *
- * // Access the type
- * const itemType = ActionBar.Types.Item;
- * ```
  */
 export const ActionBar = {
     /**

@@ -1,97 +1,139 @@
 /**
- * Copyright (c) 2025 Elara AI Pty Ltd
- * Licensed under AGPL-3.0. See LICENSE file for details.
- */
-
-/**
- * Typography Example
+ * Typography TypeDoc Examples
  *
- * Demonstrates the Text component with various styling options.
- * Open this file with the East UI Preview extension to see the rendered output.
+ * This file contains compilable versions of all TypeDoc @example blocks
+ * from the typography module (Code, Text, Heading, Link, etc.).
+ *
+ * Each example is compiled AND executed to verify correctness.
+ *
+ * Format: Each example has a comment indicating:
+ *   - File path
+ *   - Export property (e.g., Code.Root, Text.Root)
  */
 
 import { East } from "@elaraai/east";
-import type { CallableFunctionExpr } from "@elaraai/east/internal";
-import { UIComponentType, Text, Stack } from "@elaraai/east-ui";
+import { Code, CodeBlock, Heading, Highlight, Link, List, Mark, Text, UIComponentType } from "../src/index.js";
 
-const example: CallableFunctionExpr<[], typeof UIComponentType> = East.function(
-    [],
-    UIComponentType,
-    () => {
-        return Stack.Root([
-            // Basic text
+// ============================================================================
+// CODE
+// ============================================================================
 
-            // Text with background
-            Text.Root("Text with Background", {
-                color: "white",
-                background: "purple.600",
-            }),
+// File: src/typography/code/index.ts
+// Export: Code (namespace example)
+const codeExample = East.function([], UIComponentType, $ => {
+    return Code.Root("const x = 42", {
+        colorPalette: "purple",
+        variant: "surface",
+    });
+});
+codeExample.toIR().compile([])();
 
-            // Bold text
-            Text.Root("Bold Text", {
-                fontWeight: "bold",
-            }),
+// ============================================================================
+// CODE BLOCK
+// ============================================================================
 
-            // Italic text
-            Text.Root("Italic Text", {
-                fontStyle: "italic",
-            }),
+// File: src/typography/code-block/index.ts
+// Export: CodeBlock (namespace example)
+const codeBlockExample = East.function([], UIComponentType, $ => {
+    return CodeBlock.Root(
+        `function hello() {\n  console.log("Hello!");\n}`,
+        {
+            language: "typescript",
+            showLineNumbers: true,
+            highlightLines: [2n],
+        }
+    );
+});
+codeBlockExample.toIR().compile([])();
 
-            // Different font sizes
-            Text.Root("Extra Small Text", { 
-                fontSize: "xs" 
-            }),
-            Text.Root("Small Text", { 
-                fontSize: "sm" 
-            }),
-            Text.Root("Medium Text", { 
-                fontSize: "md" 
-            }),
-            Text.Root("Large Text", { 
-                fontSize: "lg" 
-            }),
+// ============================================================================
+// HEADING
+// ============================================================================
 
-            // Text transforms
-            Text.Root("uppercase text", {
-                textTransform: "uppercase",
-            }),
-            Text.Root("LOWERCASE TEXT", {
-                textTransform: "lowercase",
-            }),
-            Text.Root("capitalize each word", {
-                textTransform: "capitalize",
-            }),
+// File: src/typography/heading/index.ts
+// Export: Heading (namespace example)
+const headingExample = East.function([], UIComponentType, $ => {
+    return Heading.Root("Welcome", {
+        size: "2xl",
+        as: "h1",
+        color: "blue.600",
+    });
+});
+headingExample.toIR().compile([])();
 
-            // Text alignment
-            Text.Root("Left Aligned", { textAlign: "left" }),
-            Text.Root("Center Aligned", { textAlign: "center" }),
-            Text.Root("Right Aligned", { textAlign: "right" }),
+// ============================================================================
+// HIGHLIGHT
+// ============================================================================
 
-            // Text with border
-            Text.Root("Text with Border", {
-                borderWidth: "thin",
-                borderStyle: "solid",
-                borderColor: "gray.300",
-            }),
+// File: src/typography/highlight/index.ts
+// Export: Highlight (namespace example)
+const highlightExample = East.function([], UIComponentType, $ => {
+    return Highlight.Root(
+        "Search results for: react components",
+        ["react", "components"],
+        { color: "yellow.200" }
+    );
+});
+highlightExample.toIR().compile([])();
 
-            // Fully styled text
-            Text.Root("Fully Styled Text", {
-                color: "white",
-                background: "teal.500",
-                fontWeight: "semibold",
-                fontStyle: "italic",
-                fontSize: "lg",
-                textTransform: "uppercase",
-                textAlign: "center",
-                borderWidth: "medium",
-                borderStyle: "dashed",
-                borderColor: "teal.700",
-            }),
-        ], {
-            gap: "4",
-            direction: "column",
-        });
-    }
-);
+// ============================================================================
+// LINK
+// ============================================================================
 
-export default example;
+// File: src/typography/link/index.ts
+// Export: Link (namespace example)
+const linkExample = East.function([], UIComponentType, $ => {
+    return Link.Root("Visit our site", "https://example.com", {
+        external: true,
+        colorPalette: "blue",
+    });
+});
+linkExample.toIR().compile([])();
+
+// ============================================================================
+// LIST
+// ============================================================================
+
+// File: src/typography/list/index.ts
+// Export: List (namespace example)
+const listExample = East.function([], UIComponentType, $ => {
+    return List.Root([
+        "First item",
+        "Second item",
+        "Third item",
+    ], {
+        variant: "unordered",
+        gap: "2",
+    });
+});
+listExample.toIR().compile([])();
+
+// ============================================================================
+// MARK
+// ============================================================================
+
+// File: src/typography/mark/index.ts
+// Export: Mark (namespace example)
+const markExample = East.function([], UIComponentType, $ => {
+    return Mark.Root("Important text", {
+        colorPalette: "yellow",
+        variant: "subtle",
+    });
+});
+markExample.toIR().compile([])();
+
+// ============================================================================
+// TEXT
+// ============================================================================
+
+// File: src/typography/text/index.ts
+// Export: Text (namespace example)
+const textExample = East.function([], UIComponentType, $ => {
+    return Text.Root("Hello World", {
+        color: "blue.500",
+        fontWeight: "bold",
+    });
+});
+textExample.toIR().compile([])();
+
+console.log("Typography TypeDoc examples compiled and executed successfully!");

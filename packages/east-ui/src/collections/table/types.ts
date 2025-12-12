@@ -14,6 +14,8 @@ import {
     IntegerType,
     FloatType,
     DateTimeType,
+    ArrayType,
+    FunctionType
 } from "@elaraai/east";
 
 import {
@@ -82,62 +84,6 @@ export type TableSizeType = typeof TableSizeType;
  */
 export type TableSizeLiteral = "sm" | "md" | "lg";
 
-// ============================================================================
-// Table Root Style
-// ============================================================================
-
-/**
- * Style type for the table root component.
- *
- * @remarks
- * All properties are optional and wrapped in {@link OptionType}.
- *
- * @property variant - Table variant (line or outline)
- * @property size - Table size (sm, md, lg)
- * @property striped - Whether to show zebra stripes on rows
- * @property interactive - Whether to highlight rows on hover
- * @property stickyHeader - Whether the header sticks when scrolling
- * @property showColumnBorder - Whether to show borders between columns
- * @property colorPalette - Color scheme for interactive hover
- */
-export const TableStyleType = StructType({
-    variant: OptionType(TableVariantType),
-    size: OptionType(TableSizeType),
-    striped: OptionType(BooleanType),
-    interactive: OptionType(BooleanType),
-    stickyHeader: OptionType(BooleanType),
-    showColumnBorder: OptionType(BooleanType),
-    colorPalette: OptionType(ColorSchemeType),
-});
-
-/**
- * Type representing the table style structure.
- */
-export type TableStyleType = typeof TableStyleType;
-
-/**
- * TypeScript interface for table root styling input.
- *
- * @remarks
- * Accepts both static values and East expressions.
- *
- * @property variant - Table variant (line or outline)
- * @property size - Table size (sm, md, lg)
- * @property striped - Whether to show zebra stripes on rows
- * @property interactive - Whether to highlight rows on hover
- * @property stickyHeader - Whether the header sticks when scrolling
- * @property showColumnBorder - Whether to show borders between columns
- * @property colorPalette - Color scheme for interactive hover
- */
-export interface TableStyle {
-    variant?: SubtypeExprOrValue<TableVariantType> | TableVariantLiteral;
-    size?: SubtypeExprOrValue<TableSizeType> | TableSizeLiteral;
-    striped?: SubtypeExprOrValue<BooleanType>;
-    interactive?: SubtypeExprOrValue<BooleanType>;
-    stickyHeader?: SubtypeExprOrValue<BooleanType>;
-    showColumnBorder?: SubtypeExprOrValue<BooleanType>;
-    colorPalette?: SubtypeExprOrValue<ColorSchemeType> | ColorSchemeLiteral;
-}
 
 // ============================================================================
 // Table Value Type (for serialization)
@@ -159,6 +105,170 @@ export const TableValueLiteral = VariantType({
     String: StringType,
     DateTime: DateTimeType,
 });
+
+// ============================================================================
+// Table Callback Event Types
+// ============================================================================
+
+/**
+ * Event data for table row events.
+ *
+ * @property rowIndex - The row index (0-based)
+ * @property columnKey - The column key
+ * @property cellValue - The cell value
+ */
+export const TableCellClickEventType = StructType({
+    rowIndex: IntegerType,
+    columnKey: StringType,
+    cellValue: TableValueLiteral,
+});
+
+export type TableCellClickEventType = typeof TableCellClickEventType;
+
+
+/**
+ * Event data for table row click.
+ *
+ * @property rowIndex - The row index (0-based)
+ */
+export const TableRowClickEventType = StructType({
+    rowIndex: IntegerType,
+});
+
+export type TableRowClickEventType = typeof TableRowClickEventType;
+
+
+/**
+ * Event data for table row selection changes.
+ *
+ * @property rowIndex - The row index (0-based)
+ * @property selected - Whether the row is selected
+ * @property selectedRowsIndices - Array of selected row indices
+ */
+export const TableRowSelectionEventType = StructType({
+    rowIndex: IntegerType,
+    selected: BooleanType,
+    selectedRowsIndices: ArrayType(IntegerType),
+});
+
+export type TableRowSelectionEventType = typeof TableRowSelectionEventType;
+
+/**
+ * Sort direction for table column.
+ *
+ * @property direction - Sort direction ("asc" or "desc")
+ */
+export const TableSortDirectionType = VariantType({
+    asc: NullType,
+    desc: NullType,
+});
+
+export type TableSortDirectionType = typeof TableSortDirectionType;
+
+
+/**
+ * Event data for table sort changes.
+ *
+ * @property columnKey - The column key being sorted
+ * @property sortIndex - The sort index (for multi-column sorting)
+ * @property sortDirection - The sort direction ("asc" or "desc")
+ */
+export const TableSortEventType = StructType({
+    columnKey: StringType,
+    sortIndex: IntegerType,
+    sortDirection: TableSortDirectionType,
+});
+
+export type TableSortEventType = typeof TableSortEventType;
+
+/**
+ * Style type for the table root component.
+ *
+ * @remarks All properties are optional and wrapped in {@link OptionType}.
+ * 
+ * @property variant - Table variant (line or outline)
+ * @property size - Table size (sm, md, lg)
+ * @property striped - Whether to show zebra stripes on rows
+ * @property interactive - Whether to highlight rows on hover
+ * @property stickyHeader - Whether the header sticks when scrolling
+ * @property showColumnBorder - Whether to show borders between columns
+ * @property colorPalette - Color scheme for interactive hover
+ * @property onCellClick - Callback triggered when a cell is clicked
+ * @property onCellDoubleClick - Callback triggered when a cell is double-clicked
+ * @property onRowClick - Callback triggered when a row is clicked
+ * @property onRowDoubleClick - Callback triggered when a row is double-clicked
+ * @property onSelectionChange - Callback triggered when row selection changes
+ * @property onSortChange - Callback triggered when sort column/direction changes
+ */
+export const TableStyleType = StructType({
+    variant: OptionType(TableVariantType),
+    size: OptionType(TableSizeType),
+    striped: OptionType(BooleanType),
+    interactive: OptionType(BooleanType),
+    stickyHeader: OptionType(BooleanType),
+    showColumnBorder: OptionType(BooleanType),
+    colorPalette: OptionType(ColorSchemeType),
+    onCellClick: OptionType(FunctionType([TableCellClickEventType], NullType)),
+    onCellDoubleClick: OptionType(FunctionType([TableCellClickEventType], NullType)),
+    onRowClick: OptionType(FunctionType([TableRowClickEventType], NullType)),
+    onRowDoubleClick: OptionType(FunctionType([TableRowClickEventType], NullType)),
+    onRowSelectionChange: OptionType(FunctionType([TableRowSelectionEventType], NullType)),
+    onSortChange: OptionType(FunctionType([TableSortEventType], NullType)),
+});
+
+/**
+ * Type representing the table style structure.
+ */
+export type TableStyleType = typeof TableStyleType;
+
+/**
+ * TypeScript interface for table root styling input.
+ *
+ * @remarks
+ * Accepts both static values and East expressions.
+ *
+ * @property variant - Table variant (line or outline)
+ * @property size - Table size (sm, md, lg)
+ * @property striped - Whether to show zebra stripes on rows
+ * @property interactive - Whether to highlight rows on hover
+ * @property stickyHeader - Whether the header sticks when scrolling
+ * @property showColumnBorder - Whether to show borders between columns
+ * @property colorPalette - Color scheme for interactive hover
+ * @property onCellClick - Callback triggered when a cell is clicked
+ * @property onCellDoubleClick - Callback triggered when a cell is double-clicked
+ * @property onRowClick - Callback triggered when a row is clicked
+ * @property onRowDoubleClick - Callback triggered when a row is double-clicked
+ * @property onSelectionChange - Callback triggered when row selection changes
+ * @property onSortChange - Callback triggered when sort column/direction changes
+ */
+export interface TableStyle {
+    /** Table variant (line or outline) */
+    variant?: SubtypeExprOrValue<TableVariantType> | TableVariantLiteral;
+    /** Table size (sm, md, lg) */
+    size?: SubtypeExprOrValue<TableSizeType> | TableSizeLiteral;
+    /** Whether to show zebra stripes on rows */
+    striped?: SubtypeExprOrValue<BooleanType>;
+    /** Whether to highlight rows on hover */
+    interactive?: SubtypeExprOrValue<BooleanType>;
+    /** Whether the header sticks when scrolling */
+    stickyHeader?: SubtypeExprOrValue<BooleanType>;
+    /** Whether to show borders between columns */
+    showColumnBorder?: SubtypeExprOrValue<BooleanType>;
+    /** Color scheme for interactive hover */
+    colorPalette?: SubtypeExprOrValue<ColorSchemeType> | ColorSchemeLiteral;
+    /** Callback triggered when a cell is clicked */
+    onCellClick?: SubtypeExprOrValue<FunctionType<[TableCellClickEventType], NullType>>;
+    /** Callback triggered when a cell is double-clicked */
+    onCellDoubleClick?: SubtypeExprOrValue<FunctionType<[TableCellClickEventType], NullType>>;
+    /** Callback triggered when a row is clicked */
+    onRowClick?: SubtypeExprOrValue<FunctionType<[TableRowClickEventType], NullType>>;
+    /** Callback triggered when a row is double-clicked */
+    onRowDoubleClick?: SubtypeExprOrValue<FunctionType<[TableRowClickEventType], NullType>>;
+    /** Callback triggered when row selection changes */
+    onRowSelectionChange?: SubtypeExprOrValue<FunctionType<[TableRowSelectionEventType], NullType>>;
+    /** Callback triggered when sort column/direction changes */
+    onSortChange?: SubtypeExprOrValue<FunctionType<[TableSortEventType], NullType>>;
+}
 
 /**
  * Type representing the Table structure.

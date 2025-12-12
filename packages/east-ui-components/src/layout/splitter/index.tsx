@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import React, { memo, useMemo } from "react";
+import React, { memo, useMemo, useCallback } from "react";
 import { Splitter as ChakraSplitter } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Splitter } from "@elaraai/east-ui";
@@ -53,6 +53,7 @@ export interface EastChakraSplitterProps {
  */
 export const EastChakraSplitter = memo(function EastChakraSplitter({ value }: EastChakraSplitterProps) {
     const styleProps = useMemo(() => toChakraSplitter(value), [value]);
+    const style = useMemo(() => getSomeorUndefined(value.style), [value.style]);
 
     // Build panels config for Chakra Splitter
     const panels = useMemo(() => value.panels.map((panel) => ({
@@ -61,8 +62,37 @@ export const EastChakraSplitter = memo(function EastChakraSplitter({ value }: Ea
         maxSize: getSomeorUndefined(panel.maxSize),
     })), [value.panels]);
 
+    // Extract callbacks from style
+    const onResizeFn = useMemo(() => style ? getSomeorUndefined(style.onResize) : undefined, [style]);
+    const onResizeStartFn = useMemo(() => style ? getSomeorUndefined(style.onResizeStart) : undefined, [style]);
+    const onResizeEndFn = useMemo(() => style ? getSomeorUndefined(style.onResizeEnd) : undefined, [style]);
+
+    const handleResize = useCallback((details: { size: number[] }) => {
+        if (onResizeFn) {
+            queueMicrotask(() => onResizeFn({ size: details.size }));
+        }
+    }, [onResizeFn]);
+
+    const handleResizeStart = useCallback(() => {
+        if (onResizeStartFn) {
+            queueMicrotask(() => onResizeStartFn());
+        }
+    }, [onResizeStartFn]);
+
+    const handleResizeEnd = useCallback((details: { size: number[] }) => {
+        if (onResizeEndFn) {
+            queueMicrotask(() => onResizeEndFn({ size: details.size }));
+        }
+    }, [onResizeEndFn]);
+
     return (
-        <ChakraSplitter.Root {...styleProps} panels={panels}>
+        <ChakraSplitter.Root
+            {...styleProps}
+            panels={panels}
+            onResize={onResizeFn ? handleResize : undefined}
+            onResizeStart={onResizeStartFn ? handleResizeStart : undefined}
+            onResizeEnd={onResizeEndFn ? handleResizeEnd : undefined}
+        >
             {value.panels.map((panel, index) => (
                 <React.Fragment key={panel.id}>
                     <ChakraSplitter.Panel id={panel.id}>

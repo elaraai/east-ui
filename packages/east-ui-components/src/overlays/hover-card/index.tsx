@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { HoverCard as ChakraHoverCard, Portal } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { HoverCard } from "@elaraai/east-ui";
@@ -37,12 +37,22 @@ export const EastChakraHoverCard = memo(function EastChakraHoverCard({ value }: 
         return delay !== undefined ? Number(delay) : undefined;
     }, [style]);
 
+    // Extract callbacks from style
+    const onOpenChangeFn = useMemo(() => style ? getSomeorUndefined(style.onOpenChange) : undefined, [style]);
+
+    const handleOpenChange = useCallback((details: { open: boolean }) => {
+        if (onOpenChangeFn) {
+            queueMicrotask(() => onOpenChangeFn(details.open));
+        }
+    }, [onOpenChangeFn]);
+
     return (
         <ChakraHoverCard.Root
             positioning={placement ? { placement } : undefined}
             size={size}
             openDelay={openDelay}
             closeDelay={closeDelay}
+            onOpenChange={onOpenChangeFn ? handleOpenChange : undefined}
         >
             <ChakraHoverCard.Trigger asChild>
                 <span>

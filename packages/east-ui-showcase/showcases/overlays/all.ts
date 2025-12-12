@@ -3,7 +3,7 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East, some } from "@elaraai/east";
+import { East, some, BooleanType, IntegerType, NullType } from "@elaraai/east";
 import {
     UIComponentType,
     Grid,
@@ -22,6 +22,8 @@ import {
     Avatar,
     Badge,
     Chart,
+    State,
+    Reactive,
 } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -425,6 +427,104 @@ export default East.function(
             )
         );
 
+        // =====================================================================
+        // INTERACTIVE EXAMPLES - Demonstrate callbacks with Reactive.Root
+        // =====================================================================
+
+        // Initialize state for interactive examples
+        $(State.initTyped("dialog_open_count", 0n, IntegerType)());
+        $(State.initTyped("dialog_close_count", 0n, IntegerType)());
+        $(State.initTyped("drawer_open_count", 0n, IntegerType)());
+
+        // Interactive Dialog with onOpenChange
+        const interactiveDialog = $.let(
+            ShowcaseCard(
+                "Interactive Dialog",
+                "Dialog with onOpenChange callback",
+                Reactive.Root($ => {
+
+                    const onOpenChange = East.function(
+                        [BooleanType],
+                        NullType,
+                        ($, isOpen) => {
+                            const openCount = $.let(State.readTyped("dialog_open_count", IntegerType)());
+                            const closeCount = $.let(State.readTyped("dialog_close_count", IntegerType)());
+
+                            $.if(isOpen, $ => $(State.writeTyped("dialog_open_count", some(openCount.unwrap('some').add(1n)), IntegerType)())
+                            ).else($ => $(State.writeTyped("dialog_close_count", some(closeCount.unwrap('some').add(1n)), IntegerType)()))
+                        }
+                    );
+
+                    const openCount = $.let(State.readTyped("dialog_open_count", IntegerType)());
+                    const closeCount = $.let(State.readTyped("dialog_close_count", IntegerType)());
+
+
+                    return Stack.VStack([
+                        Dialog.Root(
+                            Button.Root("Open Dialog"),
+                            [
+                                Text.Root("This dialog tracks when it's opened and closed."),
+                                Stack.HStack([
+                                    Button.Root("Got it!", { variant: "solid", colorPalette: "blue" }),
+                                ], { gap: "2", justify: "flex-end" }),
+                            ],
+                            { title: "Interactive Dialog", onOpenChange }
+                        ),
+                        Stack.HStack([
+                            Badge.Root(East.str`Opened: ${openCount.unwrap('some')}`, { colorPalette: "green", variant: "solid" }),
+                            Badge.Root(East.str`Closed: ${closeCount.unwrap('some')}`, { colorPalette: "red", variant: "solid" }),
+                        ], { gap: "2" }),
+                    ], { gap: "3", align: "flex-start" });
+                }),
+                some(`Reactive.Root($ => {
+    const openCount = $.let(State.readTyped("dialog_open_count", IntegerType)());
+    const onOpenChange = East.function([BooleanType], NullType, ($, isOpen) => {
+        // Track open/close events
+    });
+    return Dialog.Root(Button.Root("Open"), [...content], { onOpenChange });
+})`)
+            )
+        );
+
+        // Interactive Drawer with onOpenChange
+        const interactiveDrawer = $.let(
+            ShowcaseCard(
+                "Interactive Drawer",
+                "Drawer with onOpenChange callback",
+                Reactive.Root($ => {
+                    const onOpenChange = $.let(East.function(
+                        [BooleanType],
+                        NullType,
+                        ($, isOpen) => {
+                                                const openCount = $.let(State.readTyped("drawer_open_count", IntegerType)());
+                            $.if(isOpen, $ => $(State.writeTyped("drawer_open_count", some(openCount.unwrap('some').add(1n)), IntegerType)()))
+                        }
+                    ));
+                    const openCount = $.let(State.readTyped("drawer_open_count", IntegerType)());
+                    return Stack.VStack([
+                        Drawer.Root(
+                            Button.Root("Open Drawer"),
+                            [
+                                Stack.VStack([
+                                    Text.Root("This drawer counts how many times it's been opened."),
+                                    Badge.Root(East.str`Times opened: ${openCount.unwrap('some')}`, { colorPalette: "purple", size: "lg" }),
+                                ], { gap: "4" }),
+                            ],
+                            { title: "Interactive Drawer", placement: "end", onOpenChange }
+                        ),
+                        Badge.Root(East.str`Drawer opened: ${openCount.unwrap('some')} times`, { colorPalette: "purple", variant: "solid" }),
+                    ], { gap: "3", align: "flex-start" });
+                }),
+                some(`Reactive.Root($ => {
+    const openCount = $.let(State.readTyped("drawer_open_count", IntegerType)());
+    const onOpenChange = East.function([BooleanType], NullType, ($, isOpen) => {
+        // Track open events
+    });
+    return Drawer.Root(Button.Root("Open"), [...content], { onOpenChange });
+})`)
+            )
+        );
+
         return Grid.Root(
             [
                 // Tooltips
@@ -448,6 +548,9 @@ export default East.function(
                 // ToggleTips
                 Grid.Item(toggleTipBasic),
                 Grid.Item(toggleTipInfo),
+                // Interactive examples
+                Grid.Item(interactiveDialog),
+                Grid.Item(interactiveDrawer),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

@@ -12,6 +12,7 @@ import {
     BooleanType,
     ArrayType,
     NullType,
+    FunctionType,
 } from "@elaraai/east";
 
 // ============================================================================
@@ -111,12 +112,18 @@ export type TreeViewSelectionModeLiteral = "single" | "multiple";
  * @property variant - Visual variant (subtle or solid)
  * @property selectionMode - Selection behavior (single or multiple)
  * @property animateContent - Whether to animate expand/collapse
+ * @property onExpandedChange - Callback for expanded nodes change
+ * @property onSelectionChange - Callback for selected nodes change
+ * @property onFocusChange - Callback for focused node change
  */
 export const TreeViewStyleType = StructType({
     size: OptionType(TreeViewSizeType),
     variant: OptionType(TreeViewVariantType),
     selectionMode: OptionType(TreeViewSelectionModeType),
     animateContent: OptionType(BooleanType),
+    onExpandedChange: OptionType(FunctionType([ArrayType(StringType)], NullType)),
+    onSelectionChange: OptionType(FunctionType([ArrayType(StringType)], NullType)),
+    onFocusChange: OptionType(FunctionType([OptionType(StringType)], NullType)),
 });
 
 /**
@@ -136,13 +143,30 @@ export type TreeViewStyleType = typeof TreeViewStyleType;
  * @property animateContent - Whether to animate expand/collapse
  * @property defaultExpandedValue - Initially expanded node values
  * @property defaultSelectedValue - Initially selected node values
+ * @property label - Accessible label for the tree view
+ * @property onExpandedChange - Callback for expanded nodes change
+ * @property onSelectionChange - Callback for selected nodes change
+ * @property onFocusChange - Callback for focused node change
  */
 export interface TreeViewStyle {
+    /** Tree view size (xs, sm, md) */
     size?: SubtypeExprOrValue<TreeViewSizeType> | TreeViewSizeLiteral;
+    /** Visual variant (subtle or solid) */
     variant?: SubtypeExprOrValue<TreeViewVariantType> | TreeViewVariantLiteral;
+    /** Selection behavior (single or multiple) */
     selectionMode?: SubtypeExprOrValue<TreeViewSelectionModeType> | TreeViewSelectionModeLiteral;
+    /** Whether to animate expand/collapse */
     animateContent?: SubtypeExprOrValue<BooleanType>;
+    /** Initially expanded node values */
     defaultExpandedValue?: SubtypeExprOrValue<ArrayType<typeof StringType>>;
+    /** Initially selected node values */
     defaultSelectedValue?: SubtypeExprOrValue<ArrayType<typeof StringType>>;
-    label?: SubtypeExprOrValue<typeof StringType>
+    /** Accessible label for the tree view */
+    label?: SubtypeExprOrValue<typeof StringType>;
+    /** Callback for expanded nodes change */
+    onExpandedChange?: SubtypeExprOrValue<FunctionType<[ArrayType<typeof StringType>], NullType>>;
+    /** Callback for selected nodes change */
+    onSelectionChange?: SubtypeExprOrValue<FunctionType<[ArrayType<typeof StringType>], NullType>>;
+    /** Callback for focused node change */
+    onFocusChange?: SubtypeExprOrValue<FunctionType<[OptionType<typeof StringType>], NullType>>;
 }

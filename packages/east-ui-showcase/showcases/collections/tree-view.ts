@@ -3,8 +3,8 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East, some } from "@elaraai/east";
-import { TreeView, UIComponentType, Grid } from "@elaraai/east-ui";
+import { East, some, StringType, NullType, ArrayType } from "@elaraai/east";
+import { TreeView, UIComponentType, Grid, State, Reactive, Stack, Text, Badge } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
 /**
@@ -230,6 +230,111 @@ export default East.function(
             )
         );
 
+        // =====================================================================
+        // INTERACTIVE EXAMPLES - Demonstrate callbacks with Reactive.Root
+        // =====================================================================
+
+        // Initialize state for interactive examples
+        $(State.initTyped("tree_selected", [] as string[], ArrayType(StringType))());
+        $(State.initTyped("tree_expanded", [] as string[], ArrayType(StringType))());
+
+        // Interactive TreeView with selection
+        const interactiveSelection = $.let(
+            ShowcaseCard(
+                "Interactive Selection",
+                "Click items to see onSelectionChange callback",
+                Reactive.Root($ => {
+                    const selected = $.let(State.readTyped("tree_selected", ArrayType(StringType))());
+
+                    const onSelectionChange = East.function(
+                        [ArrayType(StringType)],
+                        NullType,
+                        ($, newSelection) => {
+                            $(State.writeTyped("tree_selected", some(newSelection), ArrayType(StringType))());
+                        }
+                    );
+
+                    return Stack.VStack([
+                        TreeView.Root([
+                            TreeView.Branch("fruits", "Fruits", [
+                                TreeView.Item("apple", "Apple"),
+                                TreeView.Item("banana", "Banana"),
+                                TreeView.Item("cherry", "Cherry"),
+                            ]),
+                            TreeView.Branch("vegetables", "Vegetables", [
+                                TreeView.Item("carrot", "Carrot"),
+                                TreeView.Item("broccoli", "Broccoli"),
+                            ]),
+                        ], {
+                            selectionMode: "multiple",
+                            defaultExpandedValue: ["fruits", "vegetables"],
+                            onSelectionChange
+                        }),
+                        Badge.Root(
+                            East.str`Selected: ${selected.unwrap('some').size()}`,
+                            { colorPalette: "blue", variant: "solid" }
+                        ),
+                        Text.Root(East.str`Items selected: ${selected.unwrap('some').size()}`),
+                    ], { gap: "3", align: "stretch" });
+                }),
+                some(`Reactive.Root($ => {
+    const selected = $.let(State.readTyped("tree_selected", ArrayType(StringType))());
+    const onSelectionChange = East.function([ArrayType(StringType)], NullType, ($, newSelection) => {
+        $(State.writeTyped("tree_selected", some(newSelection), ArrayType(StringType))());
+    });
+    return TreeView.Root([...nodes], { selectionMode: "multiple", onSelectionChange });
+})`)
+            )
+        );
+
+        // Interactive TreeView with expand tracking
+        const interactiveExpand = $.let(
+            ShowcaseCard(
+                "Interactive Expand",
+                "Expand/collapse to see onExpandedChange callback",
+                Reactive.Root($ => {
+                    const expanded = $.let(State.readTyped("tree_expanded", ArrayType(StringType))());
+
+                    const onExpandedChange = East.function(
+                        [ArrayType(StringType)],
+                        NullType,
+                        ($, newExpanded) => {
+                            $(State.writeTyped("tree_expanded", some(newExpanded), ArrayType(StringType))());
+                        }
+                    );
+
+                    return Stack.VStack([
+                        TreeView.Root([
+                            TreeView.Branch("level1", "Level 1", [
+                                TreeView.Branch("level1a", "Level 1.A", [
+                                    TreeView.Item("item1", "Item 1"),
+                                    TreeView.Item("item2", "Item 2"),
+                                ]),
+                                TreeView.Branch("level1b", "Level 1.B", [
+                                    TreeView.Item("item3", "Item 3"),
+                                ]),
+                            ]),
+                            TreeView.Branch("level2", "Level 2", [
+                                TreeView.Item("item4", "Item 4"),
+                            ]),
+                        ], { onExpandedChange }),
+                        Badge.Root(
+                            East.str`Expanded: ${expanded.unwrap('some').size()}`,
+                            { colorPalette: "green", variant: "solid" }
+                        ),
+                        Text.Root(East.str`Nodes expanded: ${expanded.unwrap('some').size()}`),
+                    ], { gap: "3", align: "stretch" });
+                }),
+                some(`Reactive.Root($ => {
+    const expanded = $.let(State.readTyped("tree_expanded", ArrayType(StringType))());
+    const onExpandedChange = East.function([ArrayType(StringType)], NullType, ($, newExpanded) => {
+        $(State.writeTyped("tree_expanded", some(newExpanded), ArrayType(StringType))());
+    });
+    return TreeView.Root([...nodes], { onExpandedChange });
+})`)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(fileTree),
@@ -238,6 +343,9 @@ export default East.function(
                 Grid.Item(smallTree),
                 Grid.Item(solidTree),
                 Grid.Item(expandedTree),
+                // Interactive examples
+                Grid.Item(interactiveSelection),
+                Grid.Item(interactiveExpand),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

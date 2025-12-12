@@ -7,9 +7,10 @@ import {
     type ExprType,
     type SubtypeExprOrValue,
     East,
-    StringType,
     BooleanType,
     variant,
+    some,
+    none,
 } from "@elaraai/east";
 
 import { SizeType, ColorSchemeType } from "../../style.js";
@@ -36,44 +37,22 @@ export { CheckboxType, type CheckboxStyle } from "./types.js";
  *
  * @example
  * ```ts
- * import { Checkbox } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Checkbox, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple checkbox
- * const checkbox = Checkbox.Root(true);
- *
- * // Checkbox with label
- * const labeled = Checkbox.Root(false, {
- *   label: "Accept terms and conditions",
- * });
- *
- * // Styled checkbox
- * const styled = Checkbox.Root(true, {
- *   label: "Enable notifications",
- *   colorPalette: "blue",
- *   size: "md",
- * });
- *
- * // Indeterminate checkbox (for parent of partially selected children)
- * const indeterminate = Checkbox.Root(false, {
- *   label: "Select all",
- *   indeterminate: true,
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Checkbox.Root(true, {
+ *         label: "Enable notifications",
+ *         colorPalette: "blue",
+ *         size: "md",
+ *     });
  * });
  * ```
  */
-function createCheckbox(
+export function createCheckbox_(
     checked: SubtypeExprOrValue<BooleanType>,
     style?: CheckboxStyle
-): ExprType<UIComponentType> {
-    const toStringOption = (val: SubtypeExprOrValue<StringType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        return variant("some", val);
-    };
-
-    const toBoolOption = (val: SubtypeExprOrValue<BooleanType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        return variant("some", val);
-    };
-
+): ExprType<CheckboxType> {
     const colorPaletteValue = style?.colorPalette
         ? (typeof style.colorPalette === "string"
             ? East.value(variant(style.colorPalette, null), ColorSchemeType)
@@ -86,14 +65,22 @@ function createCheckbox(
             : style.size)
         : undefined;
 
-    return East.value(variant("Checkbox", {
+    return East.value( {
         checked: checked,
-        label: toStringOption(style?.label),
-        indeterminate: toBoolOption(style?.indeterminate),
-        disabled: toBoolOption(style?.disabled),
-        colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
-        size: sizeValue ? variant("some", sizeValue) : variant("none", null),
-    }), UIComponentType);
+        label: style?.label ? some(style.label) : none,
+        indeterminate: style?.indeterminate !== undefined ? some(style.indeterminate) : none,
+        disabled: style?.disabled !== undefined ? some(style.disabled) : none,
+        colorPalette: colorPaletteValue ? some(colorPaletteValue) : none,
+        size: sizeValue ? some(sizeValue) : none,
+        onChange: style?.onChange ? some(style.onChange) : none,
+    }, CheckboxType);
+}
+
+function createCheckbox(
+    checked: SubtypeExprOrValue<BooleanType>,
+    style?: CheckboxStyle
+): ExprType<UIComponentType> {
+    return East.value(variant("Checkbox", createCheckbox_(checked, style)), UIComponentType);
 }
 
 /**

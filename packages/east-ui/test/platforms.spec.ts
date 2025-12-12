@@ -5,6 +5,7 @@
 import assert from "node:assert/strict";
 import { test, describe } from "node:test";
 import { East, Expr, get_location, NullType, StringType, BlockBuilder, type SubtypeExprOrValue, type ExprType, type EastType } from "@elaraai/east";
+import { StateImpl } from "../src/platform/state.js";
 
 const { str } = East;
 
@@ -31,13 +32,14 @@ const testFail = East.platform("testFail", [StringType], NullType);
  *
  * @returns A platform array for compiling East functions
  */
-function createTestPlatform() {
+export function createTestPlatform() {
     return [
         testPass.implement(() => { }), // Assertion passed - do nothing
         testFail.implement((message: string) => {
             // Assertion failed - throw to fail the test
             assert.fail(message);
         }),
+        ...StateImpl,
     ];
 }
 

@@ -11,6 +11,7 @@ import {
     StringType,
     BooleanType,
     NullType,
+    FunctionType,
 } from "@elaraai/east";
 
 import { SizeType, ColorSchemeType } from "../../style.js";
@@ -63,6 +64,7 @@ export type ButtonVariantLiteral = "solid" | "subtle" | "outline" | "ghost";
  * @property size - Size of the button (xs, sm, md, lg)
  * @property loading - Whether the button shows a loading state
  * @property disabled - Whether the button is disabled
+ * @property onClick - Callback triggered when the button is clicked
  */
 export const ButtonStyleType = StructType({
     variant: OptionType(ButtonVariantType),
@@ -70,6 +72,7 @@ export const ButtonStyleType = StructType({
     size: OptionType(SizeType),
     loading: OptionType(BooleanType),
     disabled: OptionType(BooleanType),
+    onClick: OptionType(FunctionType([], NullType)),
 });
 
 /**
@@ -88,6 +91,7 @@ export type ButtonStyleType = typeof ButtonStyleType;
  * @property size - Size of the button
  * @property loading - Shows loading spinner when true
  * @property disabled - Disables button interaction when true
+ * @property onClick - Callback triggered when the button is clicked
  */
 export interface ButtonStyle {
     /** Button appearance variant (solid, subtle, outline, ghost) */
@@ -100,6 +104,8 @@ export interface ButtonStyle {
     loading?: SubtypeExprOrValue<BooleanType>;
     /** Disables button interaction when true */
     disabled?: SubtypeExprOrValue<BooleanType>;
+    /** Callback triggered when the button is clicked */
+    onClick?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 }
 
 // ============================================================================

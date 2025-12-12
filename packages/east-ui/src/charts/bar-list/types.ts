@@ -83,6 +83,15 @@ export type BarListType = typeof BarListType;
 
 /**
  * TypeScript interface for Bar list style options.
+ *
+ * @remarks
+ * All properties are optional for configuring the bar list appearance.
+ *
+ * @property sort - Sort configuration for ordering bars
+ * @property showValue - Show value text next to bars
+ * @property showLabel - Show label text for bars
+ * @property valueFormat - Format for values (use string literals or TickFormat helpers)
+ * @property color - Default bar color (Chakra color token)
  */
 export interface BarListStyle {
     /** Sort configuration */

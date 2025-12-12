@@ -7,9 +7,10 @@ import {
     type ExprType,
     type SubtypeExprOrValue,
     East,
-    StringType,
     BooleanType,
     variant,
+    some,
+    none,
 } from "@elaraai/east";
 
 import { SizeType, ColorSchemeType } from "../../style.js";
@@ -36,44 +37,22 @@ export { SwitchType, type SwitchStyle } from "./types.js";
  *
  * @example
  * ```ts
- * import { Switch } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Switch, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple switch
- * const toggle = Switch.Root(true);
- *
- * // Switch with label
- * const labeled = Switch.Root(false, {
- *   label: "Enable notifications",
- * });
- *
- * // Styled switch
- * const styled = Switch.Root(true, {
- *   label: "Dark mode",
- *   colorPalette: "blue",
- *   size: "md",
- * });
- *
- * // Disabled switch
- * const disabled = Switch.Root(false, {
- *   label: "Premium feature",
- *   disabled: true,
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Switch.Root(true, {
+ *         label: "Dark mode",
+ *         colorPalette: "blue",
+ *         size: "md",
+ *     });
  * });
  * ```
  */
-function createSwitch(
+export function createSwitch_(
     checked: SubtypeExprOrValue<BooleanType>,
     style?: SwitchStyle
-): ExprType<UIComponentType> {
-    const toStringOption = (val: SubtypeExprOrValue<StringType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        return variant("some", val);
-    };
-
-    const toBoolOption = (val: SubtypeExprOrValue<BooleanType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        return variant("some", val);
-    };
-
+): ExprType<SwitchType> {
     const colorPaletteValue = style?.colorPalette
         ? (typeof style.colorPalette === "string"
             ? East.value(variant(style.colorPalette, null), ColorSchemeType)
@@ -86,13 +65,21 @@ function createSwitch(
             : style.size)
         : undefined;
 
-    return East.value(variant("Switch", {
+    return East.value({
         checked: checked,
-        label: toStringOption(style?.label),
-        disabled: toBoolOption(style?.disabled),
-        colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
-        size: sizeValue ? variant("some", sizeValue) : variant("none", null),
-    }), UIComponentType);
+        label: style?.label ? some(style.label) : none,
+        disabled: style?.disabled !== undefined ? some(style.disabled) : none,
+        colorPalette: colorPaletteValue ? some(colorPaletteValue) : none,
+        size: sizeValue ? some(sizeValue) : none,
+        onChange: style?.onChange ? some(style.onChange) : none,
+    }, SwitchType);
+}
+
+function createSwitch(
+    checked: SubtypeExprOrValue<BooleanType>,
+    style?: SwitchStyle
+): ExprType<UIComponentType> {
+    return East.value(variant("Switch", createSwitch_(checked, style)), UIComponentType);
 }
 
 /**
@@ -124,6 +111,19 @@ export const Switch = {
      */
     Root: createSwitch,
     Types: {
+        /**
+         * The concrete East type for Switch component data.
+         *
+         * @remarks
+         * This struct type represents the serializable data structure for a Switch component.
+         *
+         * @property checked - Whether the switch is on
+         * @property label - Optional label text displayed next to the switch
+         * @property disabled - Whether the switch is disabled
+         * @property colorPalette - Color scheme for the switch
+         * @property size - Size of the switch
+         * @property onChange - Callback triggered when switch state changes
+         */
         Switch: SwitchType,
     },
 } as const;

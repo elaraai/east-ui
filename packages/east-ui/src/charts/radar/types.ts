@@ -69,6 +69,9 @@ export type RadarChartType = typeof RadarChartType;
  *
  * @remarks
  * All properties are optional and accept either static values or East expressions.
+ *
+ * @property dataKey - Key for axis labels (e.g., "subject")
+ * @property fillOpacity - Fill opacity (0-1)
  */
 export interface RadarChartStyle extends BaseChartStyle {
     /** Key for axis labels (e.g., "subject") */
@@ -78,7 +81,18 @@ export interface RadarChartStyle extends BaseChartStyle {
 }
 
 /**
- * Series configuration for Radar charts (used in createRadarChart).
+ * Series configuration for Radar charts.
+ *
+ * @remarks
+ * Configures how a data field is rendered as a series in the radar chart.
+ *
+ * @property color - Chakra color token (e.g., "teal.solid", "blue.500")
+ * @property label - Display label (defaults to name)
+ * @property stroke - Stroke/line color (defaults to color)
+ * @property strokeWidth - Stroke/line width in pixels
+ * @property fill - Fill color (defaults to color)
+ * @property fillOpacity - Fill opacity (0-1)
+ * @property strokeDasharray - Dash pattern for dashed lines (e.g., "5 5")
  */
 export interface RadarChartSeriesConfig {
     /** Chakra color token (e.g., "teal.solid", "blue.500") */

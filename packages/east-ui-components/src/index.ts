@@ -151,6 +151,7 @@ export {
     type EastChakraIntegerInputProps,
     type EastChakraFloatInputProps,
     type EastChakraDateTimeInputProps,
+    type ChakraDateTimeInputProps,
     // Checkbox
     EastChakraCheckbox,
     toChakraCheckbox,
@@ -177,11 +178,6 @@ export {
     toChakraField,
     type FieldValue,
     type EastChakraFieldProps,
-    // Fieldset
-    EastChakraFieldset,
-    toChakraFieldset,
-    type FieldsetValue,
-    type EastChakraFieldsetProps,
     // Textarea
     EastChakraTextarea,
     toChakraTextarea,
@@ -251,22 +247,39 @@ export {
 
 // Platform (State Management)
 export {
-    // Platform functions
+    // State namespace (main API)
     State,
-    state_write,
-    state_read,
+
     // Store
-    EastStore,
-    createEastStore,
-    type EastStoreOptions,
-    // React hooks
-    EastStoreProvider,
+    UIStore,
+    createUIStore,
+    type UIStoreInterface,
+    type UIStoreOptions,
+    PersistentUIStore,
+    createPersistentUIStore,
+
+    // React Provider and Hooks
+    UIStoreProvider,
+    type UIStoreProviderProps,
+    useUIStore,
+    useUIStoreSubscription,
+    useUIState,
+    useUIKey,
+    useUIWrite,
+    useUIBatch,
+
+    // Components
+    EastComponent,
+    type EastComponentProps,
     EastFunction,
+    type EastFunctionProps,
+
+    // Legacy aliases
+    EastStoreProvider,
     useEastStore,
     useEastState,
     useEastKey,
     useEastWrite,
     useEastBatch,
-    type EastStoreProviderProps,
-    type EastFunctionProps,
+    createEastStore,
 } from "./platform/index.js";

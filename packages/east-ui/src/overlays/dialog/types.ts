@@ -11,6 +11,7 @@ import {
     BooleanType,
     VariantType,
     StringType,
+    FunctionType,
 } from "@elaraai/east";
 
 // ============================================================================
@@ -135,6 +136,10 @@ export type DialogRoleLiteral = "dialog" | "alertdialog";
  * @property scrollBehavior - Scroll behavior
  * @property motionPreset - Animation style
  * @property role - ARIA role
+ * @property onOpenChange - Callback triggered when open state changes
+ * @property onExitComplete - Callback triggered when exit animation completes
+ * @property onEscapeKeyDown - Callback triggered when escape key is pressed
+ * @property onInteractOutside - Callback triggered when clicking outside the dialog
  */
 export const DialogStyleType = StructType({
     size: OptionType(DialogSizeType),
@@ -142,6 +147,14 @@ export const DialogStyleType = StructType({
     scrollBehavior: OptionType(DialogScrollBehaviorType),
     motionPreset: OptionType(DialogMotionPresetType),
     role: OptionType(DialogRoleType),
+    /** Callback triggered when open state changes */
+    onOpenChange: OptionType(FunctionType([BooleanType], NullType)),
+    /** Callback triggered when exit animation completes */
+    onExitComplete: OptionType(FunctionType([], NullType)),
+    /** Callback triggered when escape key is pressed */
+    onEscapeKeyDown: OptionType(FunctionType([], NullType)),
+    /** Callback triggered when clicking outside the dialog */
+    onInteractOutside: OptionType(FunctionType([], NullType)),
 });
 
 export type DialogStyleType = typeof DialogStyleType;
@@ -152,6 +165,27 @@ export type DialogStyleType = typeof DialogStyleType;
 
 /**
  * TypeScript interface for Dialog style options.
+ *
+ * @property size - Dialog size variant
+ * @property placement - Vertical positioning
+ * @property scrollBehavior - Scroll behavior
+ * @property motionPreset - Animation style
+ * @property role - ARIA role
+ * @property title - Dialog title
+ * @property description - Dialog description
+ * @property open - Controlled open state
+ * @property defaultOpen - Initial open state
+ * @property modal - Enable modal mode
+ * @property closeOnInteractOutside - Close when clicking outside
+ * @property closeOnEscape - Close on escape key
+ * @property preventScroll - Prevent body scroll
+ * @property trapFocus - Trap focus inside dialog
+ * @property lazyMount - Delay mounting until first open
+ * @property unmountOnExit - Unmount when closed
+ * @property onOpenChange - Callback triggered when open state changes
+ * @property onExitComplete - Callback triggered when exit animation completes
+ * @property onEscapeKeyDown - Callback triggered when escape key is pressed
+ * @property onInteractOutside - Callback triggered when clicking outside the dialog
  */
 export interface DialogStyle {
     /** Dialog size variant */
@@ -186,4 +220,12 @@ export interface DialogStyle {
     lazyMount?: SubtypeExprOrValue<BooleanType>;
     /** Unmount when closed */
     unmountOnExit?: SubtypeExprOrValue<BooleanType>;
+    /** Callback triggered when open state changes */
+    onOpenChange?: SubtypeExprOrValue<FunctionType<[BooleanType], NullType>>;
+    /** Callback triggered when exit animation completes */
+    onExitComplete?: SubtypeExprOrValue<FunctionType<[], NullType>>;
+    /** Callback triggered when escape key is pressed */
+    onEscapeKeyDown?: SubtypeExprOrValue<FunctionType<[], NullType>>;
+    /** Callback triggered when clicking outside the dialog */
+    onInteractOutside?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 }

@@ -1,6 +1,7 @@
 import { East } from "@elaraai/east";
 import { UIComponentType, Stack, Text } from "@elaraai/east-ui";
 import boxShowcase from "./box";
+import flexShowcase from "./flex";
 import stackShowcase from "./stack";
 import separatorShowcase from "./separator";
 import gridShowcase from "./grid";
@@ -15,15 +16,17 @@ export default East.function(
     ($) => {
         return Stack.VStack([
             Text.Root("Box", { fontWeight: "bold", fontSize: "lg" }),
-            $(boxShowcase()),
+            boxShowcase(),
+            Text.Root("Flex", { fontWeight: "bold", fontSize: "lg" }),
+            flexShowcase(),
             Text.Root("Stack", { fontWeight: "bold", fontSize: "lg" }),
-            $(stackShowcase()),
+            stackShowcase(),
             Text.Root("Separator", { fontWeight: "bold", fontSize: "lg" }),
-            $(separatorShowcase()),
+            separatorShowcase(),
             Text.Root("Grid", { fontWeight: "bold", fontSize: "lg" }),
-            $(gridShowcase()),
+            gridShowcase(),
             Text.Root("Splitter", { fontWeight: "bold", fontSize: "lg" }),
-            $(splitterShowcase()),
+            splitterShowcase(),
         ], { gap: "8", align: "stretch" });
     }
 );

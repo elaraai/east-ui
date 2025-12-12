@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Drawer as ChakraDrawer, Portal, CloseButton } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Drawer } from "@elaraai/east-ui";
@@ -31,8 +31,30 @@ export const EastChakraDrawer = memo(function EastChakraDrawer({ value }: EastCh
     const title = useMemo(() => getSomeorUndefined(value.title), [value.title]);
     const description = useMemo(() => getSomeorUndefined(value.description), [value.description]);
 
+    // Extract callbacks from style
+    const onOpenChangeFn = useMemo(() => style ? getSomeorUndefined(style.onOpenChange) : undefined, [style]);
+    const onExitCompleteFn = useMemo(() => style ? getSomeorUndefined(style.onExitComplete) : undefined, [style]);
+
+    const handleOpenChange = useCallback((details: { open: boolean }) => {
+        if (onOpenChangeFn) {
+            queueMicrotask(() => onOpenChangeFn(details.open));
+        }
+    }, [onOpenChangeFn]);
+
+    const handleExitComplete = useCallback(() => {
+        if (onExitCompleteFn) {
+            queueMicrotask(() => onExitCompleteFn());
+        }
+    }, [onExitCompleteFn]);
+
     return (
-        <ChakraDrawer.Root size={size} placement={placement} contained={contained}>
+        <ChakraDrawer.Root
+            size={size}
+            placement={placement}
+            contained={contained}
+            onOpenChange={onOpenChangeFn ? handleOpenChange : undefined}
+            onExitComplete={onExitCompleteFn ? handleExitComplete : undefined}
+        >
             <ChakraDrawer.Trigger asChild>
                 <span>
                     <EastChakraComponent value={value.trigger} />

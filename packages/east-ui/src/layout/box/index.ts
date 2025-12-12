@@ -21,6 +21,7 @@ import {
     FlexDirectionType,
     JustifyContentType,
     AlignItemsType,
+    OverflowType,
 } from "../../style.js";
 import { Padding, PaddingType, Margin, MarginType } from "../style.js";
 
@@ -60,20 +61,16 @@ export type BoxType = typeof BoxType;
  *
  * @example
  * ```ts
- * import { Box, Text, Style } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Box, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple box with children (accepts plain arrays)
- * const box = Box.Root([
- *   Text.Root("Hello"),
- * ]);
- *
- * // Styled flex container
- * const flexBox = Box.Root([...children], {
- *   display: Style.Display("flex"),
- *   flexDirection: Style.FlexDirection("column"),
- *   gap: "4",
- *   padding: "4",
- *   background: "gray.100",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Box.Root([
+ *         Text.Root("Hello"),
+ *     ], {
+ *         padding: "4",
+ *         background: "gray.100",
+ *     });
  * });
  * ```
  */
@@ -105,6 +102,24 @@ function createBox(
             : style.alignItems)
         : undefined;
 
+    const overflowValue = style?.overflow
+        ? (typeof style.overflow === "string"
+            ? East.value(variant(style.overflow, null), OverflowType)
+            : style.overflow)
+        : undefined;
+
+    const overflowXValue = style?.overflowX
+        ? (typeof style.overflowX === "string"
+            ? East.value(variant(style.overflowX, null), OverflowType)
+            : style.overflowX)
+        : undefined;
+
+    const overflowYValue = style?.overflowY
+        ? (typeof style.overflowY === "string"
+            ? East.value(variant(style.overflowY, null), OverflowType)
+            : style.overflowY)
+        : undefined;
+
     const paddingValue = style?.padding
         ? (typeof style.padding === "string"
             ? East.value({
@@ -133,6 +148,13 @@ function createBox(
             display: displayValue ? variant("some", displayValue) : variant("none", null),
             width: style.width ? variant("some", style.width) : variant("none", null),
             height: style.height ? variant("some", style.height) : variant("none", null),
+            minHeight: style.minHeight ? variant("some", style.minHeight) : variant("none", null),
+            minWidth: style.minWidth ? variant("some", style.minWidth) : variant("none", null),
+            maxHeight: style.maxHeight ? variant("some", style.maxHeight) : variant("none", null),
+            maxWidth: style.maxWidth ? variant("some", style.maxWidth) : variant("none", null),
+            overflow: overflowValue ? variant("some", overflowValue) : variant("none", null),
+            overflowX: overflowXValue ? variant("some", overflowXValue) : variant("none", null),
+            overflowY: overflowYValue ? variant("some", overflowYValue) : variant("none", null),
             padding: paddingValue ? variant("some", paddingValue) : variant("none", null),
             margin: marginValue ? variant("some", marginValue) : variant("none", null),
             background: style.background ? variant("some", style.background) : variant("none", null),
@@ -195,16 +217,15 @@ export const Box = {
      *
      * @example
      * ```ts
-     * import { Box, Padding } from "@elaraai/east-ui";
+     * import { East } from "@elaraai/east";
+     * import { Box, Text, UIComponentType } from "@elaraai/east-ui";
      *
-     * // Structured padding
-     * Box.Root([...], {
-     *   padding: Padding("4", "2", "4", "2"),
-     * });
-     *
-     * // Uniform padding (shorthand)
-     * Box.Root([...], {
-     *   padding: "4",
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Box.Root([
+     *         Text.Root("Padded content"),
+     *     ], {
+     *         padding: Box.Padding("4", "2", "4", "2"),
+     *     });
      * });
      * ```
      */
@@ -224,16 +245,15 @@ export const Box = {
      *
      * @example
      * ```ts
-     * import { Box, Margin } from "@elaraai/east-ui";
+     * import { East } from "@elaraai/east";
+     * import { Box, Text, UIComponentType } from "@elaraai/east-ui";
      *
-     * // Structured margin
-     * Box.Root([...], {
-     *   margin: Margin("4", "auto", "4", "auto"),
-     * });
-     *
-     * // Uniform margin (shorthand)
-     * Box.Root([...], {
-     *   margin: "4",
+     * const example = East.function([], UIComponentType, $ => {
+     *     return Box.Root([
+     *         Text.Root("Centered content"),
+     *     ], {
+     *         margin: Box.Margin("4", "auto", "4", "auto"),
+     *     });
      * });
      * ```
      */

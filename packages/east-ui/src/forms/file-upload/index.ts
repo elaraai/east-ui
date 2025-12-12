@@ -36,36 +36,20 @@ export {
  *
  * @example
  * ```ts
- * import { FileUpload } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { FileUpload, UIComponentType } from "@elaraai/east-ui";
  *
- * // Image upload with drag-and-drop
- * const imageUpload = FileUpload.Root({
- *   accept: "image/*",
- *   maxFiles: 5,
- *   maxFileSize: 5 * 1024 * 1024, // 5MB
- *   label: "Upload images",
- *   dropzoneText: "or drag and drop here",
- *   triggerText: "Choose files",
- * });
- *
- * // Single document upload
- * const docUpload = FileUpload.Root({
- *   accept: ".pdf,.doc,.docx",
- *   maxFiles: 1,
- *   required: true,
- *   label: "Upload document",
- * });
- *
- * // Directory upload
- * const folderUpload = FileUpload.Root({
- *   directory: true,
- *   label: "Upload folder",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return FileUpload.Root({
+ *         accept: "image/*",
+ *         maxFiles: 5n,
+ *     });
  * });
  * ```
  */
-function createFileUpload(
+export function createFileUpload_(
     style?: FileUploadStyle
-): ExprType<UIComponentType> {
+): ExprType<FileUploadType> {
     // Convert number to bigint for IntegerType fields
     const maxFilesValue = style?.maxFiles !== undefined
         ? (typeof style.maxFiles === "number" ? BigInt(style.maxFiles) : style.maxFiles)
@@ -84,7 +68,7 @@ function createFileUpload(
             : style.capture)
         : undefined;
 
-    return East.value(variant("FileUpload", {
+    return East.value({
         accept: style?.accept !== undefined ? variant("some", style.accept) : variant("none", null),
         maxFiles: maxFilesValue !== undefined ? variant("some", maxFilesValue) : variant("none", null),
         maxFileSize: maxFileSizeValue !== undefined ? variant("some", maxFileSizeValue) : variant("none", null),
@@ -98,7 +82,16 @@ function createFileUpload(
         label: style?.label !== undefined ? variant("some", style.label) : variant("none", null),
         dropzoneText: style?.dropzoneText !== undefined ? variant("some", style.dropzoneText) : variant("none", null),
         triggerText: style?.triggerText !== undefined ? variant("some", style.triggerText) : variant("none", null),
-    }), UIComponentType);
+        onFileAccept: style?.onFileAccept !== undefined ? variant("some", style.onFileAccept) : variant("none", null),
+        onFileReject: style?.onFileReject !== undefined ? variant("some", style.onFileReject) : variant("none", null),
+    }, FileUploadType);
+}
+
+
+function createFileUpload(
+    style?: FileUploadStyle
+): ExprType<UIComponentType> {
+    return East.value(variant("FileUpload", createFileUpload_(style)), UIComponentType);
 }
 
 // ============================================================================
@@ -110,34 +103,6 @@ function createFileUpload(
  *
  * @remarks
  * FileUpload provides a form control for uploading files with drag-and-drop support.
- *
- * @example
- * ```ts
- * import { FileUpload } from "@elaraai/east-ui";
- *
- * // Basic file upload
- * const upload = FileUpload.Root({
- *   label: "Upload file",
- *   triggerText: "Choose file",
- * });
- *
- * // Image upload with constraints
- * const imageUpload = FileUpload.Root({
- *   accept: "image/*",
- *   maxFiles: 3,
- *   maxFileSize: 10 * 1024 * 1024, // 10MB
- *   label: "Upload images",
- *   dropzoneText: "Drag images here",
- *   triggerText: "Browse",
- * });
- *
- * // Mobile camera capture
- * const cameraUpload = FileUpload.Root({
- *   accept: "image/*",
- *   capture: "environment",
- *   label: "Take photo",
- * });
- * ```
  */
 export const FileUpload = {
     /**

@@ -22,12 +22,14 @@ import {
     SplitterStyleType,
     type SplitterStyle,
     type SplitterPanelStyle,
+    SplitterResizeDetailsType,
 } from "./types.js";
 
 // Re-export style types
 export {
     SplitterStyleType,
     SplitterPanelStyleType,
+    SplitterResizeDetailsType,
     type SplitterStyle,
     type SplitterPanelStyle,
 } from "./types.js";
@@ -107,33 +109,19 @@ export type SplitterType = typeof SplitterType;
  *
  * @example
  * ```ts
- * import { Splitter, Box } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Splitter, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple panel
- * const panel = Splitter.Panel(
- *   variant("Box", sidebarContent),
- *   { id: "sidebar" }
- * );
- *
- * // Panel with size constraints
- * const constrainedPanel = Splitter.Panel(
- *   variant("Box", mainContent),
- *   {
- *     id: "main",
- *     minSize: 50,
- *     maxSize: 80,
- *   }
- * );
- *
- * // Collapsible panel
- * const collapsiblePanel = Splitter.Panel(
- *   variant("Box", terminal),
- *   {
- *     id: "terminal",
- *     collapsible: true,
- *     defaultCollapsed: false,
- *   }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Splitter.Root(
+ *         [
+ *             Splitter.Panel(Text.Root("Sidebar"), { id: "sidebar", minSize: 20 }),
+ *             Splitter.Panel(Text.Root("Main"), { id: "main", collapsible: true }),
+ *         ],
+ *         [30.0, 70.0],
+ *         { orientation: "horizontal" }
+ *     );
+ * });
  * ```
  */
 function SplitterPanel(
@@ -179,28 +167,19 @@ function SplitterPanel(
  *
  * @example
  * ```ts
- * import { Splitter, Box, Style } from "@elaraai/east-ui";
- * import { East, variant, ArrayType } from "@elaraai/east";
+ * import { East } from "@elaraai/east";
+ * import { Splitter, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * // Horizontal splitter (left/right)
- * const horizontalSplitter = Splitter.Root(
- *   East.value([
- *     Splitter.Panel(variant("Box", sidebar), { id: "sidebar", minSize: 20 }),
- *     Splitter.Panel(variant("Box", main), { id: "main", minSize: 50 }),
- *   ], ArrayType(SplitterPanelType)),
- *   East.value([30, 70], ArrayType(FloatType)),
- *   { orientation: Style.Orientation("horizontal") }
- * );
- *
- * // Vertical splitter (top/bottom)
- * const verticalSplitter = Splitter.Root(
- *   East.value([
- *     Splitter.Panel(variant("Box", editor), { id: "editor" }),
- *     Splitter.Panel(variant("Box", terminal), { id: "terminal", collapsible: true }),
- *   ], ArrayType(SplitterPanelType)),
- *   East.value([60, 40], ArrayType(FloatType)),
- *   { orientation: Style.Orientation("vertical") }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Splitter.Root(
+ *         [
+ *             Splitter.Panel(Text.Root("Left Panel"), { id: "left" }),
+ *             Splitter.Panel(Text.Root("Right Panel"), { id: "right" }),
+ *         ],
+ *         [50.0, 50.0],
+ *         { orientation: "horizontal" }
+ *     );
+ * });
  * ```
  */
 function SplitterRoot(
@@ -215,11 +194,16 @@ function SplitterRoot(
             : style.orientation)
         : undefined;
 
+    const hasStyle = orientationValue || style?.onResize !== undefined || style?.onResizeStart !== undefined || style?.onResizeEnd !== undefined;
+
     return East.value(variant("Splitter", {
         panels: panels_expr,
         defaultSize: defaultSize,
-        style: style ? variant("some", East.value({
+        style: hasStyle ? variant("some", East.value({
             orientation: orientationValue ? variant("some", orientationValue) : variant("none", null),
+            onResize: style?.onResize !== undefined ? variant("some", style.onResize) : variant("none", null),
+            onResizeStart: style?.onResizeStart !== undefined ? variant("some", style.onResizeStart) : variant("none", null),
+            onResizeEnd: style?.onResizeEnd !== undefined ? variant("some", style.onResizeEnd) : variant("none", null),
         }, SplitterStyleType)) : variant("none", null),
     }), UIComponentType);
 }
@@ -233,30 +217,7 @@ function SplitterRoot(
  *
  * @remarks
  * Splitter provides resizable panels separated by draggable dividers.
- * Use Splitter.Root to create the container and Splitter.Panel for each section.
- *
- * @example
- * ```ts
- * import { Splitter, Box, Style } from "@elaraai/east-ui";
- * import { East, variant, ArrayType, FloatType } from "@elaraai/east";
- *
- * // Two-panel horizontal layout
- * const layout = Splitter.Root(
- *   East.value([
- *     Splitter.Panel(variant("Box", sidebar), {
- *       id: "sidebar",
- *       minSize: 15,
- *       collapsible: true,
- *     }),
- *     Splitter.Panel(variant("Box", mainContent), {
- *       id: "main",
- *       minSize: 50,
- *     }),
- *   ], ArrayType(SplitterPanelType)),
- *   East.value([25, 75], ArrayType(FloatType)),
- *   { orientation: Style.Orientation("horizontal") }
- * );
- * ```
+ * Use `Splitter.Root(panels, defaultSize, style)` to create the container and `Splitter.Panel(content, config)` for each section.
  */
 export const Splitter = {
     /**
@@ -357,5 +318,14 @@ export const Splitter = {
          * @property orientation - Layout orientation (horizontal or vertical)
          */
         Style: SplitterStyleType,
+        /**
+         * Resize details type for onResize callback.
+         *
+         * @remarks
+         * This struct type contains the size array passed to resize callbacks.
+         *
+         * @property size - Array of panel sizes as percentages
+         */
+        ResizeDetails: SplitterResizeDetailsType,
     }
 } as const;

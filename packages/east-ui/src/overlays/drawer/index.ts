@@ -78,25 +78,16 @@ export type DrawerType = typeof DrawerType;
  *
  * @example
  * ```ts
- * import { Drawer, Button, Text } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Drawer, Button, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple drawer
- * const drawer = Drawer.Root(
- *   Button.Root("Open Menu"),
- *   [Text.Root("Menu content")],
- *   { title: "Navigation" }
- * );
- *
- * // Drawer from left side
- * const leftDrawer = Drawer.Root(
- *   Button.Root("Settings"),
- *   [Text.Root("Settings panel")],
- *   {
- *     title: "Settings",
- *     placement: "start",
- *     size: "md",
- *   }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Drawer.Root(
+ *         Button.Root("Open Menu"),
+ *         [Text.Root("Menu content")],
+ *         { title: "Navigation", placement: "start" }
+ *     );
+ * });
  * ```
  */
 function createDrawer(
@@ -116,16 +107,21 @@ function createDrawer(
             : style.placement)
         : undefined;
 
+    const hasStyle = sizeValue || placementValue || style?.contained !== undefined ||
+        style?.onOpenChange !== undefined || style?.onExitComplete !== undefined;
+
     return East.value(variant("Drawer", {
         trigger: trigger,
         body: body,
         title: style?.title !== undefined ? variant("some", style.title) : variant("none", null),
         description: style?.description !== undefined ? variant("some", style.description) : variant("none", null),
-        style: sizeValue || placementValue || style?.contained !== undefined
+        style: hasStyle
             ? variant("some", East.value({
                 size: sizeValue ? variant("some", sizeValue) : variant("none", null),
                 placement: placementValue ? variant("some", placementValue) : variant("none", null),
                 contained: style?.contained !== undefined ? variant("some", style.contained) : variant("none", null),
+                onOpenChange: style?.onOpenChange !== undefined ? variant("some", style.onOpenChange) : variant("none", null),
+                onExitComplete: style?.onExitComplete !== undefined ? variant("some", style.onExitComplete) : variant("none", null),
             }, DrawerStyleType))
             : variant("none", null),
     }), UIComponentType);
@@ -136,21 +132,6 @@ function createDrawer(
  *
  * @remarks
  * Use `Drawer.Root(trigger, body, style)` to create a drawer, or access `Drawer.Types` for East types.
- *
- * @example
- * ```ts
- * import { Drawer, Button, Text } from "@elaraai/east-ui";
- *
- * // Create a drawer
- * const drawer = Drawer.Root(
- *   Button.Root("Open"),
- *   [Text.Root("Content")],
- *   { title: "My Drawer", placement: "end" }
- * );
- *
- * // Access the type
- * const styleType = Drawer.Types.Style;
- * ```
  */
 export const Drawer = {
     /**

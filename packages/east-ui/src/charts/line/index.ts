@@ -32,24 +32,25 @@ export { LineChartType, type LineChartStyle, type LineChartSeriesConfig } from "
  *
  * @example
  * ```ts
- * import { Chart } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Chart, UIComponentType } from "@elaraai/east-ui";
  *
- * const chart = Chart.Line(
- *   [
- *     { month: "Jan", revenue: 186, profit: 80 },
- *     { month: "Feb", revenue: 305, profit: 120 },
- *   ],
- *   {
- *     revenue: { color: "teal.solid" },
- *     profit: { color: "purple.solid" },
- *   },
- *   {
- *     xAxis: Chart.Axis({ dataKey: "month" }),
- *     curveType: "natural",
- *     showDots: true,
- *     grid: Chart.Grid({ show: true }),
- *   }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Chart.Line(
+ *         [
+ *             { month: "Jan", revenue: 186n, profit: 80n },
+ *             { month: "Feb", revenue: 305n, profit: 120n },
+ *         ],
+ *         {
+ *             revenue: { color: "teal.solid" },
+ *             profit: { color: "purple.solid" },
+ *         },
+ *         {
+ *             xAxis: Chart.Axis({ dataKey: "month" }),
+ *             showDots: true,
+ *         }
+ *     );
+ * });
  * ```
  */
 export function createLineChart<T extends SubtypeExprOrValue<ArrayType<StructType>>>(

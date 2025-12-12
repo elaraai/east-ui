@@ -11,6 +11,7 @@ import {
     BooleanType,
     IntegerType,
     VariantType,
+    FunctionType,
 } from "@elaraai/east";
 
 import { PlacementType, type PlacementLiteral } from "../tooltip/types.js";
@@ -52,6 +53,7 @@ export type HoverCardSizeLiteral = "xs" | "sm" | "md" | "lg";
  * @property hasArrow - Show arrow pointing to trigger
  * @property openDelay - Delay before opening (ms)
  * @property closeDelay - Delay before closing (ms)
+ * @property onOpenChange - Callback triggered when open state changes
  */
 export const HoverCardStyleType = StructType({
     size: OptionType(HoverCardSizeType),
@@ -59,6 +61,8 @@ export const HoverCardStyleType = StructType({
     hasArrow: OptionType(BooleanType),
     openDelay: OptionType(IntegerType),
     closeDelay: OptionType(IntegerType),
+    /** Callback triggered when open state changes */
+    onOpenChange: OptionType(FunctionType([BooleanType], NullType)),
 });
 
 export type HoverCardStyleType = typeof HoverCardStyleType;
@@ -69,6 +73,17 @@ export type HoverCardStyleType = typeof HoverCardStyleType;
 
 /**
  * TypeScript interface for HoverCard style options.
+ *
+ * @property size - HoverCard size variant
+ * @property placement - Position relative to trigger
+ * @property hasArrow - Show arrow pointing to trigger
+ * @property openDelay - Delay before opening (ms)
+ * @property closeDelay - Delay before closing (ms)
+ * @property open - Controlled open state
+ * @property defaultOpen - Initial open state
+ * @property lazyMount - Delay mounting until first open
+ * @property unmountOnExit - Unmount when closed
+ * @property onOpenChange - Callback triggered when open state changes
  */
 export interface HoverCardStyle {
     /** HoverCard size variant */
@@ -89,4 +104,6 @@ export interface HoverCardStyle {
     lazyMount?: SubtypeExprOrValue<BooleanType>;
     /** Unmount when closed */
     unmountOnExit?: SubtypeExprOrValue<BooleanType>;
+    /** Callback triggered when open state changes */
+    onOpenChange?: SubtypeExprOrValue<FunctionType<[BooleanType], NullType>>;
 }

@@ -6,7 +6,7 @@
 import { useMemo } from "react";
 import type { ValueTypeOf } from "@elaraai/east";
 import type { Gantt } from "@elaraai/east-ui";
-import { GanttTask } from "./GanttTask";
+import { GanttTask, type TimeStep } from "./GanttTask";
 import { GanttMilestone } from "./GanttMilestone";
 
 export type GanttEventValue = ValueTypeOf<typeof Gantt.Types.Event>;
@@ -21,6 +21,19 @@ export interface GanttEventRowProps {
     startDate: Date;
     endDate: Date;
     onEventClick?: ((event: GanttEventValue, rowIndex: number, eventIndex: number) => void) | undefined;
+    onEventDoubleClick?: ((event: GanttEventValue, rowIndex: number, eventIndex: number) => void) | undefined;
+    /** Callback when a task is dragged */
+    onTaskDrag?: ((rowIndex: number, eventIndex: number, previousStart: Date, previousEnd: Date, newStart: Date, newEnd: Date) => void) | undefined;
+    /** Callback when a task duration is changed (dragging the end) */
+    onTaskDurationChange?: ((rowIndex: number, eventIndex: number, previousEnd: Date, newEnd: Date) => void) | undefined;
+    /** Callback when task progress is changed (dragging the progress handle) */
+    onTaskProgressChange?: ((rowIndex: number, eventIndex: number, previousProgress: number, newProgress: number) => void) | undefined;
+    /** Callback when a milestone is dragged */
+    onMilestoneDrag?: ((rowIndex: number, eventIndex: number, previousDate: Date, newDate: Date) => void) | undefined;
+    /** Optional step size for drag snapping */
+    dragStep?: TimeStep | undefined;
+    /** Optional step size for duration change snapping */
+    durationStep?: TimeStep | undefined;
 }
 
 const getEventPosition = (
@@ -73,6 +86,13 @@ export const GanttEventRow = ({
     startDate,
     endDate,
     onEventClick,
+    onEventDoubleClick,
+    onTaskDrag,
+    onTaskDurationChange,
+    onTaskProgressChange,
+    onMilestoneDrag,
+    dragStep,
+    durationStep,
 }: GanttEventRowProps) => {
     const renderedEvents = useMemo(() => {
         const eventHeight = height - 24;
@@ -91,7 +111,12 @@ export const GanttEventRow = ({
                         y={eventY}
                         height={eventHeight}
                         value={event.value}
-                        onClick={onEventClick ? () => onEventClick(event, rowIndex, eventIndex) : () => {}}
+                        onClick={onEventClick ? () => onEventClick(event, rowIndex, eventIndex) : undefined}
+                        onDoubleClick={onEventDoubleClick ? () => onEventDoubleClick(event, rowIndex, eventIndex) : undefined}
+                        onDrag={onMilestoneDrag ? (prevDate, newDate) => onMilestoneDrag(rowIndex, eventIndex, prevDate, newDate) : undefined}
+                        timelineStartDate={startDate}
+                        timelineEndDate={endDate}
+                        timelineWidth={width}
                     />
                 );
             }
@@ -104,11 +129,20 @@ export const GanttEventRow = ({
                     width={position.width}
                     height={eventHeight}
                     value={event.value}
-                    onClick={onEventClick ? () => onEventClick(event, rowIndex, eventIndex) : () => {}}
+                    onClick={onEventClick ? () => onEventClick(event, rowIndex, eventIndex) : undefined}
+                    onDoubleClick={onEventDoubleClick ? () => onEventDoubleClick(event, rowIndex, eventIndex) : undefined}
+                    onDrag={onTaskDrag ? (prevStart, prevEnd, newStart, newEnd) => onTaskDrag(rowIndex, eventIndex, prevStart, prevEnd, newStart, newEnd) : undefined}
+                    onDurationChange={onTaskDurationChange ? (prevEnd, newEnd) => onTaskDurationChange(rowIndex, eventIndex, prevEnd, newEnd) : undefined}
+                    onProgressChange={onTaskProgressChange ? (prevProgress, newProgress) => onTaskProgressChange(rowIndex, eventIndex, prevProgress, newProgress) : undefined}
+                    timelineStartDate={startDate}
+                    timelineEndDate={endDate}
+                    timelineWidth={width}
+                    dragStep={dragStep}
+                    durationStep={durationStep}
                 />
             );
         }).filter(Boolean);
-    }, [events, rowIndex, y, width, height, startDate, endDate, onEventClick]);
+    }, [events, rowIndex, y, width, height, startDate, endDate, onEventClick, onEventDoubleClick, onTaskDrag, onTaskDurationChange, onTaskProgressChange, onMilestoneDrag, dragStep, durationStep]);
 
     return <g>{renderedEvents}</g>;
 };

@@ -5,6 +5,7 @@
 
 import { describeEast, assertEast } from "../platforms.spec.js";
 import { Input, Style } from "../../src/index.js";
+import { tokenizeDateTimeFormat } from "@elaraai/east/internal";
 
 describeEast("Input", (test) => {
     // =========================================================================
@@ -220,27 +221,28 @@ describeEast("Input", (test) => {
         const now = new Date("2025-01-15T10:00:00Z");
         const input = $.let(Input.DateTime(now));
 
-        $(assertEast.equal(input.unwrap("DateTimeInput").showTime.hasTag("none"), true));
+        $(assertEast.equal(input.unwrap("DateTimeInput").precision.hasTag("none"), true));
         $(assertEast.equal(input.unwrap("DateTimeInput").format.hasTag("none"), true));
     });
 
-    test("creates datetime input with showTime true", $ => {
+    test("creates datetime input with precision date", $ => {
         const now = new Date("2025-01-15T10:00:00Z");
         const input = $.let(Input.DateTime(now, {
-            showTime: true,
+            precision: 'date',
         }));
 
-        $(assertEast.equal(input.unwrap("DateTimeInput").showTime.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap("DateTimeInput").showTime.unwrap("some"), true));
+        $(assertEast.equal(input.unwrap("DateTimeInput").precision.hasTag("some"), true));
+        $(assertEast.equal(input.unwrap("DateTimeInput").precision.unwrap("some").getTag(), 'date'));
     });
 
-    test("creates datetime input with showTime false", $ => {
+    test("creates datetime input with precision time", $ => {
         const now = new Date("2025-01-15T10:00:00Z");
         const input = $.let(Input.DateTime(now, {
-            showTime: false,
+            precision: 'time',
         }));
 
-        $(assertEast.equal(input.unwrap("DateTimeInput").showTime.unwrap("some"), false));
+        $(assertEast.equal(input.unwrap("DateTimeInput").precision.hasTag("some"), true));
+        $(assertEast.equal(input.unwrap("DateTimeInput").precision.unwrap("some").getTag(), 'time'));
     });
 
     test("creates datetime input with format", $ => {
@@ -250,7 +252,7 @@ describeEast("Input", (test) => {
         }));
 
         $(assertEast.equal(input.unwrap("DateTimeInput").format.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap("DateTimeInput").format.unwrap("some"), "yyyy-MM-dd HH:mm"));
+        $(assertEast.equal(input.unwrap("DateTimeInput").format.unwrap("some"), tokenizeDateTimeFormat("yyyy-MM-dd HH:mm")));
     });
 
     test("creates disabled datetime input", $ => {
@@ -325,15 +327,13 @@ describeEast("Input", (test) => {
     test("creates datetime input with all options", $ => {
         const now = new Date("2025-01-15T10:00:00Z");
         const input = $.let(Input.DateTime(now, {
-            showTime: true,
             format: "yyyy-MM-dd HH:mm:ss",
             variant: "outline",
             size: "md",
             disabled: false,
         }));
 
-        $(assertEast.equal(input.unwrap("DateTimeInput").showTime.unwrap("some"), true));
-        $(assertEast.equal(input.unwrap("DateTimeInput").format.unwrap("some"), "yyyy-MM-dd HH:mm:ss"));
+        $(assertEast.equal(input.unwrap("DateTimeInput").format.unwrap("some"), tokenizeDateTimeFormat("yyyy-MM-dd HH:mm:ss")));
         $(assertEast.equal(input.unwrap("DateTimeInput").variant.unwrap("some").hasTag("outline"), true));
         $(assertEast.equal(input.unwrap("DateTimeInput").size.unwrap("some").hasTag("md"), true));
     });

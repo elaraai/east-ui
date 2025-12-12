@@ -18,21 +18,21 @@ export default East.function(
     ($) => {
         return Stack.VStack([
             Text.Root("Text", { fontWeight: "bold", fontSize: "lg" }),
-            $(textShowcase()),
+            textShowcase(),
             Text.Root("Code", { fontWeight: "bold", fontSize: "lg" }),
-            $(codeShowcase()),
+            codeShowcase(),
             Text.Root("Heading", { fontWeight: "bold", fontSize: "lg" }),
-            $(headingShowcase()),
+            headingShowcase(),
             Text.Root("Link", { fontWeight: "bold", fontSize: "lg" }),
-            $(linkShowcase()),
+            linkShowcase(),
             Text.Root("Highlight", { fontWeight: "bold", fontSize: "lg" }),
-            $(highlightShowcase()),
+            highlightShowcase(),
             Text.Root("Mark", { fontWeight: "bold", fontSize: "lg" }),
-            $(markShowcase()),
+            markShowcase(),
             Text.Root("List", { fontWeight: "bold", fontSize: "lg" }),
-            $(listShowcase()),
+            listShowcase(),
             Text.Root("CodeBlock", { fontWeight: "bold", fontSize: "lg" }),
-            $(codeBlockShowcase()),
+            codeBlockShowcase(),
         ], { gap: "8", align: "stretch" });
     }
 );

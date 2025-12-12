@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { FileUpload as ChakraFileUpload, type FileUploadRootProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { FileUpload } from "@elaraai/east-ui";
@@ -42,6 +42,19 @@ export interface EastChakraFileUploadProps {
     value: FileUploadValue;
 }
 
+/** File info type for callbacks */
+interface FileInfo {
+    name: string;
+    size: bigint;
+    type: string;
+}
+
+/** File rejection type for callbacks */
+interface FileRejection {
+    file: FileInfo;
+    errors: string[];
+}
+
 /**
  * Renders an East UI FileUpload value using Chakra UI FileUpload component.
  */
@@ -50,9 +63,40 @@ export const EastChakraFileUpload = memo(function EastChakraFileUpload({ value }
     const label = useMemo(() => getSomeorUndefined(value.label), [value.label]);
     const dropzoneText = useMemo(() => getSomeorUndefined(value.dropzoneText), [value.dropzoneText]);
     const triggerText = useMemo(() => getSomeorUndefined(value.triggerText), [value.triggerText]);
+    const onFileAcceptFn = useMemo(() => getSomeorUndefined(value.onFileAccept), [value.onFileAccept]);
+    const onFileRejectFn = useMemo(() => getSomeorUndefined(value.onFileReject), [value.onFileReject]);
+
+    const handleFileAccept = useCallback((details: { files: File[] }) => {
+        if (onFileAcceptFn) {
+            const fileInfos: FileInfo[] = details.files.map(f => ({
+                name: f.name,
+                size: BigInt(f.size),
+                type: f.type,
+            }));
+            queueMicrotask(() => onFileAcceptFn(fileInfos));
+        }
+    }, [onFileAcceptFn]);
+
+    const handleFileReject = useCallback((details: { files: { file: File; errors: string[] }[] }) => {
+        if (onFileRejectFn) {
+            const rejections: FileRejection[] = details.files.map(r => ({
+                file: {
+                    name: r.file.name,
+                    size: BigInt(r.file.size),
+                    type: r.file.type,
+                },
+                errors: r.errors.map(e => String(e)),
+            }));
+            queueMicrotask(() => onFileRejectFn(rejections));
+        }
+    }, [onFileRejectFn]);
 
     return (
-        <ChakraFileUpload.Root {...props}>
+        <ChakraFileUpload.Root
+            {...props}
+            onFileAccept={onFileAcceptFn ? handleFileAccept : undefined}
+            onFileReject={onFileRejectFn ? handleFileReject : undefined}
+        >
             {label && <ChakraFileUpload.Label>{label}</ChakraFileUpload.Label>}
             <ChakraFileUpload.Dropzone>
                 <ChakraFileUpload.DropzoneContent>

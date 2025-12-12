@@ -3,8 +3,8 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East, some } from "@elaraai/east";
-import { Gantt, UIComponentType, Grid } from "@elaraai/east-ui";
+import { East, some, StringType, NullType, DateTimeType, variant } from "@elaraai/east";
+import { Gantt, UIComponentType, Grid, State, Reactive, Stack, Badge, Table, Text } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
 /**
@@ -252,6 +252,393 @@ export default East.function(
             )
         );
 
+        // =====================================================================
+        // INTERACTIVE EXAMPLE - Demonstrate all callbacks
+        // =====================================================================
+
+        // Initialize state for interactive example
+        $(State.initTyped("gantt_last_event", "", StringType)());
+
+        // Interactive Gantt with all callbacks
+        const interactiveCallbacks = $.let(
+            ShowcaseCard(
+                "All Callbacks",
+                "Click rows, cells, tasks, milestones or drag to see events",
+                Reactive.Root($ => {
+                    const lastEvent = $.let(State.readTyped("gantt_last_event", StringType)());
+
+                    // Table-inherited callbacks
+                    const onRowClick = East.function(
+                        [Table.Types.RowClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str`onRowClick: row ${event.rowIndex}`), StringType)());
+                        }
+                    );
+
+                    const onRowDoubleClick = East.function(
+                        [Table.Types.RowClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str`onRowDoubleClick: row ${event.rowIndex}`), StringType)());
+                        }
+                    );
+
+                    const onCellClick = East.function(
+                        [Table.Types.CellClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str`onCellClick: row ${event.rowIndex}, col ${event.columnKey}`), StringType)());
+                        }
+                    );
+
+                    const onCellDoubleClick = East.function(
+                        [Table.Types.CellClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str`onCellDoubleClick: row ${event.rowIndex}, col ${event.columnKey}`), StringType)());
+                        }
+                    );
+
+                    const onSortChange = East.function(
+                        [Table.Types.SortEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str`onSortChange: ${event.columnKey} - ${event.sortDirection.getTag()}`), StringType)());
+                        }
+                    );
+
+                    // Gantt-specific callbacks
+                    const onTaskClick = East.function(
+                        [Gantt.Types.TaskClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str`onTaskClick: row ${event.rowIndex}, task ${event.taskIndex}`), StringType)());
+                        }
+                    );
+
+                    const onTaskDoubleClick = East.function(
+                        [Gantt.Types.TaskClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str`onTaskDoubleClick: row ${event.rowIndex}, task ${event.taskIndex}`), StringType)());
+                        }
+                    );
+
+                    const onTaskDrag = East.function(
+                        [Gantt.Types.TaskDragEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str`onTaskDrag: row ${event.rowIndex}, task ${event.taskIndex} moved`), StringType)());
+                        }
+                    );
+
+                    const onTaskDurationChange = East.function(
+                        [Gantt.Types.TaskDurationChangeEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str`onTaskDurationChange: row ${event.rowIndex}, task ${event.taskIndex}, new end date`), StringType)());
+                        }
+                    );
+
+                    const onTaskProgressChange = East.function(
+                        [Gantt.Types.TaskProgressChangeEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str`onTaskProgressChange: row ${event.rowIndex}, task ${event.taskIndex}, progress ${event.newProgress}`), StringType)());
+                        }
+                    );
+
+                    const onMilestoneClick = East.function(
+                        [Gantt.Types.MilestoneClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str`onMilestoneClick: row ${event.rowIndex}, milestone ${event.milestoneIndex}`), StringType)());
+                        }
+                    );
+
+                    const onMilestoneDoubleClick = East.function(
+                        [Gantt.Types.MilestoneClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str`onMilestoneDoubleClick: row ${event.rowIndex}, milestone ${event.milestoneIndex}`), StringType)());
+                        }
+                    );
+
+                    const onMilestoneDrag = East.function(
+                        [Gantt.Types.MilestoneDragEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str`onMilestoneDrag: row ${event.rowIndex}, milestone ${event.milestoneIndex} moved`), StringType)());
+                        }
+                    );
+
+                    return Stack.VStack([
+                        Gantt.Root(
+                            [
+                                { name: "Sprint 1", start: new Date("2024-01-01"), end: new Date("2024-01-14"), release: new Date("2024-01-14") },
+                                { name: "Sprint 2", start: new Date("2024-01-15"), end: new Date("2024-01-28"), release: new Date("2024-01-28") },
+                                { name: "Sprint 3", start: new Date("2024-01-29"), end: new Date("2024-02-11"), release: new Date("2024-02-11") },
+                            ],
+                            { name: { header: "Sprint" } },
+                            row => [
+                                Gantt.Task({ start: row.start, end: row.end, colorPalette: "blue", progress: 50 }),
+                                Gantt.Milestone({ date: row.release, label: "Release", colorPalette: "green" }),
+                            ],
+                            {
+                                interactive: true,
+                                striped: true,
+                                showToday: true,
+                                onRowClick,
+                                onRowDoubleClick,
+                                onCellClick,
+                                onCellDoubleClick,
+                                onSortChange,
+                                onTaskClick,
+                                onTaskDoubleClick,
+                                onTaskDrag,
+                                onTaskDurationChange,
+                                onTaskProgressChange,
+                                onMilestoneClick,
+                                onMilestoneDoubleClick,
+                                onMilestoneDrag,
+                            }
+                        ),
+                        Badge.Root(
+                            East.equal(lastEvent.unwrap('some').length(), 0n).ifElse($ => "Interact with the Gantt chart", $ => lastEvent.unwrap('some')),
+                            { colorPalette: "blue", variant: "outline" }
+                        ),
+                    ], { gap: "3", align: "stretch" });
+                }),
+                some(`
+                Reactive.Root($ => {
+                    const lastEvent = $.let(State.readTyped("gantt_last_event", StringType)());
+
+                    // Table-inherited callbacks
+                    const onRowClick = East.function(
+                        [Table.Types.RowClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str\`onRowClick: row \${event.rowIndex} \`), StringType)());
+                        }
+                    );
+
+                    const onRowDoubleClick = East.function(
+                        [Table.Types.RowClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str\`onRowDoubleClick: row \${event.rowIndex}\`), StringType)());
+                        }
+                    );
+
+                    const onCellClick = East.function(
+                        [Table.Types.CellClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str\`onCellClick: row \${event.rowIndex}, col \${event.columnKey}\`), StringType)());
+                        }
+                    );
+
+                    const onCellDoubleClick = East.function(
+                        [Table.Types.CellClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str\`onCellDoubleClick: row \${event.rowIndex}, col \${event.columnKey}\`), StringType)());
+                        }
+                    );
+
+                    const onSortChange = East.function(
+                        [Table.Types.SortEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str\`onSortChange: \${event.columnKey} - \${event.sortDirection.getTag()}\`), StringType)());
+                        }
+                    );
+
+                    // Gantt-specific callbacks
+                    const onTaskClick = East.function(
+                        [Gantt.Types.TaskClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str\`onTaskClick: row \${event.rowIndex}, task \${event.taskIndex}\`), StringType)());
+                        }
+                    );
+
+                    const onTaskDoubleClick = East.function(
+                        [Gantt.Types.TaskClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str\`onTaskDoubleClick: row \${event.rowIndex}, task \${event.taskIndex}\`), StringType)());
+                        }
+                    );
+
+                    const onTaskDrag = East.function(
+                        [Gantt.Types.TaskDragEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str\`onTaskDrag: row \${event.rowIndex}, task \${event.taskIndex} moved\`), StringType)());
+                        }
+                    );
+
+                    const onTaskDurationChange = East.function(
+                        [Gantt.Types.TaskDurationChangeEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str\`onTaskDurationChange: row \${event.rowIndex}, task \${event.taskIndex}, new end date\`), StringType)());
+                        }
+                    );
+
+                    const onTaskProgressChange = East.function(
+                        [Gantt.Types.TaskProgressChangeEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str\`onTaskProgressChange: row \${event.rowIndex}, task \${event.taskIndex}, progress \${event.newProgress}\`), StringType)());
+                        }
+                    );
+
+                    const onMilestoneClick = East.function(
+                        [Gantt.Types.MilestoneClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str\`onMilestoneClick: row \${event.rowIndex}, milestone \${event.milestoneIndex}\`), StringType)());
+                        }
+                    );
+
+                    const onMilestoneDoubleClick = East.function(
+                        [Gantt.Types.MilestoneClickEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str\`onMilestoneDoubleClick: row \${event.rowIndex}, milestone \${event.milestoneIndex}\`), StringType)());
+                        }
+                    );
+
+                    const onMilestoneDrag = East.function(
+                        [Gantt.Types.MilestoneDragEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_last_event", some(East.str\`onMilestoneDrag: row \${event.rowIndex}, milestone \${event.milestoneIndex} moved\`), StringType)());
+                        }
+                    );
+
+                    return Stack.VStack([
+                        Gantt.Root(
+                            [
+                                { name: "Sprint 1", start: new Date("2024-01-01"), end: new Date("2024-01-14"), release: new Date("2024-01-14") },
+                                { name: "Sprint 2", start: new Date("2024-01-15"), end: new Date("2024-01-28"), release: new Date("2024-01-28") },
+                                { name: "Sprint 3", start: new Date("2024-01-29"), end: new Date("2024-02-11"), release: new Date("2024-02-11") },
+                            ],
+                            { name: { header: "Sprint" } },
+                            row => [
+                                Gantt.Task({ start: row.start, end: row.end, colorPalette: "blue", progress: 50 }),
+                                Gantt.Milestone({ date: row.release, label: "Release", colorPalette: "green" }),
+                            ],
+                            {
+                                interactive: true,
+                                striped: true,
+                                showToday: true,
+                                onRowClick,
+                                onRowDoubleClick,
+                                onCellClick,
+                                onCellDoubleClick,
+                                onSortChange,
+                                onTaskClick,
+                                onTaskDoubleClick,
+                                onTaskDrag,
+                                onTaskDurationChange,
+                                onTaskProgressChange,
+                                onMilestoneClick,
+                                onMilestoneDoubleClick,
+                                onMilestoneDrag,
+                            }
+                        ),
+                        Badge.Root(
+                            East.equal(lastEvent.unwrap('some').length(), 0n).ifElse($ => "Interact with the Gantt chart", $ => lastEvent.unwrap('some')),
+                            { colorPalette: "blue", variant: "outline" }
+                        ),
+                    ], { gap: "3", align: "stretch" });
+                })
+            `)
+            )
+        );
+
+        // =====================================================================
+        // REACTIVE DRAG EXAMPLE - Task dates stored in state and updated on drag
+        // =====================================================================
+
+        // Initialize state for the draggable task's start date
+        $(State.initTyped("gantt_task_start", new Date("2024-01-15"), DateTimeType)());
+
+        const reactiveDrag = $.let(
+            ShowcaseCard(
+                "Reactive Drag",
+                "Drag task to update state - position persists after re-render",
+                Reactive.Root($ => {
+                    // Read task start date from state
+                    const taskStart = $.let(State.readTyped("gantt_task_start", DateTimeType)());
+                    // Calculate end date (14 days after start)
+                    const taskEnd = $.let(taskStart.unwrap('some').addDays(14));
+
+                    // Callback to update start date when dragged
+                    const onTaskDrag = East.function(
+                        [Gantt.Types.TaskDragEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_task_start", some(event.newStart), DateTimeType)());
+                        }
+                    );
+
+                    return Stack.VStack([
+                        Gantt.Root(
+                            [{ name: "Draggable Task" }],
+                            { name: { header: "Task" } },
+                            _row => [
+                                Gantt.Task({
+                                    start: taskStart.unwrap('some'),
+                                    end: taskEnd,
+                                    label: "Drag me!",
+                                    colorPalette: "orange",
+                                }),
+                            ],
+                            {
+                                interactive: true,
+                                onTaskDrag,
+                                // Snap to 1-day increments when dragging
+                                dragStep: variant("days", 1),
+                                durationStep: variant("days", 1),
+                            }
+                        ),
+                        Text.Root(East.str`Start: ${taskStart.unwrap('some')}`, { fontSize: "sm", color: "fg.muted" }),
+                    ], { gap: "3", align: "stretch" });
+                }),
+                some(`
+                // Initialize state with task start date
+                $(State.initTyped("gantt_task_start", new Date("2024-01-15"), DateTimeType)());
+
+                Reactive.Root($ => {
+                    // Read from state
+                    const taskStart = $.let(State.readTyped("gantt_task_start", DateTimeType)());
+                    const taskEnd = $.let(East.datetime.addDays(taskStart, 14n));
+
+                    // Update state on drag
+                    const onTaskDrag = East.function(
+                        [Gantt.Types.TaskDragEvent],
+                        NullType,
+                        ($, event) => {
+                            $(State.writeTyped("gantt_task_start", some(event.newStart), DateTimeType)());
+                        }
+                    );
+
+                    return Gantt.Root(
+                        [{ name: "Draggable Task" }],
+                        { name: { header: "Task" } },
+                        _row => [Gantt.Task({ start: taskStart, end: taskEnd, label: "Drag me!" })],
+                        { interactive: true, onTaskDrag, dragStep: variant("days", 1) }
+                    );
+                })
+            `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -260,6 +647,10 @@ export default East.function(
                 Grid.Item(withProgress),
                 Grid.Item(colorful),
                 Grid.Item(styled),
+                // Interactive example with all callbacks
+                Grid.Item(interactiveCallbacks, { colSpan: "2" }),
+                // Reactive drag example
+                Grid.Item(reactiveDrag, { colSpan: "2" }),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

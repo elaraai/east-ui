@@ -84,26 +84,16 @@ export type DialogType = typeof DialogType;
  *
  * @example
  * ```ts
- * import { Dialog, Button, Text } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Dialog, Button, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple dialog
- * const dialog = Dialog.Root(
- *   Button.Root("Open Dialog"),
- *   [Text.Root("Dialog content here")],
- *   { title: "My Dialog" }
- * );
- *
- * // Dialog with size and placement
- * const largeDialog = Dialog.Root(
- *   Button.Root("Settings"),
- *   [Text.Root("Settings content")],
- *   {
- *     title: "Settings",
- *     size: "lg",
- *     placement: "center",
- *     closeOnEscape: true,
- *   }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Dialog.Root(
+ *         Button.Root("Open Dialog"),
+ *         [Text.Root("Dialog content here")],
+ *         { title: "My Dialog" }
+ *     );
+ * });
  * ```
  */
 function createDialog(
@@ -141,18 +131,26 @@ function createDialog(
             : style.role)
         : undefined;
 
+    const hasStyle = sizeValue || placementValue || scrollBehaviorValue || motionPresetValue || roleValue ||
+        style?.onOpenChange !== undefined || style?.onExitComplete !== undefined ||
+        style?.onEscapeKeyDown !== undefined || style?.onInteractOutside !== undefined;
+
     return East.value(variant("Dialog", {
         trigger: trigger,
         body: body,
         title: style?.title !== undefined ? variant("some", style.title) : variant("none", null),
         description: style?.description !== undefined ? variant("some", style.description) : variant("none", null),
-        style: sizeValue || placementValue || scrollBehaviorValue || motionPresetValue || roleValue
+        style: hasStyle
             ? variant("some", East.value({
                 size: sizeValue ? variant("some", sizeValue) : variant("none", null),
                 placement: placementValue ? variant("some", placementValue) : variant("none", null),
                 scrollBehavior: scrollBehaviorValue ? variant("some", scrollBehaviorValue) : variant("none", null),
                 motionPreset: motionPresetValue ? variant("some", motionPresetValue) : variant("none", null),
                 role: roleValue ? variant("some", roleValue) : variant("none", null),
+                onOpenChange: style?.onOpenChange !== undefined ? variant("some", style.onOpenChange) : variant("none", null),
+                onExitComplete: style?.onExitComplete !== undefined ? variant("some", style.onExitComplete) : variant("none", null),
+                onEscapeKeyDown: style?.onEscapeKeyDown !== undefined ? variant("some", style.onEscapeKeyDown) : variant("none", null),
+                onInteractOutside: style?.onInteractOutside !== undefined ? variant("some", style.onInteractOutside) : variant("none", null),
             }, DialogStyleType))
             : variant("none", null),
     }), UIComponentType);
@@ -163,21 +161,6 @@ function createDialog(
  *
  * @remarks
  * Use `Dialog.Root(trigger, body, style)` to create a dialog, or access `Dialog.Types` for East types.
- *
- * @example
- * ```ts
- * import { Dialog, Button, Text } from "@elaraai/east-ui";
- *
- * // Create a dialog
- * const dialog = Dialog.Root(
- *   Button.Root("Open"),
- *   [Text.Root("Content")],
- *   { title: "My Dialog" }
- * );
- *
- * // Access the type
- * const styleType = Dialog.Types.Style;
- * ```
  */
 export const Dialog = {
     /**

@@ -12,21 +12,45 @@
  * @packageDocumentation
  */
 
-// Platform functions (re-exported from @elaraai/east-ui)
-export { State, state_write, state_read } from "@elaraai/east-ui";
+// Platform (re-exported from @elaraai/east-ui)
+export { State } from "@elaraai/east-ui";
 
-// Store
-export { EastStore, createEastStore, type EastStoreOptions } from "./store.js";
-
-// React hooks
+// Store types and classes
 export {
-    EastStoreProvider,
+    UIStore,
+    createUIStore,
+    createUIStore as createEastStore, // Legacy alias
+    type UIStoreInterface,
+    type UIStoreOptions,
+    PersistentUIStore,
+    createPersistentUIStore,
+} from "./store.js";
+
+// React hooks and components
+export {
+    // Provider
+    UIStoreProvider,
+    type UIStoreProviderProps,
+
+    // Hooks
+    useUIStore,
+    useUIStoreSubscription,
+    useUIState,
+    useUIKey,
+    useUIWrite,
+    useUIBatch,
+
+    // Components
+    EastComponent,
+    type EastComponentProps,
     EastFunction,
+    type EastFunctionProps,
+
+    // Legacy aliases
+    EastStoreProvider,
     useEastStore,
     useEastState,
     useEastKey,
     useEastWrite,
     useEastBatch,
-    type EastStoreProviderProps,
-    type EastFunctionProps,
 } from "./hooks.js";

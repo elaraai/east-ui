@@ -137,11 +137,13 @@ export const EastChakraAreaChart = memo(function EastChakraAreaChart({ value }: 
             chart={chart}
             maxW="full"
             maxH="full"
+            
         >
             <AreaChart
                 data={chart.data}
                 {...(options.stackOffset ? { stackOffset: options.stackOffset } : {})}
                 margin={margin}
+                
             >
                 {showGrid && <CartesianGrid {...gridProps} />}
                 {!xAxisProps.hide && (
@@ -174,6 +176,7 @@ export const EastChakraAreaChart = memo(function EastChakraAreaChart({ value }: 
                         connectNulls={options.connectNulls}
                         isAnimationActive={false}
                         stackId={item.stackId ?? options.defaultStackId ?? "0"}
+                        
                     />
                 ))}
             </AreaChart>

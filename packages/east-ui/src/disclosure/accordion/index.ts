@@ -13,6 +13,8 @@ import {
     BooleanType,
     ArrayType,
     variant,
+    some,
+    none,
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
@@ -103,17 +105,18 @@ export type AccordionRootType = typeof AccordionRootType;
  *
  * @example
  * ```ts
- * import { Accordion, Text } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Accordion, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * const item = Accordion.Item("section-1", "Section 1", [
- *   Text.Root("Content for section 1"),
- * ]);
- *
- * // Disabled item
- * const disabled = Accordion.Item("section-2", "Section 2", [
- *   Text.Root("Disabled content"),
- * ], {
- *   disabled: true,
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Accordion.Root([
+ *         Accordion.Item("section-1", "Section 1", [
+ *             Text.Root("Content for section 1"),
+ *         ]),
+ *         Accordion.Item("section-2", "Section 2", [
+ *             Text.Root("Content for section 2"),
+ *         ], { disabled: true }),
+ *     ]);
  * });
  * ```
  */
@@ -123,16 +126,11 @@ function createAccordionItem(
     content: SubtypeExprOrValue<ArrayType<UIComponentType>>,
     style?: AccordionItemStyle
 ): ExprType<AccordionItemType> {
-    const toBoolOption = (val: SubtypeExprOrValue<BooleanType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        return variant("some", val);
-    };
-
     return East.value({
         value: value,
         trigger: trigger,
         content: content,
-        disabled: toBoolOption(style?.disabled),
+        disabled: style?.disabled !== undefined ? some(style.disabled) : none,
     }, AccordionItemType);
 }
 
@@ -153,25 +151,21 @@ function createAccordionItem(
  *
  * @example
  * ```ts
- * import { Accordion, Text } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Accordion, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple accordion
- * const faq = Accordion.Root([
- *   Accordion.Item("q1", "What is East UI?", [
- *     Text.Root("East UI is a typed UI library."),
- *   ]),
- *   Accordion.Item("q2", "How do I install it?", [
- *     Text.Root("Run npm install @elaraai/east-ui"),
- *   ]),
- * ]);
- *
- * // Allow multiple panels open
- * const multi = Accordion.Root([
- *   Accordion.Item("a", "Section A", [Text.Root("Content A")]),
- *   Accordion.Item("b", "Section B", [Text.Root("Content B")]),
- * ], {
- *   multiple: true,
- *   variant: "enclosed",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Accordion.Root([
+ *         Accordion.Item("q1", "What is East UI?", [
+ *             Text.Root("East UI is a typed UI library."),
+ *         ]),
+ *         Accordion.Item("q2", "How do I install it?", [
+ *             Text.Root("Run npm install @elaraai/east-ui"),
+ *         ]),
+ *     ], {
+ *         multiple: true,
+ *         variant: "enclosed",
+ *     });
  * });
  * ```
  */
@@ -179,11 +173,6 @@ function createAccordionRoot(
     items: SubtypeExprOrValue<ArrayType<AccordionItemType>>,
     style?: AccordionStyle
 ): ExprType<UIComponentType> {
-    const toBoolOption = (val: SubtypeExprOrValue<BooleanType> | undefined) => {
-        if (val === undefined) return variant("none", null);
-        return variant("some", val);
-    };
-
     const variantValue = style?.variant
         ? (typeof style.variant === "string"
             ? East.value(variant(style.variant, null), AccordionVariantType)
@@ -192,11 +181,12 @@ function createAccordionRoot(
 
     return East.value(variant("Accordion", {
         items: items,
-        style: style ? variant("some", East.value({
-            multiple: toBoolOption(style.multiple),
-            collapsible: toBoolOption(style.collapsible),
-            variant: variantValue ? variant("some", variantValue) : variant("none", null),
-        }, AccordionStyleType)) : variant("none", null),
+        style: style ? some(East.value({
+            multiple: style.multiple !== undefined ? some(style.multiple) : none,
+            collapsible: style.collapsible !== undefined ? some(style.collapsible) : none,
+            variant: variantValue ? some(variantValue) : none,
+            onValueChange: style.onValueChange ? some(style.onValueChange) : none,
+        }, AccordionStyleType)) : none,
     }), UIComponentType);
 }
 
@@ -210,24 +200,6 @@ function createAccordionRoot(
  * @remarks
  * Use `Accordion.Root` to create the container and `Accordion.Item` for each
  * collapsible panel. Item content supports child UI components.
- *
- * @example
- * ```ts
- * import { Accordion, Text, Button } from "@elaraai/east-ui";
- *
- * const settingsPanel = Accordion.Root([
- *   Accordion.Item("general", "General Settings", [
- *     Text.Root("General configuration options"),
- *     Button.Root("Save Settings"),
- *   ]),
- *   Accordion.Item("advanced", "Advanced Settings", [
- *     Text.Root("Advanced configuration options"),
- *   ]),
- * ], {
- *   variant: "enclosed",
- *   collapsible: true,
- * });
- * ```
  */
 export const Accordion = {
     /**

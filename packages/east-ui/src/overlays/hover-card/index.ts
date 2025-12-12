@@ -72,30 +72,19 @@ export type HoverCardType = typeof HoverCardType;
  *
  * @example
  * ```ts
- * import { HoverCard, Text, Avatar, Stack } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { HoverCard, Text, Avatar, UIComponentType } from "@elaraai/east-ui";
  *
- * // User profile hover card
- * const profileCard = HoverCard.Root(
- *   Text.Root("@johndoe"),
- *   [
- *     Stack.Root([
- *       Avatar.Root("JD", { name: "John Doe" }),
- *       Text.Root("John Doe"),
- *       Text.Root("Software Engineer"),
- *     ], { gap: "2" }),
- *   ],
- *   { placement: "bottom", openDelay: 200 }
- * );
- *
- * // Link preview hover card
- * const linkPreview = HoverCard.Root(
- *   Text.Root("View documentation"),
- *   [
- *     Text.Root("East UI Documentation"),
- *     Text.Root("Complete guide to East UI components"),
- *   ],
- *   { hasArrow: true }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return HoverCard.Root(
+ *         Text.Root("@username"),
+ *         [
+ *             Avatar.Root({ name: "John Doe" }),
+ *             Text.Root("Software Engineer"),
+ *         ],
+ *         { openDelay: 200n }
+ *     );
+ * });
  * ```
  */
 function createHoverCard(
@@ -115,16 +104,20 @@ function createHoverCard(
             : style.placement)
         : undefined;
 
+    const hasStyle = sizeValue || placementValue || style?.hasArrow !== undefined ||
+        style?.openDelay !== undefined || style?.closeDelay !== undefined || style?.onOpenChange !== undefined;
+
     return East.value(variant("HoverCard", {
         trigger: trigger,
         body: body,
-        style: sizeValue || placementValue || style?.hasArrow !== undefined || style?.openDelay !== undefined || style?.closeDelay !== undefined
+        style: hasStyle
             ? variant("some", East.value({
                 size: sizeValue ? variant("some", sizeValue) : variant("none", null),
                 placement: placementValue ? variant("some", placementValue) : variant("none", null),
                 hasArrow: style?.hasArrow !== undefined ? variant("some", style.hasArrow) : variant("none", null),
                 openDelay: style?.openDelay !== undefined ? variant("some", style.openDelay) : variant("none", null),
                 closeDelay: style?.closeDelay !== undefined ? variant("some", style.closeDelay) : variant("none", null),
+                onOpenChange: style?.onOpenChange !== undefined ? variant("some", style.onOpenChange) : variant("none", null),
             }, HoverCardStyleType))
             : variant("none", null),
     }), UIComponentType);
@@ -135,21 +128,6 @@ function createHoverCard(
  *
  * @remarks
  * Use `HoverCard.Root(trigger, body, style)` to create a hover card, or access `HoverCard.Types` for East types.
- *
- * @example
- * ```ts
- * import { HoverCard, Text, Avatar } from "@elaraai/east-ui";
- *
- * // Create a hover card
- * const hoverCard = HoverCard.Root(
- *   Text.Root("@username"),
- *   [Avatar.Root("UN"), Text.Root("User Name")],
- *   { placement: "bottom" }
- * );
- *
- * // Access the type
- * const styleType = HoverCard.Types.Style;
- * ```
  */
 export const HoverCard = {
     /**

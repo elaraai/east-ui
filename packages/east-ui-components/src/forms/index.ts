@@ -21,6 +21,7 @@ export {
     type EastChakraIntegerInputProps,
     type EastChakraFloatInputProps,
     type EastChakraDateTimeInputProps,
+    type ChakraDateTimeInputProps,
 } from "./input/index.js";
 
 // Checkbox
@@ -63,14 +64,6 @@ export {
     type FieldValue,
     type EastChakraFieldProps,
 } from "./field/index.js";
-
-// Fieldset
-export {
-    EastChakraFieldset,
-    toChakraFieldset,
-    type FieldsetValue,
-    type EastChakraFieldsetProps,
-} from "./fieldset/index.js";
 
 // Textarea
 export {

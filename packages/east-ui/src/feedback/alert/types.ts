@@ -23,10 +23,12 @@ import {
  * Status types for Alert component.
  *
  * @remarks
- * - info: Informational alert
- * - warning: Warning alert
- * - success: Success/confirmation alert
- * - error: Error/danger alert
+ * Determines the color scheme and icon for the alert.
+ *
+ * @property info - Informational alert (blue)
+ * @property warning - Warning alert (yellow)
+ * @property success - Success/confirmation alert (green)
+ * @property error - Error/danger alert (red)
  */
 export const AlertStatusType = VariantType({
     /** Informational alert */
@@ -57,10 +59,13 @@ export type AlertStatusLiteral = "info" | "warning" | "success" | "error";
  *
  * @example
  * ```ts
- * import { Alert, AlertStatus } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Alert, UIComponentType } from "@elaraai/east-ui";
  *
- * const alert = Alert(AlertStatus("success"), {
- *   title: "Saved!",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Alert.Root(Alert.Status("success"), {
+ *         title: "Saved!",
+ *     });
  * });
  * ```
  */
@@ -76,9 +81,11 @@ export function AlertStatus(status: "info" | "warning" | "success" | "error"): E
  * Variant types for Alert visual style.
  *
  * @remarks
- * - solid: Solid background alert
- * - subtle: Subtle/light background alert
- * - outline: Bordered alert
+ * Controls the visual appearance of the alert container.
+ *
+ * @property solid - Solid background alert
+ * @property subtle - Subtle/light background alert
+ * @property outline - Bordered alert
  */
 export const AlertVariantType = VariantType({
     /** Solid background alert */
@@ -107,10 +114,14 @@ export type AlertVariantLiteral = "solid" | "subtle" | "outline";
  *
  * @example
  * ```ts
- * import { Alert, AlertStatus, AlertVariant } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Alert, UIComponentType } from "@elaraai/east-ui";
  *
- * const alert = Alert(AlertStatus("info"), {
- *   variant: AlertVariant("subtle"),
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Alert.Root("info", {
+ *         title: "Info",
+ *         variant: Alert.Variant("subtle"),
+ *     });
  * });
  * ```
  */

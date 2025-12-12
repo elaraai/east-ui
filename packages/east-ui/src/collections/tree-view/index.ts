@@ -241,16 +241,15 @@ function buildIndicatorValue(indicator?: TreeNodeIndicator) {
  *
  * @example
  * ```ts
- * import { TreeView } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { TreeView, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple file item
- * TreeView.Item("file1", "index.ts");
- *
- * // Item with file icon
- * TreeView.Item("readme", "README.md", { prefix: "far", name: "file" });
- *
- * // Item with colored code icon
- * TreeView.Item("index", "index.ts", { prefix: "fas", name: "file-code", color: "blue.500" });
+ * const example = East.function([], UIComponentType, $ => {
+ *     return TreeView.Root([
+ *         TreeView.Item("readme", "README.md", { prefix: "far", name: "file" }),
+ *         TreeView.Item("index", "index.ts", { prefix: "fas", name: "file-code", color: "blue.500" }),
+ *     ]);
+ * });
  * ```
  */
 function TreeItem(
@@ -277,25 +276,19 @@ function TreeItem(
  *
  * @example
  * ```ts
- * import { TreeView } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { TreeView, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple folder branch
- * TreeView.Branch("src", "src", [
- *   TreeView.Item("file1", "index.ts"),
- *   TreeView.Item("file2", "utils.ts"),
- * ]);
- *
- * // Branch with folder icon
- * TreeView.Branch("src", "src", [
- *   TreeView.Item("index", "index.ts"),
- * ], { prefix: "fas", name: "folder", color: "yellow.500" });
- *
- * // Nested branches
- * TreeView.Branch("src", "src", [
- *   TreeView.Branch("components", "components", [
- *     TreeView.Item("button", "Button.tsx"),
- *   ]),
- * ], { prefix: "fas", name: "folder" });
+ * const example = East.function([], UIComponentType, $ => {
+ *     return TreeView.Root([
+ *         TreeView.Branch("src", "src", [
+ *             TreeView.Branch("components", "components", [
+ *                 TreeView.Item("button", "Button.tsx"),
+ *             ]),
+ *             TreeView.Item("index", "index.ts"),
+ *         ], { prefix: "fas", name: "folder", color: "yellow.500" }),
+ *     ]);
+ * });
  * ```
  */
 function TreeBranch(
@@ -327,26 +320,21 @@ function TreeBranch(
  *
  * @example
  * ```ts
- * import { TreeView } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { TreeView, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple file tree
- * TreeView.Root([
- *   TreeView.Branch("src", "src", [
- *     TreeView.Item("index", "index.ts"),
- *     TreeView.Item("utils", "utils.ts"),
- *   ]),
- *   TreeView.Item("package", "package.json"),
- * ], {
- *   variant: "subtle",
- *   size: "sm",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return TreeView.Root([
+ *         TreeView.Branch("src", "src", [
+ *             TreeView.Item("index", "index.ts"),
+ *             TreeView.Item("utils", "utils.ts"),
+ *         ]),
+ *         TreeView.Item("package", "package.json"),
+ *     ], {
+ *         variant: "subtle",
+ *         size: "sm",
+ *     });
  * });
- *
- * // File tree with indicators
- * TreeView.Root([
- *   TreeView.Branch("src", "src", [
- *     TreeView.Item("index", "index.ts", { prefix: "fas", name: "file-code" }),
- *   ], { prefix: "fas", name: "folder", color: "yellow.500" }),
- * ]);
  * ```
  */
 function TreeViewRoot(
@@ -386,7 +374,10 @@ function TreeViewRoot(
         style.size !== undefined ||
         style.variant !== undefined ||
         style.selectionMode !== undefined ||
-        style.animateContent !== undefined
+        style.animateContent !== undefined ||
+        style.onExpandedChange !== undefined ||
+        style.onSelectionChange !== undefined ||
+        style.onFocusChange !== undefined
     );
 
     return East.value(variant("TreeView", {
@@ -399,6 +390,9 @@ function TreeViewRoot(
             variant: variantValue ? variant("some", variantValue) : variant("none", null),
             selectionMode: selectionModeValue ? variant("some", selectionModeValue) : variant("none", null),
             animateContent: toBoolOption(style?.animateContent),
+            onExpandedChange: style?.onExpandedChange ? variant("some", style.onExpandedChange) : variant("none", null),
+            onSelectionChange: style?.onSelectionChange ? variant("some", style.onSelectionChange) : variant("none", null),
+            onFocusChange: style?.onFocusChange ? variant("some", style.onFocusChange) : variant("none", null),
         }, TreeViewStyleType)) : variant("none", null),
     }), UIComponentType);
 }
@@ -413,31 +407,6 @@ function TreeViewRoot(
  * @remarks
  * TreeView displays hierarchical data structures in an expandable tree format.
  * Use TreeView.Item for leaf nodes and TreeView.Branch for expandable nodes.
- *
- * @example
- * ```ts
- * import { TreeView } from "@elaraai/east-ui";
- *
- * // Simple file tree
- * const fileTree = TreeView.Root([
- *   TreeView.Branch("src", "src", [
- *     TreeView.Item("index", "index.ts"),
- *     TreeView.Item("utils", "utils.ts"),
- *   ]),
- *   TreeView.Item("package", "package.json"),
- * ], {
- *   label: "Project Files",
- *   variant: "subtle",
- *   size: "sm",
- * });
- *
- * // File tree with indicators
- * const iconTree = TreeView.Root([
- *   TreeView.Branch("src", "src", [
- *     TreeView.Item("index", "index.ts", { prefix: "fas", name: "file-code" }),
- *   ], { prefix: "fas", name: "folder", color: "yellow.500" }),
- * ]);
- * ```
  */
 export const TreeView = {
     /**

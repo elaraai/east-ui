@@ -77,30 +77,15 @@ export type TooltipType = typeof TooltipType;
  *
  * @example
  * ```ts
- * import { Tooltip, Button, Text } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Tooltip, Button, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple tooltip on a button
- * const tooltipButton = Tooltip.Root(
- *   Button.Root("Hover me"),
- *   "This is a helpful tip"
- * );
- *
- * // Tooltip with placement
- * const topTooltip = Tooltip.Root(
- *   Text.Root("Hover for info"),
- *   "Additional information",
- *   { placement: "top" }
- * );
- *
- * // Tooltip with arrow
- * const arrowTooltip = Tooltip.Root(
- *   Button.Root("Save"),
- *   "Save your changes",
- *   { placement: "bottom", hasArrow: true }
- * );
- *
- * // Access the type
- * const tooltipType = Tooltip.Types.Style;
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Tooltip.Root(
+ *         Button.Root("Hover me"),
+ *         "This is a helpful tip"
+ *     );
+ * });
  * ```
  */
 function createTooltip(
@@ -127,17 +112,6 @@ function createTooltip(
  *
  * @remarks
  * Use `Tooltip.Root(trigger, content, style)` to create a tooltip, or access `Tooltip.Types` for East types.
- *
- * @example
- * ```ts
- * import { Tooltip, Button } from "@elaraai/east-ui";
- *
- * // Create a tooltip
- * const tooltip = Tooltip.Root(Button.Root("Help"), "Click for help");
- *
- * // Access the type
- * const styleType = Tooltip.Types.Style;
- * ```
  */
 export const Tooltip = {
     /**

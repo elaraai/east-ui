@@ -71,20 +71,15 @@ export type ToggleTipType = typeof ToggleTipType;
  *
  * @example
  * ```ts
- * import { ToggleTip, Button, Icon } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { ToggleTip, Button, UIComponentType } from "@elaraai/east-ui";
  *
- * // Info toggle tip
- * const infoTip = ToggleTip.Root(
- *   Button.Root("?", { variant: "ghost", size: "sm" }),
- *   "Click to learn more about this feature"
- * );
- *
- * // Toggle tip with placement
- * const bottomTip = ToggleTip.Root(
- *   Icon.Root("info"),
- *   "Additional information here",
- *   { placement: "bottom", hasArrow: true }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return ToggleTip.Root(
+ *         Button.Root("?", { variant: "ghost", size: "sm" }),
+ *         "Click to learn more about this feature"
+ *     );
+ * });
  * ```
  */
 function createToggleTip(
@@ -98,13 +93,16 @@ function createToggleTip(
             : style.placement)
         : undefined;
 
+    const hasStyle = placementValue || style?.hasArrow !== undefined || style?.onOpenChange !== undefined;
+
     return East.value(variant("ToggleTip", {
         trigger: trigger,
         content: content,
-        style: placementValue || style?.hasArrow !== undefined
+        style: hasStyle
             ? variant("some", East.value({
                 placement: placementValue ? variant("some", placementValue) : variant("none", null),
                 hasArrow: style?.hasArrow !== undefined ? variant("some", style.hasArrow) : variant("none", null),
+                onOpenChange: style?.onOpenChange !== undefined ? variant("some", style.onOpenChange) : variant("none", null),
             }, ToggleTipStyleType))
             : variant("none", null),
     }), UIComponentType);
@@ -115,21 +113,6 @@ function createToggleTip(
  *
  * @remarks
  * Use `ToggleTip.Root(trigger, content, style)` to create a toggle tip, or access `ToggleTip.Types` for East types.
- *
- * @example
- * ```ts
- * import { ToggleTip, Button } from "@elaraai/east-ui";
- *
- * // Create a toggle tip
- * const tip = ToggleTip.Root(
- *   Button.Root("?"),
- *   "Click for help",
- *   { placement: "top" }
- * );
- *
- * // Access the type
- * const styleType = ToggleTip.Types.Style;
- * ```
  */
 export const ToggleTip = {
     /**

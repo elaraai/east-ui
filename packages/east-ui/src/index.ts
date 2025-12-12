@@ -29,13 +29,13 @@ export { Style } from "./style.js";
 export { Text, Code, Heading, Link, Highlight, Mark, List, CodeBlock } from "./typography/index.js";
 
 // Layout
-export { Box, Stack, Separator, Grid, Splitter } from "./layout/index.js";
+export { Box, Flex, Stack, Separator, Grid, Splitter } from "./layout/index.js";
 
 // Buttons
 export { Button, IconButton } from "./buttons/index.js";
 
 // Forms
-export { Input, Checkbox, Switch, Select, Slider, Field, FileUpload, Fieldset, Textarea, TagsInput } from "./forms/index.js";
+export { Input, Checkbox, Switch, Select, Slider, Field, FileUpload, Textarea, TagsInput } from "./forms/index.js";
 
 // Feedback
 export { Progress, Alert } from "./feedback/index.js";
@@ -58,8 +58,16 @@ export { Accordion, Carousel, Tabs } from "./disclosure/index.js";
 // Overlays
 export { Tooltip, Menu, Dialog, Drawer, Popover, HoverCard, ActionBar, ToggleTip } from "./overlays/index.js";
 
+// Reactive (selective re-rendering)
+export { Reactive } from "./reactive/index.js";
+
 // Component Types
 export { UIComponentType } from "./component.js";
 
-// Platform functions (state management)
-export { State, state_read, state_write } from "./platform/index.js";
+// Platform (state management)
+export { State } from "./platform/index.js";
+export { UIStore, createUIStore } from "./platform/index.js";
+export type { UIStoreInterface, UIStoreOptions } from "./platform/index.js";
+
+// Tracking functions for reactive components (used by east-ui-components)
+export { enableTracking, disableTracking, isTracking, trackKey } from "./platform/index.js";

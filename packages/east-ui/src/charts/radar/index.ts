@@ -31,23 +31,22 @@ export { RadarChartType, type RadarChartStyle, type RadarChartSeriesConfig } fro
  *
  * @example
  * ```ts
- * import { Chart } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Chart, UIComponentType } from "@elaraai/east-ui";
  *
- * const chart = Chart.Radar(
- *   [
- *     { subject: "Math", current: 80, target: 90 },
- *     { subject: "Science", current: 95, target: 85 },
- *   ],
- *   {
- *     current: { color: "teal.solid" },
- *     target: { color: "orange.solid" },
- *   },
- *   {
- *     dataKey: "subject",
- *     grid: Chart.Grid({ show: true }),
- *     fillOpacity: 0.3,
- *   }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Chart.Radar(
+ *         [
+ *             { subject: "Math", A: 120n, B: 110n },
+ *             { subject: "English", A: 98n, B: 130n },
+ *         ],
+ *         {
+ *             A: { color: "teal.solid" },
+ *             B: { color: "purple.solid" },
+ *         },
+ *         { dataKey: "subject" }
+ *     );
+ * });
  * ```
  */
 export function createRadarChart<T extends SubtypeExprOrValue<ArrayType<StructType>>>(

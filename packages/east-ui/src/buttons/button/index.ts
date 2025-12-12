@@ -6,10 +6,10 @@
 import {
     type ExprType,
     East,
-    StringType,
-    BooleanType,
-    variant,
-    type SubtypeExprOrValue,
+    StringType, variant,
+    some,
+    none,
+    type SubtypeExprOrValue
 } from "@elaraai/east";
 
 import { SizeType, ColorSchemeType } from "../../style.js";
@@ -92,20 +92,16 @@ function createButton(
             : style.size)
         : undefined;
 
-    const toBoolOption = (value: SubtypeExprOrValue<BooleanType> | undefined) => {
-        if (value === undefined) return variant("none", null);
-        return variant("some", value);
-    };
-
     return East.value(variant("Button", {
         label: label,
-        style: style ? variant("some", East.value({
-            variant: variantValue ? variant("some", variantValue) : variant("none", null),
-            colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
-            size: sizeValue ? variant("some", sizeValue) : variant("none", null),
-            loading: toBoolOption(style.loading),
-            disabled: toBoolOption(style.disabled),
-        }, ButtonStyleType)) : variant("none", null),
+        style: style ? some(East.value({
+            variant: variantValue ? some(variantValue) : none,
+            colorPalette: colorPaletteValue ? some(colorPaletteValue) : none,
+            size: sizeValue ? some(sizeValue) : none,
+            loading: style.loading !== undefined ? some(style.loading) : none,
+            disabled: style.disabled !== undefined ? some(style.disabled) : none,
+            onClick: style.onClick ? some(style.onClick) : none,
+        }, ButtonStyleType)) : none,
     }), UIComponentType);
 }
 

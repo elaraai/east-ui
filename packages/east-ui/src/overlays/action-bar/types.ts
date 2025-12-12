@@ -12,6 +12,7 @@ import {
     BooleanType,
     VariantType,
     IntegerType,
+    FunctionType,
 } from "@elaraai/east";
 
 // ============================================================================
@@ -44,9 +45,15 @@ export type ActionBarItemType = typeof ActionBarItemType;
  *
  * @remarks
  * ActionBar has fixed styling - no size/variant options.
+ *
+ * @property onSelect - Callback triggered when an action is selected
+ * @property onOpenChange - Callback triggered when open state changes
  */
 export const ActionBarStyleType = StructType({
-    // No size/variant - fixed styling
+    /** Callback triggered when an action is selected */
+    onSelect: OptionType(FunctionType([StringType], NullType)),
+    /** Callback triggered when open state changes */
+    onOpenChange: OptionType(FunctionType([BooleanType], NullType)),
 });
 
 export type ActionBarStyleType = typeof ActionBarStyleType;
@@ -57,6 +64,15 @@ export type ActionBarStyleType = typeof ActionBarStyleType;
 
 /**
  * TypeScript interface for ActionBar style options.
+ *
+ * @property selectionCount - Selection count to display
+ * @property selectionLabel - Label for selection (e.g., "items selected")
+ * @property open - Controlled open state
+ * @property defaultOpen - Initial open state
+ * @property closeOnInteractOutside - Close when clicking outside
+ * @property closeOnEscape - Close on escape key
+ * @property onSelect - Callback triggered when an action is selected
+ * @property onOpenChange - Callback triggered when open state changes
  */
 export interface ActionBarStyle {
     /** Selection count to display */
@@ -71,4 +87,8 @@ export interface ActionBarStyle {
     closeOnInteractOutside?: SubtypeExprOrValue<BooleanType>;
     /** Close on escape key */
     closeOnEscape?: SubtypeExprOrValue<BooleanType>;
+    /** Callback triggered when an action is selected */
+    onSelect?: SubtypeExprOrValue<FunctionType<[StringType], NullType>>;
+    /** Callback triggered when open state changes */
+    onOpenChange?: SubtypeExprOrValue<FunctionType<[BooleanType], NullType>>;
 }

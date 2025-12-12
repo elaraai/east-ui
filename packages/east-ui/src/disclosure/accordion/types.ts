@@ -12,6 +12,9 @@ import {
     StructType,
     BooleanType,
     VariantType,
+    ArrayType,
+    StringType,
+    FunctionType,
     variant,
 } from "@elaraai/east";
 
@@ -70,11 +73,13 @@ export function AccordionVariant(v: AccordionVariantLiteral): ExprType<Accordion
  * @property multiple - Whether multiple items can be open at once
  * @property collapsible - Whether all items can be collapsed
  * @property variant - Visual variant (enclosed, plain, subtle)
+ * @property onValueChange - Callback triggered when expanded items change
  */
 export const AccordionStyleType = StructType({
     multiple: OptionType(BooleanType),
     collapsible: OptionType(BooleanType),
     variant: OptionType(AccordionVariantType),
+    onValueChange: OptionType(FunctionType([ArrayType(StringType)], NullType)),
 });
 
 /**
@@ -120,6 +125,7 @@ export interface AccordionItemStyle {
  * @property multiple - Whether multiple items can be open at once
  * @property collapsible - Whether all items can be collapsed
  * @property variant - Visual variant (enclosed, plain, or subtle)
+ * @property onValueChange - Callback triggered when expanded items change
  */
 export interface AccordionStyle {
     /** Whether multiple items can be open at once */
@@ -128,4 +134,6 @@ export interface AccordionStyle {
     collapsible?: SubtypeExprOrValue<BooleanType>;
     /** Visual variant (enclosed, plain, or subtle) */
     variant?: SubtypeExprOrValue<AccordionVariantType> | AccordionVariantLiteral;
+    /** Callback triggered when expanded items change (receives array of expanded item values) */
+    onValueChange?: SubtypeExprOrValue<FunctionType<[ArrayType<StringType>], NullType>>;
 }

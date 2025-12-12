@@ -28,7 +28,7 @@ import {
     type ColumnResizeMode,
     type ColumnDef,
 } from "@tanstack/react-table";
-import { equalFor, printFor, type ValueTypeOf } from "@elaraai/east";
+import { equalFor, printFor, variant, type ValueTypeOf } from "@elaraai/east";
 import { Gantt } from "@elaraai/east-ui";
 import { getSomeorUndefined } from "../../utils";
 import { EastChakraComponent } from "../../component";
@@ -132,6 +132,24 @@ export const EastChakraGantt = memo(function EastChakraGantt({
 }: EastChakraGanttProps) {
     const props = useMemo(() => toChakraTableRoot(value), [value]);
     const headerHeight = 56;
+
+    // Extract East-side callbacks from style
+    const style = useMemo(() => getSomeorUndefined(value.style), [value.style]);
+    const onCellClickFn = useMemo(() => style ? getSomeorUndefined(style.onCellClick) : undefined, [style]);
+    const onCellDoubleClickFn = useMemo(() => style ? getSomeorUndefined(style.onCellDoubleClick) : undefined, [style]);
+    const onRowClickFn = useMemo(() => style ? getSomeorUndefined(style.onRowClick) : undefined, [style]);
+    const onRowDoubleClickFn = useMemo(() => style ? getSomeorUndefined(style.onRowDoubleClick) : undefined, [style]);
+    const onSortChangeFn = useMemo(() => style ? getSomeorUndefined(style.onSortChange) : undefined, [style]);
+    const onTaskClickFn = useMemo(() => style ? getSomeorUndefined(style.onTaskClick) : undefined, [style]);
+    const onTaskDoubleClickFn = useMemo(() => style ? getSomeorUndefined(style.onTaskDoubleClick) : undefined, [style]);
+    const onTaskDragFn = useMemo(() => style ? getSomeorUndefined(style.onTaskDrag) : undefined, [style]);
+    const onTaskProgressChangeFn = useMemo(() => style ? getSomeorUndefined(style.onTaskProgressChange) : undefined, [style]);
+    const onMilestoneClickFn = useMemo(() => style ? getSomeorUndefined(style.onMilestoneClick) : undefined, [style]);
+    const onMilestoneDoubleClickFn = useMemo(() => style ? getSomeorUndefined(style.onMilestoneDoubleClick) : undefined, [style]);
+    const onMilestoneDragFn = useMemo(() => style ? getSomeorUndefined(style.onMilestoneDrag) : undefined, [style]);
+    const onTaskDurationChangeFn = useMemo(() => style ? getSomeorUndefined(style.onTaskDurationChange) : undefined, [style]);
+    const dragStepValue = useMemo(() => style ? getSomeorUndefined(style.dragStep) : undefined, [style]);
+    const durationStepValue = useMemo(() => style ? getSomeorUndefined(style.durationStep) : undefined, [style]);
     const [gridLineColor] = useToken("colors", ["gray.300"]);
     const tableContainerRef = useRef<HTMLDivElement>(null);
     const timelineContainerRef = useRef<HTMLDivElement>(null);
@@ -257,11 +275,220 @@ export const EastChakraGantt = memo(function EastChakraGantt({
                 }));
                 onSortChange?.(sorts);
 
+                // Also call East-side callback if present - called once per sort column
+                if (onSortChangeFn) {
+                    newSorting.forEach((s, index) => {
+                        queueMicrotask(() => onSortChangeFn({
+                            columnKey: s.id,
+                            sortIndex: BigInt(index),
+                            sortDirection: s.desc ? variant('desc', null) : variant('asc', null),
+                        }));
+                    });
+                }
+
                 return newSorting;
             });
         },
-        [onSortChange]
+        [onSortChange, onSortChangeFn]
     );
+
+    // Handle cell click
+    const handleCellClick = useCallback((rowIndex: bigint, columnKey: string, cellValue: GanttCellValue | undefined) => {
+        if (onCellClickFn && cellValue?.value !== undefined) {
+            queueMicrotask(() => onCellClickFn({ rowIndex, columnKey, cellValue: cellValue.value }));
+        }
+    }, [onCellClickFn]);
+
+    // Handle cell double click
+    const handleCellDoubleClick = useCallback((rowIndex: bigint, columnKey: string, cellValue: GanttCellValue | undefined) => {
+        if (onCellDoubleClickFn && cellValue?.value !== undefined) {
+            queueMicrotask(() => onCellDoubleClickFn({ rowIndex, columnKey, cellValue: cellValue.value }));
+        }
+    }, [onCellDoubleClickFn]);
+
+    // Handle row click
+    const handleRowClick = useCallback((rowIndex: bigint) => {
+        if (onRowClickFn) {
+            queueMicrotask(() => onRowClickFn({ rowIndex }));
+        }
+    }, [onRowClickFn]);
+
+    // Handle row double click
+    const handleRowDoubleClick = useCallback((rowIndex: bigint) => {
+        if (onRowDoubleClickFn) {
+            queueMicrotask(() => onRowDoubleClickFn({ rowIndex }));
+        }
+    }, [onRowDoubleClickFn]);
+
+    // Handle task click (East-side callback)
+    const handleTaskClick = useCallback((rowIndex: bigint, taskIndex: bigint, taskStart: Date, taskEnd: Date) => {
+        if (onTaskClickFn) {
+            queueMicrotask(() => onTaskClickFn({ rowIndex, taskIndex, taskStart, taskEnd }));
+        }
+    }, [onTaskClickFn]);
+
+    // Handle milestone click (East-side callback)
+    const handleMilestoneClick = useCallback((rowIndex: bigint, milestoneIndex: bigint, milestoneDate: Date) => {
+        if (onMilestoneClickFn) {
+            queueMicrotask(() => onMilestoneClickFn({ rowIndex, milestoneIndex, milestoneDate }));
+        }
+    }, [onMilestoneClickFn]);
+
+    // Handle task double click (East-side callback)
+    const handleTaskDoubleClick = useCallback((rowIndex: bigint, taskIndex: bigint, taskStart: Date, taskEnd: Date) => {
+        if (onTaskDoubleClickFn) {
+            queueMicrotask(() => onTaskDoubleClickFn({ rowIndex, taskIndex, taskStart, taskEnd }));
+        }
+    }, [onTaskDoubleClickFn]);
+
+    // Handle milestone double click (East-side callback)
+    const handleMilestoneDoubleClick = useCallback((rowIndex: bigint, milestoneIndex: bigint, milestoneDate: Date) => {
+        if (onMilestoneDoubleClickFn) {
+            queueMicrotask(() => onMilestoneDoubleClickFn({ rowIndex, milestoneIndex, milestoneDate }));
+        }
+    }, [onMilestoneDoubleClickFn]);
+
+    // Handle task drag (East-side callback)
+    const handleTaskDrag = useCallback((
+        rowIndex: bigint,
+        taskIndex: bigint,
+        previousStart: Date,
+        previousEnd: Date,
+        newStart: Date,
+        newEnd: Date
+    ) => {
+        if (onTaskDragFn) {
+            queueMicrotask(() => onTaskDragFn({ rowIndex, taskIndex, previousStart, previousEnd, newStart, newEnd }));
+        }
+    }, [onTaskDragFn]);
+
+    // Handle task progress change (East-side callback)
+    const handleTaskProgressChange = useCallback((
+        rowIndex: bigint,
+        taskIndex: bigint,
+        previousProgress: number,
+        newProgress: number
+    ) => {
+        if (onTaskProgressChangeFn) {
+            queueMicrotask(() => onTaskProgressChangeFn({ rowIndex, taskIndex, previousProgress, newProgress }));
+        }
+    }, [onTaskProgressChangeFn]);
+
+    // Handle milestone drag (East-side callback)
+    const handleMilestoneDrag = useCallback((
+        rowIndex: bigint,
+        milestoneIndex: bigint,
+        previousDate: Date,
+        newDate: Date
+    ) => {
+        if (onMilestoneDragFn) {
+            queueMicrotask(() => onMilestoneDragFn({ rowIndex, milestoneIndex, previousDate, newDate }));
+        }
+    }, [onMilestoneDragFn]);
+
+    // Handle task duration change (East-side callback)
+    const handleTaskDurationChange = useCallback((
+        rowIndex: bigint,
+        taskIndex: bigint,
+        previousEnd: Date,
+        newEnd: Date
+    ) => {
+        if (onTaskDurationChangeFn) {
+            queueMicrotask(() => onTaskDurationChangeFn({ rowIndex, taskIndex, previousEnd, newEnd }));
+        }
+    }, [onTaskDurationChangeFn]);
+
+    // Wrap the onEventClick to also call East callbacks
+    const handleEventClick = useCallback((event: GanttEventValue, rowIndex: number, eventIndex: number) => {
+        onEventClick?.(event, rowIndex, eventIndex);
+
+        // Also call East-side callbacks
+        if (event.type === 'Task' && onTaskClickFn) {
+            handleTaskClick(
+                BigInt(rowIndex),
+                BigInt(eventIndex),
+                event.value.start,
+                event.value.end
+            );
+        } else if (event.type === 'Milestone' && onMilestoneClickFn) {
+            handleMilestoneClick(
+                BigInt(rowIndex),
+                BigInt(eventIndex),
+                event.value.date
+            );
+        }
+    }, [onEventClick, onTaskClickFn, onMilestoneClickFn, handleTaskClick, handleMilestoneClick]);
+
+    // Wrap the onEventDoubleClick to call East callbacks
+    const handleEventDoubleClick = useCallback((event: GanttEventValue, rowIndex: number, eventIndex: number) => {
+        if (event.type === 'Task' && onTaskDoubleClickFn) {
+            handleTaskDoubleClick(
+                BigInt(rowIndex),
+                BigInt(eventIndex),
+                event.value.start,
+                event.value.end
+            );
+        } else if (event.type === 'Milestone' && onMilestoneDoubleClickFn) {
+            handleMilestoneDoubleClick(
+                BigInt(rowIndex),
+                BigInt(eventIndex),
+                event.value.date
+            );
+        }
+    }, [onTaskDoubleClickFn, onMilestoneDoubleClickFn, handleTaskDoubleClick, handleMilestoneDoubleClick]);
+
+    // Handle task drag from GanttEventRow
+    const handleEventTaskDrag = useCallback((
+        rowIndex: number,
+        eventIndex: number,
+        previousStart: Date,
+        previousEnd: Date,
+        newStart: Date,
+        newEnd: Date
+    ) => {
+        handleTaskDrag(BigInt(rowIndex), BigInt(eventIndex), previousStart, previousEnd, newStart, newEnd);
+    }, [handleTaskDrag]);
+
+    // Handle milestone drag from GanttEventRow
+    const handleEventMilestoneDrag = useCallback((
+        rowIndex: number,
+        eventIndex: number,
+        previousDate: Date,
+        newDate: Date
+    ) => {
+        handleMilestoneDrag(BigInt(rowIndex), BigInt(eventIndex), previousDate, newDate);
+    }, [handleMilestoneDrag]);
+
+    // Handle task duration change from GanttEventRow
+    const handleEventTaskDurationChange = useCallback((
+        rowIndex: number,
+        eventIndex: number,
+        previousEnd: Date,
+        newEnd: Date
+    ) => {
+        handleTaskDurationChange(BigInt(rowIndex), BigInt(eventIndex), previousEnd, newEnd);
+    }, [handleTaskDurationChange]);
+
+    // Handle task progress change from GanttEventRow
+    const handleEventTaskProgressChange = useCallback((
+        rowIndex: number,
+        eventIndex: number,
+        previousProgress: number,
+        newProgress: number
+    ) => {
+        handleTaskProgressChange(BigInt(rowIndex), BigInt(eventIndex), previousProgress, newProgress);
+    }, [handleTaskProgressChange]);
+
+    // Convert East TimeStep variant values to TimeStep interface for components
+    const dragStep = useMemo(() => {
+        if (!dragStepValue) return undefined;
+        return { type: dragStepValue.type as "minutes" | "hours" | "days" | "weeks" | "months", value: dragStepValue.value };
+    }, [dragStepValue]);
+
+    const durationStep = useMemo(() => {
+        if (!durationStepValue) return undefined;
+        return { type: durationStepValue.type as "minutes" | "hours" | "days" | "weeks" | "months", value: durationStepValue.value };
+    }, [durationStepValue]);
 
     // Column sizing state
     const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
@@ -577,6 +804,8 @@ export const EastChakraGantt = memo(function EastChakraGantt({
                                     !rowStateManager.isRowLoaded(rowKey) ||
                                     rowState.status === "loading";
 
+                                const rowIndex = BigInt(virtualRow.index);
+
                                 return (
                                     <ChakraTable.Row
                                         key={row.id}
@@ -588,18 +817,32 @@ export const EastChakraGantt = memo(function EastChakraGantt({
                                             width: "100%",
                                             height: `${virtualRow.size}px`,
                                             transform: `translateY(${virtualRow.start}px)`,
+                                            cursor: (onRowClickFn || onRowDoubleClickFn) ? 'pointer' : undefined,
                                         }}
+                                        onClick={onRowClickFn ? () => handleRowClick(rowIndex) : undefined}
+                                        onDoubleClick={onRowDoubleClickFn ? () => handleRowDoubleClick(rowIndex) : undefined}
                                     >
                                         {row.getVisibleCells().map((cell) => {
                                             const cellValue = cell.getValue() as
                                                 | GanttCellValue
                                                 | undefined;
                                             const meta = cell.column.columnDef.meta;
+                                            const columnKey = meta?.columnKey ?? cell.column.id;
 
                                             const cellStyle = {
                                                 width: `var(--col-${cell.column.id}-size)`,
                                                 flex: columnSizing[cell.column.id] ? "none" : 1,
                                             };
+
+                                            const cellClickHandler = onCellClickFn ? (e: React.MouseEvent) => {
+                                                e.stopPropagation();
+                                                handleCellClick(rowIndex, columnKey, cellValue);
+                                            } : undefined;
+
+                                            const cellDoubleClickHandler = onCellDoubleClickFn ? (e: React.MouseEvent) => {
+                                                e.stopPropagation();
+                                                handleCellDoubleClick(rowIndex, columnKey, cellValue);
+                                            } : undefined;
 
                                             if (isRowLoading) {
                                                 return (
@@ -614,13 +857,20 @@ export const EastChakraGantt = memo(function EastChakraGantt({
                                                     <ChakraTable.Cell
                                                         key={cell.id}
                                                         style={cellStyle}
+                                                        onClick={cellClickHandler}
+                                                        onDoubleClick={cellDoubleClickHandler}
                                                     />
                                                 );
                                             }
 
                                             if (cellValue.content != null) {
                                                 return (
-                                                    <ChakraTable.Cell key={cell.id} style={cellStyle}>
+                                                    <ChakraTable.Cell
+                                                        key={cell.id}
+                                                        style={cellStyle}
+                                                        onClick={cellClickHandler}
+                                                        onDoubleClick={cellDoubleClickHandler}
+                                                    >
                                                         <EastChakraComponent
                                                             value={cellValue.content}
                                                         />
@@ -629,7 +879,12 @@ export const EastChakraGantt = memo(function EastChakraGantt({
                                             }
 
                                             return (
-                                                <ChakraTable.Cell key={cell.id} style={cellStyle}>
+                                                <ChakraTable.Cell
+                                                    key={cell.id}
+                                                    style={cellStyle}
+                                                    onClick={cellClickHandler}
+                                                    onDoubleClick={cellDoubleClickHandler}
+                                                >
                                                     <Text>
                                                         {meta?.print?.(cellValue.value.value) ?? null}
                                                     </Text>
@@ -713,7 +968,14 @@ export const EastChakraGantt = memo(function EastChakraGantt({
                                                     height={virtualRow.size}
                                                     startDate={dateRange.start}
                                                     endDate={dateRange.end}
-                                                    onEventClick={onEventClick}
+                                                    onEventClick={handleEventClick}
+                                                    onEventDoubleClick={handleEventDoubleClick}
+                                                    onTaskDrag={handleEventTaskDrag}
+                                                    onTaskDurationChange={handleEventTaskDurationChange}
+                                                    onTaskProgressChange={handleEventTaskProgressChange}
+                                                    onMilestoneDrag={handleEventMilestoneDrag}
+                                                    dragStep={dragStep}
+                                                    durationStep={durationStep}
                                                 />
                                             </svg>
                                         </ChakraTable.Cell>

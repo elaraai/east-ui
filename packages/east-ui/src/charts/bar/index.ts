@@ -37,46 +37,19 @@ export { BarChartType, type BarChartStyle, type BarChartSeriesConfig } from "./t
  *
  * @example
  * ```ts
- * import { Chart } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Chart, UIComponentType } from "@elaraai/east-ui";
  *
- * // Basic bar chart
- * const chart = Chart.Bar(
- *   [
- *     { type: "Stock", allocation: 60 },
- *     { type: "Crypto", allocation: 45 },
- *     { type: "ETF", allocation: 12 },
- *   ],
- *   { allocation: { color: "teal.solid" } },
- *   {
- *     xAxis: Chart.Axis({ dataKey: "type" }),
- *     grid: Chart.Grid({ show: true }),
- *   }
- * );
- *
- * // Horizontal bar chart
- * const horizontalChart = Chart.Bar(
- *   monthlyData,
- *   { value: { color: "blue.solid" } },
- *   {
- *     layout: "vertical",
- *     yAxis: Chart.Axis({ dataKey: "month" }),
- *   }
- * );
- *
- * // 100% stacked bar chart
- * const stackedChart = Chart.Bar(
- *   osUsageData,
- *   {
- *     windows: { color: "teal.solid", stackId: "a" },
- *     mac: { color: "purple.solid", stackId: "a" },
- *     linux: { color: "blue.solid", stackId: "a" },
- *   },
- *   {
- *     stacked: true,
- *     stackOffset: "expand",
- *     legend: Chart.Legend({ show: true }),
- *   }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Chart.Bar(
+ *         [
+ *             { category: "A", value: 100n },
+ *             { category: "B", value: 200n },
+ *         ],
+ *         { value: { color: "blue.solid" } },
+ *         { xAxis: Chart.Axis({ dataKey: "category" }) }
+ *     );
+ * });
  * ```
  */
 export function createBarChart<T extends SubtypeExprOrValue<ArrayType<StructType>>>(

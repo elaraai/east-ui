@@ -24,8 +24,9 @@ import {
  *
  * @remarks
  * Used to show trend direction.
- * - up: Positive trend (usually green)
- * - down: Negative trend (usually red)
+ *
+ * @property up - Positive trend (usually green)
+ * @property down - Negative trend (usually red)
  */
 export const StatIndicatorType = VariantType({
     /** Positive/increasing trend */
@@ -52,11 +53,14 @@ export type StatIndicatorLiteral = "up" | "down";
  *
  * @example
  * ```ts
- * import { Stat, StatIndicator } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Stat, UIComponentType } from "@elaraai/east-ui";
  *
- * const stat = Stat.Root("Revenue", "$45,231", {
- *   helpText: "+20.1%",
- *   indicator: StatIndicator("up"),
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Stat.Root("Revenue", "$45,231", {
+ *         helpText: "+20.1%",
+ *         indicator: Stat.Indicator("up"),
+ *     });
  * });
  * ```
  */

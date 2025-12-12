@@ -31,20 +31,19 @@ export { ScatterChartType, type ScatterChartStyle, type ScatterChartSeriesConfig
  *
  * @example
  * ```ts
- * import { Chart } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Chart, UIComponentType } from "@elaraai/east-ui";
  *
- * const chart = Chart.Scatter(
- *   [
- *     { height: 170, weight: 65 },
- *     { height: 180, weight: 80 },
- *   ],
- *   { data: { color: "blue.solid" } },
- *   {
- *     xDataKey: "height",
- *     yDataKey: "weight",
- *     grid: Chart.Grid({ show: true }),
- *   }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Chart.Scatter(
+ *         [
+ *             { x: 10n, y: 30n },
+ *             { x: 20n, y: 40n },
+ *         ],
+ *         { y: { color: "purple.solid" } },
+ *         { xAxis: Chart.Axis({ dataKey: "x" }) }
+ *     );
+ * });
  * ```
  */
 export function createScatterChart<T extends SubtypeExprOrValue<ArrayType<StructType>>>(

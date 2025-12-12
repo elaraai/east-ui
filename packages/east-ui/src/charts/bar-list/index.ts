@@ -45,21 +45,18 @@ export {
  *
  * @example
  * ```ts
- * import { Chart } from "@elaraai/east-ui";
+ * import { East, none } from "@elaraai/east";
+ * import { Chart, UIComponentType } from "@elaraai/east-ui";
  *
- * Chart.BarList(
- *   [
- *     { name: "Google", value: 1200000 },
- *     { name: "ChatGPT", value: 1345000 },
- *     { name: "Bing", value: 200000, color: "blue.solid" },
- *   ],
- *   {
- *     sort: { by: "value", direction: "desc" },
- *     showValue: true,
- *     valueFormat: "compact",
- *     color: "teal.subtle",
- *   }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Chart.BarList(
+ *         [
+ *             { name: "Chrome", value: 275, color: none },
+ *             { name: "Safari", value: 200, color: none },
+ *         ],
+ *         { showValue: true }
+ *     );
+ * });
  * ```
  */
 export function createBarList(

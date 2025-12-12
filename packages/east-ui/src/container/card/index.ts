@@ -66,27 +66,18 @@ export type CardType = typeof CardType;
  *
  * @example
  * ```ts
- * import { Card, Text, Button } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Card, Text, Button, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple card with children
- * const card = Card.Root([
- *   Text.Root("Card content here"),
- * ]);
- *
- * // Card with title and children
- * const titled = Card.Root([
- *   Text.Root("This is the main content of the card."),
- *   Button.Root("Action"),
- * ], {
- *   title: "Card Title",
- *   description: "A brief description",
- * });
- *
- * // Styled card
- * const styled = Card.Root([...children], {
- *   title: "Elevated Card",
- *   variant: "elevated",
- *   size: "md",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Card.Root([
+ *         Text.Root("Card content here"),
+ *         Button.Root("Action"),
+ *     ], {
+ *         title: "Card Title",
+ *         description: "A brief description",
+ *         variant: "elevated",
+ *     });
  * });
  * ```
  */

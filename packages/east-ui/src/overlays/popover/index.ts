@@ -77,28 +77,16 @@ export type PopoverType = typeof PopoverType;
  *
  * @example
  * ```ts
- * import { Popover, Button, Text, StringInput } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Popover, Button, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple popover
- * const popover = Popover.Root(
- *   Button.Root("Edit"),
- *   [Text.Root("Edit your profile")],
- *   { title: "Edit Profile" }
- * );
- *
- * // Popover with form content
- * const formPopover = Popover.Root(
- *   Button.Root("Settings"),
- *   [
- *     StringInput.Root("name", { placeholder: "Enter name" }),
- *     Button.Root("Save"),
- *   ],
- *   {
- *     title: "Quick Settings",
- *     placement: "bottom-start",
- *     closeOnInteractOutside: true,
- *   }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Popover.Root(
+ *         Button.Root("Edit"),
+ *         [Text.Root("Edit your profile")],
+ *         { title: "Edit Profile" }
+ *     );
+ * });
  * ```
  */
 function createPopover(
@@ -118,17 +106,21 @@ function createPopover(
             : style.placement)
         : undefined;
 
+    const hasStyle = sizeValue || placementValue || style?.hasArrow !== undefined ||
+        style?.gutter !== undefined || style?.onOpenChange !== undefined;
+
     return East.value(variant("Popover", {
         trigger: trigger,
         body: body,
         title: style?.title !== undefined ? variant("some", style.title) : variant("none", null),
         description: style?.description !== undefined ? variant("some", style.description) : variant("none", null),
-        style: sizeValue || placementValue || style?.hasArrow !== undefined || style?.gutter !== undefined
+        style: hasStyle
             ? variant("some", East.value({
                 size: sizeValue ? variant("some", sizeValue) : variant("none", null),
                 placement: placementValue ? variant("some", placementValue) : variant("none", null),
                 hasArrow: style?.hasArrow !== undefined ? variant("some", style.hasArrow) : variant("none", null),
                 gutter: style?.gutter !== undefined ? variant("some", style.gutter) : variant("none", null),
+                onOpenChange: style?.onOpenChange !== undefined ? variant("some", style.onOpenChange) : variant("none", null),
             }, PopoverStyleType))
             : variant("none", null),
     }), UIComponentType);
@@ -139,21 +131,6 @@ function createPopover(
  *
  * @remarks
  * Use `Popover.Root(trigger, body, style)` to create a popover, or access `Popover.Types` for East types.
- *
- * @example
- * ```ts
- * import { Popover, Button, Text } from "@elaraai/east-ui";
- *
- * // Create a popover
- * const popover = Popover.Root(
- *   Button.Root("Open"),
- *   [Text.Root("Content")],
- *   { title: "My Popover", placement: "bottom" }
- * );
- *
- * // Access the type
- * const styleType = Popover.Types.Style;
- * ```
  */
 export const Popover = {
     /**

@@ -3,6 +3,19 @@ name: Publish
 on:
   workflow_dispatch:
     inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        default: 'prerelease'
+        type: choice
+        options:
+          - prerelease   # 0.0.1-beta.7 -> 0.0.1-beta.8 (npm tag: beta)
+          - prepatch     # 0.0.1-beta.8 -> 0.0.2-beta.0 (npm tag: beta)
+          - preminor     # 0.0.1-beta.8 -> 0.1.0-beta.0 (npm tag: beta)
+          - premajor     # 0.0.1-beta.8 -> 1.0.0-beta.0 (npm tag: beta)
+          - patch        # 0.0.1 -> 0.0.2 (npm tag: latest)
+          - minor        # 0.0.1 -> 0.1.0 (npm tag: latest)
+          - major        # 0.0.1 -> 1.0.0 (npm tag: latest)
       publish_east_ui:
         description: 'Publish @elaraai/east-ui'
         required: true
@@ -18,23 +31,22 @@ on:
         required: true
         default: true
         type: boolean
-      npm_tag:
-        description: 'npm tag (latest or beta)'
-        required: true
-        default: 'latest'
-        type: choice
-        options:
-          - latest
-          - beta
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write  # Need write to push version bump and tag
       id-token: write  # Required for npm trusted publishers (OIDC)
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Use Node.js 22.x
         uses: actions/setup-node@v4
@@ -52,33 +64,112 @@ jobs:
       - name: Build all packages
         run: npm run build
 
-      - name: Run tests
-        run: npm test
-
       - name: Run linter
         run: npm run lint
 
-      # Publish npm packages in dependency order (using OIDC trusted publishers)
-      # 1. east-ui (core types and platform functions)
-      - name: Publish @elaraai/east-ui
-        if: ${{ inputs.publish_east_ui }}
-        run: npm publish --access public --provenance --tag ${{ inputs.npm_tag }}
-        working-directory: packages/east-ui
+      - name: Run tests
+        run: npm test
 
-      # 2. east-ui-components (depends on east-ui)
-      - name: Update east-ui-components workspace dependency
+      - name: Determine npm tag
+        id: npm_tag
+        run: |
+          if [[ "${{ inputs.release_type }}" == pre* ]]; then
+            echo "tag=beta" >> $GITHUB_OUTPUT
+            echo "prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+          fi
+
+      # Bump versions in all selected packages
+      - name: Bump east-ui version
+        if: ${{ inputs.publish_east_ui }}
+        id: version_ui
+        working-directory: packages/east-ui
+        run: |
+          if [[ "${{ inputs.release_type }}" == pre* ]]; then
+            NEW_VERSION=$(npm version ${{ inputs.release_type }} --preid=beta --no-git-tag-version)
+          else
+            NEW_VERSION=$(npm version ${{ inputs.release_type }} --no-git-tag-version)
+          fi
+          echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Bump east-ui-components version
         if: ${{ inputs.publish_east_ui_components }}
+        id: version_components
+        working-directory: packages/east-ui-components
+        run: |
+          if [[ "${{ inputs.release_type }}" == pre* ]]; then
+            NEW_VERSION=$(npm version ${{ inputs.release_type }} --preid=beta --no-git-tag-version)
+          else
+            NEW_VERSION=$(npm version ${{ inputs.release_type }} --no-git-tag-version)
+          fi
+          echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Bump east-ui-extension version
+        if: ${{ inputs.publish_vscode }}
+        id: version_extension
+        working-directory: packages/east-ui-extension
+        run: |
+          if [[ "${{ inputs.release_type }}" == pre* ]]; then
+            NEW_VERSION=$(npm version ${{ inputs.release_type }} --preid=beta --no-git-tag-version)
+          else
+            NEW_VERSION=$(npm version ${{ inputs.release_type }} --no-git-tag-version)
+          fi
+          echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+
+      # Update workspace dependencies before publish
+      - name: Update east-ui-components workspace dependency
+        if: ${{ inputs.publish_east_ui_components && inputs.publish_east_ui }}
         run: |
           EAST_UI_VERSION=$(node -p "require('./packages/east-ui/package.json').version")
           cd packages/east-ui-components
           npm pkg set "dependencies.@elaraai/east-ui=^${EAST_UI_VERSION}"
 
+      # Commit all version bumps
+      - name: Commit version bumps
+        run: |
+          git add -A
+          PACKAGES=""
+          if [[ "${{ inputs.publish_east_ui }}" == "true" ]]; then
+            PACKAGES="${PACKAGES} east-ui@${{ steps.version_ui.outputs.new_version }}"
+          fi
+          if [[ "${{ inputs.publish_east_ui_components }}" == "true" ]]; then
+            PACKAGES="${PACKAGES} east-ui-components@${{ steps.version_components.outputs.new_version }}"
+          fi
+          if [[ "${{ inputs.publish_vscode }}" == "true" ]]; then
+            PACKAGES="${PACKAGES} east-ui-extension@${{ steps.version_extension.outputs.new_version }}"
+          fi
+          git commit -m "chore: bump versions -${PACKAGES}" || echo "No changes to commit"
+
+      # Create tags for each package
+      - name: Create tags
+        run: |
+          if [[ "${{ inputs.publish_east_ui }}" == "true" ]]; then
+            git tag "east-ui-${{ steps.version_ui.outputs.new_version }}"
+          fi
+          if [[ "${{ inputs.publish_east_ui_components }}" == "true" ]]; then
+            git tag "east-ui-components-${{ steps.version_components.outputs.new_version }}"
+          fi
+          if [[ "${{ inputs.publish_vscode }}" == "true" ]]; then
+            git tag "east-ui-extension-${{ steps.version_extension.outputs.new_version }}"
+          fi
+
+      - name: Push changes and tags
+        run: git push origin HEAD --tags
+
+      # Publish npm packages in dependency order
+      - name: Publish @elaraai/east-ui
+        if: ${{ inputs.publish_east_ui }}
+        run: npm publish --access public --provenance --tag ${{ steps.npm_tag.outputs.tag }}
+        working-directory: packages/east-ui
+
       - name: Publish @elaraai/east-ui-components
         if: ${{ inputs.publish_east_ui_components }}
-        run: npm publish --access public --provenance --tag ${{ inputs.npm_tag }}
+        run: npm publish --access public --provenance --tag ${{ steps.npm_tag.outputs.tag }}
         working-directory: packages/east-ui-components
 
-      # 4. VSCode Extension
+      # VSCode Extension
       - name: Build VSCode extension
         if: ${{ inputs.publish_vscode }}
         run: npm run build && npm run package
@@ -86,7 +177,35 @@ jobs:
 
       - name: Publish VSCode extension
         if: ${{ inputs.publish_vscode }}
-        run: npx vsce publish --no-dependencies ${{ inputs.npm_tag == 'beta' && '--pre-release' || '' }}
+        run: npx vsce publish --no-dependencies ${{ steps.npm_tag.outputs.prerelease == 'true' && '--pre-release' || '' }}
         working-directory: packages/east-ui-extension
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      # Create GitHub releases
+      - name: Create GitHub Release for east-ui
+        if: ${{ inputs.publish_east_ui }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: east-ui-${{ steps.version_ui.outputs.new_version }}
+          name: "@elaraai/east-ui ${{ steps.version_ui.outputs.new_version }}"
+          generate_release_notes: true
+          prerelease: ${{ steps.npm_tag.outputs.prerelease == 'true' }}
+
+      - name: Create GitHub Release for east-ui-components
+        if: ${{ inputs.publish_east_ui_components }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: east-ui-components-${{ steps.version_components.outputs.new_version }}
+          name: "@elaraai/east-ui-components ${{ steps.version_components.outputs.new_version }}"
+          generate_release_notes: true
+          prerelease: ${{ steps.npm_tag.outputs.prerelease == 'true' }}
+
+      - name: Create GitHub Release for east-ui-extension
+        if: ${{ inputs.publish_vscode }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: east-ui-extension-${{ steps.version_extension.outputs.new_version }}
+          name: "East UI VSCode Extension ${{ steps.version_extension.outputs.new_version }}"
+          generate_release_notes: true
+          prerelease: ${{ steps.npm_tag.outputs.prerelease == 'true' }}

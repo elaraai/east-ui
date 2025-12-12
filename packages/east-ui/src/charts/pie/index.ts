@@ -29,25 +29,18 @@ export { PieSliceType, PieChartType, type PieChartStyle } from "./types.js";
  *
  * @example
  * ```ts
- * import { Chart } from "@elaraai/east-ui";
+ * import { East, some } from "@elaraai/east";
+ * import { Chart, UIComponentType } from "@elaraai/east-ui";
  *
- * // Pie chart
- * const chart = Chart.Pie(
- *   [
- *     { name: "Desktop", value: 400, color: variant("some", "blue.solid") },
- *     { name: "Mobile", value: 300, color: variant("some", "orange.solid") },
- *   ],
- *   { legend: Chart.Legend({ show: true }) }
- * );
- *
- * // Donut chart
- * const donutChart = Chart.Pie(
- *   pieData,
- *   {
- *     innerRadius: 60,
- *     outerRadius: 80,
- *   }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Chart.Pie(
+ *         [
+ *             { name: "Chrome", value: 275, color: some("blue.solid") },
+ *             { name: "Safari", value: 200, color: some("green.solid") },
+ *         ],
+ *         { showLabels: true }
+ *     );
+ * });
  * ```
  */
 export function createPieChart(

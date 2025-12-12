@@ -72,10 +72,18 @@ export type MenuType = typeof MenuType;
  *
  * @example
  * ```ts
- * import { Menu } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Menu, Button, UIComponentType } from "@elaraai/east-ui";
  *
- * const item = Menu.Item("edit", "Edit");
- * const disabledItem = Menu.Item("delete", "Delete", true);
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Menu.Root(
+ *         Button.Root("Actions"),
+ *         [
+ *             Menu.Item("edit", "Edit"),
+ *             Menu.Item("delete", "Delete", true),
+ *         ]
+ *     );
+ * });
  * ```
  */
 function createMenuItem(
@@ -97,9 +105,19 @@ function createMenuItem(
  *
  * @example
  * ```ts
- * import { Menu } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Menu, Button, UIComponentType } from "@elaraai/east-ui";
  *
- * const separator = Menu.Separator();
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Menu.Root(
+ *         Button.Root("File"),
+ *         [
+ *             Menu.Item("new", "New"),
+ *             Menu.Separator(),
+ *             Menu.Item("exit", "Exit"),
+ *         ]
+ *     );
+ * });
  * ```
  */
 function createMenuSeparator(): ExprType<MenuItemType> {
@@ -120,18 +138,20 @@ function createMenuSeparator(): ExprType<MenuItemType> {
  *
  * @example
  * ```ts
- * import { Menu, Button } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Menu, Button, UIComponentType } from "@elaraai/east-ui";
  *
- * const menu = Menu.Root(
- *     Button.Root("Actions"),
- *     [
- *         Menu.Item("edit", "Edit"),
- *         Menu.Item("duplicate", "Duplicate"),
- *         Menu.Separator(),
- *         Menu.Item("delete", "Delete"),
- *     ],
- *     { placement: "bottom-start" }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Menu.Root(
+ *         Button.Root("Actions"),
+ *         [
+ *             Menu.Item("edit", "Edit"),
+ *             Menu.Separator(),
+ *             Menu.Item("delete", "Delete"),
+ *         ],
+ *         { placement: "bottom-start" }
+ *     );
+ * });
  * ```
  */
 function createMenu(
@@ -145,6 +165,8 @@ function createMenu(
             : style.placement)
         : undefined;
 
+    // Note: Menu's style properties (onSelect, onOpenChange) are in MenuStyleType but
+    // the Menu component only uses placement directly on the component, not in a style object
     return East.value(variant("Menu", {
         trigger: trigger,
         items: items,
@@ -161,32 +183,7 @@ function createMenu(
  *
  * @remarks
  * Menu provides a dropdown menu triggered by a UI element.
- *
- * @example
- * ```ts
- * import { Menu, Button } from "@elaraai/east-ui";
- *
- * // Basic menu
- * const menu = Menu.Root(
- *     Button.Root("Options"),
- *     [
- *         Menu.Item("view", "View"),
- *         Menu.Item("edit", "Edit"),
- *         Menu.Separator(),
- *         Menu.Item("delete", "Delete"),
- *     ]
- * );
- *
- * // Menu with placement
- * const menuWithPlacement = Menu.Root(
- *     Button.Root("Actions"),
- *     [
- *         Menu.Item("copy", "Copy"),
- *         Menu.Item("paste", "Paste"),
- *     ],
- *     { placement: "bottom-end" }
- * );
- * ```
+ * Use `Menu.Root(trigger, items, style)` to create a menu, `Menu.Item(value, label)` for items, and `Menu.Separator()` for dividers.
  */
 export const Menu = {
     /**

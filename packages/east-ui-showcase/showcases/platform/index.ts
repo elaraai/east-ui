@@ -3,4 +3,4 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-export { StateShowcase } from "./state.js";
+export { default as stateShowcase } from "./state";

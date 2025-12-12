@@ -155,6 +155,7 @@ export interface IconStyle {
  * @remarks
  * Icon displays a Font Awesome icon with optional styling.
  *
+ * @property prefix - The Font Awesome prefix (e.g., "fas", "far", "fab")
  * @property name - The Font Awesome icon name (e.g., "user", "home", "chevron-right")
  * @property style - Optional styling configuration
  */

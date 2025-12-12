@@ -26,7 +26,7 @@ export { AreaChartType, type AreaChartStyle, type AreaChartSeriesConfig } from "
  * Creates an Area chart component.
  *
  * @param data - Array of data points
- * @param series - Series configuration
+ * @param series - Series configuration keyed by field names
  * @param style - Optional styling configuration
  * @returns An East expression representing the area chart component
  *
@@ -37,37 +37,22 @@ export { AreaChartType, type AreaChartStyle, type AreaChartSeriesConfig } from "
  *
  * @example
  * ```ts
- * import { Chart } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Chart, UIComponentType } from "@elaraai/east-ui";
  *
- * // Basic area chart
- * const chart = Chart.Area(
- *   [
- *     { month: "Jan", revenue: 186 },
- *     { month: "Feb", revenue: 305 },
- *     { month: "Mar", revenue: 237 },
- *   ],
- *   [{ name: "revenue", color: "teal.solid" }],
- *   {
- *     xAxis: { dataKey: "month" },
- *     showGrid: true,
- *     curveType: "natural",
- *   }
- * );
- *
- * // 100% stacked area chart
- * const stackedChart = Chart.Area(
- *   osUsageData,
- *   [
- *     { name: "windows", color: "teal.solid" },
- *     { name: "mac", color: "purple.solid" },
- *     { name: "linux", color: "blue.solid" },
- *   ],
- *   {
- *     stacked: true,
- *     stackOffset: "expand",
- *     showLegend: true,
- *   }
- * );
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Chart.Area(
+ *         [
+ *             { month: "Jan", revenue: 186, profit: 80 },
+ *             { month: "Feb", revenue: 305, profit: 120 },
+ *         ],
+ *         {
+ *             revenue: { color: "teal.solid" },
+ *             profit: { color: "purple.solid" },
+ *         },
+ *         { xAxis: Chart.Axis({ dataKey: "month" }) }
+ *     );
+ * });
  * ```
  */
 export function createAreaChart<T extends SubtypeExprOrValue<ArrayType<StructType>>>(

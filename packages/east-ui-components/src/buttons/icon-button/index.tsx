@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { IconButton as ChakraIconButton, type IconButtonProps } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -25,10 +25,10 @@ const iconButtonEqual = equalFor(IconButton.Types.IconButton);
 export type IconButtonValue = ValueTypeOf<typeof IconButton.Types.IconButton>;
 
 /**
- * Converts an East UI IconButton value to Chakra UI IconButton props.
+ * Converts an East UI IconButton value to Chakra UI IconButton props (excluding callbacks).
  * Pure function - easy to test independently.
  */
-export function toChakraIconButton(value: IconButtonValue): Omit<IconButtonProps, "children" | "aria-label"> {
+export function toChakraIconButton(value: IconButtonValue): Omit<IconButtonProps, "children" | "aria-label" | "onClick"> {
     const style = getSomeorUndefined(value.style);
 
     return {
@@ -49,9 +49,19 @@ export interface EastChakraIconButtonProps {
  */
 export const EastChakraIconButton = memo(function EastChakraIconButton({ value }: EastChakraIconButtonProps) {
     const props = useMemo(() => toChakraIconButton(value), [value]);
+    const onClickFn = useMemo(() => {
+        const style = getSomeorUndefined(value.style);
+        return style ? getSomeorUndefined(style.onClick) : undefined;
+    }, [value.style]);
+
+    const handleClick = useCallback(() => {
+        if (onClickFn) {
+            queueMicrotask(() => onClickFn());
+        }
+    }, [onClickFn]);
 
     return (
-        <ChakraIconButton {...props} aria-label={value.name}>
+        <ChakraIconButton {...props} aria-label={value.name} onClick={onClickFn ? handleClick : undefined}>
             <FontAwesomeIcon icon={[value.prefix as IconPrefix, value.name as IconName]} />
         </ChakraIconButton>
     );

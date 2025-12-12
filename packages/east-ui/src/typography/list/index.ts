@@ -47,8 +47,7 @@ function createList(
  * List component for ordered and unordered lists.
  *
  * @remarks
- * Use `List.Root(items, style)` to create lists. Items can be simple strings
- * or objects with value and optional icon.
+ * Use `List.Root(items, style)` to create lists with an array of string items.
  *
  * @example
  * ```ts
@@ -59,7 +58,7 @@ function createList(
  *     return List.Root([
  *         "First item",
  *         "Second item",
- *         { value: "Third item", icon: "check" },
+ *         "Third item",
  *     ], {
  *         variant: "unordered",
  *         gap: "2",

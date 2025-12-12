@@ -114,17 +114,14 @@ export type TabsRootType = typeof TabsRootType;
  *
  * @example
  * ```ts
- * import { Tabs, Text } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Tabs, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * const item = Tabs.Item("overview", "Overview", [
- *   Text.Root("Overview content"),
- * ]);
- *
- * // Disabled tab
- * const disabled = Tabs.Item("disabled", "Disabled Tab", [
- *   Text.Root("This tab is disabled"),
- * ], {
- *   disabled: true,
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Tabs.Root([
+ *         Tabs.Item("overview", "Overview", [Text.Root("Overview content")]),
+ *         Tabs.Item("disabled", "Disabled Tab", [Text.Root("Disabled")], { disabled: true }),
+ *     ]);
  * });
  * ```
  */
@@ -164,35 +161,17 @@ function createTabsItem(
  *
  * @example
  * ```ts
- * import { Tabs, Text } from "@elaraai/east-ui";
+ * import { East } from "@elaraai/east";
+ * import { Tabs, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * // Simple tabs
- * const tabs = Tabs.Root([
- *   Tabs.Item("overview", "Overview", [Text.Root("Overview content")]),
- *   Tabs.Item("settings", "Settings", [Text.Root("Settings content")]),
- *   Tabs.Item("billing", "Billing", [Text.Root("Billing content")]),
- * ], {
- *   defaultValue: "overview",
- *   variant: "line",
- * });
- *
- * // Enclosed variant with equal width
- * const enclosed = Tabs.Root([
- *   Tabs.Item("tab1", "Tab 1", [Text.Root("Content 1")]),
- *   Tabs.Item("tab2", "Tab 2", [Text.Root("Content 2")]),
- * ], {
- *   variant: "enclosed",
- *   fitted: true,
- *   size: "lg",
- * });
- *
- * // Vertical tabs
- * const vertical = Tabs.Root([
- *   Tabs.Item("profile", "Profile", [Text.Root("Profile content")]),
- *   Tabs.Item("security", "Security", [Text.Root("Security content")]),
- * ], {
- *   orientation: "vertical",
- *   variant: "subtle",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Tabs.Root([
+ *         Tabs.Item("overview", "Overview", [Text.Root("Overview content")]),
+ *         Tabs.Item("settings", "Settings", [Text.Root("Settings content")]),
+ *     ], {
+ *         defaultValue: "overview",
+ *         variant: "line",
+ *     });
  * });
  * ```
  */
@@ -260,6 +239,7 @@ function createTabsRoot(
             lazyMount: toBoolOption(style.lazyMount),
             unmountOnExit: toBoolOption(style.unmountOnExit),
             colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
+            onValueChange: style?.onValueChange !== undefined ? variant("some", style.onValueChange) : variant("none", null),
         }, TabsStyleType)) : variant("none", null),
     }), UIComponentType);
 }
@@ -274,24 +254,6 @@ function createTabsRoot(
  * @remarks
  * Use `Tabs.Root` to create the container and `Tabs.Item` for each
  * tab panel. Tab content supports child UI components.
- *
- * @example
- * ```ts
- * import { Tabs, Text, Button } from "@elaraai/east-ui";
- *
- * const settingsTabs = Tabs.Root([
- *   Tabs.Item("general", "General", [
- *     Text.Root("General settings"),
- *     Button.Root("Save"),
- *   ]),
- *   Tabs.Item("advanced", "Advanced", [
- *     Text.Root("Advanced settings"),
- *   ]),
- * ], {
- *   variant: "enclosed",
- *   defaultValue: "general",
- * });
- * ```
  */
 export const Tabs = {
     /**

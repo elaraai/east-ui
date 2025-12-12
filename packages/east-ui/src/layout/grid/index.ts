@@ -113,26 +113,18 @@ export function GridItem(
  *
  * @example
  * ```ts
- * import { Grid, Text } from "@elaraai/east-ui";
- * import { East, variant, ArrayType } from "@elaraai/east";
+ * import { East } from "@elaraai/east";
+ * import { Grid, Text, UIComponentType } from "@elaraai/east-ui";
  *
- * // Basic 3-column grid
- * const grid = Grid.Root(
- *   East.value([
- *     Grid.Item(variant("Text", Text(...))),
- *     Grid.Item(variant("Text", Text(...)), { colSpan: 2 }),
- *     Grid.Item(variant("Text", Text(...))),
- *   ], ArrayType(GridItemType)),
- *   {
- *     templateColumns: "repeat(3, 1fr)",
- *     gap: "4",
- *   }
- * );
- *
- * // Responsive grid with auto-fit
- * const responsiveGrid = Grid.Root(items, {
- *   templateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
- *   gap: "6",
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Grid.Root([
+ *         Grid.Item(Text.Root("Cell 1")),
+ *         Grid.Item(Text.Root("Cell 2")),
+ *         Grid.Item(Text.Root("Cell 3")),
+ *     ], {
+ *         templateColumns: "repeat(3, 1fr)",
+ *         gap: "4",
+ *     });
  * });
  * ```
  */
@@ -211,24 +203,7 @@ export const GridType = StructType({
  *
  * @remarks
  * Grid provides a two-dimensional layout system using CSS Grid.
- * Use Grid.Root to create the container and Grid.Item for each cell.
- *
- * @example
- * ```ts
- * import { Grid, Text } from "@elaraai/east-ui";
- *
- * const layout = Grid.Root(
- *   East.value([
- *     Grid.Item(variant("Text", mainContent), { colSpan: 2 }),
- *     Grid.Item(variant("Text", sidebar)),
- *     Grid.Item(variant("Text", footer), { colSpan: 3 }),
- *   ], ArrayType(GridItemType)),
- *   {
- *     templateColumns: "repeat(3, 1fr)",
- *     gap: "4",
- *   }
- * );
- * ```
+ * Use `Grid.Root(items, style)` to create the container and `Grid.Item(content, style)` for each cell.
  */
 export const Grid = {
     /**

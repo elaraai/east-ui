@@ -1,5 +1,5 @@
-import { East, some } from "@elaraai/east";
-import { Splitter, Text, UIComponentType, Stack, Box } from "@elaraai/east-ui";
+import { East, some, FloatType, NullType, ArrayType } from "@elaraai/east";
+import { Splitter, Text, UIComponentType, Stack, Box, State, Reactive, Badge } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
 /**
@@ -221,6 +221,104 @@ export default East.function(
             )
         );
 
+        // =====================================================================
+        // INTERACTIVE EXAMPLES - Demonstrate callbacks with Reactive.Root
+        // =====================================================================
+
+        // Initialize state for interactive example
+        $(State.initTyped("splitter_left_size", 50.0, FloatType)());
+        $(State.initTyped("splitter_right_size", 50.0, FloatType)());
+
+        // Interactive Splitter with onResize
+        const interactiveSplitter = $.let(
+            ShowcaseCard(
+                "Interactive Splitter",
+                "Drag to see onResize callback",
+                Reactive.Root($ => {
+                    const leftSize = $.let(State.readTyped("splitter_left_size", FloatType)());
+                    const rightSize = $.let(State.readTyped("splitter_right_size", FloatType)());
+
+                    const onResize = East.function(
+                        [Splitter.Types.ResizeDetails],
+                        NullType,
+                        ($, details) => {
+                            // Update state with new sizes
+                            const sizes = $.let(details.size);
+                            $(State.writeTyped("splitter_left_size", some(sizes.get(0n)), FloatType)());
+                            $(State.writeTyped("splitter_right_size", some(sizes.get(1n)), FloatType)());
+                        }
+                    );
+
+                    return Stack.VStack([
+                        Box.Root([
+                            Splitter.Root([
+                                Splitter.Panel(
+                                    Box.Root([Text.Root("Left Panel")], { padding: "4", background: "blue.100" }),
+                                    { id: "left" }
+                                ),
+                                Splitter.Panel(
+                                    Box.Root([Text.Root("Right Panel")], { padding: "4", background: "green.100" }),
+                                    { id: "right" }
+                                ),
+                            ], [50, 50], { orientation: "horizontal", onResize }),
+                        ], { height: "150px" }),
+                        Stack.HStack([
+                            Badge.Root(
+                                East.str`Left: ${East.print(leftSize.unwrap('some'))}%`,
+                                { colorPalette: "blue", variant: "solid" }
+                            ),
+                            Badge.Root(
+                                East.str`Right: ${East.print(rightSize.unwrap('some'))}%`,
+                                { colorPalette: "green", variant: "solid" }
+                            ),
+                        ], { gap: "2" }),
+                    ], { gap: "3", align: "stretch" });
+                }),
+                some(`
+                    Reactive.Root($ => {
+                        const leftSize = $.let(State.readTyped("splitter_left_size", FloatType)());
+                        const rightSize = $.let(State.readTyped("splitter_right_size", FloatType)());
+
+                        const onResize = East.function(
+                            [Splitter.Types.ResizeDetails],
+                            NullType,
+                            ($, details) => {
+                                // Update state with new sizes
+                                const sizes = $.let(details.size);
+                                $(State.writeTyped("splitter_left_size", some(sizes.get(0n)), FloatType)());
+                                $(State.writeTyped("splitter_right_size", some(sizes.get(1n)), FloatType)());
+                            }
+                        );
+
+                        return Stack.VStack([
+                            Box.Root([
+                                Splitter.Root([
+                                    Splitter.Panel(
+                                        Box.Root([Text.Root("Left Panel")], { padding: "4", background: "blue.100" }),
+                                        { id: "left" }
+                                    ),
+                                    Splitter.Panel(
+                                        Box.Root([Text.Root("Right Panel")], { padding: "4", background: "green.100" }),
+                                        { id: "right" }
+                                    ),
+                                ], [50, 50], { orientation: "horizontal", onResize }),
+                            ], { height: "150px" }),
+                            Stack.HStack([
+                                Badge.Root(
+                                    East.str\`Left: \${East.print(leftSize.unwrap('some'))}%\`,
+                                    { colorPalette: "blue", variant: "solid" }
+                                ),
+                                Badge.Root(
+                                    East.str\`Right: \${East.print(rightSize.unwrap('some'))}%\`,
+                                    { colorPalette: "green", variant: "solid" }
+                                ),
+                            ], { gap: "2" }),
+                        ], { gap: "3", align: "stretch" });
+                    })
+                `)
+            )
+        );
+
         return Stack.VStack([
             horizontal,
             vertical,
@@ -228,6 +326,7 @@ export default East.function(
             constrained,
             asymmetric,
             editor,
+            interactiveSplitter,
         ], { gap: "4", width: "100%" });
     }
 );
