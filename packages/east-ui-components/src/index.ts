@@ -281,4 +281,5 @@ export {
     useEastKey,
     useEastWrite,
     useEastBatch,
+    createEastStore,
 } from "./platform/index.js";

@@ -19,6 +19,7 @@ export { State } from "@elaraai/east-ui";
 export {
     UIStore,
     createUIStore,
+    createUIStore as createEastStore, // Legacy alias
     type UIStoreInterface,
     type UIStoreOptions,
     PersistentUIStore,
