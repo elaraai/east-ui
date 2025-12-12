@@ -148,7 +148,6 @@ export const EastChakraGantt = memo(function EastChakraGantt({
     const onMilestoneDoubleClickFn = useMemo(() => style ? getSomeorUndefined(style.onMilestoneDoubleClick) : undefined, [style]);
     const onMilestoneDragFn = useMemo(() => style ? getSomeorUndefined(style.onMilestoneDrag) : undefined, [style]);
     const onTaskDurationChangeFn = useMemo(() => style ? getSomeorUndefined(style.onTaskDurationChange) : undefined, [style]);
-    const onRowSelectionChangeFn = useMemo(() => style ? getSomeorUndefined(style.onRowSelectionChange) : undefined, [style]);
     const dragStepValue = useMemo(() => style ? getSomeorUndefined(style.dragStep) : undefined, [style]);
     const durationStepValue = useMemo(() => style ? getSomeorUndefined(style.durationStep) : undefined, [style]);
     const [gridLineColor] = useToken("colors", ["gray.300"]);
@@ -295,15 +294,15 @@ export const EastChakraGantt = memo(function EastChakraGantt({
 
     // Handle cell click
     const handleCellClick = useCallback((rowIndex: bigint, columnKey: string, cellValue: GanttCellValue | undefined) => {
-        if (onCellClickFn) {
-            queueMicrotask(() => onCellClickFn({ rowIndex, columnKey, cellValue: cellValue?.value! }));
+        if (onCellClickFn && cellValue?.value !== undefined) {
+            queueMicrotask(() => onCellClickFn({ rowIndex, columnKey, cellValue: cellValue.value }));
         }
     }, [onCellClickFn]);
 
     // Handle cell double click
     const handleCellDoubleClick = useCallback((rowIndex: bigint, columnKey: string, cellValue: GanttCellValue | undefined) => {
-        if (onCellDoubleClickFn) {
-            queueMicrotask(() => onCellDoubleClickFn({ rowIndex, columnKey, cellValue: cellValue?.value! }));
+        if (onCellDoubleClickFn && cellValue?.value !== undefined) {
+            queueMicrotask(() => onCellDoubleClickFn({ rowIndex, columnKey, cellValue: cellValue.value }));
         }
     }, [onCellDoubleClickFn]);
 

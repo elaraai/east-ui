@@ -143,7 +143,7 @@ export const GanttMilestone = ({
     }, [dragState, onDrag, onClick, positionToDate, position.x, timelineWidth]);
 
     // Handle double click separately (only when not dragging)
-    const handleDoubleClick = useCallback((e: React.MouseEvent) => {
+    const handleDoubleClick = useCallback((_e: React.MouseEvent) => {
         if (onDoubleClick && !dragState) {
             onDoubleClick();
         }

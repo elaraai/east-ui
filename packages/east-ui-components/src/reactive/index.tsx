@@ -59,7 +59,7 @@ export function EastReactiveComponent({ value }: { value: ReactiveValue }) {
             disableTracking();
             throw e;
         }
-    }, [value.render]);
+    }, [value]);
 
     // Subscribe to the keys we depend on
     const subscribe = useCallback((cb: () => void) => {
@@ -79,7 +79,8 @@ export function EastReactiveComponent({ value }: { value: ReactiveValue }) {
     const snapshot = useSyncExternalStore(subscribe, getSnapshot);
 
     // Execute render function with tracking
-    // Re-runs when snapshot changes (i.e., when dependencies change)
+    // snapshot is intentionally included to trigger re-renders when dependencies change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const result = useMemo(() => executeWithTracking(), [executeWithTracking, snapshot]);
 
     if (result === undefined || result === null) {

@@ -10,11 +10,9 @@ import {
     useMemo,
     useCallback,
     useSyncExternalStore,
-    useState,
     type ReactNode,
 } from "react";
 import { State, type UIStoreInterface, UIComponentType } from "@elaraai/east-ui";
-import { PersistentUIStore } from "./store.js";
 import { EastChakraComponent } from "../component.js";
 import type { EastIR, ValueTypeOf } from "@elaraai/east";
 import { Alert, Box, Code, Text, Stack } from "@chakra-ui/react";
@@ -193,7 +191,6 @@ export interface EastFunctionProps {
     /**
      * The IR (intermediate representation) from calling `.toIR()` on an East function.
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ir: EastIR<[], UIComponentType>;
 }
 

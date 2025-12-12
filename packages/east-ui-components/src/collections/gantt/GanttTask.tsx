@@ -237,7 +237,7 @@ export const GanttTask = ({
     }, [dragState, onDrag, onClick, offsetToDuration, durationToOffset, timelineWidth, dragStep]);
 
     // Handle double click separately (only when not dragging)
-    const handleDoubleClick = useCallback((e: React.MouseEvent) => {
+    const handleDoubleClick = useCallback((_e: React.MouseEvent) => {
         if (onDoubleClick && !dragState && !durationDragState) {
             onDoubleClick();
         }

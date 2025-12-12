@@ -254,15 +254,15 @@ export const EastChakraTable = memo(function EastChakraTable({
 
     // Handle cell click
     const handleCellClick = useCallback((rowIndex: bigint, columnKey: string, cellValue: TableCellValue | undefined) => {
-        if (onCellClickFn) {
-            queueMicrotask(() => onCellClickFn({ rowIndex, columnKey, cellValue: cellValue?.value! }));
+        if (onCellClickFn && cellValue?.value !== undefined) {
+            queueMicrotask(() => onCellClickFn({ rowIndex, columnKey, cellValue: cellValue.value }));
         }
     }, [onCellClickFn]);
 
     // Handle cell double click
     const handleCellDoubleClick = useCallback((rowIndex: bigint, columnKey: string, cellValue: TableCellValue | undefined) => {
-        if (onCellDoubleClickFn) {
-            queueMicrotask(() => onCellDoubleClickFn({ rowIndex, columnKey, cellValue: cellValue?.value! }));
+        if (onCellDoubleClickFn && cellValue?.value !== undefined) {
+            queueMicrotask(() => onCellDoubleClickFn({ rowIndex, columnKey, cellValue: cellValue.value }));
         }
     }, [onCellDoubleClickFn]);
 

@@ -17,7 +17,7 @@ import {
     FunctionType
 } from "@elaraai/east";
 
-import { TableCellClickEventType, TableRowClickEventType, TableRowSelectionEventType, TableSortEventType } from "../table/types.js";
+import { TableCellClickEventType, TableRowClickEventType, TableSortEventType } from "../table/types.js";
 
 import {
     ColorSchemeType,
@@ -262,7 +262,6 @@ export type GanttMilestoneDragEventType = typeof GanttMilestoneDragEventType;
  * @property onCellDoubleClick - Callback triggered when a cell is double-clicked
  * @property onRowClick - Callback triggered when a row is clicked
  * @property onRowDoubleClick - Callback triggered when a row is double-clicked
- * @property onRowSelectionChange - Callback triggered when row selection changes
  * @property onSortChange - Callback triggered when sorting changes
  * @property onTaskClick - Callback triggered when a task is clicked
  * @property onTaskDoubleClick - Callback triggered when a task is double-clicked
@@ -291,7 +290,6 @@ export const GanttStyleType = StructType({
     onCellDoubleClick: OptionType(FunctionType([TableCellClickEventType], NullType)),
     onRowClick: OptionType(FunctionType([TableRowClickEventType], NullType)),
     onRowDoubleClick: OptionType(FunctionType([TableRowClickEventType], NullType)),
-    onRowSelectionChange: OptionType(FunctionType([TableRowSelectionEventType], NullType)),
     onSortChange: OptionType(FunctionType([TableSortEventType], NullType)),
     onTaskClick: OptionType(FunctionType([GanttTaskClickEventType], NullType)),
     onTaskDoubleClick: OptionType(FunctionType([GanttTaskClickEventType], NullType)),
@@ -328,7 +326,6 @@ export type GanttStyleType = typeof GanttStyleType;
  * @property onCellDoubleClick - Callback triggered when a cell is double-clicked
  * @property onRowClick - Callback triggered when a row is clicked
  * @property onRowDoubleClick - Callback triggered when a row is double-clicked
- * @property onRowSelectionChange - Callback triggered when row selection changes
  * @property onSortChange - Callback triggered when sorting changes
  * @property onTaskClick - Callback triggered when a task is clicked
  * @property onTaskDoubleClick - Callback triggered when a task is double-clicked
@@ -368,8 +365,6 @@ export interface GanttStyle {
     onRowClick?: SubtypeExprOrValue<FunctionType<[TableRowClickEventType], NullType>>;
     /** Callback triggered when a row is double-clicked */
     onRowDoubleClick?: SubtypeExprOrValue<FunctionType<[TableRowClickEventType], NullType>>;
-    /** Callback triggered when row selection changes */
-    onRowSelectionChange?: SubtypeExprOrValue<FunctionType<[TableRowSelectionEventType], NullType>>;
     /** Callback triggered when sorting changes */
     onSortChange?: SubtypeExprOrValue<FunctionType<[TableSortEventType], NullType>>;
     /** Callback triggered when a task is clicked */

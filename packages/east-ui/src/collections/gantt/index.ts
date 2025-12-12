@@ -47,7 +47,6 @@ import {
     GanttTaskProgressChangeEventType,
     GanttMilestoneClickEventType,
     GanttMilestoneDragEventType,
-    TimeStepType,
 } from "./types.js";
 
 // Re-export types
@@ -382,7 +381,6 @@ function createGantt<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
         onCellDoubleClick: style.onCellDoubleClick ? some(style.onCellDoubleClick) : none,
         onRowClick: style.onRowClick ? some(style.onRowClick) : none,
         onRowDoubleClick: style.onRowDoubleClick ? some(style.onRowDoubleClick) : none,
-        onRowSelectionChange: style.onRowSelectionChange ? some(style.onRowSelectionChange) : none,
         onSortChange: style.onSortChange ? some(style.onSortChange) : none,
         onTaskClick: style.onTaskClick ? some(style.onTaskClick) : none,
         onTaskDoubleClick: style.onTaskDoubleClick ? some(style.onTaskDoubleClick) : none,
