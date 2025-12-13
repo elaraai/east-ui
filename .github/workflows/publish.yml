@@ -118,8 +118,10 @@ jobs:
         id: version_extension
         working-directory: packages/east-ui-extension
         run: |
+          # VS Marketplace doesn't support semver prerelease versions (e.g., 1.0.0-beta.0)
+          # For pre-releases, use regular patch bump and --pre-release flag when publishing
           if [[ "${{ inputs.release_type }}" == pre* ]]; then
-            npm version ${{ inputs.release_type }} --preid=beta --no-git-tag-version
+            npm version patch --no-git-tag-version
           else
             npm version ${{ inputs.release_type }} --no-git-tag-version
           fi
