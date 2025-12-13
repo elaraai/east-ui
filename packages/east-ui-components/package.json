@@ -1,6 +1,6 @@
 {
   "name": "@elaraai/east-ui-components",
-  "version": "0.0.1-beta.7",
+  "version": "0.0.1-beta.8",
   "description": "React components for rendering East UI types with Chakra UI",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -36,7 +36,7 @@
     "@chakra-ui/charts": "^3.30.0",
     "@chakra-ui/react": "^3.0.0",
     "@elaraai/east": "^0.0.1-beta.14",
-    "@elaraai/east-ui": "^0.0.1-beta.7",
+    "@elaraai/east-ui": "^0.0.1-beta.8",
     "@emotion/react": "^11.14.0",
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
     "@fortawesome/free-brands-svg-icons": "^7.1.0",
