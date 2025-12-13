@@ -88,11 +88,11 @@ jobs:
         working-directory: packages/east-ui
         run: |
           if [[ "${{ inputs.release_type }}" == pre* ]]; then
-            NEW_VERSION=$(npm version ${{ inputs.release_type }} --preid=beta --no-git-tag-version)
+            npm version ${{ inputs.release_type }} --preid=beta --no-git-tag-version
           else
-            NEW_VERSION=$(npm version ${{ inputs.release_type }} --no-git-tag-version)
+            npm version ${{ inputs.release_type }} --no-git-tag-version
           fi
-          echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+          echo "new_version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
       - name: Bump east-ui-components version
         if: ${{ inputs.publish_east_ui_components }}
@@ -100,11 +100,11 @@ jobs:
         working-directory: packages/east-ui-components
         run: |
           if [[ "${{ inputs.release_type }}" == pre* ]]; then
-            NEW_VERSION=$(npm version ${{ inputs.release_type }} --preid=beta --no-git-tag-version)
+            npm version ${{ inputs.release_type }} --preid=beta --no-git-tag-version
           else
-            NEW_VERSION=$(npm version ${{ inputs.release_type }} --no-git-tag-version)
+            npm version ${{ inputs.release_type }} --no-git-tag-version
           fi
-          echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+          echo "new_version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
       - name: Bump east-ui-extension version
         if: ${{ inputs.publish_vscode }}
@@ -112,11 +112,11 @@ jobs:
         working-directory: packages/east-ui-extension
         run: |
           if [[ "${{ inputs.release_type }}" == pre* ]]; then
-            NEW_VERSION=$(npm version ${{ inputs.release_type }} --preid=beta --no-git-tag-version)
+            npm version ${{ inputs.release_type }} --preid=beta --no-git-tag-version
           else
-            NEW_VERSION=$(npm version ${{ inputs.release_type }} --no-git-tag-version)
+            npm version ${{ inputs.release_type }} --no-git-tag-version
           fi
-          echo "new_version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+          echo "new_version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
       # Update workspace dependencies before publish
       - name: Update east-ui-components workspace dependency
