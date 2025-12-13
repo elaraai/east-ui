@@ -39,14 +39,21 @@ jobs:
       contents: write  # Need write to push version bump and tag
       id-token: write  # Required for npm trusted publishers (OIDC)
     steps:
+      - name: Generate app token
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Configure git
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "elara-ci[bot]"
+          git config user.email "elara-ci[bot]@users.noreply.github.com"
 
       - name: Use Node.js 22.x
         uses: actions/setup-node@v4
