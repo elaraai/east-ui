@@ -215,6 +215,13 @@ jobs:
         if: steps.check_updates.outputs.has_updates == 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          UPDATES: ${{ steps.summary.outputs.updates }}
+          COMMIT_MSG: ${{ steps.summary.outputs.commit_msg }}
+          TEST_EMOJI: ${{ steps.test_status.outputs.emoji }}
+          TEST_MESSAGE: ${{ steps.test_status.outputs.message }}
+          LINT_OUTCOME: ${{ steps.lint.outcome }}
+          TEST_OUTCOME: ${{ steps.test.outcome }}
+          TEST_PASSED: ${{ steps.test_status.outputs.passed }}
         run: |
           # Create label if it doesn't exist
           gh label create dependencies --color 0366d6 --description "Dependency updates" 2>/dev/null || true
@@ -222,19 +229,25 @@ jobs:
           # Check if PR already exists for this branch
           EXISTING_PR=$(gh pr list --head "${{ env.branch_name }}" --json number --jq '.[0].number' 2>/dev/null || echo "")
 
-          PR_TITLE="${{ steps.test_status.outputs.emoji }} ${{ steps.summary.outputs.commit_msg }}"
-          PR_BODY="## Dependency Update
+          PR_TITLE="${TEST_EMOJI} ${COMMIT_MSG}"
+
+          # Use heredoc to avoid shell interpretation of backticks
+          PR_BODY=$(cat <<'EOFBODY'
+          ## Dependency Update
 
           ### Updated packages
-          ${{ steps.summary.outputs.updates }}
+          EOFBODY
+          )
+          PR_BODY="${PR_BODY}
+          ${UPDATES}
 
-          ### Test Status: ${{ steps.test_status.outputs.emoji }} ${{ steps.test_status.outputs.message }}
+          ### Test Status: ${TEST_EMOJI} ${TEST_MESSAGE}
 
-          - Lint: ${{ steps.lint.outcome }}
-          - Tests: ${{ steps.test.outcome }}
+          - Lint: ${LINT_OUTCOME}
+          - Tests: ${TEST_OUTCOME}
 
           ### Checklist
-          - [${{ steps.test_status.outputs.passed == 'true' && 'x' || ' ' }}] CI tests pass
+          - [$([ "$TEST_PASSED" = "true" ] && echo "x" || echo " ")] CI tests pass
           - [ ] Manual testing if needed
           - [ ] Ready to merge
 
