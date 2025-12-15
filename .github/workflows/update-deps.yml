@@ -36,7 +36,7 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Check for @elaraai/east updates
-        id: check_updates
+        id: check_east
         run: |
           # Get current version from east-ui (canonical source)
           CURRENT_VERSION=$(node -p "require('./packages/east-ui/package.json').peerDependencies['@elaraai/east']" | sed 's/\^//')
@@ -48,38 +48,100 @@ jobs:
 
           # Determine which version to use based on current version
           if [[ "$CURRENT_VERSION" == *"beta"* ]]; then
-            # Currently on beta, check for newer beta
             LATEST_VERSION="${LATEST_BETA}"
             echo "channel=beta" >> $GITHUB_OUTPUT
           else
-            # Currently on stable, check for newer stable
             LATEST_VERSION="${LATEST_STABLE}"
             echo "channel=latest" >> $GITHUB_OUTPUT
           fi
 
           echo "latest_version=${LATEST_VERSION}" >> $GITHUB_OUTPUT
 
-          if [[ -z "$LATEST_VERSION" ]]; then
+          if [[ -z "$LATEST_VERSION" ]] || [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
             echo "has_updates=false" >> $GITHUB_OUTPUT
-            echo "No version found on npm"
-          elif [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
-            echo "has_updates=false" >> $GITHUB_OUTPUT
-            echo "Already on latest: $CURRENT_VERSION"
           else
             echo "has_updates=true" >> $GITHUB_OUTPUT
-            echo "Update available: $CURRENT_VERSION -> $LATEST_VERSION"
+            echo "@elaraai/east: $CURRENT_VERSION -> $LATEST_VERSION"
+          fi
+
+      - name: Check for @elaraai/e3-api-server updates
+        id: check_e3_server
+        run: |
+          CURRENT_VERSION=$(node -p "require('./packages/east-ui-extension/package.json').dependencies['@elaraai/e3-api-server']" | sed 's/\^//')
+          echo "current_version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
+
+          LATEST_STABLE=$(npm view @elaraai/e3-api-server version 2>/dev/null || echo "")
+          LATEST_BETA=$(npm view @elaraai/e3-api-server dist-tags.beta 2>/dev/null || echo "")
+
+          if [[ "$CURRENT_VERSION" == *"beta"* ]]; then
+            LATEST_VERSION="${LATEST_BETA}"
+          else
+            LATEST_VERSION="${LATEST_STABLE}"
+          fi
+
+          echo "latest_version=${LATEST_VERSION}" >> $GITHUB_OUTPUT
+
+          if [[ -z "$LATEST_VERSION" ]] || [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
+            echo "has_updates=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_updates=true" >> $GITHUB_OUTPUT
+            echo "@elaraai/e3-api-server: $CURRENT_VERSION -> $LATEST_VERSION"
+          fi
+
+      - name: Check for @elaraai/e3-api-client updates
+        id: check_e3_client
+        run: |
+          CURRENT_VERSION=$(node -p "require('./packages/east-ui-extension/webview/package.json').dependencies['@elaraai/e3-api-client']" | sed 's/\^//')
+          echo "current_version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
+
+          LATEST_STABLE=$(npm view @elaraai/e3-api-client version 2>/dev/null || echo "")
+          LATEST_BETA=$(npm view @elaraai/e3-api-client dist-tags.beta 2>/dev/null || echo "")
+
+          if [[ "$CURRENT_VERSION" == *"beta"* ]]; then
+            LATEST_VERSION="${LATEST_BETA}"
+          else
+            LATEST_VERSION="${LATEST_STABLE}"
+          fi
+
+          echo "latest_version=${LATEST_VERSION}" >> $GITHUB_OUTPUT
+
+          if [[ -z "$LATEST_VERSION" ]] || [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
+            echo "has_updates=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_updates=true" >> $GITHUB_OUTPUT
+            echo "@elaraai/e3-api-client: $CURRENT_VERSION -> $LATEST_VERSION"
+          fi
+
+      - name: Check if any updates available
+        id: check_updates
+        run: |
+          if [[ "${{ steps.check_east.outputs.has_updates }}" == "true" ]] || \
+             [[ "${{ steps.check_e3_server.outputs.has_updates }}" == "true" ]] || \
+             [[ "${{ steps.check_e3_client.outputs.has_updates }}" == "true" ]]; then
+            echo "has_updates=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_updates=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Create update branch
         if: steps.check_updates.outputs.has_updates == 'true'
         run: |
-          BRANCH_NAME="deps/east-${{ steps.check_updates.outputs.latest_version }}"
+          # Create branch name from date to handle multiple package updates
+          BRANCH_NAME="deps/elara-$(date +%Y%m%d)"
           git checkout -b "$BRANCH_NAME"
           echo "branch_name=${BRANCH_NAME}" >> $GITHUB_ENV
 
       - name: Update @elaraai/east version
-        if: steps.check_updates.outputs.has_updates == 'true'
-        run: make set-east-version VERSION=${{ steps.check_updates.outputs.latest_version }}
+        if: steps.check_east.outputs.has_updates == 'true'
+        run: make set-east-version VERSION=${{ steps.check_east.outputs.latest_version }}
+
+      - name: Update @elaraai/e3-api-server version
+        if: steps.check_e3_server.outputs.has_updates == 'true'
+        run: make set-e3-api-server-version VERSION=${{ steps.check_e3_server.outputs.latest_version }}
+
+      - name: Update @elaraai/e3-api-client version
+        if: steps.check_e3_client.outputs.has_updates == 'true'
+        run: make set-e3-api-client-version VERSION=${{ steps.check_e3_client.outputs.latest_version }}
 
       - name: Install dependencies
         if: steps.check_updates.outputs.has_updates == 'true'
@@ -115,11 +177,38 @@ jobs:
             echo "message=Tests failed - manual fixes required" >> $GITHUB_OUTPUT
           fi
 
+      - name: Build update summary
+        if: steps.check_updates.outputs.has_updates == 'true'
+        id: summary
+        run: |
+          UPDATES=""
+          COMMIT_MSG="deps: update"
+
+          if [[ "${{ steps.check_east.outputs.has_updates }}" == "true" ]]; then
+            UPDATES="${UPDATES}- \`@elaraai/east\`: \`${{ steps.check_east.outputs.current_version }}\` → \`${{ steps.check_east.outputs.latest_version }}\`\n"
+            COMMIT_MSG="${COMMIT_MSG} @elaraai/east@${{ steps.check_east.outputs.latest_version }}"
+          fi
+
+          if [[ "${{ steps.check_e3_server.outputs.has_updates }}" == "true" ]]; then
+            UPDATES="${UPDATES}- \`@elaraai/e3-api-server\`: \`${{ steps.check_e3_server.outputs.current_version }}\` → \`${{ steps.check_e3_server.outputs.latest_version }}\`\n"
+            COMMIT_MSG="${COMMIT_MSG} @elaraai/e3-api-server@${{ steps.check_e3_server.outputs.latest_version }}"
+          fi
+
+          if [[ "${{ steps.check_e3_client.outputs.has_updates }}" == "true" ]]; then
+            UPDATES="${UPDATES}- \`@elaraai/e3-api-client\`: \`${{ steps.check_e3_client.outputs.current_version }}\` → \`${{ steps.check_e3_client.outputs.latest_version }}\`\n"
+            COMMIT_MSG="${COMMIT_MSG} @elaraai/e3-api-client@${{ steps.check_e3_client.outputs.latest_version }}"
+          fi
+
+          echo "updates<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$UPDATES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "commit_msg=${COMMIT_MSG}" >> $GITHUB_OUTPUT
+
       - name: Commit and push
         if: steps.check_updates.outputs.has_updates == 'true'
         run: |
           git add -A
-          git commit -m "deps: update @elaraai/east to ${{ steps.check_updates.outputs.latest_version }}"
+          git commit -m "${{ steps.summary.outputs.commit_msg }}"
           git push -u --force origin "${{ env.branch_name }}"
 
       - name: Create Pull Request
@@ -133,12 +222,11 @@ jobs:
           # Check if PR already exists for this branch
           EXISTING_PR=$(gh pr list --head "${{ env.branch_name }}" --json number --jq '.[0].number' 2>/dev/null || echo "")
 
-          PR_TITLE="${{ steps.test_status.outputs.emoji }} deps: update @elaraai/east to ${{ steps.check_updates.outputs.latest_version }}"
+          PR_TITLE="${{ steps.test_status.outputs.emoji }} ${{ steps.summary.outputs.commit_msg }}"
           PR_BODY="## Dependency Update
 
-          Updates \`@elaraai/east\` from \`${{ steps.check_updates.outputs.current_version }}\` to \`${{ steps.check_updates.outputs.latest_version }}\`.
-
-          **Channel:** ${{ steps.check_updates.outputs.channel }}
+          ### Updated packages
+          ${{ steps.summary.outputs.updates }}
 
           ### Test Status: ${{ steps.test_status.outputs.emoji }} ${{ steps.test_status.outputs.message }}
 

@@ -1,4 +1,4 @@
-.PHONY: install build test lint dev clean extension extension-install set-east-version version-prerelease version-patch version-minor version-major
+.PHONY: install build test lint dev clean extension extension-install set-east-version set-e3-api-server-version set-e3-api-client-version version-prerelease version-patch version-minor version-major
 
 # Install all workspace dependencies
 install:
@@ -41,6 +41,26 @@ ifndef VERSION
 endif
 	@echo "Updating @elaraai/east to version $(VERSION)..."
 	@find . -name "package.json" -exec sed -i 's/"@elaraai\/east": "[^"]*"/"@elaraai\/east": "^$(VERSION)"/g' {} \;
+	@echo "Done. Run 'npm install' to update dependencies."
+
+# Update @elaraai/e3-api-server version
+# Usage: make set-e3-api-server-version VERSION=0.0.2-beta.1
+set-e3-api-server-version:
+ifndef VERSION
+	$(error VERSION is required. Usage: make set-e3-api-server-version VERSION=0.0.2-beta.1)
+endif
+	@echo "Updating @elaraai/e3-api-server to version $(VERSION)..."
+	@find . -name "package.json" -exec sed -i 's/"@elaraai\/e3-api-server": "[^"]*"/"@elaraai\/e3-api-server": "^$(VERSION)"/g' {} \;
+	@echo "Done. Run 'npm install' to update dependencies."
+
+# Update @elaraai/e3-api-client version
+# Usage: make set-e3-api-client-version VERSION=0.0.2-beta.1
+set-e3-api-client-version:
+ifndef VERSION
+	$(error VERSION is required. Usage: make set-e3-api-client-version VERSION=0.0.2-beta.1)
+endif
+	@echo "Updating @elaraai/e3-api-client to version $(VERSION)..."
+	@find . -name "package.json" -exec sed -i 's/"@elaraai\/e3-api-client": "[^"]*"/"@elaraai\/e3-api-client": "^$(VERSION)"/g' {} \;
 	@echo "Done. Run 'npm install' to update dependencies."
 
 # Bump all package versions
