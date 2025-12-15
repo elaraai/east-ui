@@ -35,7 +35,7 @@
   "dependencies": {
     "@chakra-ui/charts": "^3.30.0",
     "@chakra-ui/react": "^3.0.0",
-    "@elaraai/east": "^0.0.1-beta.14",
+    "@elaraai/east": "^0.0.1-beta.16",
     "@elaraai/east-ui": "^0.0.1-beta.8",
     "@emotion/react": "^11.14.0",
     "@fortawesome/fontawesome-svg-core": "^7.1.0",

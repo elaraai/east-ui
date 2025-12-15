@@ -58,7 +58,7 @@
         "lint": "eslint ."
     },
     "dependencies": {
-        "@elaraai/east": "^0.0.1-beta.14",
+        "@elaraai/east": "^0.0.1-beta.16",
         "@elaraai/east-ui": "*"
     },
     "devDependencies": {
