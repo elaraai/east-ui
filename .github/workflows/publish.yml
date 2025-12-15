@@ -133,7 +133,7 @@ jobs:
         run: |
           EAST_UI_VERSION=$(node -p "require('./packages/east-ui/package.json').version")
           cd packages/east-ui-components
-          npm pkg set "dependencies.@elaraai/east-ui=^${EAST_UI_VERSION}"
+          npm pkg set "peerDependencies.@elaraai/east-ui=^${EAST_UI_VERSION}"
 
       # Commit all version bumps
       - name: Commit version bumps

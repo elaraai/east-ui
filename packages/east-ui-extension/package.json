@@ -1,7 +1,7 @@
 {
     "name": "east-ui-preview",
     "displayName": "East UI Preview",
-    "description": "Live preview of East UI components from TypeScript or IR files",
+    "description": "Browse e3 repositories and preview task outputs as East UI components",
     "version": "0.0.11",
     "publisher": "ElaraAI",
     "license": "SEE LICENSE IN LICENSE",
@@ -16,9 +16,8 @@
         "east",
         "ui",
         "preview",
-        "ir",
-        "components",
-        "typescript"
+        "e3",
+        "components"
     ],
     "repository": {
         "type": "git",
@@ -30,18 +29,24 @@
         "commands": [
             {
                 "command": "east-ui.openPreview",
-                "title": "East UI: Open Preview",
+                "title": "Open Repository",
                 "category": "East UI"
             }
         ],
-        "menus": {
-            "explorer/context": [
-                {
-                    "command": "east-ui.openPreview",
-                    "when": "resourceExtname == .beast || resourceExtname == .east || resourceExtname == .json || resourceExtname == .ts",
-                    "group": "navigation"
+        "configuration": {
+            "title": "East UI Preview",
+            "properties": {
+                "east-ui.e3.port": {
+                    "type": "number",
+                    "default": 3001,
+                    "description": "Port for the e3 API server"
+                },
+                "east-ui.e3.lastRepositoryPath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Last used e3 repository path (auto-saved)"
                 }
-            ]
+            }
         }
     },
     "activationEvents": [
@@ -58,8 +63,7 @@
         "lint": "eslint ."
     },
     "dependencies": {
-        "@elaraai/east": "^0.0.1-beta.14",
-        "@elaraai/east-ui": "*"
+        "@elaraai/e3-api-server": "^0.0.2-beta.4"
     },
     "devDependencies": {
         "@types/node": "^22.0.0",

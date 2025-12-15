@@ -5,13 +5,14 @@
 
 import * as vscode from 'vscode';
 import { openPreviewCommand } from './commands/openPreview.js';
+import { stopE3Server } from './server/e3Server.js';
 
 export function activate(context: vscode.ExtensionContext) {
     const disposable = vscode.commands.registerCommand(
         'east-ui.openPreview',
-        async (uri?: vscode.Uri) => {
+        async () => {
             try {
-                await openPreviewCommand(context, uri);
+                await openPreviewCommand(context);
             } catch (error) {
                 const message = error instanceof Error ? error.message : String(error);
                 vscode.window.showErrorMessage(`East UI Preview failed: ${message}`);
@@ -22,4 +23,6 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(disposable);
 }
 
-export function deactivate() {}
+export async function deactivate() {
+    await stopE3Server();
+}

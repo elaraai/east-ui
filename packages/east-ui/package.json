@@ -81,7 +81,7 @@
     "tsx": "^4.19.2",
     "typescript": "~5.9.2"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@elaraai/east": "^0.0.1-beta.14"
   }
 }

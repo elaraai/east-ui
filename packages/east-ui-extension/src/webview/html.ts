@@ -4,20 +4,12 @@
  */
 
 import * as vscode from 'vscode';
-import { IRType, toJSONFor } from '@elaraai/east';
-import type { FunctionIR } from '../types.js';
-
-// Use East's proper JSON serializer for IR (handles BigInt, Date, Uint8Array, etc.)
-const serializeIR = toJSONFor(IRType);
 
 export function generateWebviewHtml(
     webviewUri: vscode.Uri,
-    fileName: string,
-    ir: FunctionIR,
-    isWatching: boolean
+    serverUrl: string,
+    repoPath: string
 ): string {
-    // Serialize IR using East's JSON serializer (handles special types correctly)
-    const irJson = JSON.stringify(serializeIR(ir));
     const nonce = getNonce();
 
     return `<!DOCTYPE html>
@@ -25,15 +17,14 @@ export function generateWebviewHtml(
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webviewUri} 'unsafe-inline'; script-src 'nonce-${nonce}'; img-src ${webviewUri} data:; font-src ${webviewUri};">
-    <title>East UI: ${escapeHtml(fileName)}</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webviewUri} 'unsafe-inline'; script-src 'nonce-${nonce}'; img-src ${webviewUri} data:; font-src ${webviewUri}; connect-src ${serverUrl};">
+    <title>East UI Preview</title>
 </head>
 <body>
     <div id="root"></div>
     <script nonce="${nonce}">
-        window.__EAST_IR_JSON__ = ${irJson};
-        window.__EAST_FILENAME__ = ${JSON.stringify(fileName)};
-        window.__EAST_WATCHING__ = ${isWatching};
+        window.__E3_API_URL__ = ${JSON.stringify(serverUrl)};
+        window.__E3_REPO_PATH__ = ${JSON.stringify(repoPath)};
     </script>
     <script nonce="${nonce}" src="${webviewUri}/index.js"></script>
 </body>
@@ -47,12 +38,4 @@ function getNonce(): string {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
-}
-
-function escapeHtml(str: string): string {
-    return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
 }

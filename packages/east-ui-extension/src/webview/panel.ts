@@ -5,20 +5,18 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import type { FunctionIR } from '../types.js';
 import { generateWebviewHtml } from './html.js';
 
 export function createPreviewPanel(
     context: vscode.ExtensionContext,
-    filePath: string,
-    ir: FunctionIR
+    serverUrl: string,
+    repoPath: string
 ): vscode.WebviewPanel {
-    const fileName = path.basename(filePath);
-    const isTypeScript = filePath.endsWith('.ts');
+    const repoName = path.basename(repoPath);
 
     const panel = vscode.window.createWebviewPanel(
         'eastUIPreview',
-        `East UI: ${fileName}`,
+        `East UI: ${repoName}`,
         vscode.ViewColumn.Beside,
         {
             enableScripts: true,
@@ -34,8 +32,8 @@ export function createPreviewPanel(
         vscode.Uri.joinPath(context.extensionUri, 'dist', 'webview')
     );
 
-    // Generate HTML with the IR embedded
-    panel.webview.html = generateWebviewHtml(webviewUri, fileName, ir, isTypeScript);
+    // Generate HTML with the server config embedded
+    panel.webview.html = generateWebviewHtml(webviewUri, serverUrl, repoPath);
 
     return panel;
 }

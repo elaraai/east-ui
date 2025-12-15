@@ -38,8 +38,8 @@ jobs:
       - name: Check for @elaraai/east updates
         id: check_updates
         run: |
-          # Get current version from east-ui-components (canonical source)
-          CURRENT_VERSION=$(node -p "require('./packages/east-ui-components/package.json').dependencies['@elaraai/east']" | sed 's/\^//')
+          # Get current version from east-ui (canonical source)
+          CURRENT_VERSION=$(node -p "require('./packages/east-ui/package.json').peerDependencies['@elaraai/east']" | sed 's/\^//')
           echo "current_version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
 
           # Get latest version from npm (check both latest and beta tags)

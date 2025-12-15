@@ -3,87 +3,80 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { useState, useEffect, useMemo } from 'react';
-import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
-import { EastIR, IR, IRType, ValueTypeOf, fromJSONFor } from '@elaraai/east';
-import {
-    EastStoreProvider,
-    EastFunction,
-    createEastStore
-} from '@elaraai/east-ui-components';
+import { ChakraProvider, defaultSystem, Box, Flex, CodeBlock } from '@chakra-ui/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { E3Provider, useE3Context } from './context/E3Context';
 import { Toolbar } from './components/Toolbar';
+import { WorkspaceTree } from './components/WorkspaceTree';
+import { TaskPreview } from './components/TaskPreview';
 import { ErrorDisplay } from './components/ErrorDisplay';
-
-// Use East's proper JSON deserializer for IR (handles BigInt, Date, Uint8Array, etc.)
-const deserializeIR = fromJSONFor(IRType);
+import { shikiAdapter } from './shiki';
 
 declare global {
     interface Window {
-        __EAST_IR_JSON__: unknown;  // Serialized IR (East JSON format)
-        __EAST_FILENAME__: string;
-        __EAST_WATCHING__: boolean;
+        __E3_API_URL__: string;
+        __E3_REPO_PATH__: string;
     }
 }
 
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            retry: 2,
+            staleTime: 30_000, // 30 seconds
+        },
+    },
+});
+
+function AppContent() {
+    const { sidebarVisible } = useE3Context();
+
+    return (
+        <Flex direction="column" height="100vh">
+            <Toolbar />
+            <Flex flex={1} overflow="hidden">
+                {/* Sidebar with workspace tree */}
+                {sidebarVisible && (
+                    <Box
+                        width="250px"
+                        borderRight="1px solid"
+                        borderColor="gray.200"
+                        bg="white"
+                        overflowY="auto"
+                    >
+                        <WorkspaceTree />
+                    </Box>
+                )}
+
+                {/* Main content area */}
+                <TaskPreview />
+            </Flex>
+        </Flex>
+    );
+}
+
 export function App() {
-    // Deserialize the initial IR from East JSON format
-    const [irJson, setIRJson] = useState(window.__EAST_IR_JSON__);
-    const [error, setError] = useState<string | null>(null);
-    const filename = window.__EAST_FILENAME__;
-    const isWatching = window.__EAST_WATCHING__;
+    const apiUrl = window.__E3_API_URL__;
+    const repoPath = window.__E3_REPO_PATH__;
 
-    // Deserialize IR when it changes
-    const ir = useMemo(() => {
-        try {
-            return deserializeIR(irJson) as ValueTypeOf<IR>;
-        } catch (e) {
-            setError(`Failed to deserialize IR: ${e instanceof Error ? e.message : String(e)}`);
-            return null;
-        }
-    }, [irJson]);
-
-    // Listen for updates from extension
-    useEffect(() => {
-        const handleMessage = (event: MessageEvent) => {
-            const message = event.data;
-            if (message.type === 'update') {
-                setIRJson(message.irJson);  // Receive serialized IR
-                setError(null);
-            } else if (message.type === 'error') {
-                setError(message.message);
-            }
-        };
-
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
-    }, []);
-
-    // Create store (with empty initial state) - recreate on IR change to reset state
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const store = useMemo(() => createEastStore(), [ir]);
-
-    if (error || !ir) {
+    // Validate configuration
+    if (!apiUrl || !repoPath) {
         return (
             <ChakraProvider value={defaultSystem}>
-                <Toolbar filename={filename} isWatching={isWatching} hasError={true} />
-                <ErrorDisplay message={error ?? 'Failed to load IR'} />
+                <ErrorDisplay message="Missing configuration: API URL or repository path not provided" />
             </ChakraProvider>
         );
     }
 
-    // Create EastIR wrapper
-    const eastIR = new EastIR(ir);
-
     return (
-        <ChakraProvider value={defaultSystem}>
-            <Toolbar
-                filename={filename}
-                isWatching={isWatching}
-                hasError={false}
-            />
-            <EastStoreProvider store={store}>
-                <EastFunction ir={eastIR} />
-            </EastStoreProvider>
-        </ChakraProvider>
+        <QueryClientProvider client={queryClient}>
+            <ChakraProvider value={defaultSystem}>
+                <CodeBlock.AdapterProvider value={shikiAdapter}>
+                    <E3Provider apiUrl={apiUrl} repoPath={repoPath}>
+                        <AppContent />
+                    </E3Provider>
+                </CodeBlock.AdapterProvider>
+            </ChakraProvider>
+        </QueryClientProvider>
     );
 }
