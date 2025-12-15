@@ -4,7 +4,8 @@
   "private": true,
   "description": "East UI - UI component library for the East language",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "packages/east-ui-extension/webview"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
