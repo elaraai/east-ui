@@ -61,8 +61,8 @@ export default East.function(
                 Box.Root([
                     Chart.Line(
                         [
-                            { month: "January", mac: null, linux: 120 },
-                            { month: "February", mac: null, linux: 110 },
+                            { month: "January", mac: 10, linux: 120 },
+                            { month: "February", mac: 95, linux: 110 },
                             { month: "March", mac: 87, linux: 125 },
                             { month: "April", mac: 110, linux: 100 },
                         ],
