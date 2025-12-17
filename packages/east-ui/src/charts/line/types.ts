@@ -23,6 +23,7 @@ import {
     ChartLegendType,
     ChartMarginType,
     CurveType,
+    MultiSeriesDataType,
     type CurveLiteral,
     type BaseChartStyle,
 } from "../types.js";
@@ -38,7 +39,13 @@ import {
  * Line charts display data points connected by line segments.
  * Ideal for showing trends over time.
  *
- * @property data - Array of data points
+ * Supports two data formats:
+ * - Single array: `data` contains all series in one array (series keys are field names)
+ * - Multi-series: `dataSeries` contains separate arrays per series (for sparse data)
+ *
+ * @property data - Array of data points (single array form)
+ * @property dataSeries - Record of arrays per series (multi-series form, for sparse data)
+ * @property valueKey - Field name for Y values when using dataSeries
  * @property series - Series configuration for multi-series charts
  * @property xAxis - X-axis configuration
  * @property yAxis - Y-axis configuration
@@ -53,6 +60,8 @@ import {
  */
 export const LineChartType = StructType({
     data: ArrayType(DictType(StringType, LiteralValueType)),
+    dataSeries: OptionType(MultiSeriesDataType),
+    valueKey: OptionType(StringType),
     series: ArrayType(ChartSeriesType),
     xAxis: OptionType(ChartAxisType),
     yAxis: OptionType(ChartAxisType),

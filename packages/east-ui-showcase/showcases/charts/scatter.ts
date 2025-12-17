@@ -187,12 +187,80 @@ export default East.function(
             )
         );
 
+        // Multi-series sparse data (record form)
+        const sparseMultiSeries = $.let(
+            ShowcaseCard(
+                "Sparse Multi-Series",
+                "Separate arrays for each series (avoids null values)",
+                Box.Root([
+                    Chart.Scatter(
+                        {
+                            groupA: [
+                                { x: 10n, value: 30n },
+                                { x: 20n, value: 50n },
+                                { x: 30n, value: 45n },
+                                { x: 40n, value: 60n },
+                            ],
+                            groupB: [
+                                { x: 15n, value: 25n },
+                                { x: 35n, value: 55n },
+                                { x: 45n, value: 70n },
+                            ],
+                        },
+                        {
+                            groupA: { color: "purple.solid" },
+                            groupB: { color: "teal.solid" },
+                        },
+                        {
+                            xAxis: Chart.Axis({ dataKey: "x" }),
+                            valueKey: "value",
+                            tooltip: Chart.Tooltip({ show: true }),
+                            legend: Chart.Legend({ show: true }),
+                            grid: Chart.Grid({ show: true }),
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Scatter(
+                            {
+                                groupA: [
+                                    { x: 10n, value: 30n },
+                                    { x: 20n, value: 50n },
+                                    { x: 30n, value: 45n },
+                                    { x: 40n, value: 60n },
+                                ],
+                                groupB: [
+                                    { x: 15n, value: 25n },
+                                    // x: 25 is missing - sparse data!
+                                    { x: 35n, value: 55n },
+                                    { x: 45n, value: 70n },
+                                ],
+                            },
+                            {
+                                groupA: { color: "purple.solid" },
+                                groupB: { color: "teal.solid" },
+                            },
+                            {
+                                xAxis: Chart.Axis({ dataKey: "x" }),
+                                valueKey: "value",
+                                tooltip: Chart.Tooltip({ show: true }),
+                                legend: Chart.Legend({ show: true }),
+                                grid: Chart.Grid({ show: true }),
+                            }
+                        ),
+                    ], { height: "220px", width: "100%" })
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
                 Grid.Item(withLabels),
                 Grid.Item(customDomain),
                 Grid.Item(withTooltip),
+                Grid.Item(sparseMultiSeries),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

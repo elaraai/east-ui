@@ -476,3 +476,66 @@ export function convertChartData(
 ): Record<string, unknown>[] {
     return data.map(convertDataPoint);
 }
+
+/**
+ * Converts multi-series data (record of arrays) to a merged array format for Recharts.
+ *
+ * @remarks
+ * This function takes data in the format:
+ * ```
+ * {
+ *   revenue: [{ month: "Jan", value: 100 }, { month: "Feb", value: 200 }],
+ *   profit: [{ month: "Jan", value: 50 }, { month: "Mar", value: 75 }]
+ * }
+ * ```
+ * And converts it to the merged format Recharts expects:
+ * ```
+ * [
+ *   { month: "Jan", revenue: 100, profit: 50 },
+ *   { month: "Feb", revenue: 200, profit: null },
+ *   { month: "Mar", revenue: null, profit: 75 }
+ * ]
+ * ```
+ *
+ * @param dataSeries - Map of series name to array of data points
+ * @param xAxisKey - The key used for the x-axis (to merge on)
+ * @param valueKey - The key containing the y-value in each data point
+ * @returns Array of merged data points
+ */
+export function convertMultiSeriesData(
+    dataSeries: Map<string, Map<string, ValueTypeOf<typeof LiteralValueType>>[]>,
+    xAxisKey: string,
+    valueKey: string
+): Record<string, unknown>[] {
+    // Collect all unique x-axis values
+    const xAxisValues = new Set<unknown>();
+    const seriesData = new Map<string, Map<unknown, unknown>>();
+
+    dataSeries.forEach((dataPoints, seriesName) => {
+        const seriesMap = new Map<unknown, unknown>();
+        dataPoints.forEach(point => {
+            const xValue = point.get(xAxisKey);
+            const yValue = point.get(valueKey);
+            if (xValue !== undefined) {
+                const xConverted = convertLiteralValue(xValue);
+                xAxisValues.add(xConverted);
+                if (yValue !== undefined) {
+                    seriesMap.set(xConverted, convertLiteralValue(yValue));
+                }
+            }
+        });
+        seriesData.set(seriesName, seriesMap);
+    });
+
+    // Build merged array
+    const result: Record<string, unknown>[] = [];
+    xAxisValues.forEach(xValue => {
+        const row: Record<string, unknown> = { [xAxisKey]: xValue };
+        seriesData.forEach((seriesMap, seriesName) => {
+            row[seriesName] = seriesMap.get(xValue) ?? null;
+        });
+        result.push(row);
+    });
+
+    return result;
+}

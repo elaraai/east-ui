@@ -283,6 +283,73 @@ export default East.function(
             )
         );
 
+        // Multi-series sparse data (record form)
+        const sparseMultiSeries = $.let(
+            ShowcaseCard(
+                "Sparse Multi-Series",
+                "Separate arrays for each series (avoids null values)",
+                Box.Root([
+                    Chart.Bar(
+                        {
+                            sales: [
+                                { month: "Jan", value: 186n },
+                                { month: "Feb", value: 305n },
+                                { month: "Mar", value: 237n },
+                                { month: "Apr", value: 273n },
+                            ],
+                            returns: [
+                                { month: "Jan", value: 20n },
+                                { month: "Mar", value: 35n },
+                                { month: "Apr", value: 28n },
+                            ],
+                        },
+                        {
+                            sales: { color: "teal.solid" },
+                            returns: { color: "red.solid" },
+                        },
+                        {
+                            xAxis: Chart.Axis({ dataKey: "month" }),
+                            valueKey: "value",
+                            grid: Chart.Grid({ show: true }),
+                            tooltip: Chart.Tooltip({ show: true }),
+                            legend: Chart.Legend({ show: true }),
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Bar(
+                            {
+                                sales: [
+                                    { month: "Jan", value: 186n },
+                                    { month: "Feb", value: 305n },
+                                    { month: "Mar", value: 237n },
+                                    { month: "Apr", value: 273n },
+                                ],
+                                returns: [
+                                    { month: "Jan", value: 20n },
+                                    // Feb is missing - sparse data!
+                                    { month: "Mar", value: 35n },
+                                    { month: "Apr", value: 28n },
+                                ],
+                            },
+                            {
+                                sales: { color: "teal.solid" },
+                                returns: { color: "red.solid" },
+                            },
+                            {
+                                xAxis: Chart.Axis({ dataKey: "month" }),
+                                valueKey: "value",
+                                grid: Chart.Grid({ show: true }),
+                                tooltip: Chart.Tooltip({ show: true }),
+                                legend: Chart.Legend({ show: true }),
+                            }
+                        ),
+                    ], { height: "220px", width: "100%" })
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -291,6 +358,7 @@ export default East.function(
                 Grid.Item(horizontal),
                 Grid.Item(grouped),
                 Grid.Item(currency),
+                Grid.Item(sparseMultiSeries),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

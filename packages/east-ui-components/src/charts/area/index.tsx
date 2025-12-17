@@ -11,6 +11,7 @@ import { Chart as EastChart } from "@elaraai/east-ui";
 import { getSomeorUndefined } from "../../utils";
 import {
     convertChartData,
+    convertMultiSeriesData,
     toChartSeries,
     toRechartsXAxis,
     toRechartsYAxis,
@@ -39,8 +40,22 @@ export interface EastChakraAreaChartProps {
  * Renders an East UI AreaChart value using Chakra UI Charts.
  */
 export const EastChakraAreaChart = memo(function EastChakraAreaChart({ value }: EastChakraAreaChartProps) {
+    // Check if we have multi-series data (record form)
+    const dataSeries = useMemo(() => getSomeorUndefined(value.dataSeries), [value.dataSeries]);
+    const valueKey = useMemo(() => getSomeorUndefined(value.valueKey), [value.valueKey]);
+    const xAxisDataKey = useMemo(() => {
+        const xAxis = getSomeorUndefined(value.xAxis);
+        return xAxis ? getSomeorUndefined(xAxis.dataKey) : undefined;
+    }, [value.xAxis]);
+
     // Convert East data and series to chart format
-    const chartData = useMemo(() => convertChartData(value.data), [value.data]);
+    const chartData = useMemo(() => {
+        if (dataSeries && xAxisDataKey && valueKey) {
+            return convertMultiSeriesData(dataSeries, xAxisDataKey, valueKey);
+        }
+        return convertChartData(value.data);
+    }, [value.data, dataSeries, xAxisDataKey, valueKey]);
+
     const series = useMemo(() => value.series.map(toChartSeries), [value.series]);
 
     // Initialize the chart hook

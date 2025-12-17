@@ -8,7 +8,7 @@ import {
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
-import { CurveType } from "../types.js";
+import { CurveType, MultiSeriesDataType } from "../types.js";
 import type { LineChartStyle, LineChartSeriesConfig } from "./types.js";
 
 // Re-export types
@@ -19,10 +19,37 @@ export { LineChartType, type LineChartStyle, type LineChartSeriesConfig } from "
 // ============================================================================
 
 /**
+ * Helper to check if data is in record form (multiple series arrays).
+ */
+function isRecordForm(data: unknown): data is Record<string, unknown> {
+    if (data === null || data === undefined) return false;
+    if (Array.isArray(data)) return false;
+    if (typeof data !== "object") return false;
+    // Check if it's a plain object with string keys mapping to arrays
+    const keys = Object.keys(data);
+    if (keys.length === 0) return false;
+    // If any value is an array, treat as record form
+    return keys.some(key => Array.isArray((data as Record<string, unknown>)[key]));
+}
+
+/**
+ * Helper to map a single array to Dict format.
+ */
+function mapArrayToDict(data_expr: ExprType<ArrayType<StructType>>): ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>> {
+    return data_expr.map(($, datum) => {
+        const ret = $.let(new Map(), DictType(StringType, LiteralValueType));
+        for (const [field_name, field_type] of Object.entries(Expr.type(data_expr).value.fields)) {
+            $(ret.insert(field_name, variant(field_type.type, datum[field_name] as any)));
+        }
+        return ret;
+    });
+}
+
+/**
  * Creates a Line chart component.
  *
- * @param data - Array of data points
- * @param series - Series configuration keyed by field names from the data type
+ * @param data - Array of data points, OR a record of arrays for multi-series sparse data
+ * @param series - Series configuration keyed by field names (array form) or record keys (record form)
  * @param style - Optional styling configuration
  * @returns An East expression representing the line chart component
  *
@@ -30,7 +57,12 @@ export { LineChartType, type LineChartStyle, type LineChartSeriesConfig } from "
  * Line charts display data points connected by line segments.
  * Ideal for showing trends over time.
  *
- * @example
+ * Supports two data formats:
+ * - **Single array**: All series share the same data points. Series keys are field names.
+ * - **Record of arrays**: Each series has its own array (for sparse data). Series keys are record keys.
+ *   Use `style.valueKey` to specify which field contains the Y value in each array.
+ *
+ * @example Single array form
  * ```ts
  * import { East } from "@elaraai/east";
  * import { Chart, UIComponentType } from "@elaraai/east-ui";
@@ -52,22 +84,84 @@ export { LineChartType, type LineChartStyle, type LineChartSeriesConfig } from "
  *     );
  * });
  * ```
+ *
+ * @example Record form (for sparse data)
+ * ```ts
+ * import { East } from "@elaraai/east";
+ * import { Chart, UIComponentType } from "@elaraai/east-ui";
+ *
+ * const example = East.function([], UIComponentType, $ => {
+ *     return Chart.Line(
+ *         {
+ *             revenue: [
+ *                 { month: "Jan", value: 186n },
+ *                 { month: "Feb", value: 305n },
+ *             ],
+ *             profit: [
+ *                 { month: "Jan", value: 80n },
+ *                 // Feb is missing - no null needed!
+ *                 { month: "Mar", value: 150n },
+ *             ],
+ *         },
+ *         {
+ *             revenue: { color: "teal.solid" },
+ *             profit: { color: "purple.solid" },
+ *         },
+ *         {
+ *             xAxis: Chart.Axis({ dataKey: "month" }),
+ *             valueKey: "value",
+ *         }
+ *     );
+ * });
+ * ```
  */
+// Overload 1: Single array form
 export function createLineChart<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
     data: T,
     series: {
         [K in TypeOf<NoInfer<T>> extends ArrayType<StructType> ? keyof TypeOf<NoInfer<T>>["value"]["fields"] : never]?: LineChartSeriesConfig
     },
     style?: LineChartStyle
+): ExprType<UIComponentType>;
+
+// Overload 2: Record form (multi-series)
+export function createLineChart<K extends string, T extends SubtypeExprOrValue<ArrayType<StructType>>>(
+    data: Record<K, T>,
+    series: { [P in K]?: LineChartSeriesConfig },
+    style?: LineChartStyle
+): ExprType<UIComponentType>;
+
+// Implementation
+export function createLineChart(
+    data: SubtypeExprOrValue<ArrayType<StructType>> | Record<string, SubtypeExprOrValue<ArrayType<StructType>>>,
+    series: Record<string, LineChartSeriesConfig | undefined>,
+    style?: LineChartStyle
 ): ExprType<UIComponentType> {
-    const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
-    const data_mapped = data_expr.map(($, datum) => {
-        const ret = $.let(new Map(), DictType(StringType, LiteralValueType));
-        for (const [field_name, field_type] of Object.entries(Expr.type(data_expr).value.fields)) {
-            $(ret.insert(field_name, variant(field_type.type, datum[field_name] as any)));
+    let data_mapped: ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>;
+    let dataSeries_mapped: ExprType<typeof MultiSeriesDataType> | undefined;
+
+    if (isRecordForm(data)) {
+        // Record form: multiple arrays, one per series
+        const dataRecord = data as Record<string, SubtypeExprOrValue<ArrayType<StructType>>>;
+
+        // Create empty data array (renderer will use dataSeries instead)
+        data_mapped = East.value([], ArrayType(DictType(StringType, LiteralValueType)));
+
+        // Map each series array
+        const seriesDataMap = new Map<string, ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>>();
+        for (const [seriesName, seriesData] of Object.entries(dataRecord)) {
+            const series_expr = East.value(seriesData) as ExprType<ArrayType<StructType>>;
+            seriesDataMap.set(seriesName, mapArrayToDict(series_expr));
         }
-        return ret
-    });
+
+        dataSeries_mapped = East.value(seriesDataMap, MultiSeriesDataType);
+    } else {
+        // Single array form: existing behavior
+        const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
+        data_mapped = mapArrayToDict(data_expr);
+        dataSeries_mapped = undefined;
+    }
+
     const series_mapped = Object.entries(series as Record<string, LineChartSeriesConfig>).map(([name, config]) => ({
         name: name as string,
         color: config?.color !== undefined ? some(config.color) : none,
@@ -88,6 +182,8 @@ export function createLineChart<T extends SubtypeExprOrValue<ArrayType<StructTyp
 
     return East.value(variant("LineChart", {
         data: data_mapped,
+        dataSeries: dataSeries_mapped ? variant("some", dataSeries_mapped) : variant("none", null),
+        valueKey: style?.valueKey !== undefined ? variant("some", style.valueKey) : variant("none", null),
         series: series_mapped,
         xAxis: style?.xAxis ? variant("some", style.xAxis) : variant("none", null),
         yAxis: style?.yAxis ? variant("some", style.yAxis) : variant("none", null),

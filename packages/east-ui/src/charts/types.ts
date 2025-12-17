@@ -18,12 +18,14 @@ import {
     OptionType,
     StructType,
     ArrayType,
+    DictType,
     StringType,
     FloatType,
     BooleanType,
     VariantType,
     NullType,
     IntegerType,
+    LiteralValueType,
     type ExprType,
     variant,
     some,
@@ -1693,6 +1695,12 @@ export interface BaseChartStyle {
     legend?: SubtypeExprOrValue<ChartLegendType>;
     /** Chart margin configuration */
     margin?: SubtypeExprOrValue<ChartMarginType>;
+    /**
+     * Value key for multi-series data (record form).
+     * Specifies which field in each series array contains the Y value.
+     * Only used when data is passed as Record<string, Array<T>>.
+     */
+    valueKey?: SubtypeExprOrValue<StringType>;
 }
 
 /**
@@ -1704,3 +1712,22 @@ export const BaseChartStyleType = StructType({
     legend: OptionType(ChartLegendType),
     margin: OptionType(ChartMarginType),
 });
+
+// ============================================================================
+// Multi-Series Data Type
+// ============================================================================
+
+/**
+ * Type for multi-series data storage.
+ *
+ * @remarks
+ * Used when data is passed as a record of arrays (for sparse data).
+ * Each key is a series name, value is an array of data points.
+ * This avoids the need for null values when series have different data points.
+ */
+export const MultiSeriesDataType = DictType(StringType, ArrayType(DictType(StringType, LiteralValueType)));
+
+/**
+ * Type representing multi-series data.
+ */
+export type MultiSeriesDataType = typeof MultiSeriesDataType;

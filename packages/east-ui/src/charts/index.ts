@@ -35,6 +35,7 @@ export {
     CurveType,
     StackOffsetType,
     BarLayoutType,
+    MultiSeriesDataType,
     type ChartSeries,
     type ChartSort,
     type ChartAxis,
@@ -95,7 +96,7 @@ export {
 } from "./sparkline/index.js";
 
 // Import types for the namespace
-import { ChartSeriesType, ChartSortType, ChartSortDirectionType, ChartAxisType, TickFormatType, CurveType, StackOffsetType, BarLayoutType, ChartSeries, ChartSort, StackOffset, BarLayout, ChartGrid, ChartLegend, ChartTooltip, ChartAxis, ChartMargin, NumberTickFormat, CurrencyTickFormat, PercentTickFormat, CompactTickFormat, UnitTickFormat, ScientificTickFormat, EngineeringTickFormat, DateTickFormat, TimeTickFormat, DateTimeTickFormat } from "./types.js";
+import { ChartSeriesType, ChartSortType, ChartSortDirectionType, ChartAxisType, TickFormatType, CurveType, StackOffsetType, BarLayoutType, MultiSeriesDataType, ChartSeries, ChartSort, StackOffset, BarLayout, ChartGrid, ChartLegend, ChartTooltip, ChartAxis, ChartMargin, NumberTickFormat, CurrencyTickFormat, PercentTickFormat, CompactTickFormat, UnitTickFormat, ScientificTickFormat, EngineeringTickFormat, DateTickFormat, TimeTickFormat, DateTimeTickFormat } from "./types.js";
 import { AreaChartType } from "./area/index.js";
 import { BarChartType } from "./bar/index.js";
 import { LineChartType } from "./line/index.js";
@@ -616,6 +617,15 @@ export const Chart = {
          * @property vertical - Bars extend vertically (category on X axis)
          */
         BarLayout: BarLayoutType,
+        /**
+         * Multi-series data type for sparse/separate series arrays.
+         *
+         * @remarks
+         * Used when data is passed as a record of arrays instead of a single array.
+         * Each key is a series name, value is an array of data points.
+         * This avoids the need for null values when series have different data points.
+         */
+        MultiSeriesData: MultiSeriesDataType,
 
         /**
          * The concrete East type for Area chart data.

@@ -295,4 +295,82 @@ describeEast("Chart.Line", (test) => {
         $(assertEast.equal(chart.unwrap("LineChart").series.size(), 2n));
         $(assertEast.equal(chart.unwrap("LineChart").legend.unwrap("some").show.unwrap("some"), true));
     });
+
+    // =========================================================================
+    // Multi-Series Data (Record Form) - for sparse data
+    // =========================================================================
+
+    test("creates line chart with record form data (multi-series)", $ => {
+        const chart = $.let(Chart.Line(
+            {
+                revenue: [
+                    { month: "January", value: 186n },
+                    { month: "February", value: 305n },
+                ],
+                profit: [
+                    { month: "January", value: 80n },
+                    { month: "March", value: 150n },
+                ],
+            },
+            {
+                revenue: { color: "teal.solid" },
+                profit: { color: "purple.solid" },
+            },
+            {
+                xAxis: Chart.Axis({ dataKey: "month" }),
+                valueKey: "value",
+            }
+        ));
+
+        $(assertEast.equal(chart.getTag(), "LineChart"));
+        $(assertEast.equal(chart.unwrap("LineChart").series.size(), 2n));
+        $(assertEast.equal(chart.unwrap("LineChart").valueKey.unwrap("some"), "value"));
+        $(assertEast.equal(chart.unwrap("LineChart").dataSeries.hasTag("some"), true));
+    });
+
+    test("creates line chart with record form and multiple styling options", $ => {
+        const chart = $.let(Chart.Line(
+            {
+                sales: [
+                    { date: "2024-01", amount: 1000n },
+                    { date: "2024-02", amount: 1500n },
+                ],
+                returns: [
+                    { date: "2024-01", amount: 50n },
+                ],
+            },
+            {
+                sales: { color: "blue.solid", strokeWidth: 2n },
+                returns: { color: "red.solid", strokeDasharray: "5 5" },
+            },
+            {
+                xAxis: Chart.Axis({ dataKey: "date" }),
+                valueKey: "amount",
+                showDots: true,
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap("LineChart").series.size(), 2n));
+        $(assertEast.equal(chart.unwrap("LineChart").valueKey.unwrap("some"), "amount"));
+        $(assertEast.equal(chart.unwrap("LineChart").showDots.unwrap("some"), true));
+    });
+
+    test("creates line chart with single array still works (backwards compatible)", $ => {
+        const chart = $.let(Chart.Line(
+            [
+                { month: "January", revenue: 186n, profit: 80n },
+                { month: "February", revenue: 305n, profit: 120n },
+            ],
+            {
+                revenue: { color: "teal.solid" },
+                profit: { color: "purple.solid" },
+            },
+            { xAxis: Chart.Axis({ dataKey: "month" }) }
+        ));
+
+        $(assertEast.equal(chart.getTag(), "LineChart"));
+        $(assertEast.equal(chart.unwrap("LineChart").series.size(), 2n));
+        // For single array form, dataSeries should be none
+        $(assertEast.equal(chart.unwrap("LineChart").dataSeries.hasTag("none"), true));
+    });
 });

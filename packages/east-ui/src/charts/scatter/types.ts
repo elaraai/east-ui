@@ -21,6 +21,7 @@ import {
     ChartTooltipType,
     ChartLegendType,
     ChartMarginType,
+    MultiSeriesDataType,
     type BaseChartStyle,
 } from "../types.js";
 
@@ -35,7 +36,13 @@ import {
  * Scatter charts display data points on a 2D coordinate plane.
  * Useful for showing correlations between variables.
  *
- * @property data - Array of data points
+ * Supports two data formats:
+ * - Single array: `data` contains all series in one array (series keys are field names)
+ * - Multi-series: `dataSeries` contains separate arrays per series (for sparse data)
+ *
+ * @property data - Array of data points (single array form)
+ * @property dataSeries - Record of arrays per series (multi-series form, for sparse data)
+ * @property valueKey - Field name for Y values when using dataSeries
  * @property series - Series configuration
  * @property xAxis - X-axis configuration
  * @property yAxis - Y-axis configuration
@@ -49,6 +56,8 @@ import {
  */
 export const ScatterChartType = StructType({
     data: ArrayType(DictType(StringType, LiteralValueType)),
+    dataSeries: OptionType(MultiSeriesDataType),
+    valueKey: OptionType(StringType),
     series: ArrayType(ChartSeriesType),
     xAxis: OptionType(ChartAxisType),
     yAxis: OptionType(ChartAxisType),

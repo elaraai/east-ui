@@ -44,10 +44,7 @@ export const PlannerAxis = ({
 
         // Calculate how many slots we can show labels for
         // Show fewer labels if slots are very narrow
-        const minLabelSpacing = 60; // Minimum pixels between labels
-        const labelInterval = Math.max(1, Math.ceil(minLabelSpacing / slotWidth));
-
-        for (let i = 0; i < totalSlots; i += labelInterval) {
+        for (let i = 0; i < totalSlots; i += 1) {
             const slot = startSlot + BigInt(i);
             const x = getSlotPosition(slot, startSlot, slotWidth);
 

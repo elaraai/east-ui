@@ -25,6 +25,7 @@ import {
     ChartMarginType,
     BarLayoutType,
     StackOffsetType,
+    MultiSeriesDataType,
     type BarLayoutLiteral,
     type StackOffsetLiteral,
     type BaseChartStyle,
@@ -41,7 +42,13 @@ import {
  * Bar charts display categorical data with rectangular bars.
  * Supports horizontal/vertical layouts and stacking.
  *
- * @property data - Array of data points
+ * Supports two data formats:
+ * - Single array: `data` contains all series in one array (series keys are field names)
+ * - Multi-series: `dataSeries` contains separate arrays per series (for sparse data)
+ *
+ * @property data - Array of data points (single array form)
+ * @property dataSeries - Record of arrays per series (multi-series form, for sparse data)
+ * @property valueKey - Field name for Y values when using dataSeries
  * @property series - Series configuration for multi-series charts
  * @property xAxis - X-axis configuration
  * @property yAxis - Y-axis configuration
@@ -58,6 +65,8 @@ import {
  */
 export const BarChartType = StructType({
     data: ArrayType(DictType(StringType, LiteralValueType)),
+    dataSeries: OptionType(MultiSeriesDataType),
+    valueKey: OptionType(StringType),
     series: ArrayType(ChartSeriesType),
     xAxis: OptionType(ChartAxisType),
     yAxis: OptionType(ChartAxisType),
