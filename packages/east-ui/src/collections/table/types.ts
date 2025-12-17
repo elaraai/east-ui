@@ -15,7 +15,9 @@ import {
     FloatType,
     DateTimeType,
     ArrayType,
-    FunctionType
+    FunctionType,
+    EastTypeType,
+    LiteralValueType,
 } from "@elaraai/east";
 
 import {
@@ -86,26 +88,17 @@ export type TableSizeLiteral = "sm" | "md" | "lg";
 
 
 // ============================================================================
-// Table Value Type (for serialization)
+// Primitive East Types (for type-safe column configuration)
 // ============================================================================
 
-
 /**
- * Type representing the Table structure.
+ * Union of primitive East types that can be directly rendered in table cells.
+ *
+ * @remarks
+ * These types don't require a custom `value` function in column config
+ * because they can be directly converted to LiteralValueType.
  */
-export type TableValueType = BooleanType | IntegerType | FloatType | StringType | DateTimeType | ArrayType<StringType>;
-
-/**
- * Type representing the Table structure.
- */
-export const TableValueLiteral = VariantType({
-    Boolean: BooleanType,
-    Integer: IntegerType,
-    Float: FloatType,
-    String: StringType,
-    DateTime: DateTimeType,
-    Array: ArrayType(StringType)
-});
+export type PrimitiveEastType = BooleanType | IntegerType | FloatType | StringType | DateTimeType;
 
 // ============================================================================
 // Table Callback Event Types
@@ -116,12 +109,12 @@ export const TableValueLiteral = VariantType({
  *
  * @property rowIndex - The row index (0-based)
  * @property columnKey - The column key
- * @property cellValue - The cell value
+ * @property cellValue - The cell value as a LiteralValueType
  */
 export const TableCellClickEventType = StructType({
     rowIndex: IntegerType,
     columnKey: StringType,
-    cellValue: TableValueLiteral,
+    cellValue: LiteralValueType,
 });
 
 export type TableCellClickEventType = typeof TableCellClickEventType;
@@ -271,18 +264,6 @@ export interface TableStyle {
     onSortChange?: SubtypeExprOrValue<FunctionType<[TableSortEventType], NullType>>;
 }
 
-/**
- * Type representing the Table structure.
- */
-export const TableValueTypeType = VariantType({
-    Boolean: NullType,
-    Integer: NullType,
-    Float: NullType,
-    String: NullType,
-    DateTime: NullType,
-    Array: NullType
-});
-
 // ============================================================================
 // Table Column Type (for serialization)
 // ============================================================================
@@ -294,7 +275,7 @@ export const TableValueTypeType = VariantType({
  * Defines the header text and key for a column.
  *
  * @property key - The column key (field name)
- * @property type - The column value type
+ * @property type - The column value type as an EastTypeValue (supports any East type)
  * @property header - Optional header text for the column
  * @property width - Optional fixed width (CSS value, e.g., "200px", "20%")
  * @property minWidth - Optional minimum width (CSS value)
@@ -302,7 +283,7 @@ export const TableValueTypeType = VariantType({
  */
 export const TableColumnType = StructType({
     key: StringType,
-    type: TableValueTypeType,
+    type: EastTypeType,
     header: OptionType(StringType),
     width: OptionType(StringType),
     minWidth: OptionType(StringType),

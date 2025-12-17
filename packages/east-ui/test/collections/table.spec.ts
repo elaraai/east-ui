@@ -4,7 +4,7 @@
  */
 
 import { describeEast, assertEast } from "../platforms.spec.js";
-import { Table, Badge, Text } from "../../src/index.js";
+import { Table, Badge, Text, Stack } from "../../src/index.js";
 import { East } from "@elaraai/east";
 
 describeEast("Table", (test) => {
@@ -12,17 +12,17 @@ describeEast("Table", (test) => {
     // Simple Array Syntax
     // =========================================================================
 
-    test("creates table with array of field names", $ => {
+    test("creates table with array of field names (primitive fields only)", $ => {
         const table = $.let(Table.Root(
             [
-                { name: "Alice", email: "alice@example.com", tags: ["tag1", "tag2"] },
-                { name: "Bob", email: "bob@example.com", tags: ["tag3"] },
+                { name: "Alice", email: "alice@example.com" },
+                { name: "Bob", email: "bob@example.com" },
             ],
-            ["name", "email", "tags"]
+            ["name", "email"]
         ));
 
         $(assertEast.equal(table.getTag(), "Table"));
-        $(assertEast.equal(table.unwrap("Table").columns.size(), 3n));
+        $(assertEast.equal(table.unwrap("Table").columns.size(), 2n));
         $(assertEast.equal(table.unwrap("Table").rows.size(), 2n));
     });
 
@@ -267,5 +267,97 @@ describeEast("Table", (test) => {
 
         $(assertEast.equal(table.unwrap("Table").rows.size(), 2n));
         $(assertEast.equal(table.unwrap("Table").columns.size(), 3n));
+    });
+
+    // =========================================================================
+    // Complex Type Columns (require value function)
+    // =========================================================================
+
+    test("creates table with array field using value function", $ => {
+        // Array fields require a value function to extract a sortable value
+        const table = $.let(Table.Root(
+            [
+                { name: "Alice", tags: ["admin", "active"] },
+                { name: "Bob", tags: ["user"] },
+            ],
+            {
+                name: { header: "Name" },
+                tags: {
+                    header: "Tags",
+                    // Extract array length as sortable integer value
+                    value: (tags) => tags.size(),
+                    render: (tags) => Stack.HStack(tags.map(($, tag) => Badge.Root(tag, { variant: "subtle" })) as any),
+                },
+            }
+        ));
+
+        $(assertEast.equal(table.unwrap("Table").columns.size(), 2n));
+        $(assertEast.equal(table.unwrap("Table").rows.size(), 2n));
+    });
+
+    test("creates table with struct field using value function", $ => {
+        // Struct fields require a value function to extract a sortable value
+        const table = $.let(Table.Root(
+            [
+                { name: "Project A", metadata: { priority: 1n, owner: "Alice" } },
+                { name: "Project B", metadata: { priority: 3n, owner: "Bob" } },
+            ],
+            {
+                name: { header: "Name" },
+                metadata: {
+                    header: "Priority",
+                    // Extract priority as sortable integer value (plain expression, not wrapped in variant)
+                    value: (meta) => meta.priority,
+                    render: (meta) => Text.Root(East.str`Priority: ${meta.priority}`),
+                },
+            }
+        ));
+
+        $(assertEast.equal(table.unwrap("Table").columns.size(), 2n));
+        $(assertEast.equal(table.unwrap("Table").rows.size(), 2n));
+    });
+
+    test("creates table with array field extracting string value", $ => {
+        // Extract first tag as string value for sorting
+        const table = $.let(Table.Root(
+            [
+                { name: "Alice", skills: ["TypeScript", "React", "Node"] },
+                { name: "Bob", skills: ["Python", "Django"] },
+            ],
+            {
+                name: { header: "Name" },
+                skills: {
+                    header: "Primary Skill",
+                    // Extract first skill as sortable string value (plain expression)
+                    value: (skills) => skills.get(0n),
+                    render: (skills) => Badge.Root(skills.get(0n), { variant: "subtle" }),
+                },
+            }
+        ));
+
+        $(assertEast.equal(table.unwrap("Table").columns.size(), 2n));
+    });
+
+    test("creates table mixing primitive and complex columns", $ => {
+        // Mix of primitive fields (no value function needed) and complex fields (value function required)
+        const table = $.let(Table.Root(
+            [
+                { id: 1n, name: "Alice", contact: { email: "alice@example.com", phone: "555-1234" } },
+                { id: 2n, name: "Bob", contact: { email: "bob@example.com", phone: "555-5678" } },
+            ],
+            {
+                id: { header: "ID" },  // Primitive - no value function needed
+                name: { header: "Name" },  // Primitive - no value function needed
+                contact: {
+                    header: "Contact",
+                    // Extract email as sortable string value (plain expression)
+                    value: (contact) => contact.email,
+                    render: (contact) => Text.Root(contact.email),
+                },
+            }
+        ));
+
+        $(assertEast.equal(table.unwrap("Table").columns.size(), 3n));
+        $(assertEast.equal(table.unwrap("Table").rows.size(), 2n));
     });
 });

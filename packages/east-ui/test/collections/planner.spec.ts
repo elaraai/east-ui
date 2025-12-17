@@ -422,4 +422,75 @@ describeEast("Planner", (test) => {
         $(assertEast.equal(planner.unwrap("Planner").rows.size(), 1n));
         $(assertEast.equal(planner.unwrap("Planner").columns.size(), 2n));
     });
+
+    // =========================================================================
+    // Complex Type Columns (require value function)
+    // =========================================================================
+
+    test("creates planner with array field using value function", $ => {
+        const planner = $.let(Planner.Root(
+            [
+                { name: "Alice", skills: ["TypeScript", "React"], start: 1n, end: 3n },
+                { name: "Bob", skills: ["Python", "Django", "FastAPI"], start: 2n, end: 5n },
+            ],
+            {
+                name: { header: "Name" },
+                skills: {
+                    header: "Skills",
+                    // Extract array length as sortable integer value
+                    value: (skills) => skills.size(),
+                    render: (skills) => Text.Root(East.str`${skills.size()} skills`),
+                },
+            },
+            row => [Planner.Event({ start: row.start, end: row.end })],
+        ));
+
+        $(assertEast.equal(planner.unwrap("Planner").columns.size(), 2n));
+        $(assertEast.equal(planner.unwrap("Planner").rows.size(), 2n));
+    });
+
+    test("creates planner with struct field using value function", $ => {
+        const planner = $.let(Planner.Root(
+            [
+                { name: "Task A", info: { priority: 1n, category: "urgent" }, start: 1n, end: 3n },
+                { name: "Task B", info: { priority: 3n, category: "normal" }, start: 2n, end: 4n },
+            ],
+            {
+                name: { header: "Task" },
+                info: {
+                    header: "Priority",
+                    // Extract priority as sortable integer value
+                    value: (info) => info.priority,
+                    render: (info) => Text.Root(East.str`P${info.priority}`),
+                },
+            },
+            row => [Planner.Event({ start: row.start, end: row.end })],
+        ));
+
+        $(assertEast.equal(planner.unwrap("Planner").columns.size(), 2n));
+        $(assertEast.equal(planner.unwrap("Planner").rows.size(), 2n));
+    });
+
+    test("creates planner mixing primitive and complex columns", $ => {
+        const planner = $.let(Planner.Root(
+            [
+                { id: 1n, name: "Alice", contact: { email: "alice@example.com", phone: "555-1234" }, start: 1n, end: 3n },
+                { id: 2n, name: "Bob", contact: { email: "bob@example.com", phone: "555-5678" }, start: 2n, end: 5n },
+            ],
+            {
+                id: { header: "ID" },  // Primitive - no value function needed
+                name: { header: "Name" },  // Primitive - no value function needed
+                contact: {
+                    header: "Email",
+                    // Extract email as sortable string value
+                    value: (contact) => contact.email,
+                    render: (contact) => Text.Root(contact.email),
+                },
+            },
+            row => [Planner.Event({ start: row.start, end: row.end })],
+        ));
+
+        $(assertEast.equal(planner.unwrap("Planner").columns.size(), 3n));
+        $(assertEast.equal(planner.unwrap("Planner").rows.size(), 2n));
+    });
 });

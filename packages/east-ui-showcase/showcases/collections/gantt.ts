@@ -252,6 +252,60 @@ export default East.function(
             )
         );
 
+        // Complex column types with value function
+        const complexColumns = $.let(
+            ShowcaseCard(
+                "Complex Column Types",
+                "Array and struct fields with value functions for sorting",
+                Gantt.Root(
+                    [
+                        { task: "Platform v2", tags: ["backend", "api", "priority"], info: { team: "Core", size: 5n }, start: new Date("2024-01-01"), end: new Date("2024-03-31") },
+                        { task: "UI Refresh", tags: ["frontend", "design"], info: { team: "Web", size: 3n }, start: new Date("2024-01-15"), end: new Date("2024-02-28") },
+                        { task: "CI/CD", tags: ["devops"], info: { team: "Infra", size: 2n }, start: new Date("2024-02-01"), end: new Date("2024-02-28") },
+                    ],
+                    {
+                        task: { header: "Project" },
+                        tags: {
+                            header: "Tags",
+                            value: (tags) => tags.size(),
+                            render: (tags) => Text.Root(East.str`${tags.size()} tags`),
+                        },
+                        info: {
+                            header: "Team",
+                            value: (info) => info.size,
+                            render: (info) => Text.Root(East.str`${info.team} (${info.size})`),
+                        },
+                    },
+                    row => [Gantt.Task({ start: row.start, end: row.end, colorPalette: "purple" })],
+                    { variant: "line", striped: true }
+                ),
+                some(`
+                    Gantt.Root(
+                        [
+                            { task: "Platform v2", tags: ["backend", "api", "priority"], info: { team: "Core", size: 5n }, start: new Date("2024-01-01"), end: new Date("2024-03-31") },
+                            { task: "UI Refresh", tags: ["frontend", "design"], info: { team: "Web", size: 3n }, start: new Date("2024-01-15"), end: new Date("2024-02-28") },
+                            { task: "CI/CD", tags: ["devops"], info: { team: "Infra", size: 2n }, start: new Date("2024-02-01"), end: new Date("2024-02-28") },
+                        ],
+                        {
+                            task: { header: "Project" },
+                            tags: {
+                                header: "Tags",
+                                value: (tags) => tags.size(),
+                                render: (tags) => Text.Root(East.str\`\${tags.size()} tags\`),
+                            },
+                            info: {
+                                header: "Team",
+                                value: (info) => info.size,
+                                render: (info) => Text.Root(East.str\`\${info.team} (\${info.size})\`),
+                            },
+                        },
+                        row => [Gantt.Task({ start: row.start, end: row.end, colorPalette: "purple" })],
+                        { variant: "line", striped: true }
+                    )
+                `)
+            )
+        );
+
         // Column render with row access
         const columnRenderWithRow = $.let(
             ShowcaseCard(
@@ -711,6 +765,8 @@ export default East.function(
                 Grid.Item(withProgress),
                 Grid.Item(colorful),
                 Grid.Item(styled),
+                // Complex column types with value functions
+                Grid.Item(complexColumns, { colSpan: "2" }),
                 // Column render with row access
                 Grid.Item(columnRenderWithRow, { colSpan: "2" }),
                 // Interactive example with all callbacks

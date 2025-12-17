@@ -18,7 +18,11 @@ import {
     type ValueTypeOf,
     type TypeOf,
     some,
-    none
+    none,
+    toEastTypeValue,
+    type EastType,
+    type EastTypeValue,
+    LiteralValueType,
 } from "@elaraai/east";
 
 import { ColorSchemeType } from "../../style.js";
@@ -28,9 +32,6 @@ import {
     TableColumnType,
     type TableColumnConfig,
 } from "../table/index.js";
-import {
-    TableValueLiteral, TableValueTypeType
-} from "../table/types.js";
 import { Text } from "../../typography/index.js";
 
 import {
@@ -255,29 +256,40 @@ function createPlanner<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
     const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
     const field_types = Expr.type(data_expr).value.fields;
 
-    // Normalize columns to object format
-    const columns_obj: Record<string, TableColumnConfig & { type: ValueTypeOf<typeof TableValueTypeType> }> = Array.isArray(columns)
+    // Normalize columns to object format, converting field types to EastTypeValue
+    const columns_obj = Array.isArray(columns)
         ? Object.fromEntries((columns as string[]).map(key => [key, {
-            type: variant(field_types[key as keyof typeof field_types].type, null)
-        }])) as Record<string, TableColumnConfig & { type: ValueTypeOf<typeof TableValueTypeType> }>
+            type: toEastTypeValue(field_types[key as keyof typeof field_types] as EastType)
+        }])) as Record<string, TableColumnConfig & { type: EastTypeValue }>
         : Object.fromEntries((Object.entries(columns)).map(([key, value]) => [key, {
             ...value,
-            type: variant(field_types[key as keyof typeof field_types].type, null)
-        }])) as Record<string, TableColumnConfig & { type: ValueTypeOf<typeof TableValueTypeType> }>;
+            type: toEastTypeValue(field_types[key as keyof typeof field_types] as EastType)
+        }])) as Record<string, TableColumnConfig & { type: EastTypeValue }>;
 
     // Map each data row to an PlannerRow with cells and events
     const rows_mapped = data_expr.map(($, datum) => {
         // Build cells dict (same as Table)
         const cells = $.let(new Map(), DictType(StringType, StructType({
-            value: TableValueLiteral,
+            value: LiteralValueType,
             content: UIComponentType
         })));
 
         for (const [col_key, col_config] of Object.entries(columns_obj)) {
             const field_value = (datum as any)[col_key];
             const field_type = field_types[col_key];
+
+            // Get cell value: use custom value function if provided, otherwise use field value directly
+            let cellValue;
+            if ((col_config as any).value) {
+                const customValue = East.value((col_config as any).value(field_value, datum as any));
+                const customValueType = Expr.type(customValue) as EastType;
+                cellValue = variant(customValueType.type as any, customValue);
+            } else {
+                cellValue = variant(field_type.type, field_value);
+            }
+
             $(cells.insert(col_key, {
-                value: variant(field_type.type, field_value),
+                value: cellValue,
                 content: East.value(
                     col_config.render ?
                         col_config.render(field_value, datum as any) :
@@ -303,13 +315,6 @@ function createPlanner<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
     // Create columns array from the columns config
     const columns_mapped: ValueTypeOf<ArrayType<typeof TableColumnType>> = [];
     for (const [key, config] of Object.entries(columns_obj)) {
-        if (config.type.type !== "Boolean" &&
-            config.type.type !== "Integer" &&
-            config.type.type !== "Float" &&
-            config.type.type !== "String" &&
-            config.type.type !== "DateTime") {
-            throw new Error(`Planner column type for key "${key}" must be one of Boolean, Integer, Float, String, or DateTime.`);
-        }
         columns_mapped.push({
             key: key,
             type: config.type,

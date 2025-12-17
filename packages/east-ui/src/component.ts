@@ -14,7 +14,8 @@ import {
     FloatType,
     BooleanType,
     DictType,
-    FunctionType
+    FunctionType,
+    LiteralValueType,
 } from "@elaraai/east";
 
 // Typography
@@ -64,7 +65,7 @@ import { IconType } from "./display/icon/types.js";
 
 // Collections
 import { DataListRootType } from "./collections/data-list/index.js";
-import { TableColumnType, TableStyleType, TableValueLiteral } from "./collections/table/types.js";
+import { TableColumnType, TableStyleType } from "./collections/table/types.js";
 import { GanttEventType, GanttStyleType } from "./collections/gantt/types.js";
 import { PlannerStyleType, PlannerEventType } from "./collections/planner/types.js";
 // import { TreeViewStyleType } from "./collections/tree-view/types.js";
@@ -268,7 +269,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
 
     Table: StructType({
         rows: ArrayType(DictType(StringType, StructType({
-            value: TableValueLiteral,
+            value: LiteralValueType,
             content: node,
         }))),
         columns: ArrayType(TableColumnType),
@@ -278,7 +279,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
     Gantt: StructType({
         rows: ArrayType(StructType({
             cells: DictType(StringType, StructType({
-                value: TableValueLiteral,
+                value: LiteralValueType,
                 content: node,
             })),
             events: ArrayType(GanttEventType),
@@ -290,7 +291,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
     Planner: StructType({
         rows: ArrayType(StructType({
             cells: DictType(StringType, StructType({
-                value: TableValueLiteral,
+                value: LiteralValueType,
                 content: node,
             })),
             events: ArrayType(PlannerEventType),

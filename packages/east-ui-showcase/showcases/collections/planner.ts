@@ -246,6 +246,60 @@ export default East.function(
             )
         );
 
+        // Complex column types with value function
+        const complexColumns = $.let(
+            ShowcaseCard(
+                "Complex Column Types",
+                "Array and struct fields with value functions for sorting",
+                Planner.Root(
+                    [
+                        { name: "Alice", skills: ["TypeScript", "React"], info: { dept: "Eng", level: 3n }, start: 1n, end: 4n },
+                        { name: "Bob", skills: ["Python"], info: { dept: "Data", level: 2n }, start: 2n, end: 5n },
+                        { name: "Charlie", skills: ["Go", "Rust", "C++"], info: { dept: "Infra", level: 4n }, start: 3n, end: 7n },
+                    ],
+                    {
+                        name: { header: "Name" },
+                        skills: {
+                            header: "Skills",
+                            value: (skills) => skills.size(),
+                            render: (skills) => Text.Root(East.str`${skills.size()} skills`),
+                        },
+                        info: {
+                            header: "Level",
+                            value: (info) => info.level,
+                            render: (info) => Text.Root(East.str`${info.dept} L${info.level}`),
+                        },
+                    },
+                    row => [Planner.Event({ start: row.start, end: row.end, colorPalette: "purple" })],
+                    { maxSlot: 8n, striped: true }
+                ),
+                some(`
+                    Planner.Root(
+                        [
+                            { name: "Alice", skills: ["TypeScript", "React"], info: { dept: "Eng", level: 3n }, start: 1n, end: 4n },
+                            { name: "Bob", skills: ["Python"], info: { dept: "Data", level: 2n }, start: 2n, end: 5n },
+                            { name: "Charlie", skills: ["Go", "Rust", "C++"], info: { dept: "Infra", level: 4n }, start: 3n, end: 7n },
+                        ],
+                        {
+                            name: { header: "Name" },
+                            skills: {
+                                header: "Skills",
+                                value: (skills) => skills.size(),
+                                render: (skills) => Text.Root(East.str\`\${skills.size()} skills\`),
+                            },
+                            info: {
+                                header: "Level",
+                                value: (info) => info.level,
+                                render: (info) => Text.Root(East.str\`\${info.dept} L\${info.level}\`),
+                            },
+                        },
+                        row => [Planner.Event({ start: row.start, end: row.end, colorPalette: "purple" })],
+                        { maxSlot: 8n, striped: true }
+                    )
+                `)
+            )
+        );
+
         // Column render with row access
         const columnRenderWithRow = $.let(
             ShowcaseCard(
@@ -409,6 +463,7 @@ export default East.function(
             singleSlotMode,
             customSlotLabels,
             styled,
+            complexColumns,
             columnRenderWithRow,
             withBoundaries,
             withContextMenu,

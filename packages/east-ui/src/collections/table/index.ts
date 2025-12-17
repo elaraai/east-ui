@@ -18,7 +18,16 @@ import {
     none,
     type ValueTypeOf,
     FunctionType,
-    NullType
+    NullType,
+    toEastTypeValue,
+    type EastType,
+    type EastTypeValue,
+    LiteralValueType,
+    BooleanType,
+    IntegerType,
+    FloatType,
+    DateTimeType,
+    BlobType,
 } from "@elaraai/east";
 
 import {
@@ -31,9 +40,7 @@ import {
     TableColumnType,
     TableSizeType,
     type TableStyle,
-    TableValueLiteral,
-    type TableValueType,
-    TableValueTypeType,
+    type PrimitiveEastType,
     TableCellClickEventType,
     TableRowClickEventType,
     TableRowSelectionEventType,
@@ -42,6 +49,7 @@ import {
 } from "./types.js";
 import { UIComponentType } from "../../component.js";
 import { Text } from "../../typography/index.js";
+
 
 // Re-export style types
 export {
@@ -59,11 +67,11 @@ export {
  * @remarks
  * Defines the type for a table cell.
  *
- * @property value - The cell value as a literal
- * @property content - Optional UI component content for the cell
+ * @property value - The cell value as a LiteralValueType (for sorting/filtering)
+ * @property content - UI component content for the cell (for rendering)
  */
 export const TableCellType = StructType({
-    value: TableValueLiteral,
+    value: LiteralValueType,
     content: UIComponentType,
 });
 
@@ -100,22 +108,12 @@ export type TableRootType = typeof TableRootType;
 // ============================================================================
 
 /**
- * Column configuration for the Table API.
+ * Base column configuration properties shared by all column types.
  *
  * @typeParam FieldType - The East type of the field being rendered
  * @typeParam RowType - The East struct type of the entire row
- *
- * @remarks
- * Defines how a column should be displayed, including header text
- * and an optional render function to convert data to UI components.
- *
- * @property header - Column header text (defaults to column key)
- * @property render - Function to render the cell content from field value and row
- * @property onCellClick - Optional cell click handler
- * @property onCellDoubleClick - Optional cell double-click handler
- * @property onSortChange - Optional sort change handler
  */
-export interface TableColumnConfig<FieldType extends TableValueType = TableValueType, RowType extends StructType = StructType> {
+interface TableColumnConfigBase<FieldType extends EastType = EastType, RowType extends StructType = StructType> {
     /** Column header text (defaults to column key if not provided) */
     header?: SubtypeExprOrValue<StringType>;
     /** Optional render function - defaults to Text.Root (with auto string conversion for non-strings) */
@@ -133,6 +131,42 @@ export interface TableColumnConfig<FieldType extends TableValueType = TableValue
     /** Maximum column width (CSS value) */
     maxWidth?: SubtypeExprOrValue<StringType>;
 }
+
+
+type CellType = NullType | BooleanType | IntegerType | FloatType | StringType | DateTimeType | BlobType;
+/**
+ * Column configuration for primitive fields (value function is optional).
+ */
+interface TableColumnConfigPrimitive<FieldType extends PrimitiveEastType = PrimitiveEastType, RowType extends StructType = StructType>
+    extends TableColumnConfigBase<FieldType, RowType> {
+    /** Optional function to extract a sortable/filterable value from the field */
+    value?: (value: ExprType<FieldType>, row: ExprType<RowType>) => SubtypeExprOrValue<CellType>;
+}
+
+/**
+ * Column configuration for complex fields (value function is required).
+ */
+interface TableColumnConfigComplex<FieldType extends EastType = EastType, RowType extends StructType = StructType>
+    extends TableColumnConfigBase<FieldType, RowType> {
+    /** Required function to extract a sortable/filterable value from complex fields */
+    value: (value: ExprType<FieldType>, row: ExprType<RowType>) => SubtypeExprOrValue<CellType>;
+}
+
+/**
+ * Column configuration for the Table API.
+ *
+ * @typeParam FieldType - The East type of the field being rendered
+ * @typeParam RowType - The East struct type of the entire row
+ *
+ * @remarks
+ * For primitive fields (Boolean, Integer, Float, String, DateTime), the `value` function is optional.
+ * For complex fields (Struct, Dict, Array, etc.), the `value` function is required to extract
+ * a sortable/filterable value.
+ */
+export type TableColumnConfig<FieldType extends EastType = EastType, RowType extends StructType = StructType> =
+    FieldType extends PrimitiveEastType
+        ? TableColumnConfigPrimitive<FieldType, RowType>
+        : TableColumnConfigComplex<FieldType, RowType>;
 
 /**
  * Creates a Table component following the chart pattern.
@@ -186,9 +220,20 @@ type ExtractRowType<T> = T extends ArrayType<infer S>
 type DataFields<T extends SubtypeExprOrValue<ArrayType<StructType>>> = ExtractStructFields<TypeOf<T>>;
 type DataRowType<T extends SubtypeExprOrValue<ArrayType<StructType>>> = ExtractRowType<TypeOf<T>>;
 
-// Column specification can be array of keys or object config
+// Helper type to extract only primitive field keys from a struct's fields
+type PrimitiveFieldKeys<Fields> = {
+    [K in keyof Fields]: Fields[K] extends PrimitiveEastType ? K : never
+}[keyof Fields];
+
+/**
+ * Column specification for the Table API.
+ *
+ * @remarks
+ * - **Array form**: Only primitive field keys allowed (e.g., `["name", "age"]`)
+ * - **Object form**: All fields allowed, but complex fields require a `value` function
+ */
 type ColumnSpec<T extends SubtypeExprOrValue<ArrayType<StructType>>> =
-    | (keyof DataFields<NoInfer<T>>)[]
+    | PrimitiveFieldKeys<DataFields<NoInfer<T>>>[]
     | { [K in keyof DataFields<NoInfer<T>>]?: TableColumnConfig<DataFields<NoInfer<T>>[K], DataRowType<NoInfer<T>>> };
 
 export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
@@ -199,26 +244,38 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
     const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
     const field_types = Expr.type(data_expr).value.fields;
 
-    // Normalize columns to object format
-    const columns_obj: Record<string, TableColumnConfig & { type: ValueTypeOf<typeof TableValueTypeType> }> = Array.isArray(columns)
+    // Normalize columns to object format, converting field types to EastTypeValue
+    const columns_obj = Array.isArray(columns)
         ? Object.fromEntries((columns as string[]).map(key => [key, {
-            type: variant(field_types[key as keyof typeof field_types].type, null)
-        }])) as Record<string, TableColumnConfig & { type: ValueTypeOf<typeof TableValueTypeType> }>
+            type: toEastTypeValue(field_types[key as keyof typeof field_types] as EastType)
+        }])) as Record<string, TableColumnConfig & { type: EastTypeValue }>
         : Object.fromEntries((Object.entries(columns)).map(([key, value]) => [key, {
             ...value,
-            type: variant(field_types[key as keyof typeof field_types].type, null)
-        }])) as Record<string, TableColumnConfig & { type: ValueTypeOf<typeof TableValueTypeType> }>;
+            type: toEastTypeValue(field_types[key as keyof typeof field_types] as EastType)
+        }])) as Record<string, TableColumnConfig & { type: EastTypeValue }>;
     // Map each data row to a Dict<String, UIComponentType> by calling render functions
     const rows_mapped = data_expr.map(($, datum) => {
         const cells = $.let(new Map(), DictType(StringType, StructType({
-            value: TableValueLiteral,
+            value: LiteralValueType,
             content: UIComponentType,
         })));
         for (const [col_key, col_config] of Object.entries(columns_obj)) {
             const field_value = (datum as any)[col_key];
             const field_type = field_types[col_key];
+
+            // Get cell value: use custom value function if provided, otherwise use field value directly
+            // (for primitive types, this works; complex types require a value function)
+            let cellValue;
+            if ((col_config as any).value) {
+                const customValue = East.value((col_config as any).value(field_value, datum as any));
+                const customValueType = Expr.type(customValue) as EastType;
+                cellValue = variant(customValueType.type as any, customValue);
+            } else {
+                cellValue = variant(field_type.type, field_value);
+            }
+
             $(cells.insert(col_key, {
-                value: variant(field_type.type, field_value),
+                value: cellValue,
                 content: East.value(
                     col_config.render ?
                         col_config.render(field_value, datum as any) :
@@ -238,14 +295,6 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
     const columns_mapped: ValueTypeOf<ArrayType<typeof TableColumnType>> = []
 
     for (const [key, config] of Object.entries(columns_obj)) {
-        if (config.type.type !== "Boolean" &&
-            config.type.type !== "Integer" &&
-            config.type.type !== "Float" &&
-            config.type.type !== "String" &&
-            config.type.type !== "DateTime" &&
-            config.type.type !== 'Array') {
-            throw new Error(`Table column type for key "${key}" must be one of Boolean, Integer, Float, String, or DateTime.`);
-        }
         columns_mapped.push({
             key: key,
             type: config.type,
@@ -382,14 +431,14 @@ export const Table = {
          * @remarks
          * Defines the type for a table cell.
          *
-         * @property value - The cell value as a literal
-         * @property content - Optional UI component content for the cell
+         * @property value - The cell value as a LiteralValueType
+         * @property content - UI component content for the cell
          */
         Cell: TableCellType,
         /**
-         * Type representing the Table structure.
+         * Type for cell values (LiteralValueType - supports any primitive East value).
          */
-        Value: TableValueLiteral,
+        Value: LiteralValueType,
         /**
          * Table variant type for Chakra UI v3 table styling.
          *

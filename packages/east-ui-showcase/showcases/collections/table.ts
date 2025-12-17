@@ -30,7 +30,9 @@ export default East.function(
                         email: { header: "Email" },
                         role: { header: "Role" },
                         tags: {
-                            header: "Tags", render: value => Stack.HStack(value.map(($, tag) => Badge.Root(tag)) as any, { gap: "1" })
+                            header: "Tags",
+                            value: tags => tags.size(),
+                            render: value => Stack.HStack(value.map(($, tag) => Badge.Root(tag)) as any, { gap: "1" })
                         },
                     }
                 ),
@@ -230,6 +232,62 @@ export default East.function(
                             showColumnBorder: true,
                             colorPalette: "teal"
                         }
+                    )
+                `)
+            )
+        );
+
+        // Complex column types with value function
+        const complexColumns = $.let(
+            ShowcaseCard(
+                "Complex Column Types",
+                "Array and struct fields with value functions for sorting",
+                Table.Root(
+                    [
+                        { name: "Alice", skills: ["TypeScript", "React", "Node"], metadata: { level: "Senior", years: 5n } },
+                        { name: "Bob", skills: ["Python", "Django"], metadata: { level: "Mid", years: 3n } },
+                        { name: "Charlie", skills: ["Go", "Rust", "C++", "Java"], metadata: { level: "Senior", years: 8n } },
+                    ],
+                    {
+                        name: { header: "Name" },
+                        skills: {
+                            header: "Skills",
+                            // value function extracts sortable value from array
+                            value: (skills) => skills.size(),
+                            render: (skills) => Stack.HStack(skills.map(($, s) => Badge.Root(s, { variant: "subtle", colorPalette: "blue" })) as any, { gap: "1", wrap: "wrap" }),
+                        },
+                        metadata: {
+                            header: "Experience",
+                            // value function extracts sortable value from struct
+                            value: (meta) => meta.years,
+                            render: (meta) => Text.Root(East.str`${meta.level} (${meta.years} yrs)`),
+                        },
+                    },
+                    { variant: "line", striped: true }
+                ),
+                some(`
+                    Table.Root(
+                        [
+                            { name: "Alice", skills: ["TypeScript", "React", "Node"], metadata: { level: "Senior", years: 5n } },
+                            { name: "Bob", skills: ["Python", "Django"], metadata: { level: "Mid", years: 3n } },
+                            { name: "Charlie", skills: ["Go", "Rust", "C++", "Java"], metadata: { level: "Senior", years: 8n } },
+                        ],
+                        {
+                            name: { header: "Name" },
+                            skills: {
+                                header: "Skills",
+                                // value function extracts sortable value from array
+                                value: (skills) => skills.size(),
+                                render: (skills) => Stack.HStack(skills.map(($, s) => Badge.Root(s)) as any, { gap: "1" }),
+                            },
+                            metadata: {
+                                header: "Experience",
+                                // value function extracts sortable value from struct
+                                value: (meta) => meta.years,
+                                render: (meta) => Text.Root(East.str\`\${meta.level} (\${meta.years} yrs)\`),
+                            },
+                        },
+                        { variant: "line", striped: true }
                     )
                 `)
             )
@@ -506,6 +564,8 @@ export default East.function(
                 Grid.Item(interactive),
                 Grid.Item(withBadge),
                 Grid.Item(fullStyled),
+                // Complex column types with value functions
+                Grid.Item(complexColumns, { colSpan: "2" }),
                 // Column render with row access
                 Grid.Item(columnRenderWithRow, { colSpan: "2" }),
                 // Interactive example with all callbacks

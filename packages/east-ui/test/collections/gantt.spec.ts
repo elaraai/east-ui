@@ -304,4 +304,75 @@ describeEast("Gantt", (test) => {
         $(assertEast.equal(gantt.unwrap("Gantt").rows.size(), 1n));
         $(assertEast.equal(gantt.unwrap("Gantt").columns.size(), 2n));
     });
+
+    // =========================================================================
+    // Complex Type Columns (require value function)
+    // =========================================================================
+
+    test("creates gantt with array field using value function", $ => {
+        const gantt = $.let(Gantt.Root(
+            [
+                { name: "Design", tags: ["ui", "frontend"], start: new Date("2024-01-01"), end: new Date("2024-01-15") },
+                { name: "Backend", tags: ["api", "db"], start: new Date("2024-01-10"), end: new Date("2024-02-01") },
+            ],
+            {
+                name: { header: "Task" },
+                tags: {
+                    header: "Tags",
+                    // Extract array length as sortable integer value
+                    value: (tags) => tags.size(),
+                    render: (tags) => Text.Root(East.str`${tags.size()} tags`),
+                },
+            },
+            row => [Gantt.Task({ start: row.start, end: row.end })]
+        ));
+
+        $(assertEast.equal(gantt.unwrap("Gantt").columns.size(), 2n));
+        $(assertEast.equal(gantt.unwrap("Gantt").rows.size(), 2n));
+    });
+
+    test("creates gantt with struct field using value function", $ => {
+        const gantt = $.let(Gantt.Root(
+            [
+                { name: "Sprint 1", metadata: { priority: 1n, status: "active" }, start: new Date("2024-01-01"), end: new Date("2024-01-14") },
+                { name: "Sprint 2", metadata: { priority: 3n, status: "pending" }, start: new Date("2024-01-15"), end: new Date("2024-01-28") },
+            ],
+            {
+                name: { header: "Sprint" },
+                metadata: {
+                    header: "Priority",
+                    // Extract priority as sortable integer value
+                    value: (meta) => meta.priority,
+                    render: (meta) => Text.Root(East.str`Priority: ${meta.priority}`),
+                },
+            },
+            row => [Gantt.Task({ start: row.start, end: row.end })]
+        ));
+
+        $(assertEast.equal(gantt.unwrap("Gantt").columns.size(), 2n));
+        $(assertEast.equal(gantt.unwrap("Gantt").rows.size(), 2n));
+    });
+
+    test("creates gantt mixing primitive and complex columns", $ => {
+        const gantt = $.let(Gantt.Root(
+            [
+                { id: 1n, name: "Project A", team: { lead: "Alice", size: 5n }, start: new Date("2024-01-01"), end: new Date("2024-02-01") },
+                { id: 2n, name: "Project B", team: { lead: "Bob", size: 3n }, start: new Date("2024-02-01"), end: new Date("2024-03-01") },
+            ],
+            {
+                id: { header: "ID" },  // Primitive - no value function needed
+                name: { header: "Project" },  // Primitive - no value function needed
+                team: {
+                    header: "Team Lead",
+                    // Extract lead name as sortable string value
+                    value: (team) => team.lead,
+                    render: (team) => Text.Root(team.lead),
+                },
+            },
+            row => [Gantt.Task({ start: row.start, end: row.end })]
+        ));
+
+        $(assertEast.equal(gantt.unwrap("Gantt").columns.size(), 3n));
+        $(assertEast.equal(gantt.unwrap("Gantt").rows.size(), 2n));
+    });
 });
