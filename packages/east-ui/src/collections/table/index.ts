@@ -242,7 +242,8 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
             config.type.type !== "Integer" &&
             config.type.type !== "Float" &&
             config.type.type !== "String" &&
-            config.type.type !== "DateTime") {
+            config.type.type !== "DateTime" &&
+            config.type.type !== 'Array') {
             throw new Error(`Table column type for key "${key}" must be one of Boolean, Integer, Float, String, or DateTime.`);
         }
         columns_mapped.push({

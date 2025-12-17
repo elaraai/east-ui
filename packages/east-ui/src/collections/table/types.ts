@@ -93,7 +93,7 @@ export type TableSizeLiteral = "sm" | "md" | "lg";
 /**
  * Type representing the Table structure.
  */
-export type TableValueType = BooleanType | IntegerType | FloatType | StringType | DateTimeType;
+export type TableValueType = BooleanType | IntegerType | FloatType | StringType | DateTimeType | ArrayType<StringType>;
 
 /**
  * Type representing the Table structure.
@@ -104,6 +104,7 @@ export const TableValueLiteral = VariantType({
     Float: FloatType,
     String: StringType,
     DateTime: DateTimeType,
+    Array: ArrayType(StringType)
 });
 
 // ============================================================================
@@ -279,6 +280,7 @@ export const TableValueTypeType = VariantType({
     Float: NullType,
     String: NullType,
     DateTime: NullType,
+    Array: NullType
 });
 
 // ============================================================================

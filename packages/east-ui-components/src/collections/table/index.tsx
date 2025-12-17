@@ -27,7 +27,7 @@ import {
     type ColumnDef,
     type RowSelectionState,
 } from "@tanstack/react-table";
-import { compareFor, equalFor, printFor, variant, type ValueTypeOf } from "@elaraai/east";
+import { ArrayType, compareFor, equalFor, printFor, StringType, variant, type ValueTypeOf } from "@elaraai/east";
 import { Table } from "@elaraai/east-ui";
 import { getSomeorUndefined } from "../../utils";
 import { EastChakraComponent } from "../../component";
@@ -168,8 +168,8 @@ export const EastChakraTable = memo(function EastChakraTable({
     // Create TanStack Table columns from East UI columns
     const columns = useMemo<ColumnDef<TableRowValue, TableCellValue | undefined>[]>(() => {
         return value.columns.map((col) => {
-            const print = printFor(col.type);
-            const compare = compareFor(col.type);
+            const print = col.type.type === 'Array' ? printFor(ArrayType(StringType)) : printFor(col.type);
+            const compare = col.type.type === 'Array' ? compareFor(ArrayType(StringType)) : compareFor(col.type);
 
             // Extract width values from column config
             const width = getSomeorUndefined(col.width);
@@ -188,13 +188,13 @@ export const EastChakraTable = memo(function EastChakraTable({
                          const valA = cellA?.value?.value;
                         const valB = cellB?.value?.value;
                         if (valA === undefined || valB === undefined) return 0;
-                        return compare(valA, valB);
+                        return compare(valA as any, valB as any);
                     },
                     minSize: parseSize(minWidth, 80),
                     size: parseSize(width, 150),
                     maxSize: parseSize(maxWidth, 400),
                     meta: {
-                        print,
+                        print: print as any,
                         columnKey: col.key,
                         width,
                         minWidth,

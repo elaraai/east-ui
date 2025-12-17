@@ -15,14 +15,14 @@ describeEast("Table", (test) => {
     test("creates table with array of field names", $ => {
         const table = $.let(Table.Root(
             [
-                { name: "Alice", email: "alice@example.com" },
-                { name: "Bob", email: "bob@example.com" },
+                { name: "Alice", email: "alice@example.com", tags: ["tag1", "tag2"] },
+                { name: "Bob", email: "bob@example.com", tags: ["tag3"] },
             ],
-            ["name", "email"]
+            ["name", "email", "tags"]
         ));
 
         $(assertEast.equal(table.getTag(), "Table"));
-        $(assertEast.equal(table.unwrap("Table").columns.size(), 2n));
+        $(assertEast.equal(table.unwrap("Table").columns.size(), 3n));
         $(assertEast.equal(table.unwrap("Table").rows.size(), 2n));
     });
 

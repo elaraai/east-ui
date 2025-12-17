@@ -328,6 +328,36 @@ describeEast("Chart.Line", (test) => {
         $(assertEast.equal(chart.unwrap("LineChart").dataSeries.hasTag("some"), true));
     });
 
+    test("creates line chart with record form data (multi-series expression)", $ => {
+        const revenue = $.let([
+            { month: "January", value: 186n },
+            { month: "February", value: 305n },
+        ])
+        const profit = $.let([
+            { month: "January", value: 80n },
+            { month: "March", value: 150n },
+        ])
+        const chart = $.let(Chart.Line(
+            {
+                revenue: revenue,
+                profit: profit
+            },
+            {
+                revenue: { color: "teal.solid" },
+                profit: { color: "purple.solid" },
+            },
+            {
+                xAxis: Chart.Axis({ dataKey: "month" }),
+                valueKey: "value",
+            }
+        ));
+
+        $(assertEast.equal(chart.getTag(), "LineChart"));
+        $(assertEast.equal(chart.unwrap("LineChart").series.size(), 2n));
+        $(assertEast.equal(chart.unwrap("LineChart").valueKey.unwrap("some"), "value"));
+        $(assertEast.equal(chart.unwrap("LineChart").dataSeries.hasTag("some"), true));
+    });
+
     test("creates line chart with record form and multiple styling options", $ => {
         const chart = $.let(Chart.Line(
             {

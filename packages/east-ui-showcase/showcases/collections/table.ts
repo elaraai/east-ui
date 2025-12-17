@@ -3,7 +3,7 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East, some, StringType, IntegerType, NullType, ArrayType } from "@elaraai/east";
+import { East, some, StringType, NullType } from "@elaraai/east";
 import { Table, UIComponentType, Grid, Badge, State, Reactive, Stack, Text } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -21,20 +21,27 @@ export default East.function(
                 "Simple table with field names",
                 Table.Root(
                     [
-                        { name: "Alice", email: "alice@example.com", role: "Admin" },
-                        { name: "Bob", email: "bob@example.com", role: "User" },
-                        { name: "Charlie", email: "charlie@example.com", role: "User" },
+                        { name: "Alice", email: "alice@example.com", role: "Admin", tags: ["team lead", "full-time"] },
+                        { name: "Bob", email: "bob@example.com", role: "User", tags: ["part-time"] },
+                        { name: "Charlie", email: "charlie@example.com", role: "User", tags: ["contractor"] },
                     ],
-                    ["name", "email", "role"]
+                    {
+                        name: { header: "Name" },
+                        email: { header: "Email" },
+                        role: { header: "Role" },
+                        tags: {
+                            header: "Tags", render: value => Stack.HStack(value.map(($, tag) => Badge.Root(tag)) as any, { gap: "1" })
+                        },
+                    }
                 ),
                 some(`
                     Table.Root(
                         [
-                            { name: "Alice", email: "alice@example.com", role: "Admin" },
-                            { name: "Bob", email: "bob@example.com", role: "User" },
-                            { name: "Charlie", email: "charlie@example.com", role: "User" },
+                            { name: "Alice", email: "alice@example.com", role: "Admin", tags: ["team lead", "full-time"] },
+                            { name: "Bob", email: "bob@example.com", role: "User", tags: ["part-time"] },
+                            { name: "Charlie", email: "charlie@example.com", role: "User", tags: ["contractor"] },
                         ],
-                        ["name", "email", "role"]
+                        ["name", "email", "role", "tags"]
                     )
                 `)
             )
