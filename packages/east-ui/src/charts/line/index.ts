@@ -19,17 +19,28 @@ export { LineChartType, type LineChartStyle, type LineChartSeriesConfig } from "
 // ============================================================================
 
 /**
+ * Helper to check if a value is an East expression.
+ */
+function isExpr(value: unknown): value is Expr {
+    return value !== null && typeof value === "object" && value instanceof Expr;
+}
+
+/**
  * Helper to check if data is in record form (multiple series arrays).
  */
 function isRecordForm(data: unknown): data is Record<string, unknown> {
     if (data === null || data === undefined) return false;
     if (Array.isArray(data)) return false;
+    if (isExpr(data)) return false;  // Single expression = single array form
     if (typeof data !== "object") return false;
-    // Check if it's a plain object with string keys mapping to arrays
+    // Check if it's a plain object with string keys mapping to arrays or expressions
     const keys = Object.keys(data);
     if (keys.length === 0) return false;
-    // If any value is an array, treat as record form
-    return keys.some(key => Array.isArray((data as Record<string, unknown>)[key]));
+    // If any value is an array or array expression, treat as record form
+    return keys.some(key => {
+        const val = (data as Record<string, unknown>)[key];
+        return Array.isArray(val) || isExpr(val);
+    });
 }
 
 /**
@@ -150,14 +161,19 @@ export function createLineChart(
         // Map each series array
         const seriesDataMap = new Map<string, ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>>();
         for (const [seriesName, seriesData] of Object.entries(dataRecord)) {
-            const series_expr = East.value(seriesData) as ExprType<ArrayType<StructType>>;
+            // Handle both plain arrays and expressions
+            const series_expr = isExpr(seriesData)
+                ? seriesData as ExprType<ArrayType<StructType>>
+                : East.value(seriesData) as ExprType<ArrayType<StructType>>;
             seriesDataMap.set(seriesName, mapArrayToDict(series_expr));
         }
 
         dataSeries_mapped = East.value(seriesDataMap, MultiSeriesDataType);
     } else {
         // Single array form: existing behavior
-        const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
+        const data_expr = isExpr(data)
+            ? data as ExprType<ArrayType<StructType>>
+            : East.value(data) as ExprType<ArrayType<StructType>>;
         data_mapped = mapArrayToDict(data_expr);
         dataSeries_mapped = undefined;
     }

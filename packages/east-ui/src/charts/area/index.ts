@@ -24,15 +24,26 @@ export { AreaChartType, type AreaChartStyle, type AreaChartSeriesConfig } from "
 // ============================================================================
 
 /**
+ * Helper to check if a value is an East expression.
+ */
+function isExpr(value: unknown): value is Expr {
+    return value !== null && typeof value === "object" && value instanceof Expr;
+}
+
+/**
  * Helper to check if data is in record form (multiple series arrays).
  */
 function isRecordForm(data: unknown): data is Record<string, unknown> {
     if (data === null || data === undefined) return false;
     if (Array.isArray(data)) return false;
+    if (isExpr(data)) return false;
     if (typeof data !== "object") return false;
     const keys = Object.keys(data);
     if (keys.length === 0) return false;
-    return keys.some(key => Array.isArray((data as Record<string, unknown>)[key]));
+    return keys.some(key => {
+        const val = (data as Record<string, unknown>)[key];
+        return Array.isArray(val) || isExpr(val);
+    });
 }
 
 /**
@@ -126,12 +137,16 @@ export function createAreaChart(
         data_mapped = East.value([], ArrayType(DictType(StringType, LiteralValueType)));
         const seriesDataMap = new Map<string, ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>>();
         for (const [seriesName, seriesData] of Object.entries(dataRecord)) {
-            const series_expr = East.value(seriesData) as ExprType<ArrayType<StructType>>;
+            const series_expr = isExpr(seriesData)
+                ? seriesData as ExprType<ArrayType<StructType>>
+                : East.value(seriesData) as ExprType<ArrayType<StructType>>;
             seriesDataMap.set(seriesName, mapArrayToDict(series_expr));
         }
         dataSeries_mapped = East.value(seriesDataMap, MultiSeriesDataType);
     } else {
-        const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
+        const data_expr = isExpr(data)
+            ? data as ExprType<ArrayType<StructType>>
+            : East.value(data) as ExprType<ArrayType<StructType>>;
         data_mapped = mapArrayToDict(data_expr);
         dataSeries_mapped = undefined;
     }
