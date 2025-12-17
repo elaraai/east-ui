@@ -314,6 +314,9 @@ function createPlanner<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
             key: key,
             type: config.type,
             header: config?.header !== undefined ? some(config.header) : some(key) as any,
+            width: config?.width !== undefined ? some(config.width) : none as any,
+            minWidth: config?.minWidth !== undefined ? some(config.minWidth) : none as any,
+            maxWidth: config?.maxWidth !== undefined ? some(config.maxWidth) : none as any,
         });
     }
 

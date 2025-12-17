@@ -39,6 +39,13 @@ import { GanttEventRow, type GanttEventValue } from "./GanttEventRow";
 // Pre-define equality function at module level
 const ganttRootEqual = equalFor(Gantt.Types.Root);
 
+// Parse CSS size values to pixels (simple numeric extraction)
+const parseSize = (val: string | undefined, defaultVal: number): number => {
+    if (!val) return defaultVal;
+    const num = parseInt(val, 10);
+    return isNaN(num) ? defaultVal : num;
+};
+
 /** East Gantt Root value type */
 export type GanttRootValue = ValueTypeOf<typeof Gantt.Types.Root>;
 
@@ -64,6 +71,9 @@ declare module "@tanstack/react-table" {
     interface ColumnMeta<TData, TValue> {
         print?: (value: unknown) => string;
         columnKey?: string;
+        width?: string | undefined;
+        minWidth?: string | undefined;
+        maxWidth?: string | undefined;
     }
 }
 
@@ -128,10 +138,25 @@ export const EastChakraGantt = memo(function EastChakraGantt({
     loadingDelay = 200,
     enableColumnResizing = true,
     onEventClick,
-    tablePanelSize = 40,
+    tablePanelSize: tablePanelSizeProp,
 }: EastChakraGanttProps) {
     const props = useMemo(() => toChakraTableRoot(value), [value]);
     const headerHeight = 56;
+
+    // Calculate total column width from column definitions
+    const totalColumnWidth = useMemo(() => {
+        return value.columns.reduce((total, col) => {
+            const width = getSomeorUndefined(col.width);
+            return total + parseSize(width, 150);
+        }, 0);
+    }, [value.columns]);
+
+    // Calculate table panel size based on column widths if not specified
+    // Assume a reasonable container width of 1200px for calculation
+    const tablePanelSize = useMemo(() =>
+        tablePanelSizeProp ?? Math.min(Math.max((totalColumnWidth / 1200) * 100, 20), 60),
+        [tablePanelSizeProp, totalColumnWidth]
+    );
 
     // Extract East-side callbacks from style
     const style = useMemo(() => getSomeorUndefined(value.style), [value.style]);
@@ -242,6 +267,12 @@ export const EastChakraGantt = memo(function EastChakraGantt({
         return value.columns.map((col) => {
             const print = printFor(col.type);
             const compare = compareFor(col.type);
+
+            // Extract width values from column config
+            const width = getSomeorUndefined(col.width);
+            const minWidth = getSomeorUndefined(col.minWidth);
+            const maxWidth = getSomeorUndefined(col.maxWidth);
+
             return columnHelper.accessor(
                 (row) => row.cells.get(col.key),
                 {
@@ -256,12 +287,15 @@ export const EastChakraGantt = memo(function EastChakraGantt({
                         if (valA === undefined || valB === undefined) return 0;
                         return compare(valA, valB);
                     },
-                    minSize: 80,
-                    size: 150,
-                    maxSize: 400,
+                    minSize: parseSize(minWidth, 80),
+                    size: parseSize(width, 150),
+                    maxSize: parseSize(maxWidth, 400),
                     meta: {
                         print,
                         columnKey: col.key,
+                        width,
+                        minWidth,
+                        maxWidth,
                     },
                 }
             );
@@ -676,7 +710,7 @@ export const EastChakraGantt = memo(function EastChakraGantt({
                                                 transition="background 0.2s"
                                                 style={{
                                                     width: `var(--header-${header.id}-size)`,
-                                                    flex: columnSizing[header.id] ? "none" : 1,
+                                                    flex: (columnSizing[header.id] || header.column.columnDef.meta?.width) ? "none" : 1,
                                                 }}
                                                 position="relative"
                                             >
@@ -840,7 +874,7 @@ export const EastChakraGantt = memo(function EastChakraGantt({
 
                                             const cellStyle = {
                                                 width: `var(--col-${cell.column.id}-size)`,
-                                                flex: columnSizing[cell.column.id] ? "none" : 1,
+                                                flex: (columnSizing[cell.column.id] || meta?.width) ? "none" : 1,
                                             };
 
                                             const cellClickHandler = onCellClickFn ? (e: React.MouseEvent) => {

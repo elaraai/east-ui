@@ -294,11 +294,17 @@ export const TableValueTypeType = VariantType({
  * @property key - The column key (field name)
  * @property type - The column value type
  * @property header - Optional header text for the column
+ * @property width - Optional fixed width (CSS value, e.g., "200px", "20%")
+ * @property minWidth - Optional minimum width (CSS value)
+ * @property maxWidth - Optional maximum width (CSS value)
  */
 export const TableColumnType = StructType({
     key: StringType,
     type: TableValueTypeType,
     header: OptionType(StringType),
+    width: OptionType(StringType),
+    minWidth: OptionType(StringType),
+    maxWidth: OptionType(StringType),
 });
 
 /**

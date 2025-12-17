@@ -126,6 +126,12 @@ export interface TableColumnConfig<FieldType extends TableValueType = TableValue
     onCellDoubleClick?: SubtypeExprOrValue<FunctionType<[TableCellClickEventType], NullType>>,
     /** Optional sort change handler */
     onSortChange?: SubtypeExprOrValue<FunctionType<[TableSortEventType], NullType>>,
+    /** Fixed column width (CSS value, e.g., "200px", "20%") */
+    width?: SubtypeExprOrValue<StringType>;
+    /** Minimum column width (CSS value) */
+    minWidth?: SubtypeExprOrValue<StringType>;
+    /** Maximum column width (CSS value) */
+    maxWidth?: SubtypeExprOrValue<StringType>;
 }
 
 /**
@@ -243,6 +249,9 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
             key: key,
             type: config.type,
             header: config?.header !== undefined ? some(config.header) : some(key) as any,
+            width: config?.width !== undefined ? some(config.width) : none as any,
+            minWidth: config?.minWidth !== undefined ? some(config.minWidth) : none as any,
+            maxWidth: config?.maxWidth !== undefined ? some(config.maxWidth) : none as any,
         });
     }
     // Build the style object

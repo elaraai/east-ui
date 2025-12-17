@@ -40,20 +40,20 @@ export default East.function(
             )
         );
 
-        // Table with custom headers
+        // Table with custom headers and column widths
         const customHeaders = $.let(
             ShowcaseCard(
-                "Custom Headers",
-                "Object config with custom column headers",
+                "Custom Headers & Widths",
+                "Object config with custom column headers and widths",
                 Table.Root(
                     [
                         { firstName: "Alice", lastName: "Smith", dept: "Engineering" },
                         { firstName: "Bob", lastName: "Jones", dept: "Marketing" },
                     ],
                     {
-                        firstName: { header: "First Name" },
-                        lastName: { header: "Last Name" },
-                        dept: { header: "Department" },
+                        firstName: { header: "First Name", width: "300px", minWidth: "80px" },
+                        lastName: { header: "Last Name", width: "150px" },
+                        dept: { header: "Department", minWidth: "100px", maxWidth: "200px" },
                     }
                 ),
                 some(`
@@ -63,9 +63,9 @@ export default East.function(
                             { firstName: "Bob", lastName: "Jones", dept: "Marketing" },
                         ],
                         {
-                            firstName: { header: "First Name" },
-                            lastName: { header: "Last Name" },
-                            dept: { header: "Department" },
+                            firstName: { header: "First Name", width: "120px", minWidth: "80px" },
+                            lastName: { header: "Last Name", width: "150px" },
+                            dept: { header: "Department", minWidth: "100px", maxWidth: "200px" },
                         }
                     )
                 `)

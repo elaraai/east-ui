@@ -36,6 +36,13 @@ import { RowStateManager, type RowKey, type RowState } from "../../utils/RowStat
 // Pre-define equality function at module level
 const tableRootEqual = equalFor(Table.Types.Root);
 
+// Parse CSS size values to pixels (simple numeric extraction)
+const parseSize = (val: string | undefined, defaultVal: number): number => {
+    if (!val) return defaultVal;
+    const num = parseInt(val, 10);
+    return isNaN(num) ? defaultVal : num;
+};
+
 /** East Table Root value type */
 export type TableRootValue = ValueTypeOf<typeof Table.Types.Root>;
 
@@ -61,6 +68,9 @@ declare module '@tanstack/react-table' {
     interface ColumnMeta<TData, TValue> {
         print?: (value: unknown) => string;
         columnKey?: string;
+        width?: string | undefined;
+        minWidth?: string | undefined;
+        maxWidth?: string | undefined;
     }
     /* eslint-enable @typescript-eslint/no-unused-vars */
 }
@@ -160,6 +170,12 @@ export const EastChakraTable = memo(function EastChakraTable({
         return value.columns.map((col) => {
             const print = printFor(col.type);
             const compare = compareFor(col.type);
+
+            // Extract width values from column config
+            const width = getSomeorUndefined(col.width);
+            const minWidth = getSomeorUndefined(col.minWidth);
+            const maxWidth = getSomeorUndefined(col.maxWidth);
+
             return columnHelper.accessor(
                 (row) => row.get(col.key),
                 {
@@ -174,12 +190,15 @@ export const EastChakraTable = memo(function EastChakraTable({
                         if (valA === undefined || valB === undefined) return 0;
                         return compare(valA, valB);
                     },
-                    minSize: 80,
-                    size: 150,
-                    maxSize: 400,
+                    minSize: parseSize(minWidth, 80),
+                    size: parseSize(width, 150),
+                    maxSize: parseSize(maxWidth, 400),
                     meta: {
                         print,
                         columnKey: col.key,
+                        width,
+                        minWidth,
+                        maxWidth,
                     },
                 }
             );
@@ -424,7 +443,7 @@ export const EastChakraTable = memo(function EastChakraTable({
                                         transition="background 0.2s"
                                         style={{
                                             width: `var(--header-${header.id}-size)`,
-                                            flex: columnSizing[header.id] ? 'none' : 1,
+                                            flex: (columnSizing[header.id] || header.column.columnDef.meta?.width) ? 'none' : 1,
                                         }}
                                         position="relative"
                                     >
@@ -566,7 +585,7 @@ export const EastChakraTable = memo(function EastChakraTable({
 
                                     const cellStyle = {
                                         width: `var(--col-${cell.column.id}-size)`,
-                                        flex: columnSizing[cell.column.id] ? 'none' : 1,
+                                        flex: (columnSizing[cell.column.id] || meta?.width) ? 'none' : 1,
                                     };
 
                                     const cellClickHandler = onCellClickFn ? (e: React.MouseEvent) => {

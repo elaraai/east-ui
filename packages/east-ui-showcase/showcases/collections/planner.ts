@@ -42,18 +42,21 @@ export default East.function(
             )
         );
 
-        // Planner with labels and colors
+        // Planner with labels, colors and column widths
         const withLabels = $.let(
             ShowcaseCard(
-                "Events with Labels & Colors",
-                "Events with custom labels and color palettes",
+                "Events with Labels, Colors & Width",
+                "Events with custom labels, color palettes, and column widths",
                 Planner.Root(
                     [
-                        { name: "Project A", slot: 1n, endSlot: 4n },
-                        { name: "Project B", slot: 3n, endSlot: 7n },
-                        { name: "Project C", slot: 5n, endSlot: 8n },
+                        { name: "Project A", status: "Active", slot: 1n, endSlot: 4n },
+                        { name: "Project B", status: "Pending", slot: 3n, endSlot: 7n },
+                        { name: "Project C", status: "Done", slot: 5n, endSlot: 8n },
                     ],
-                    { name: { header: "Project" } },
+                    {
+                        name: { header: "Project", width: "200px", minWidth: "80px" },
+                        status: { header: "Status", width: "100px", maxWidth: "150px" },
+                    },
                     row => [
                         Planner.Event({
                             start: row.slot,
@@ -66,11 +69,14 @@ export default East.function(
                 some(`
                     Planner.Root(
                         [
-                            { name: "Project A", slot: 1n, endSlot: 4n },
-                            { name: "Project B", slot: 3n, endSlot: 7n },
-                            { name: "Project C", slot: 5n, endSlot: 8n },
+                            { name: "Project A", status: "Active", slot: 1n, endSlot: 4n },
+                            { name: "Project B", status: "Pending", slot: 3n, endSlot: 7n },
+                            { name: "Project C", status: "Done", slot: 5n, endSlot: 8n },
                         ],
-                        { name: { header: "Project" } },
+                        {
+                            name: { header: "Project", width: "120px", minWidth: "80px" },
+                            status: { header: "Status", width: "100px", maxWidth: "150px" },
+                        },
                         row => [
                             Planner.Event({
                                 start: row.slot,

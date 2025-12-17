@@ -44,11 +44,11 @@ export default East.function(
             )
         );
 
-        // Gantt with custom headers
+        // Gantt with custom headers and column widths
         const customHeaders = $.let(
             ShowcaseCard(
-                "Custom Headers",
-                "Object config with custom column headers",
+                "Custom Headers & Widths",
+                "Object config with custom column headers and widths",
                 Gantt.Root(
                     [
                         { phase: "Research", team: "R&D", start: new Date("2024-02-01"), end: new Date("2024-02-28") },
@@ -56,8 +56,8 @@ export default East.function(
                         { phase: "Launch", team: "Marketing", start: new Date("2024-03-15"), end: new Date("2024-04-15") },
                     ],
                     {
-                        phase: { header: "Phase" },
-                        team: { header: "Team" },
+                        phase: { header: "Phase", width: "300px", minWidth: "80px" },
+                        team: { header: "Team", width: "150px", maxWidth: "200px" },
                     },
                     row => [Gantt.Task({ start: row.start, end: row.end, colorPalette: "teal" })]
                 ),
@@ -69,8 +69,8 @@ export default East.function(
                             { phase: "Launch", team: "Marketing", start: new Date("2024-03-15"), end: new Date("2024-04-15") },
                         ],
                         {
-                            phase: { header: "Phase" },
-                            team: { header: "Team" },
+                            phase: { header: "Phase", width: "120px", minWidth: "80px" },
+                            team: { header: "Team", width: "150px", maxWidth: "200px" },
                         },
                         row => [Gantt.Task({ start: row.start, end: row.end, colorPalette: "teal" })]
                     )
