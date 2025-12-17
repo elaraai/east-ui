@@ -5,6 +5,7 @@
 
 import { ChakraProvider, defaultSystem, Box, Flex, CodeBlock } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { OverlayManagerProvider } from '@elaraai/east-ui-components';
 import { E3Provider, useE3Context } from './context/E3Context';
 import { Toolbar } from './components/Toolbar';
 import { WorkspaceTree } from './components/WorkspaceTree';
@@ -71,11 +72,13 @@ export function App() {
     return (
         <QueryClientProvider client={queryClient}>
             <ChakraProvider value={defaultSystem}>
-                <CodeBlock.AdapterProvider value={shikiAdapter}>
-                    <E3Provider apiUrl={apiUrl} repoPath={repoPath}>
-                        <AppContent />
-                    </E3Provider>
-                </CodeBlock.AdapterProvider>
+                <OverlayManagerProvider>
+                    <CodeBlock.AdapterProvider value={shikiAdapter}>
+                        <E3Provider apiUrl={apiUrl} repoPath={repoPath}>
+                            <AppContent />
+                        </E3Provider>
+                    </CodeBlock.AdapterProvider>
+                </OverlayManagerProvider>
             </ChakraProvider>
         </QueryClientProvider>
     );

@@ -118,6 +118,9 @@ export function toRechartsXAxis(
     const tickLine = getSomeorUndefined(value.tickLine);
     if (tickLine !== undefined) props.tickLine = tickLine;
 
+    const label = getSomeorUndefined(value.label);
+    if (label !== undefined) props.label = label;
+
     const tickMargin = getSomeorUndefined(value.tickMargin);
     if (tickMargin !== undefined) props.tickMargin = Number(tickMargin);
 
@@ -157,6 +160,9 @@ export function toRechartsYAxis(
 
     const tickLine = getSomeorUndefined(value.tickLine);
     if (tickLine !== undefined) props.tickLine = tickLine;
+
+    const label = getSomeorUndefined(value.label);
+    if (label !== undefined) props.label = label;
 
     const tickMargin = getSomeorUndefined(value.tickMargin);
     if (tickMargin !== undefined) props.tickMargin = Number(tickMargin);

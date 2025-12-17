@@ -26,6 +26,14 @@ export function toChakraCard(value: CardValue): CardRootProps {
     return {
         variant: style ? getSomeorUndefined(style.variant)?.type : undefined,
         size: style ? getSomeorUndefined(style.size)?.type as CardRootProps["size"] : undefined,
+        height: style ? getSomeorUndefined(style.height) : undefined,
+        minHeight: style ? getSomeorUndefined(style.minHeight) : undefined,
+        maxHeight: style ? getSomeorUndefined(style.maxHeight) : undefined,
+        width: style ? getSomeorUndefined(style.width) : undefined,
+        minWidth: style ? getSomeorUndefined(style.minWidth) : undefined,
+        maxWidth: style ? getSomeorUndefined(style.maxWidth) : undefined,
+        flex: style ? getSomeorUndefined(style.flex) : undefined,
+        overflow: style ? getSomeorUndefined(style.overflow)?.type : undefined,
     };
 }
 
@@ -38,15 +46,14 @@ export interface EastChakraCardProps {
  */
 export const EastChakraCard = memo(function EastChakraCard({ value }: EastChakraCardProps) {
     const props = useMemo(() => toChakraCard(value), [value]);
-    const title = useMemo(() => getSomeorUndefined(value.title), [value.title]);
-    const description = useMemo(() => getSomeorUndefined(value.description), [value.description]);
+    const header = useMemo(() => getSomeorUndefined(value.header), [value.header]);
+    const footer = useMemo(() => getSomeorUndefined(value.footer), [value.footer]);
 
     return (
         <ChakraCard.Root {...props}>
-            {(title || description) && (
+            {header && (
                 <ChakraCard.Header>
-                    {title && <ChakraCard.Title>{title}</ChakraCard.Title>}
-                    {description && <ChakraCard.Description>{description}</ChakraCard.Description>}
+                    <EastChakraComponent value={header} />
                 </ChakraCard.Header>
             )}
             <ChakraCard.Body>
@@ -54,6 +61,11 @@ export const EastChakraCard = memo(function EastChakraCard({ value }: EastChakra
                     <EastChakraComponent key={index} value={child} />
                 ))}
             </ChakraCard.Body>
+            {footer && (
+                <ChakraCard.Footer>
+                    <EastChakraComponent value={footer} />
+                </ChakraCard.Footer>
+            )}
         </ChakraCard.Root>
     );
 }, (prev, next) => cardEqual(prev.value, next.value));

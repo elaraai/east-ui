@@ -73,6 +73,9 @@ function createBadge(
         variant: variantValue ? variant("some", variantValue) : variant("none", null),
         colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
         size: sizeValue ? variant("some", sizeValue) : variant("none", null),
+        opacity: style?.opacity !== undefined ? variant("some", style.opacity) : variant("none", null),
+        color: style?.color ? variant("some", style.color) : variant("none", null),
+        background: style?.background ? variant("some", style.background) : variant("none", null),
     }), UIComponentType);
 }
 

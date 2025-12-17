@@ -107,6 +107,11 @@ export {
     type TreeViewRootValue,
     type TreeNodeValue,
     type EastChakraTreeViewProps,
+    EastChakraPlanner,
+    toChakraPlannerRoot,
+    type PlannerRootValue,
+    type PlannerEventValue,
+    type EastChakraPlannerProps,
 } from "./collections/index.js";
 
 // Display
@@ -243,6 +248,12 @@ export {
     EastChakraToggleTip,
     type ToggleTipValue,
     type EastChakraToggleTipProps,
+    // Programmatic overlay management
+    OverlayManagerProvider,
+    type OverlayManagerProviderProps,
+    DialogOpenImpl,
+    DrawerOpenImpl,
+    OverlayImpl,
 } from "./overlays/index.js";
 
 // Platform (State Management)

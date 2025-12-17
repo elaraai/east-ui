@@ -8,6 +8,7 @@ import {
     OptionType,
     StructType,
     StringType,
+    FloatType,
 } from "@elaraai/east";
 
 import { SizeType, ColorSchemeType, StyleVariantType } from "../../style.js";
@@ -27,12 +28,18 @@ import type { SizeLiteral, ColorSchemeLiteral, StyleVariantLiteral } from "../..
  * @property variant - Visual variant (solid, subtle, outline)
  * @property colorPalette - Color scheme for the badge
  * @property size - Size of the badge
+ * @property opacity - CSS opacity (0-1)
+ * @property color - Custom text color (overrides colorPalette)
+ * @property background - Custom background color (overrides colorPalette)
  */
 export const BadgeType = StructType({
     value: StringType,
     variant: OptionType(StyleVariantType),
     colorPalette: OptionType(ColorSchemeType),
     size: OptionType(SizeType),
+    opacity: OptionType(FloatType),
+    color: OptionType(StringType),
+    background: OptionType(StringType),
 });
 
 /**
@@ -50,6 +57,9 @@ export type BadgeType = typeof BadgeType;
  * @property variant - Visual variant (solid, subtle, outline)
  * @property colorPalette - Color scheme for the badge
  * @property size - Size of the badge
+ * @property opacity - CSS opacity (0-1)
+ * @property color - Custom text color (overrides colorPalette)
+ * @property background - Custom background color (overrides colorPalette)
  */
 export interface BadgeStyle {
     /** Visual variant (solid, subtle, outline) */
@@ -58,4 +68,10 @@ export interface BadgeStyle {
     colorPalette?: SubtypeExprOrValue<ColorSchemeType> | ColorSchemeLiteral;
     /** Size of the badge */
     size?: SubtypeExprOrValue<SizeType> | SizeLiteral;
+    /** CSS opacity (0-1) */
+    opacity?: SubtypeExprOrValue<FloatType>;
+    /** Custom text color (overrides colorPalette) */
+    color?: SubtypeExprOrValue<StringType>;
+    /** Custom background color (overrides colorPalette) */
+    background?: SubtypeExprOrValue<StringType>;
 }

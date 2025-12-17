@@ -30,14 +30,22 @@ export {
 
 export {
     EastChakraDialog,
+    DialogContent,
+    toChakraDialog,
     type DialogValue,
+    type DialogOpenInputValue,
     type EastChakraDialogProps,
+    type DialogContentProps,
 } from "./dialog/index.js";
 
 export {
     EastChakraDrawer,
+    DrawerContent,
+    toChakraDrawer,
     type DrawerValue,
+    type DrawerOpenInputValue,
     type EastChakraDrawerProps,
+    type DrawerContentProps,
 } from "./drawer/index.js";
 
 export {
@@ -52,3 +60,11 @@ export {
     type ToggleTipValue,
     type EastChakraToggleTipProps,
 } from "./toggle-tip/index.js";
+
+export {
+    OverlayManagerProvider,
+    type OverlayManagerProviderProps,
+    DialogOpenImpl,
+    DrawerOpenImpl,
+    OverlayImpl,
+} from "./overlay-manager.js";

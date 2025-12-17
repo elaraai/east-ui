@@ -10,7 +10,8 @@ import {
     StringType, OptionType,
     StructType,
     ArrayType,
-    variant
+    variant,
+    NullType,
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
@@ -65,6 +66,35 @@ export const DialogType = StructType({
  * Type alias for DialogType.
  */
 export type DialogType = typeof DialogType;
+
+// ============================================================================
+// Dialog Open Input Type
+// ============================================================================
+
+/**
+ * East StructType for programmatic dialog opening.
+ *
+ * @remarks
+ * This type is used with {@link dialog_open} to programmatically open a dialog
+ * without a trigger element. Unlike {@link DialogType}, this does not include
+ * a trigger property.
+ *
+ * @property body - Array of UI components for dialog content
+ * @property title - Optional dialog title
+ * @property description - Optional dialog description
+ * @property style - Optional style configuration
+ */
+export const DialogOpenInputType = StructType({
+    body: ArrayType(UIComponentType),
+    title: OptionType(StringType),
+    description: OptionType(StringType),
+    style: OptionType(DialogStyleType),
+});
+
+/**
+ * Type alias for DialogOpenInputType.
+ */
+export type DialogOpenInputType = typeof DialogOpenInputType;
 
 // ============================================================================
 // Dialog Function
@@ -156,6 +186,38 @@ function createDialog(
     }), UIComponentType);
 }
 
+// ============================================================================
+// Dialog Open Platform Function
+// ============================================================================
+
+/**
+ * Platform function to programmatically open a dialog.
+ *
+ * @remarks
+ * Opens a dialog without requiring a trigger element. The dialog content,
+ * title, description, and style are specified in the {@link DialogOpenInputType} parameter.
+ * Pass `Dialog.Implementation` to `ir.compile()` to enable this functionality.
+ *
+ * @param input - The dialog configuration including body content and style
+ * @returns Null
+ *
+ * @example
+ * ```ts
+ * import { East, NullType, variant } from "@elaraai/east";
+ * import { Dialog, Text, UIComponentType } from "@elaraai/east-ui";
+ *
+ * const showAlert = East.function([], NullType, $ => {
+ *     $(Dialog.open(East.value({
+ *         body: [Text.Root("Are you sure?")],
+ *         title: variant("some", "Confirm"),
+ *         description: variant("none", null),
+ *         style: variant("none", null),
+ *     }, Dialog.Types.OpenInput)));
+ * });
+ * ```
+ */
+export const dialog_open = East.platform("dialog_open", [DialogOpenInputType], NullType);
+
 /**
  * Dialog component for modal overlays.
  *
@@ -190,6 +252,29 @@ export const Dialog = {
      * ```
      */
     Root: createDialog,
+    /**
+     * Platform function to programmatically open a dialog.
+     *
+     * @remarks
+     * Opens a dialog without requiring a trigger element. Pass `Dialog.Implementation`
+     * to `ir.compile()` to enable this functionality.
+     *
+     * @example
+     * ```ts
+     * import { East, NullType, variant } from "@elaraai/east";
+     * import { Dialog, Text } from "@elaraai/east-ui";
+     *
+     * const showAlert = East.function([], NullType, $ => {
+     *     $(Dialog.open(East.value({
+     *         body: [Text.Root("Are you sure?")],
+     *         title: variant("some", "Confirm"),
+     *         description: variant("none", null),
+     *         style: variant("none", null),
+     *     }, Dialog.Types.OpenInput)));
+     * });
+     * ```
+     */
+    open: dialog_open,
     Types: {
         /**
          * East StructType for Dialog component.
@@ -260,5 +345,18 @@ export const Dialog = {
          * @property alertdialog - Alert dialog role for confirmations
          */
         Role: DialogRoleType,
+        /**
+         * East StructType for programmatic dialog opening.
+         *
+         * @remarks
+         * Use this type with {@link Dialog.open} to programmatically open a dialog
+         * without a trigger element.
+         *
+         * @property body - Array of UI components for dialog content
+         * @property title - Optional dialog title
+         * @property description - Optional dialog description
+         * @property style - Optional style configuration
+         */
+        OpenInput: DialogOpenInputType,
     },
 } as const;

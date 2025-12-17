@@ -26,6 +26,7 @@ import {
     JustifyContentType,
     AlignItemsType,
 } from "../../style.js";
+import { Padding, PaddingType } from "../style.js";
 
 
 // Re-export style types
@@ -138,6 +139,17 @@ function GridRoot(
         return variant("some", value);
     };
 
+    const paddingValue = style?.padding
+        ? (typeof style.padding === "string"
+            ? East.value({
+                top: some(style.padding),
+                right: some(style.padding),
+                bottom: some(style.padding),
+                left: some(style.padding)
+            }, PaddingType)
+            : style.padding)
+        : undefined;
+
     const justifyItemsValue = style?.justifyItems
         ? (typeof style.justifyItems === "string"
             ? East.value(variant(style.justifyItems, null), JustifyContentType)
@@ -171,6 +183,13 @@ function GridRoot(
         items: items_expr,
         style: style ?
             variant("some", {
+                width: toStringOption(style.width),
+                height: toStringOption(style.height),
+                minHeight: toStringOption(style.minHeight),
+                minWidth: toStringOption(style.minWidth),
+                maxHeight: toStringOption(style.maxHeight),
+                maxWidth: toStringOption(style.maxWidth),
+                padding: paddingValue ? variant("some", paddingValue) : variant("none", null),
                 templateColumns: toStringOption(style.templateColumns),
                 templateRows: toStringOption(style.templateRows),
                 templateAreas: toStringOption(style.templateAreas),
@@ -265,6 +284,23 @@ export const Grid = {
      * ```
      */
     Item: GridItem,
+    /**
+     * Creates padding configuration for the Grid component.
+     *
+     * @param top - Top padding (Chakra UI spacing token or CSS value)
+     * @param right - Right padding (Chakra UI spacing token or CSS value)
+     * @param bottom - Bottom padding (Chakra UI spacing token or CSS value)
+     * @param left - Left padding (Chakra UI spacing token or CSS value)
+     * @returns An East expression representing the padding configuration
+     *
+     * @example
+     * ```ts
+     * Grid.Root([...], {
+     *     padding: Grid.Padding("4", "2", "4", "2"),
+     * });
+     * ```
+     */
+    Padding,
     Types: {
         /**
          * The concrete East type for Grid component data.

@@ -20,10 +20,17 @@ export type BadgeValue = ValueTypeOf<typeof Badge.Types.Badge>;
  * Pure function - easy to test independently.
  */
 export function toChakraBadge(value: BadgeValue): BadgeProps {
+    const opacity = getSomeorUndefined(value.opacity);
+    const color = getSomeorUndefined(value.color);
+    const background = getSomeorUndefined(value.background);
+
     return {
         variant: getSomeorUndefined(value.variant)?.type,
         colorPalette: getSomeorUndefined(value.colorPalette)?.type,
         size: getSomeorUndefined(value.size)?.type,
+        opacity: opacity,
+        color: color,
+        background: background,
     };
 }
 

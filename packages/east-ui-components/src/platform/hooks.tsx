@@ -15,6 +15,7 @@ import {
 import { State, type UIStoreInterface, UIComponentType } from "@elaraai/east-ui";
 import { EastChakraComponent } from "../component.js";
 import type { EastIR, ValueTypeOf } from "@elaraai/east";
+import { OverlayImpl } from "../overlays/overlay-manager.js";
 import { Alert, Box, Code, Text, Stack } from "@chakra-ui/react";
 
 // Configure the singleton store to use queueMicrotask for deferred notifications.
@@ -227,10 +228,10 @@ export interface EastFunctionProps {
  * ```
  */
 export function EastFunction({ ir }: EastFunctionProps) {
-    // Compile IR with State.Implementation once on mount, with error handling
+    // Compile IR with State.Implementation and OverlayImpl once on mount, with error handling
     const result = useMemo(() => {
         try {
-            return { compiled: ir.compile(State.Implementation), error: null };
+            return { compiled: ir.compile([...State.Implementation, ...OverlayImpl]), error: null };
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : String(err);
             const errorStack = err instanceof Error ? err.stack : undefined;

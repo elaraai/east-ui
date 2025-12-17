@@ -15,8 +15,8 @@
 
 export { Tooltip } from "./tooltip/index.js";
 export { Menu } from "./menu/index.js";
-export { Dialog } from "./dialog/index.js";
-export { Drawer } from "./drawer/index.js";
+export { Dialog, dialog_open } from "./dialog/index.js";
+export { Drawer, drawer_open } from "./drawer/index.js";
 export { Popover } from "./popover/index.js";
 export { HoverCard } from "./hover-card/index.js";
 export { ActionBar } from "./action-bar/index.js";

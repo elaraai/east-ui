@@ -5,6 +5,7 @@
 
 import { describeEast, assertEast } from "../platforms.spec.js";
 import { Table, Badge, Text } from "../../src/index.js";
+import { East } from "@elaraai/east";
 
 describeEast("Table", (test) => {
     // =========================================================================
@@ -101,7 +102,7 @@ describeEast("Table", (test) => {
             ],
             {
                 item: { header: "Item" },
-                price: { header: "Price", render: value => Text.Root(value, { textAlign: "right" }) },
+                price: { header: "Price", render: (value) => Text.Root(value, { textAlign: "right" }) },
             }
         ));
 
@@ -181,6 +182,69 @@ describeEast("Table", (test) => {
         $(assertEast.equal(table.unwrap("Table").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
         $(assertEast.equal(table.unwrap("Table").style.unwrap("some").striped.unwrap("some"), true));
         $(assertEast.equal(table.unwrap("Table").style.unwrap("some").interactive.unwrap("some"), true));
+    });
+
+    // =========================================================================
+    // Render with Row Access
+    // =========================================================================
+
+    test("render function receives row parameter to access other fields", $ => {
+        const table = $.let(Table.Root(
+            [
+                { name: "Alice", status: "Active", role: "Admin" },
+                { name: "Bob", status: "Inactive", role: "User" },
+            ],
+            {
+                name: { header: "Name" },
+                status: {
+                    header: "Status",
+                    render: (value, row) => Badge.Root(
+                        East.str`${value} (${row.role})`,
+                        { variant: "solid" }
+                    ),
+                },
+            }
+        ));
+
+        $(assertEast.equal(table.unwrap("Table").rows.size(), 2n));
+        $(assertEast.equal(table.unwrap("Table").columns.size(), 2n));
+    });
+
+    test("render function uses row field for conditional styling", $ => {
+        const table = $.let(Table.Root(
+            [
+                { product: "Widget", price: 100n, inStock: true },
+                { product: "Gadget", price: 250n, inStock: false },
+            ],
+            {
+                product: { header: "Product" },
+                price: {
+                    header: "Price",
+                    render: (value) => Text.Root(
+                        East.str`$${value}`,
+                    ),
+                },
+            }
+        ));
+
+        $(assertEast.equal(table.unwrap("Table").rows.size(), 2n));
+    });
+
+    test("render function accesses multiple row fields", $ => {
+        const table = $.let(Table.Root(
+            [
+                { firstName: "Alice", lastName: "Smith", department: "Engineering" },
+            ],
+            {
+                firstName: {
+                    header: "Full Name",
+                    render: (value, row) => Text.Root(East.str`${value} ${row.lastName}`),
+                },
+                department: { header: "Department" },
+            }
+        ));
+
+        $(assertEast.equal(table.unwrap("Table").columns.size(), 2n));
     });
 
     // =========================================================================

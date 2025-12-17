@@ -27,7 +27,7 @@ import {
     type ColumnDef,
     type RowSelectionState,
 } from "@tanstack/react-table";
-import { equalFor, printFor, variant, type ValueTypeOf } from "@elaraai/east";
+import { compareFor, equalFor, printFor, variant, type ValueTypeOf } from "@elaraai/east";
 import { Table } from "@elaraai/east-ui";
 import { getSomeorUndefined } from "../../utils";
 import { EastChakraComponent } from "../../component";
@@ -159,12 +159,21 @@ export const EastChakraTable = memo(function EastChakraTable({
     const columns = useMemo<ColumnDef<TableRowValue, TableCellValue | undefined>[]>(() => {
         return value.columns.map((col) => {
             const print = printFor(col.type);
+            const compare = compareFor(col.type);
             return columnHelper.accessor(
                 (row) => row.get(col.key),
                 {
                     id: col.key,
                     header: getSomeorUndefined(col.header) ?? col.key,
                     enableSorting: true,
+                    sortingFn: (rowA, rowB, columnId) => {
+                        const cellA = rowA.original.get(columnId);
+                        const cellB = rowB.original.get(columnId);
+                         const valA = cellA?.value?.value;
+                        const valB = cellB?.value?.value;
+                        if (valA === undefined || valB === undefined) return 0;
+                        return compare(valA, valB);
+                    },
                     minSize: 80,
                     size: 150,
                     maxSize: 400,

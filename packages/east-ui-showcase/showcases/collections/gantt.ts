@@ -252,6 +252,70 @@ export default East.function(
             )
         );
 
+        // Column render with row access
+        const columnRenderWithRow = $.let(
+            ShowcaseCard(
+                "Column Render with Row Access",
+                "Render function accesses other row fields for conditional styling",
+                Gantt.Root(
+                    [
+                        { task: "Backend API", owner: "Alice", priority: "high", start: new Date("2024-01-01"), end: new Date("2024-02-15") },
+                        { task: "Frontend UI", owner: "Bob", priority: "medium", start: new Date("2024-01-15"), end: new Date("2024-03-01") },
+                        { task: "Integration", owner: "Charlie", priority: "high", start: new Date("2024-02-01"), end: new Date("2024-03-15") },
+                        { task: "Documentation", owner: "Diana", priority: "low", start: new Date("2024-02-15"), end: new Date("2024-04-01") },
+                    ],
+                    {
+                        task: {
+                            header: "Task",
+                            render: (value, row) => Text.Root(
+                                East.str`${value} (${row.owner})`,
+                            ),
+                        },
+                        priority: {
+                            header: "Priority",
+                            render: (value, row) => Badge.Root(
+                                East.str`${value} ${row.owner}`,
+                                {
+                                    variant: "solid",
+                                }
+                            ),
+                        },
+                    },
+                    row => [Gantt.Task({ start: row.start, end: row.end })],
+                    { variant: "line", striped: true }
+                ),
+                some(`
+                    Gantt.Root(
+                        [
+                            { task: "Backend API", owner: "Alice", priority: "high", start: new Date("2024-01-01"), end: new Date("2024-02-15") },
+                            { task: "Frontend UI", owner: "Bob", priority: "medium", start: new Date("2024-01-15"), end: new Date("2024-03-01") },
+                            { task: "Integration", owner: "Charlie", priority: "high", start: new Date("2024-02-01"), end: new Date("2024-03-15") },
+                            { task: "Documentation", owner: "Diana", priority: "low", start: new Date("2024-02-15"), end: new Date("2024-04-01") },
+                        ],
+                        {
+                            task: {
+                                header: "Task",
+                                render: (value, row) => Text.Root(
+                                    East.str\`\${value} (\${row.owner})\`,
+                                ),
+                            },
+                            priority: {
+                                header: "Priority",
+                                render: (value, row) => Badge.Root(value, {
+                                    colorPalette: row.priority.equal("high").ifElse("red",
+                                        row.priority.equal("medium").ifElse("yellow", "green")
+                                    ),
+                                    variant: "solid",
+                                }),
+                            },
+                        },
+                        row => [Gantt.Task({ start: row.start, end: row.end })],
+                        { variant: "line", striped: true }
+                    )
+                `)
+            )
+        );
+
         // =====================================================================
         // INTERACTIVE EXAMPLE - Demonstrate all callbacks
         // =====================================================================
@@ -647,6 +711,8 @@ export default East.function(
                 Grid.Item(withProgress),
                 Grid.Item(colorful),
                 Grid.Item(styled),
+                // Column render with row access
+                Grid.Item(columnRenderWithRow, { colSpan: "2" }),
                 // Interactive example with all callbacks
                 Grid.Item(interactiveCallbacks, { colSpan: "2" }),
                 // Reactive drag example

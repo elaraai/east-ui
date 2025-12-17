@@ -12,6 +12,7 @@ import {
     StructType,
     VariantType,
     FunctionType,
+    FloatType,
 } from "@elaraai/east";
 
 import { ColorSchemeType, StyleVariantType } from "../../style.js";
@@ -66,6 +67,9 @@ export type TagSizeLiteral = "sm" | "md" | "lg" | "xl";
  * @property size - Size of the tag (sm, md, lg, xl)
  * @property closable - Whether the tag shows a close button
  * @property onClose - Callback triggered when close button is clicked
+ * @property opacity - CSS opacity (0-1)
+ * @property color - Custom text color (overrides colorPalette)
+ * @property background - Custom background color (overrides colorPalette)
  */
 export const TagType = StructType({
     label: StringType,
@@ -74,6 +78,9 @@ export const TagType = StructType({
     size: OptionType(TagSizeType),
     closable: OptionType(BooleanType),
     onClose: OptionType(FunctionType([], NullType)),
+    opacity: OptionType(FloatType),
+    color: OptionType(StringType),
+    background: OptionType(StringType),
 });
 
 /**
@@ -93,6 +100,9 @@ export type TagType = typeof TagType;
  * @property size - Size of the tag (sm, md, lg, xl)
  * @property closable - Whether the tag shows a close button
  * @property onClose - Callback triggered when close button is clicked
+ * @property opacity - CSS opacity (0-1)
+ * @property color - Custom text color (overrides colorPalette)
+ * @property background - Custom background color (overrides colorPalette)
  */
 export interface TagStyle {
     /** Visual variant (solid, subtle, outline) */
@@ -105,4 +115,10 @@ export interface TagStyle {
     closable?: SubtypeExprOrValue<BooleanType>;
     /** Callback triggered when close button is clicked */
     onClose?: SubtypeExprOrValue<FunctionType<[], NullType>>;
+    /** CSS opacity (0-1) */
+    opacity?: SubtypeExprOrValue<FloatType>;
+    /** Custom text color (overrides colorPalette) */
+    color?: SubtypeExprOrValue<StringType>;
+    /** Custom background color (overrides colorPalette) */
+    background?: SubtypeExprOrValue<StringType>;
 }

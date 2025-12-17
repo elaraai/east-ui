@@ -237,12 +237,21 @@ type ExtractStructFields<T> = T extends ArrayType<infer S>
     : never
     : never;
 
+// Helper type to extract the row element type from an array type (always StructType due to constraint)
+type ExtractRowType<T> = T extends ArrayType<infer S>
+    ? S extends StructType
+    ? S
+    : StructType
+    : StructType;
+
 type DataFields<T extends SubtypeExprOrValue<ArrayType<StructType>>> = ExtractStructFields<TypeOf<T>>;
+
+type DataRowType<T extends SubtypeExprOrValue<ArrayType<StructType>>> = ExtractRowType<TypeOf<T>>;
 
 // Column specification can be array of keys or object config
 type ColumnSpec<T extends SubtypeExprOrValue<ArrayType<StructType>>> =
     | (keyof DataFields<NoInfer<T>>)[]
-    | { [K in keyof DataFields<NoInfer<T>>]?: TableColumnConfig<DataFields<NoInfer<T>>[K]> };
+    | { [K in keyof DataFields<NoInfer<T>>]?: TableColumnConfig<DataFields<NoInfer<T>>[K], DataRowType<NoInfer<T>>> };
 
 // ============================================================================
 // Main Gantt Factory
@@ -310,7 +319,7 @@ function createGantt<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
                 value: variant(field_type.type, field_value),
                 content: East.value(
                     col_config.render ?
-                        col_config.render(field_value) :
+                        col_config.render(field_value, datum as any) :
                         Text.Root(East.str`${field_value}`, {
                             whiteSpace: "nowrap",
                             overflow: "hidden",

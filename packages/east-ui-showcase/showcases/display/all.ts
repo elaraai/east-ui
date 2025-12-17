@@ -89,6 +89,44 @@ export default East.function(
             )
         );
 
+        // Badge - Opacity & Custom Colors
+        const badgeCustom = $.let(
+            ShowcaseCard(
+                "Badge Custom Styling",
+                "Opacity and custom colors",
+                Stack.VStack([
+                    Stack.HStack([
+                        Badge.Root("100%", { colorPalette: "blue", variant: "solid" }),
+                        Badge.Root("75%", { colorPalette: "blue", variant: "solid", opacity: 0.75 }),
+                        Badge.Root("50%", { colorPalette: "blue", variant: "solid", opacity: 0.5 }),
+                        Badge.Root("25%", { colorPalette: "blue", variant: "solid", opacity: 0.25 }),
+                    ], { gap: "2" }),
+                    Stack.HStack([
+                        Badge.Root("Custom BG", { background: "#ff6b6b", color: "white" }),
+                        Badge.Root("Gradient", { background: "linear-gradient(90deg, #667eea 0%, #764ba2 100%)", color: "white" }),
+                        Badge.Root("Dark", { background: "#1a1a2e", color: "#eee" }),
+                    ], { gap: "2" }),
+                ], { gap: "3", align: "flex-start" }),
+                some(`
+                    Stack.VStack([
+                        // Opacity levels
+                        Stack.HStack([
+                            Badge.Root("100%", { colorPalette: "blue", variant: "solid" }),
+                            Badge.Root("75%", { colorPalette: "blue", variant: "solid", opacity: 0.75 }),
+                            Badge.Root("50%", { colorPalette: "blue", variant: "solid", opacity: 0.5 }),
+                            Badge.Root("25%", { colorPalette: "blue", variant: "solid", opacity: 0.25 }),
+                        ], { gap: "2" }),
+                        // Custom colors
+                        Stack.HStack([
+                            Badge.Root("Custom BG", { background: "#ff6b6b", color: "white" }),
+                            Badge.Root("Gradient", { background: "linear-gradient(...)", color: "white" }),
+                            Badge.Root("Dark", { background: "#1a1a2e", color: "#eee" }),
+                        ], { gap: "2" }),
+                    ])
+                `)
+            )
+        );
+
         // Tag - Basic
         const tagBasic = $.let(
             ShowcaseCard(
@@ -145,6 +183,44 @@ export default East.function(
                         Tag.Root("Subtle", { variant: "subtle", colorPalette: "cyan" }),
                         Tag.Root("Outline", { variant: "outline", colorPalette: "cyan" }),
                     ], { gap: "2" })
+                `)
+            )
+        );
+
+        // Tag - Opacity & Custom Colors
+        const tagCustom = $.let(
+            ShowcaseCard(
+                "Tag Custom Styling",
+                "Opacity and custom colors",
+                Stack.VStack([
+                    Stack.HStack([
+                        Tag.Root("100%", { colorPalette: "green", variant: "solid" }),
+                        Tag.Root("75%", { colorPalette: "green", variant: "solid", opacity: 0.75 }),
+                        Tag.Root("50%", { colorPalette: "green", variant: "solid", opacity: 0.5 }),
+                        Tag.Root("25%", { colorPalette: "green", variant: "solid", opacity: 0.25 }),
+                    ], { gap: "2" }),
+                    Stack.HStack([
+                        Tag.Root("Custom", { background: "#e74c3c", color: "white" }),
+                        Tag.Root("Brand", { background: "#3498db", color: "white" }),
+                        Tag.Root("Dark Mode", { background: "#2c3e50", color: "#ecf0f1" }),
+                    ], { gap: "2" }),
+                ], { gap: "3", align: "flex-start" }),
+                some(`
+                    Stack.VStack([
+                        // Opacity levels
+                        Stack.HStack([
+                            Tag.Root("100%", { colorPalette: "green", variant: "solid" }),
+                            Tag.Root("75%", { colorPalette: "green", variant: "solid", opacity: 0.75 }),
+                            Tag.Root("50%", { colorPalette: "green", variant: "solid", opacity: 0.5 }),
+                            Tag.Root("25%", { colorPalette: "green", variant: "solid", opacity: 0.25 }),
+                        ], { gap: "2" }),
+                        // Custom colors
+                        Stack.HStack([
+                            Tag.Root("Custom", { background: "#e74c3c", color: "white" }),
+                            Tag.Root("Brand", { background: "#3498db", color: "white" }),
+                            Tag.Root("Dark Mode", { background: "#2c3e50", color: "#ecf0f1" }),
+                        ], { gap: "2" }),
+                    ])
                 `)
             )
         );
@@ -327,10 +403,12 @@ export default East.function(
             [
                 Grid.Item(badgeBasic),
                 Grid.Item(badgeVariants),
-                Grid.Item(badgeColors, { colSpan: "2" }),
+                Grid.Item(badgeColors),
+                Grid.Item(badgeCustom),
                 Grid.Item(tagBasic),
                 Grid.Item(tagClosable),
-                Grid.Item(tagVariants, { colSpan: "2" }),
+                Grid.Item(tagVariants),
+                Grid.Item(tagCustom),
                 Grid.Item(avatarBasic),
                 Grid.Item(avatarSizes),
                 Grid.Item(avatarColors, { colSpan: "2" }),

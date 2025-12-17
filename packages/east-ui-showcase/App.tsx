@@ -10,7 +10,7 @@ import {
     Tabs,
     Text,
 } from "@chakra-ui/react";
-import { UIStoreProvider, State } from "@elaraai/east-ui-components";
+import { UIStoreProvider, State, OverlayManagerProvider } from "@elaraai/east-ui-components";
 import { ElaraLogo } from "./components/ElaraLogo";
 import {
     TypographyPage,
@@ -50,6 +50,7 @@ const tabs = [
 export function App() {
     return (
         <UIStoreProvider store={store}>
+            <OverlayManagerProvider>
             <Box bg="gray.50" _dark={{ bg: "gray.900" }} minH="100vh">
                 {/* Header */}
                 <Box
@@ -124,6 +125,7 @@ export function App() {
                     </Tabs.Root>
                 </Container>
             </Box>
+            </OverlayManagerProvider>
         </UIStoreProvider>
     );
 }

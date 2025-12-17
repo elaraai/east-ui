@@ -47,7 +47,7 @@ export { Badge, Tag, Avatar, Stat, Icon, type IconName } from "./display/index.j
 export { Card } from "./container/index.js";
 
 // Collections
-export { DataList, Table, TreeView, Gantt } from "./collections/index.js";
+export { DataList, Table, TreeView, Gantt, Planner } from "./collections/index.js";
 
 // Charts
 export { Chart, Sparkline } from "./charts/index.js";
@@ -56,7 +56,7 @@ export { Chart, Sparkline } from "./charts/index.js";
 export { Accordion, Carousel, Tabs } from "./disclosure/index.js";
 
 // Overlays
-export { Tooltip, Menu, Dialog, Drawer, Popover, HoverCard, ActionBar, ToggleTip } from "./overlays/index.js";
+export { Tooltip, Menu, Dialog, dialog_open, Drawer, drawer_open, Popover, HoverCard, ActionBar, ToggleTip } from "./overlays/index.js";
 
 // Reactive (selective re-rendering)
 export { Reactive } from "./reactive/index.js";

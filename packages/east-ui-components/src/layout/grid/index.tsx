@@ -40,7 +40,23 @@ export function toChakraGrid(value: GridValue): GridProps {
     // autoFlow values are now CSS-compatible (e.g., "row dense")
     const autoFlow = style ? getSomeorUndefined(style.autoFlow)?.type : undefined;
 
+    // Parse padding struct to Chakra padding props
+    const padding = style ? getSomeorUndefined(style.padding) : undefined;
+    const paddingProps = padding ? {
+        paddingTop: getSomeorUndefined(padding.top),
+        paddingRight: getSomeorUndefined(padding.right),
+        paddingBottom: getSomeorUndefined(padding.bottom),
+        paddingLeft: getSomeorUndefined(padding.left),
+    } : {};
+
     return {
+        width: style ? getSomeorUndefined(style.width) : undefined,
+        height: style ? getSomeorUndefined(style.height) : undefined,
+        minHeight: style ? getSomeorUndefined(style.minHeight) : undefined,
+        minWidth: style ? getSomeorUndefined(style.minWidth) : undefined,
+        maxHeight: style ? getSomeorUndefined(style.maxHeight) : undefined,
+        maxWidth: style ? getSomeorUndefined(style.maxWidth) : undefined,
+        ...paddingProps,
         templateColumns: style ? getSomeorUndefined(style.templateColumns) : undefined,
         templateRows: style ? getSomeorUndefined(style.templateRows) : undefined,
         templateAreas: style ? getSomeorUndefined(style.templateAreas) : undefined,

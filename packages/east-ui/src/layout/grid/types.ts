@@ -23,6 +23,7 @@ import type {
     AlignItemsLiteral,
     JustifyContentLiteral,
 } from "../../style.js";
+import { PaddingType } from "../style.js";
 
 // ============================================================================
 // Grid Auto Flow Type
@@ -95,6 +96,13 @@ export function GridAutoFlow(flow: "row" | "column" | "dense" | "row dense" | "c
  * This struct defines the styling options for the Grid component.
  * All properties are optional and wrapped in {@link OptionType}.
  *
+ * @property width - Width (Chakra UI size token or CSS value)
+ * @property height - Height (Chakra UI size token or CSS value)
+ * @property minHeight - Min height (Chakra UI size token or CSS value)
+ * @property minWidth - Min width (Chakra UI size token or CSS value)
+ * @property maxHeight - Max height (Chakra UI size token or CSS value)
+ * @property maxWidth - Max width (Chakra UI size token or CSS value)
+ * @property padding - Padding configuration
  * @property templateColumns - CSS grid-template-columns (e.g., "repeat(3, 1fr)")
  * @property templateRows - CSS grid-template-rows
  * @property templateAreas - CSS grid-template-areas
@@ -110,6 +118,13 @@ export function GridAutoFlow(flow: "row" | "column" | "dense" | "row dense" | "c
  * @property autoFlow - How auto-placed items are inserted
  */
 export const GridStyleType = StructType({
+    width: OptionType(StringType),
+    height: OptionType(StringType),
+    minHeight: OptionType(StringType),
+    minWidth: OptionType(StringType),
+    maxHeight: OptionType(StringType),
+    maxWidth: OptionType(StringType),
+    padding: OptionType(PaddingType),
     templateColumns: OptionType(StringType),
     templateRows: OptionType(StringType),
     templateAreas: OptionType(StringType),
@@ -137,6 +152,13 @@ export type GridStyleType = typeof GridStyleType;
  * Use this interface when calling the Grid.Root function. All properties
  * accept East expressions for dynamic styling.
  *
+ * @property width - Width (Chakra UI size token or CSS value)
+ * @property height - Height (Chakra UI size token or CSS value)
+ * @property minHeight - Min height (Chakra UI size token or CSS value)
+ * @property minWidth - Min width (Chakra UI size token or CSS value)
+ * @property maxHeight - Max height (Chakra UI size token or CSS value)
+ * @property maxWidth - Max width (Chakra UI size token or CSS value)
+ * @property padding - Padding configuration - use Padding() helper or string
  * @property templateColumns - CSS grid-template-columns (e.g., "repeat(3, 1fr)")
  * @property templateRows - CSS grid-template-rows
  * @property templateAreas - CSS grid-template-areas
@@ -152,6 +174,20 @@ export type GridStyleType = typeof GridStyleType;
  * @property autoFlow - How auto-placed items are inserted
  */
 export interface GridStyle {
+    /** Width (Chakra UI size token or CSS value) */
+    width?: SubtypeExprOrValue<StringType>;
+    /** Height (Chakra UI size token or CSS value) */
+    height?: SubtypeExprOrValue<StringType>;
+    /** Min height (Chakra UI size token or CSS value) */
+    minHeight?: SubtypeExprOrValue<StringType>;
+    /** Min width (Chakra UI size token or CSS value) */
+    minWidth?: SubtypeExprOrValue<StringType>;
+    /** Max height (Chakra UI size token or CSS value) */
+    maxHeight?: SubtypeExprOrValue<StringType>;
+    /** Max width (Chakra UI size token or CSS value) */
+    maxWidth?: SubtypeExprOrValue<StringType>;
+    /** Padding configuration - use Padding() helper or string */
+    padding?: SubtypeExprOrValue<PaddingType> | string;
     /** CSS grid-template-columns (e.g., "repeat(3, 1fr)") */
     templateColumns?: SubtypeExprOrValue<StringType>;
     /** CSS grid-template-rows */

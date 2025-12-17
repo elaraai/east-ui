@@ -18,12 +18,7 @@ export function useWorkspaces(apiUrl: string) {
 export function useWorkspaceStatus(apiUrl: string, workspace: string | null) {
     return useQuery({
         queryKey: ['workspaceStatus', apiUrl, workspace],
-        queryFn: async () => {
-            console.log('[East] useWorkspaceStatus: Fetching status for', workspace);
-            const result = await workspaceStatus(apiUrl, workspace!);
-            console.log('[East] useWorkspaceStatus: Got', result.tasks?.length, 'tasks, statuses:', result.tasks?.map(t => `${t.name}:${t.status.type}`).join(', '));
-            return result;
-        },
+        queryFn: async () =>  await workspaceStatus(apiUrl, workspace!),
         enabled: !!apiUrl && !!workspace,
         refetchInterval: 1000,
         staleTime: 0, // Always consider data stale

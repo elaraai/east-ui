@@ -4,6 +4,7 @@
  */
 
 import { createServer, type Server } from '@elaraai/e3-api-server';
+import getPort from 'get-port';
 
 let serverInstance: Server | null = null;
 let currentRepoPath: string | null = null;
@@ -16,6 +17,7 @@ export interface E3ServerConfig {
 /**
  * Start the e3 API server.
  * If already running with a different repo, stops and restarts.
+ * Uses get-port to find an available port (prefers configured port).
  */
 export async function startE3Server(config: E3ServerConfig): Promise<string> {
     // If server is running with same repo, just return the URL
@@ -28,9 +30,12 @@ export async function startE3Server(config: E3ServerConfig): Promise<string> {
         await stopE3Server();
     }
 
+    // Get an available port (prefers configured port if available)
+    const port = await getPort({ port: config.port });
+
     serverInstance = createServer({
         repo: config.repo,
-        port: config.port,
+        port,
         host: 'localhost',
         cors: true,
     });

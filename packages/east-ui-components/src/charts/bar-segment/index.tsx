@@ -52,7 +52,7 @@ export const EastChakraBarSegment = memo(function EastChakraBarSegment({ value }
     return (
         <BarSegment.Root chart={chart}>
             <BarSegment.Content>
-                <BarSegment.Bar />
+                <BarSegment.Bar tooltip  />
             </BarSegment.Content>
             {showLabel && (
                 <BarSegment.Legend showPercent={showValue} />

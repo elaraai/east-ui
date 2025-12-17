@@ -66,6 +66,7 @@ import { IconType } from "./display/icon/types.js";
 import { DataListRootType } from "./collections/data-list/index.js";
 import { TableColumnType, TableStyleType, TableValueLiteral } from "./collections/table/types.js";
 import { GanttEventType, GanttStyleType } from "./collections/gantt/types.js";
+import { PlannerStyleType, PlannerEventType } from "./collections/planner/types.js";
 // import { TreeViewStyleType } from "./collections/tree-view/types.js";
 
 // Charts
@@ -226,9 +227,9 @@ export const UIComponentType = RecursiveType(node => VariantType({
 
     // Container
     Card: StructType({
-        title: OptionType(StringType),
-        description: OptionType(StringType),
+        header: OptionType(node),
         body: ArrayType(node),
+        footer: OptionType(node),
         style: OptionType(CardStyleType),
     }),
     DataList: DataListRootType,
@@ -284,6 +285,18 @@ export const UIComponentType = RecursiveType(node => VariantType({
         })),
         columns: ArrayType(TableColumnType),
         style: OptionType(GanttStyleType),
+    }),
+
+    Planner: StructType({
+        rows: ArrayType(StructType({
+            cells: DictType(StringType, StructType({
+                value: TableValueLiteral,
+                content: node,
+            })),
+            events: ArrayType(PlannerEventType),
+        })),
+        columns: ArrayType(TableColumnType),
+        style: OptionType(PlannerStyleType),
     }),
 
     // Disclosure

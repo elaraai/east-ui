@@ -4,6 +4,7 @@ import dataListShowcase from "./data-list";
 import tableShowcase from "./table";
 import treeViewShowcase from "./tree-view";
 import ganttShowcase from "./gantt";
+import plannerShowcase from "./planner";
 
 /**
  * Combined collections showcase - all collection components in one East.function.
@@ -21,6 +22,8 @@ export default East.function(
             treeViewShowcase(),
             Text.Root("Gantt", { fontWeight: "bold", fontSize: "lg" }),
             ganttShowcase(),
+            Text.Root("Planner", { fontWeight: "bold", fontSize: "lg" }),
+            plannerShowcase(),
         ], { gap: "8", align: "stretch" });
     }
 );

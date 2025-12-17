@@ -7,3 +7,4 @@ export { DataList } from "./data-list/index.js";
 export { Table, createTable, type TableColumnConfig } from "./table/index.js";
 export { TreeView } from "./tree-view/index.js";
 export { Gantt, type TaskInput, type MilestoneInput } from "./gantt/index.js";
+export { Planner, type EventInput } from "./planner/index.js";

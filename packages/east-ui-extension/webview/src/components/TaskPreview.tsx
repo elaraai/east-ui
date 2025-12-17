@@ -25,13 +25,12 @@ import {
     decodeBeast2,
     isTypeValueEqual,
     toEastTypeValue,
-    FunctionType,
-    type EastIR,
+    ValueTypeOf,
 } from '@elaraai/east';
 import {
     EastStoreProvider,
-    EastFunction,
     createEastStore,
+    EastChakraComponent,
 } from '@elaraai/east-ui-components';
 import { useE3Context } from '../context/E3Context';
 import { useWorkspaceStatus } from '../hooks/useE3Data';
@@ -116,9 +115,17 @@ const TaskPreviewContent = memo(function TaskPreviewContent({
         if (!output) return null;
         try {
             const decoded = decodeBeast2(output);
-            if (isTypeValueEqual(decoded.type, toEastTypeValue(FunctionType([], UIComponentType)))) {
-                return decoded.value as EastIR<[], UIComponentType>;
+            // console.log('[East] Decoded task output:', {
+            //     type: decoded.type,
+            //     value: decoded.value,
+            //     target_type: toEastTypeValue(UIComponentType),
+            //     equal: isTypeValueEqual(decoded.type, toEastTypeValue(UIComponentType))
+            // });
+            if (isTypeValueEqual(decoded.type, toEastTypeValue(UIComponentType))) {
+                console.log('[East] Task output decoded as East IR');
+                return decoded.value as ValueTypeOf<UIComponentType>;
             } else {
+                console.warn('[East] Task output is not of type UIComponentType, got:', decoded.type);
                 return null;
             }
         } catch (e) {
@@ -152,7 +159,7 @@ const TaskPreviewContent = memo(function TaskPreviewContent({
         if (isLoading && stdout?.data === undefined && stderr?.data === undefined) return;
         setViewState(prev => {
             if (prev.mode !== null) return prev;
-            const mode: ViewMode = ir === null ? 'logs' : 'both';
+            const mode: ViewMode = ir === null ? 'logs' : 'function';
             const sizes = getSizesForMode(mode);
             return { mode, prevMode: mode, sizes };
         });
@@ -173,7 +180,7 @@ const TaskPreviewContent = memo(function TaskPreviewContent({
     const functionPanel = useMemo(() => (
         <Box height="100%" overflow="auto" p="4">
             {ir ? (
-                <EastFunction ir={ir} />
+                <EastChakraComponent value={ir} />
             ) : (
                 <Center>
                     <Text color="gray.500">

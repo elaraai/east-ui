@@ -10,7 +10,8 @@ import {
     StringType, OptionType,
     StructType,
     ArrayType,
-    variant
+    variant,
+    NullType
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
@@ -59,6 +60,35 @@ export const DrawerType = StructType({
  * Type alias for DrawerType.
  */
 export type DrawerType = typeof DrawerType;
+
+// ============================================================================
+// Drawer Open Input Type
+// ============================================================================
+
+/**
+ * East StructType for programmatic drawer opening.
+ *
+ * @remarks
+ * This type is used with {@link drawer_open} to programmatically open a drawer
+ * without a trigger element. Unlike {@link DrawerType}, this does not include
+ * a trigger property.
+ *
+ * @property body - Array of UI components for drawer content
+ * @property title - Optional drawer title
+ * @property description - Optional drawer description
+ * @property style - Optional style configuration
+ */
+export const DrawerOpenInputType = StructType({
+    body: ArrayType(UIComponentType),
+    title: OptionType(StringType),
+    description: OptionType(StringType),
+    style: OptionType(DrawerStyleType),
+});
+
+/**
+ * Type alias for DrawerOpenInputType.
+ */
+export type DrawerOpenInputType = typeof DrawerOpenInputType;
 
 // ============================================================================
 // Drawer Function
@@ -127,6 +157,38 @@ function createDrawer(
     }), UIComponentType);
 }
 
+// ============================================================================
+// Drawer Open Platform Function
+// ============================================================================
+
+/**
+ * Platform function to programmatically open a drawer.
+ *
+ * @remarks
+ * Opens a drawer without requiring a trigger element. The drawer content,
+ * title, description, and style are specified in the {@link DrawerOpenInputType} parameter.
+ * Pass `Drawer.Implementation` to `ir.compile()` to enable this functionality.
+ *
+ * @param input - The drawer configuration including body content and style
+ * @returns Null
+ *
+ * @example
+ * ```ts
+ * import { East, NullType, variant } from "@elaraai/east";
+ * import { Drawer, Text } from "@elaraai/east-ui";
+ *
+ * const openSettings = East.function([], NullType, $ => {
+ *     $(Drawer.open(East.value({
+ *         body: [Text.Root("Settings content")],
+ *         title: variant("some", "Settings"),
+ *         description: variant("none", null),
+ *         style: variant("none", null),
+ *     }, Drawer.Types.OpenInput)));
+ * });
+ * ```
+ */
+export const drawer_open = East.platform("drawer_open", [DrawerOpenInputType], NullType);
+
 /**
  * Drawer component for slide-in panels.
  *
@@ -161,6 +223,29 @@ export const Drawer = {
      * ```
      */
     Root: createDrawer,
+    /**
+     * Platform function to programmatically open a drawer.
+     *
+     * @remarks
+     * Opens a drawer without requiring a trigger element. Pass `Drawer.Implementation`
+     * to `ir.compile()` to enable this functionality.
+     *
+     * @example
+     * ```ts
+     * import { East, NullType, variant } from "@elaraai/east";
+     * import { Drawer, Text } from "@elaraai/east-ui";
+     *
+     * const openSettings = East.function([], NullType, $ => {
+     *     $(Drawer.open(East.value({
+     *         body: [Text.Root("Settings content")],
+     *         title: variant("some", "Settings"),
+     *         description: variant("none", null),
+     *         style: variant("none", null),
+     *     }, Drawer.Types.OpenInput)));
+     * });
+     * ```
+     */
+    open: drawer_open,
     Types: {
         /**
          * East StructType for Drawer component.
@@ -204,5 +289,18 @@ export const Drawer = {
          * @property bottom - Bottom edge
          */
         Placement: DrawerPlacementType,
+        /**
+         * East StructType for programmatic drawer opening.
+         *
+         * @remarks
+         * Use this type with {@link Drawer.open} to programmatically open a drawer
+         * without a trigger element.
+         *
+         * @property body - Array of UI components for drawer content
+         * @property title - Optional drawer title
+         * @property description - Optional drawer description
+         * @property style - Optional style configuration
+         */
+        OpenInput: DrawerOpenInputType,
     },
 } as const;

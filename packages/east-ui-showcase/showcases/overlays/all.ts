@@ -3,7 +3,7 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East, some, BooleanType, IntegerType, NullType } from "@elaraai/east";
+import { East, some, BooleanType, IntegerType, NullType, variant } from "@elaraai/east";
 import {
     UIComponentType,
     Grid,
@@ -525,6 +525,80 @@ export default East.function(
             )
         );
 
+        // =====================================================================
+        // PROGRAMMATIC OVERLAYS - Dialog.open and Drawer.open
+        // =====================================================================
+
+        // Programmatic Dialog.open
+        const programmaticDialog = $.let(
+            ShowcaseCard(
+                "Programmatic Dialog",
+                "Dialog.open() without trigger",
+                Button.Root("Open Dialog Programmatically", {
+                    variant: "solid",
+                    colorPalette: "teal",
+                    onClick: East.function([], NullType, $ => {
+                        $(Dialog.open(East.value({
+                            body: [
+                                Text.Root("This dialog was opened programmatically using Dialog.open()!"),
+                                Stack.HStack([
+                                    Button.Root("Cool!", { variant: "solid", colorPalette: "teal" }),
+                                ], { gap: "2", justify: "flex-end" }),
+                            ],
+                            title: variant("some", "Programmatic Dialog"),
+                            description: variant("some", "No trigger element needed"),
+                            style: variant("none", null),
+                        }, Dialog.Types.OpenInput)));
+                    }),
+                }),
+                some(`Button.Root("Open Dialog", {
+    onClick: East.function([], NullType, $ => {
+        $(Dialog.open(East.value({
+            body: [Text.Root("Content here")],
+            title: variant("some", "Title"),
+            description: variant("none", null),
+            style: variant("none", null),
+        }, Dialog.Types.OpenInput)));
+    }),
+})`)
+            )
+        );
+
+        // Programmatic Drawer.open
+        const programmaticDrawer = $.let(
+            ShowcaseCard(
+                "Programmatic Drawer",
+                "Drawer.open() without trigger",
+                Button.Root("Open Drawer Programmatically", {
+                    variant: "solid",
+                    colorPalette: "purple",
+                    onClick: East.function([], NullType, $ => {
+                        $(Drawer.open(East.value({
+                            body: [
+                                Stack.VStack([
+                                    Text.Root("This drawer was opened programmatically using Drawer.open()!"),
+                                    Text.Root("Great for navigation, notifications, or dynamic content.", { color: "gray.500" }),
+                                ], { gap: "4" }),
+                            ],
+                            title: variant("some", "Programmatic Drawer"),
+                            description: variant("some", "Opened via Drawer.open()"),
+                            style: variant("none", null),
+                        }, Drawer.Types.OpenInput)));
+                    }),
+                }),
+                some(`Button.Root("Open Drawer", {
+    onClick: East.function([], NullType, $ => {
+        $(Drawer.open(East.value({
+            body: [Text.Root("Content here")],
+            title: variant("some", "Title"),
+            description: variant("none", null),
+            style: variant("none", null),
+        }, Drawer.Types.OpenInput)));
+    }),
+})`)
+            )
+        );
+
         return Grid.Root(
             [
                 // Tooltips
@@ -551,6 +625,9 @@ export default East.function(
                 // Interactive examples
                 Grid.Item(interactiveDialog),
                 Grid.Item(interactiveDrawer),
+                // Programmatic overlays
+                Grid.Item(programmaticDialog),
+                Grid.Item(programmaticDrawer),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

@@ -3,8 +3,9 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
+import { East } from "@elaraai/east";
 import { describeEast, assertEast } from "../platforms.spec.js";
-import { Gantt } from "../../src/index.js";
+import { Gantt, Text, Badge } from "../../src/index.js";
 
 describeEast("Gantt", (test) => {
     // =========================================================================
@@ -238,5 +239,69 @@ describeEast("Gantt", (test) => {
         // Each row has 2 events (task + milestone)
         $(assertEast.equal(gantt.unwrap("Gantt").rows.get(0n).events.size(), 2n));
         $(assertEast.equal(gantt.unwrap("Gantt").rows.get(1n).events.size(), 2n));
+    });
+
+    // =========================================================================
+    // Column Render with Row Field Access
+    // =========================================================================
+
+    test("column render function receives row parameter to access other fields", $ => {
+        const gantt = $.let(Gantt.Root(
+            [
+                { name: "Design", owner: "Alice", start: new Date("2024-01-01"), end: new Date("2024-01-15") },
+                { name: "Development", owner: "Bob", start: new Date("2024-01-10"), end: new Date("2024-02-01") },
+            ],
+            {
+                name: {
+                    header: "Task",
+                    render: (value, row) => Text.Root(East.str`${value} (${row.owner})`),
+                },
+            },
+            row => [Gantt.Task({ start: row.start, end: row.end })]
+        ));
+
+        $(assertEast.equal(gantt.unwrap("Gantt").rows.size(), 2n));
+        $(assertEast.equal(gantt.unwrap("Gantt").columns.size(), 1n));
+    });
+
+    test("column render function uses row field for conditional styling", $ => {
+        const gantt = $.let(Gantt.Root(
+            [
+                { task: "Critical Bug", priority: "high", start: new Date("2024-01-01"), end: new Date("2024-01-05") },
+                { task: "Minor Fix", priority: "low", start: new Date("2024-01-06"), end: new Date("2024-01-10") },
+            ],
+            {
+                task: { header: "Task" },
+                priority: {
+                    header: "Priority",
+                    render: (value) => Badge.Root(
+                        value,
+                    ),
+                },
+            },
+            row => [Gantt.Task({ start: row.start, end: row.end })]
+        ));
+
+        $(assertEast.equal(gantt.unwrap("Gantt").rows.size(), 2n));
+        $(assertEast.equal(gantt.unwrap("Gantt").columns.size(), 2n));
+    });
+
+    test("column render function accesses multiple row fields", $ => {
+        const gantt = $.let(Gantt.Root(
+            [
+                { firstName: "Alice", lastName: "Smith", dept: "Eng", start: new Date("2024-01-01"), end: new Date("2024-02-01") },
+            ],
+            {
+                firstName: {
+                    header: "Full Name",
+                    render: (value, row) => Text.Root(East.str`${value} ${row.lastName}`),
+                },
+                dept: { header: "Department" },
+            },
+            row => [Gantt.Task({ start: row.start, end: row.end })]
+        ));
+
+        $(assertEast.equal(gantt.unwrap("Gantt").rows.size(), 1n));
+        $(assertEast.equal(gantt.unwrap("Gantt").columns.size(), 2n));
     });
 });

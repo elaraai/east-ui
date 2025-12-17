@@ -4,7 +4,7 @@
  */
 
 import { describeEast, assertEast } from "../platforms.spec.js";
-import { Card, Text, Style } from "../../src/index.js";
+import { Card, Text, Heading, Button, Stack, Style } from "../../src/index.js";
 
 describeEast("Card", (test) => {
     // =========================================================================
@@ -14,8 +14,8 @@ describeEast("Card", (test) => {
     test("creates empty card", $ => {
         const card = $.let(Card.Root([]));
 
-        $(assertEast.equal(card.unwrap("Card").title.hasTag("none"), true));
-        $(assertEast.equal(card.unwrap("Card").description.hasTag("none"), true));
+        $(assertEast.equal(card.unwrap("Card").header.hasTag("none"), true));
+        $(assertEast.equal(card.unwrap("Card").footer.hasTag("none"), true));
         $(assertEast.equal(card.unwrap("Card").style.hasTag("none"), true));
     });
 
@@ -25,26 +25,59 @@ describeEast("Card", (test) => {
         ]));
 
         // body is an array of components
-        $(assertEast.equal(card.unwrap("Card").title.hasTag("none"), true));
+        $(assertEast.equal(card.unwrap("Card").header.hasTag("none"), true));
     });
 
-    test("creates card with title", $ => {
+    test("creates card with header", $ => {
         const card = $.let(Card.Root([], {
-            title: "Card Title",
+            header: Heading.Root("Card Title"),
         }));
 
-        $(assertEast.equal(card.unwrap("Card").title.hasTag("some"), true));
-        $(assertEast.equal(card.unwrap("Card").title.unwrap("some"), "Card Title"));
+        $(assertEast.equal(card.unwrap("Card").header.hasTag("some"), true));
+        $(assertEast.equal(card.unwrap("Card").header.unwrap("some").unwrap("Heading").value, "Card Title"));
     });
 
-    test("creates card with title and description", $ => {
+    test("creates card with header and footer", $ => {
         const card = $.let(Card.Root([], {
-            title: "Product Name",
-            description: "Product description here",
+            header: Heading.Root("Product Name"),
+            footer: Button.Root("Buy Now"),
         }));
 
-        $(assertEast.equal(card.unwrap("Card").title.unwrap("some"), "Product Name"));
-        $(assertEast.equal(card.unwrap("Card").description.unwrap("some"), "Product description here"));
+        $(assertEast.equal(card.unwrap("Card").header.unwrap("some").unwrap("Heading").value, "Product Name"));
+        $(assertEast.equal(card.unwrap("Card").footer.hasTag("some"), true));
+        $(assertEast.equal(card.unwrap("Card").footer.unwrap("some").unwrap("Button").label, "Buy Now"));
+    });
+
+    // =========================================================================
+    // Complex Header/Footer
+    // =========================================================================
+
+    test("creates card with VStack header", $ => {
+        const card = $.let(Card.Root([
+            Text.Root("Body content"),
+        ], {
+            header: Stack.VStack([
+                Heading.Root("Title"),
+                Text.Root("Description"),
+            ]),
+        }));
+
+        $(assertEast.equal(card.unwrap("Card").header.hasTag("some"), true));
+        $(assertEast.equal(card.unwrap("Card").header.unwrap("some").hasTag("Stack"), true));
+    });
+
+    test("creates card with HStack footer", $ => {
+        const card = $.let(Card.Root([
+            Text.Root("Body content"),
+        ], {
+            footer: Stack.HStack([
+                Button.Root("Cancel", { variant: "outline" }),
+                Button.Root("Save"),
+            ]),
+        }));
+
+        $(assertEast.equal(card.unwrap("Card").footer.hasTag("some"), true));
+        $(assertEast.equal(card.unwrap("Card").footer.unwrap("some").hasTag("Stack"), true));
     });
 
     // =========================================================================
@@ -124,6 +157,69 @@ describeEast("Card", (test) => {
     });
 
     // =========================================================================
+    // Dimension Properties
+    // =========================================================================
+
+    test("creates card with height", $ => {
+        const card = $.let(Card.Root([], {
+            height: "400px",
+        }));
+
+        $(assertEast.equal(card.unwrap("Card").style.hasTag("some"), true));
+        $(assertEast.equal(card.unwrap("Card").style.unwrap("some").height.hasTag("some"), true));
+        $(assertEast.equal(card.unwrap("Card").style.unwrap("some").height.unwrap("some"), "400px"));
+    });
+
+    test("creates card with minHeight", $ => {
+        const card = $.let(Card.Root([], {
+            minHeight: "200px",
+        }));
+
+        $(assertEast.equal(card.unwrap("Card").style.unwrap("some").minHeight.unwrap("some"), "200px"));
+    });
+
+    test("creates card with maxHeight", $ => {
+        const card = $.let(Card.Root([], {
+            maxHeight: "600px",
+        }));
+
+        $(assertEast.equal(card.unwrap("Card").style.unwrap("some").maxHeight.unwrap("some"), "600px"));
+    });
+
+    test("creates card with width", $ => {
+        const card = $.let(Card.Root([], {
+            width: "300px",
+        }));
+
+        $(assertEast.equal(card.unwrap("Card").style.unwrap("some").width.unwrap("some"), "300px"));
+    });
+
+    test("creates card with flex", $ => {
+        const card = $.let(Card.Root([], {
+            flex: "1",
+        }));
+
+        $(assertEast.equal(card.unwrap("Card").style.unwrap("some").flex.unwrap("some"), "1"));
+    });
+
+    test("creates card with full height", $ => {
+        const card = $.let(Card.Root([], {
+            height: "100%",
+        }));
+
+        $(assertEast.equal(card.unwrap("Card").style.unwrap("some").height.unwrap("some"), "100%"));
+    });
+
+    test("creates card with overflow", $ => {
+        const card = $.let(Card.Root([], {
+            overflow: "auto",
+        }));
+
+        $(assertEast.equal(card.unwrap("Card").style.unwrap("some").overflow.hasTag("some"), true));
+        $(assertEast.equal(card.unwrap("Card").style.unwrap("some").overflow.unwrap("some").hasTag("auto"), true));
+    });
+
+    // =========================================================================
     // Combined Options
     // =========================================================================
 
@@ -131,28 +227,36 @@ describeEast("Card", (test) => {
         const card = $.let(Card.Root([
             Text.Root("Main content goes here"),
         ], {
-            title: "Full Card",
-            description: "Card with all options",
+            header: Heading.Root("Full Card"),
+            footer: Button.Root("Action"),
             variant: "elevated",
             size: "md",
+            height: "400px",
+            minHeight: "200px",
         }));
 
-        $(assertEast.equal(card.unwrap("Card").title.unwrap("some"), "Full Card"));
-        $(assertEast.equal(card.unwrap("Card").description.unwrap("some"), "Card with all options"));
+        $(assertEast.equal(card.unwrap("Card").header.unwrap("some").unwrap("Heading").value, "Full Card"));
+        $(assertEast.equal(card.unwrap("Card").footer.unwrap("some").unwrap("Button").label, "Action"));
         $(assertEast.equal(card.unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("elevated"), true));
         $(assertEast.equal(card.unwrap("Card").style.unwrap("some").size.unwrap("some").hasTag("md"), true));
+        $(assertEast.equal(card.unwrap("Card").style.unwrap("some").height.unwrap("some"), "400px"));
+        $(assertEast.equal(card.unwrap("Card").style.unwrap("some").minHeight.unwrap("some"), "200px"));
     });
 
     test("creates product card", $ => {
         const card = $.let(Card.Root([
             Text.Root("$99.99"),
         ], {
-            title: "Product Name",
-            description: "Product category",
+            header: Stack.VStack([
+                Heading.Root("Product Name"),
+                Text.Root("Product category"),
+            ]),
+            footer: Button.Root("Add to Cart"),
             variant: "outline",
         }));
 
-        $(assertEast.equal(card.unwrap("Card").title.unwrap("some"), "Product Name"));
+        $(assertEast.equal(card.unwrap("Card").header.hasTag("some"), true));
+        $(assertEast.equal(card.unwrap("Card").footer.hasTag("some"), true));
         $(assertEast.equal(card.unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
     });
 
@@ -160,13 +264,15 @@ describeEast("Card", (test) => {
         const card = $.let(Card.Root([
             Text.Root("San Francisco, CA"),
         ], {
-            title: "John Doe",
-            description: "Software Engineer",
+            header: Stack.VStack([
+                Heading.Root("John Doe"),
+                Text.Root("Software Engineer"),
+            ]),
             variant: "elevated",
             size: "sm",
         }));
 
-        $(assertEast.equal(card.unwrap("Card").title.unwrap("some"), "John Doe"));
+        $(assertEast.equal(card.unwrap("Card").header.hasTag("some"), true));
         $(assertEast.equal(card.unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("elevated"), true));
     });
 
@@ -174,11 +280,11 @@ describeEast("Card", (test) => {
         const card = $.let(Card.Root([
             Text.Root("Important details displayed here in the card body."),
         ], {
-            title: "Information",
+            header: Heading.Root("Information"),
             variant: "subtle",
         }));
 
-        $(assertEast.equal(card.unwrap("Card").title.unwrap("some"), "Information"));
+        $(assertEast.equal(card.unwrap("Card").header.unwrap("some").unwrap("Heading").value, "Information"));
         $(assertEast.equal(card.unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
     });
 
@@ -187,9 +293,24 @@ describeEast("Card", (test) => {
             Text.Root("First line"),
             Text.Root("Second line"),
         ], {
-            title: "Multi-content Card",
+            header: Heading.Root("Multi-content Card"),
         }));
 
-        $(assertEast.equal(card.unwrap("Card").title.unwrap("some"), "Multi-content Card"));
+        $(assertEast.equal(card.unwrap("Card").header.unwrap("some").unwrap("Heading").value, "Multi-content Card"));
+    });
+
+    test("creates flexible card that fills container", $ => {
+        const card = $.let(Card.Root([
+            Text.Root("This card fills available space"),
+        ], {
+            header: Heading.Root("Flexible Card"),
+            height: "100%",
+            flex: "1",
+            overflow: "auto",
+        }));
+
+        $(assertEast.equal(card.unwrap("Card").style.unwrap("some").height.unwrap("some"), "100%"));
+        $(assertEast.equal(card.unwrap("Card").style.unwrap("some").flex.unwrap("some"), "1"));
+        $(assertEast.equal(card.unwrap("Card").style.unwrap("some").overflow.unwrap("some").hasTag("auto"), true));
     });
 });

@@ -228,6 +228,82 @@ export default East.function(
             )
         );
 
+        // Column render with row access
+        const columnRenderWithRow = $.let(
+            ShowcaseCard(
+                "Column Render with Row Access",
+                "Render function accesses other row fields for conditional styling",
+                Table.Root(
+                    [
+                        { name: "Alice", role: "Admin", status: "Active", score: 95n },
+                        { name: "Bob", role: "User", status: "Inactive", score: 72n },
+                        { name: "Charlie", role: "Manager", status: "Active", score: 88n },
+                        { name: "Diana", role: "User", status: "Pending", score: 65n },
+                    ],
+                    {
+                        name: {
+                            header: "Name",
+                            render: (value, row) => Text.Root(
+                                East.str`${value} (${row.role})`,
+                            ),
+                        },
+                        status: {
+                            header: "Status",
+                            render: (value, row) => Badge.Root(
+                                value,
+                                {
+                                    variant: "solid",
+                                }
+                            ),
+                        },
+                        score: {
+                            header: "Score",
+                            render: (value, row) => Text.Root(
+                                East.str`${value}`,
+                            ),
+                        },
+                    },
+                    { variant: "line", striped: true }
+                ),
+                some(`
+                    Table.Root(
+                        [
+                            { name: "Alice", role: "Admin", status: "Active", score: 95n },
+                            { name: "Bob", role: "User", status: "Inactive", score: 72n },
+                            { name: "Charlie", role: "Manager", status: "Active", score: 88n },
+                            { name: "Diana", role: "User", status: "Pending", score: 65n },
+                        ],
+                        {
+                            name: {
+                                header: "Name",
+                                render: (value, row) => Text.Root(
+                                    East.str\`\${value} (\${row.role})\`,
+                                    { fontWeight: row.role.equal("Admin").ifElse("bold", "normal") }
+                                ),
+                            },
+                            status: {
+                                header: "Status",
+                                render: (value, row) => Badge.Root(value, {
+                                    colorPalette: row.status.equal("Active").ifElse("green",
+                                        row.status.equal("Inactive").ifElse("red", "yellow")
+                                    ),
+                                    variant: "solid",
+                                }),
+                            },
+                            score: {
+                                header: "Score",
+                                render: (value, row) => Text.Root(
+                                    East.str\`\${value}\`,
+                                    { color: row.score.greaterEqual(80n).ifElse("green.500", "red.500") }
+                                ),
+                            },
+                        },
+                        { variant: "line", striped: true }
+                    )
+                `)
+            )
+        );
+
         // =====================================================================
         // INTERACTIVE EXAMPLES - Demonstrate callbacks with Reactive.Root
         // =====================================================================
@@ -423,6 +499,8 @@ export default East.function(
                 Grid.Item(interactive),
                 Grid.Item(withBadge),
                 Grid.Item(fullStyled),
+                // Column render with row access
+                Grid.Item(columnRenderWithRow, { colSpan: "2" }),
                 // Interactive example with all callbacks
                 Grid.Item(interactiveCallbacks, { colSpan: "2" }),
             ],

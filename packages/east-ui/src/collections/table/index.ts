@@ -103,22 +103,23 @@ export type TableRootType = typeof TableRootType;
  * Column configuration for the Table API.
  *
  * @typeParam FieldType - The East type of the field being rendered
+ * @typeParam RowType - The East struct type of the entire row
  *
  * @remarks
  * Defines how a column should be displayed, including header text
  * and an optional render function to convert data to UI components.
  *
  * @property header - Column header text (defaults to column key)
- * @property render - Function to render the cell content from field value
+ * @property render - Function to render the cell content from field value and row
  * @property onCellClick - Optional cell click handler
  * @property onCellDoubleClick - Optional cell double-click handler
  * @property onSortChange - Optional sort change handler
  */
-export interface TableColumnConfig<FieldType extends TableValueType = TableValueType> {
+export interface TableColumnConfig<FieldType extends TableValueType = TableValueType, RowType extends StructType = StructType> {
     /** Column header text (defaults to column key if not provided) */
     header?: SubtypeExprOrValue<StringType>;
     /** Optional render function - defaults to Text.Root (with auto string conversion for non-strings) */
-    render?: (value: ExprType<FieldType>) => ExprType<UIComponentType>;
+    render?: (value: ExprType<FieldType>, row: ExprType<RowType>) => ExprType<UIComponentType>;
     /** Optional cell click handler */
     onCellClick?: SubtypeExprOrValue<FunctionType<[TableCellClickEventType], NullType>>,
     /** Optional cell double-click handler */
@@ -169,12 +170,20 @@ type ExtractStructFields<T> = T extends ArrayType<infer S>
     : never
     : never;
 
+// Helper type to extract the row element type from an array type (always StructType due to constraint)
+type ExtractRowType<T> = T extends ArrayType<infer S>
+    ? S extends StructType
+    ? S
+    : StructType
+    : StructType;
+
 type DataFields<T extends SubtypeExprOrValue<ArrayType<StructType>>> = ExtractStructFields<TypeOf<T>>;
+type DataRowType<T extends SubtypeExprOrValue<ArrayType<StructType>>> = ExtractRowType<TypeOf<T>>;
 
 // Column specification can be array of keys or object config
 type ColumnSpec<T extends SubtypeExprOrValue<ArrayType<StructType>>> =
     | (keyof DataFields<NoInfer<T>>)[]
-    | { [K in keyof DataFields<NoInfer<T>>]?: TableColumnConfig<DataFields<NoInfer<T>>[K]> };
+    | { [K in keyof DataFields<NoInfer<T>>]?: TableColumnConfig<DataFields<NoInfer<T>>[K], DataRowType<NoInfer<T>>> };
 
 export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
     data: T,
@@ -206,7 +215,7 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
                 value: variant(field_type.type, field_value),
                 content: East.value(
                     col_config.render ?
-                        col_config.render(field_value) :
+                        col_config.render(field_value, datum as any) :
                         Text.Root(East.str`${field_value}`, {
                             whiteSpace: "nowrap",
                             overflow: "hidden",
