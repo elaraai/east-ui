@@ -104,7 +104,19 @@ export const PlannerEvent = ({
     const colorPalette = useMemo(() => getSomeorUndefined(value.colorPalette)?.type ?? "blue", [value.colorPalette]);
     const label = useMemo(() => getSomeorUndefined(value.label), [value.label]);
 
+    // Text styling from event
+    const textColor = useMemo(() => getSomeorUndefined(value.color), [value.color]);
+    const backgroundColor = useMemo(() => getSomeorUndefined(value.background), [value.background]);
+    const eventOpacity = useMemo(() => getSomeorUndefined(value.opacity), [value.opacity]);
+    const fontWeight = useMemo(() => getSomeorUndefined(value.fontWeight)?.type, [value.fontWeight]);
+    const fontStyle = useMemo(() => getSomeorUndefined(value.fontStyle)?.type, [value.fontStyle]);
+    const customFontSize = useMemo(() => getSomeorUndefined(value.fontSize)?.type, [value.fontSize]);
+    const textAlign = useMemo(() => getSomeorUndefined(value.textAlign)?.type, [value.textAlign]);
+
     const [fillColor, strokeColor] = useToken("colors", [`${colorPalette}.500`, `${colorPalette}.600`]);
+
+    // Use custom background color if provided, otherwise use colorPalette
+    const actualFillColor = backgroundColor ?? fillColor;
 
     // Calculate base x and width from local slots
     const { baseX, baseWidth } = useMemo(() => {
@@ -136,8 +148,12 @@ export const PlannerEvent = ({
     }, [baseX, baseWidth, interaction, minWidth]);
 
     const eventWidth = useMemo(() => Math.max(currentWidth, 4), [currentWidth]);
-    const fontSize = useMemo(() => Math.min(height * 0.7, 14), [height]);
+    const defaultFontSize = useMemo(() => Math.min(height * 0.7, 14), [height]);
+    const fontSize = customFontSize ?? defaultFontSize;
     const isActive = useMemo(() => isHovered || interaction.type !== null, [isHovered, interaction.type]);
+
+    // Compute actual opacity
+    const baseOpacity = eventOpacity ?? (isActive ? 1 : 0.9);
 
     // Conversions
     const pixelsToSlots = useCallback((px: number): bigint => BigInt(Math.round(px / slotWidth)), [slotWidth]);
@@ -282,10 +298,10 @@ export const PlannerEvent = ({
                 y={y}
                 width={eventWidth}
                 height={height}
-                fill={fillColor}
+                fill={actualFillColor}
                 stroke={strokeColor}
                 strokeWidth={isActive ? 3 : 2}
-                opacity={isActive ? 1 : 0.9}
+                opacity={baseOpacity}
                 rx={4}
                 ry={4}
                 onDoubleClick={handleDoubleClick}
@@ -299,11 +315,14 @@ export const PlannerEvent = ({
             />
 
             {label && (
-                <foreignObject x={currentX + 8} y={y} width={180} height={height} style={{ pointerEvents: "none" }}>
+                <foreignObject x={currentX + 8} y={y} width={Math.max(eventWidth - 16, 0)} height={height} style={{ pointerEvents: "none" }}>
                     <Text
-                        fontSize={`${fontSize}px`}
-                        color="fg.default"
-                        opacity={isActive ? 1 : 0.9}
+                        fontSize={typeof fontSize === "number" ? `${fontSize}px` : fontSize}
+                        color={textColor ?? "fg.default"}
+                        opacity={baseOpacity}
+                        fontWeight={fontWeight}
+                        fontStyle={fontStyle}
+                        textAlign={textAlign}
                         whiteSpace="nowrap"
                         cursor={cursor}
                         userSelect="none"
@@ -312,6 +331,7 @@ export const PlannerEvent = ({
                         textOverflow="ellipsis"
                         display="flex"
                         alignItems="center"
+                        justifyContent={textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : "flex-start"}
                         height="100%"
                         m={0}
                         p={0}

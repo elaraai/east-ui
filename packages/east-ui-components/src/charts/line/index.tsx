@@ -8,11 +8,11 @@ import { Chart, useChart } from "@chakra-ui/charts";
 import { Line, LineChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis, type LineProps } from "recharts";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Chart as EastChart } from "@elaraai/east-ui";
+import type { LineChartSeriesType } from "@elaraai/east-ui/internal";
 import { getSomeorUndefined } from "../../utils";
 import {
     convertChartData,
     convertMultiSeriesData,
-    toChartSeries,
     toRechartsXAxis,
     toRechartsYAxis,
     getAxisTickFormat,
@@ -24,6 +24,7 @@ import {
     shouldShowTooltip,
     toRechartsMargin,
     createTickFormatter,
+    type ChartSeriesItem,
 } from "../utils";
 
 // Pre-define the equality function at module level
@@ -31,6 +32,43 @@ const lineChartEqual = equalFor(EastChart.Types.LineChart);
 
 /** East LineChart value type */
 export type LineChartValue = ValueTypeOf<typeof EastChart.Types.LineChart>;
+
+/** East LineChartSeries value type */
+export type LineChartSeriesValue = ValueTypeOf<LineChartSeriesType>;
+
+/** Extended series item with line-specific properties */
+interface LineSeriesItem extends ChartSeriesItem {
+    strokeWidth?: number;
+    strokeDasharray?: string;
+    showDots?: boolean;
+    showLine?: boolean;
+}
+
+/**
+ * Converts an East LineChartSeries value to props for Chakra useChart series.
+ */
+function toLineChartSeries(value: LineChartSeriesValue): LineSeriesItem {
+    const result: LineSeriesItem = {
+        name: value.name,
+        color: getSomeorUndefined(value.color) ?? "teal.solid",
+    };
+
+    const stackId = getSomeorUndefined(value.stackId);
+    const label = getSomeorUndefined(value.label);
+    const strokeWidth = getSomeorUndefined(value.strokeWidth);
+    const strokeDasharray = getSomeorUndefined(value.strokeDasharray);
+    const showDots = getSomeorUndefined(value.showDots);
+    const showLine = getSomeorUndefined(value.showLine);
+
+    if (stackId !== undefined) result.stackId = stackId;
+    if (label !== undefined) result.label = label;
+    if (strokeWidth !== undefined) result.strokeWidth = Number(strokeWidth);
+    if (strokeDasharray !== undefined) result.strokeDasharray = strokeDasharray;
+    if (showDots !== undefined) result.showDots = showDots;
+    if (showLine !== undefined) result.showLine = showLine;
+
+    return result;
+}
 
 export interface EastChakraLineChartProps {
     value: LineChartValue;
@@ -58,7 +96,7 @@ export const EastChakraLineChart = memo(function EastChakraLineChart({ value }: 
         return convertChartData(value.data);
     }, [value.data, dataSeries, xAxisDataKey, valueKey]);
 
-    const series = useMemo(() => value.series.map(toChartSeries), [value.series]);
+    const series = useMemo(() => value.series.map(toLineChartSeries), [value.series]);
 
     // Initialize the chart hook
     const chart = useChart({
@@ -180,18 +218,27 @@ export const EastChakraLineChart = memo(function EastChakraLineChart({ value }: 
                 {showLegend && (
                     <Legend {...legendProps} content={<Chart.Legend />} />
                 )}
-                {chart.series.map((item) => (
-                    <Line
-                        key={item.name as string}
-                        type={options.curveType as NonNullable<LineProps["type"]>}
-                        dataKey={chart.key(item.name)}
-                        stroke={chart.color(item.color)}
-                        strokeWidth={options.strokeWidth}
-                        dot={options.showDots}
-                        connectNulls={options.connectNulls}
-                        isAnimationActive={false}
-                    />
-                ))}
+                {series.map((item) => {
+                    // Per-series values with global fallback
+                    const seriesStrokeWidth = item.strokeWidth ?? options.strokeWidth;
+                    const seriesShowDots = item.showDots ?? options.showDots;
+                    const seriesShowLine = item.showLine ?? true;
+                    const seriesStrokeDasharray = item.strokeDasharray;
+
+                    return (
+                        <Line
+                            key={item.name as string}
+                            type={options.curveType as NonNullable<LineProps["type"]>}
+                            dataKey={chart.key(item.name)}
+                            stroke={seriesShowLine ? chart.color(item.color) : "transparent"}
+                            strokeWidth={seriesStrokeWidth}
+                            strokeDasharray={seriesStrokeDasharray}
+                            dot={seriesShowDots}
+                            connectNulls={options.connectNulls}
+                            isAnimationActive={false}
+                        />
+                    );
+                })}
             </LineChart>
         </Chart.Root>
     );

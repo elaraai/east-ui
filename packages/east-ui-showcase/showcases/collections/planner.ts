@@ -456,6 +456,86 @@ export default East.function(
             )
         );
 
+        // Event styling with custom colors, fonts, opacity
+        const eventStyling = $.let(
+            ShowcaseCard(
+                "Event Styling",
+                "Custom color, background, opacity, font weight, style, size, and alignment",
+                Planner.Root(
+                    [
+                        { task: "Default", start: 1n, end: 4n },
+                        { task: "Bold Red", start: 1n, end: 4n },
+                        { task: "Custom BG", start: 1n, end: 4n },
+                        { task: "Faded", start: 1n, end: 4n },
+                    ],
+                    ["task"],
+                    row => [
+                        Planner.Event({
+                            start: 1n,
+                            end: 3n,
+                            label: "Default",
+                            colorPalette: "blue",
+                        }),
+                        Planner.Event({
+                            start: 4n,
+                            end: 6n,
+                            label: "Bold Red",
+                            colorPalette: "gray",
+                            color: "red.600",
+                            fontWeight: "bold",
+                            fontSize: "md",
+                        }),
+                        Planner.Event({
+                            start: 7n,
+                            end: 9n,
+                            label: "Centered",
+                            background: "#ff69b4",
+                            color: "white",
+                            fontWeight: "semibold",
+                            textAlign: "center",
+                        }),
+                        Planner.Event({
+                            start: 10n,
+                            end: 12n,
+                            label: "Faded Italic",
+                            colorPalette: "red",
+                            opacity: 0.5,
+                            fontStyle: "italic",
+                        }),
+                    ],
+                    { maxSlot: 13n }
+                ),
+                some(`
+                    Planner.Root(
+                        [...],
+                        ["task"],
+                        row => [
+                            // Default styling
+                            Planner.Event({ start: 1n, end: 3n, label: "Default", colorPalette: "blue" }),
+                            // Bold text with custom color
+                            Planner.Event({
+                                start: 4n, end: 6n, label: "Bold Red",
+                                colorPalette: "gray", color: "red.600",
+                                fontWeight: "bold", fontSize: "md",
+                            }),
+                            // Custom background with centered text
+                            Planner.Event({
+                                start: 7n, end: 9n, label: "Centered",
+                                background: "#ff69b4", color: "white",
+                                fontWeight: "semibold", textAlign: "center",
+                            }),
+                            // Faded with italic
+                            Planner.Event({
+                                start: 10n, end: 12n, label: "Faded Italic",
+                                colorPalette: "red", opacity: 0.5, fontStyle: "italic",
+                            }),
+                        ],
+                        { maxSlot: 13n }
+                    )
+                `)
+            )
+        );
+
         return Stack.VStack([
             basic,
             withLabels,
@@ -467,6 +547,7 @@ export default East.function(
             columnRenderWithRow,
             withBoundaries,
             withContextMenu,
+            eventStyling,
         ], { gap: "6", align: "stretch" });
     }
 );

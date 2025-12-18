@@ -185,9 +185,9 @@ export function createLineChart(
         label: config?.label !== undefined ? some(config.label) : none,
         stroke: config?.stroke !== undefined ? some(config.stroke) : none,
         strokeWidth: config?.strokeWidth !== undefined ? some(config.strokeWidth) : none,
-        fill: none,
-        fillOpacity: none,
         strokeDasharray: config?.strokeDasharray !== undefined ? some(config.strokeDasharray) : none,
+        showDots: config?.showDots !== undefined ? some(config.showDots) : none,
+        showLine: config?.showLine !== undefined ? some(config.showLine) : none,
     }));
 
     const curveValue = style?.curveType

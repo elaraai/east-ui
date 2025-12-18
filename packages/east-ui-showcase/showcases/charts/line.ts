@@ -349,6 +349,158 @@ export default East.function(
             )
         );
 
+        // Per-series styling (strokeWidth, strokeDasharray, showDots, showLine)
+        const perSeriesStyling = $.let(
+            ShowcaseCard(
+                "Per-Series Styling",
+                "Different strokeWidth, dashed lines, dots per series",
+                Box.Root([
+                    Chart.Line(
+                        [
+                            { month: "Jan", actual: 100, target: 120, forecast: 110 },
+                            { month: "Feb", actual: 150, target: 130, forecast: 140 },
+                            { month: "Mar", actual: 130, target: 140, forecast: 145 },
+                            { month: "Apr", actual: 180, target: 150, forecast: 160 },
+                            { month: "May", actual: 160, target: 160, forecast: 170 },
+                        ],
+                        {
+                            actual: {
+                                color: "teal.solid",
+                                strokeWidth: 3n,
+                                showDots: true,
+                            },
+                            target: {
+                                color: "red.solid",
+                                strokeWidth: 2n,
+                                strokeDasharray: "5 5",
+                                showDots: false,
+                            },
+                            forecast: {
+                                color: "purple.solid",
+                                strokeWidth: 1n,
+                                strokeDasharray: "2 2",
+                                showDots: false,
+                            },
+                        },
+                        {
+                            xAxis: Chart.Axis({ dataKey: "month" }),
+                            grid: Chart.Grid({ show: true }),
+                            tooltip: Chart.Tooltip({ show: true }),
+                            legend: Chart.Legend({ show: true }),
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Line(
+                            [
+                                { month: "Jan", actual: 100, target: 120, forecast: 110 },
+                                { month: "Feb", actual: 150, target: 130, forecast: 140 },
+                                { month: "Mar", actual: 130, target: 140, forecast: 145 },
+                                { month: "Apr", actual: 180, target: 150, forecast: 160 },
+                                { month: "May", actual: 160, target: 160, forecast: 170 },
+                            ],
+                            {
+                                actual: {
+                                    color: "teal.solid",
+                                    strokeWidth: 3n,
+                                    showDots: true,
+                                },
+                                target: {
+                                    color: "red.solid",
+                                    strokeWidth: 2n,
+                                    strokeDasharray: "5 5",
+                                    showDots: false,
+                                },
+                                forecast: {
+                                    color: "purple.solid",
+                                    strokeWidth: 1n,
+                                    strokeDasharray: "2 2",
+                                    showDots: false,
+                                },
+                            },
+                            {
+                                xAxis: Chart.Axis({ dataKey: "month" }),
+                                grid: Chart.Grid({ show: true }),
+                                tooltip: Chart.Tooltip({ show: true }),
+                                legend: Chart.Legend({ show: true }),
+                            }
+                        ),
+                    ], { height: "220px", width: "100%" })
+                `)
+            )
+        );
+
+        // Dots only (no lines)
+        const dotsOnly = $.let(
+            ShowcaseCard(
+                "Dots Only (Scatter)",
+                "Hide lines per series for scatter-like appearance",
+                Box.Root([
+                    Chart.Line(
+                        [
+                            { month: "Jan", revenue: 186, profit: 80 },
+                            { month: "Feb", revenue: 305, profit: 120 },
+                            { month: "Mar", revenue: 237, profit: 95 },
+                            { month: "Apr", revenue: 273, profit: 150 },
+                            { month: "May", revenue: 209, profit: 110 },
+                        ],
+                        {
+                            revenue: {
+                                color: "teal.solid",
+                                showLine: false,
+                                showDots: true,
+                            },
+                            profit: {
+                                color: "orange.solid",
+                                showLine: true,
+                                showDots: true,
+                                strokeWidth: 2n,
+                            },
+                        },
+                        {
+                            xAxis: Chart.Axis({ dataKey: "month" }),
+                            grid: Chart.Grid({ show: true }),
+                            tooltip: Chart.Tooltip({ show: true }),
+                            legend: Chart.Legend({ show: true }),
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Line(
+                            [
+                                { month: "Jan", revenue: 186, profit: 80 },
+                                { month: "Feb", revenue: 305, profit: 120 },
+                                { month: "Mar", revenue: 237, profit: 95 },
+                                { month: "Apr", revenue: 273, profit: 150 },
+                                { month: "May", revenue: 209, profit: 110 },
+                            ],
+                            {
+                                revenue: {
+                                    color: "teal.solid",
+                                    showLine: false,  // Dots only
+                                    showDots: true,
+                                },
+                                profit: {
+                                    color: "orange.solid",
+                                    showLine: true,
+                                    showDots: true,
+                                    strokeWidth: 2n,
+                                },
+                            },
+                            {
+                                xAxis: Chart.Axis({ dataKey: "month" }),
+                                grid: Chart.Grid({ show: true }),
+                                tooltip: Chart.Tooltip({ show: true }),
+                                legend: Chart.Legend({ show: true }),
+                            }
+                        ),
+                    ], { height: "220px", width: "100%" })
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -358,6 +510,8 @@ export default East.function(
                 Grid.Item(noDots),
                 Grid.Item(thickLine),
                 Grid.Item(sparseMultiSeries),
+                Grid.Item(perSeriesStyling),
+                Grid.Item(dotsOnly),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

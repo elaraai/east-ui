@@ -22,6 +22,10 @@ import { TableCellClickEventType, TableRowClickEventType, TableSortEventType } f
 import {
     ColorSchemeType,
     type ColorSchemeLiteral,
+    FontWeightType,
+    FontStyleType,
+    SizeType,
+    TextAlignType,
 } from "../../style.js";
 
 // Import shared types from table
@@ -80,12 +84,27 @@ export type SlotModeLiteral = "single" | "span";
  * @property end - End slot (only used if mode=span)
  * @property label - Optional label to display on the event
  * @property colorPalette - Optional color scheme for the event
+ * @property color - Optional text color (overrides colorPalette)
+ * @property background - Optional background color (overrides colorPalette)
+ * @property opacity - Optional opacity (0-1)
+ * @property fontWeight - Optional font weight for label
+ * @property fontStyle - Optional font style for label
+ * @property fontSize - Optional font size for label
+ * @property textAlign - Optional text alignment for label
  */
 export const PlannerEventType = StructType({
     start: IntegerType,
     end: OptionType(IntegerType),
     label: OptionType(StringType),
     colorPalette: OptionType(ColorSchemeType),
+    // Text styling
+    color: OptionType(StringType),
+    background: OptionType(StringType),
+    opacity: OptionType(FloatType),
+    fontWeight: OptionType(FontWeightType),
+    fontStyle: OptionType(FontStyleType),
+    fontSize: OptionType(SizeType),
+    textAlign: OptionType(TextAlignType),
 });
 
 /**

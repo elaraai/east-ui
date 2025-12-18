@@ -13,6 +13,7 @@ import {
     DictType,
     StringType,
     IntegerType,
+    FloatType,
     OptionType,
     variant,
     type ValueTypeOf,
@@ -25,7 +26,17 @@ import {
     LiteralValueType,
 } from "@elaraai/east";
 
-import { ColorSchemeType } from "../../style.js";
+import {
+    ColorSchemeType,
+    FontWeightType,
+    FontStyleType,
+    SizeType,
+    TextAlignType,
+    type FontWeightLiteral,
+    type FontStyleLiteral,
+    type SizeLiteral,
+    type TextAlignLiteral,
+} from "../../style.js";
 import { UIComponentType } from "../../component.js";
 import {
     TableCellType,
@@ -128,12 +139,33 @@ export type PlannerRootType = typeof PlannerRootType;
  * @property end - End slot (only used if mode=span)
  * @property label - Optional label to display on the event
  * @property colorPalette - Optional color scheme for the event
+ * @property color - Optional text color (overrides colorPalette)
+ * @property background - Optional background color (overrides colorPalette)
+ * @property opacity - Optional opacity (0-1)
+ * @property fontWeight - Optional font weight for label
+ * @property fontStyle - Optional font style for label
+ * @property fontSize - Optional font size for label
+ * @property textAlign - Optional text alignment for label
  */
 export interface EventInput {
     start: SubtypeExprOrValue<IntegerType>;
     end?: SubtypeExprOrValue<IntegerType>;
     label?: SubtypeExprOrValue<StringType>;
     colorPalette?: SubtypeExprOrValue<ColorSchemeType> | string;
+    /** Text color (overrides colorPalette) */
+    color?: SubtypeExprOrValue<StringType>;
+    /** Background color (overrides colorPalette) */
+    background?: SubtypeExprOrValue<StringType>;
+    /** Opacity (0-1) */
+    opacity?: SubtypeExprOrValue<FloatType>;
+    /** Font weight for label */
+    fontWeight?: SubtypeExprOrValue<FontWeightType> | FontWeightLiteral;
+    /** Font style for label */
+    fontStyle?: SubtypeExprOrValue<FontStyleType> | FontStyleLiteral;
+    /** Font size for label */
+    fontSize?: SubtypeExprOrValue<SizeType> | SizeLiteral;
+    /** Text alignment for label */
+    textAlign?: SubtypeExprOrValue<TextAlignType> | TextAlignLiteral;
 }
 
 // ============================================================================
@@ -172,11 +204,42 @@ function createEvent(input: EventInput): ExprType<PlannerEventType> {
             : input.colorPalette)
         : undefined;
 
+    const fontWeightValue = input.fontWeight
+        ? (typeof input.fontWeight === "string"
+            ? East.value(variant(input.fontWeight as any, null), FontWeightType)
+            : input.fontWeight)
+        : undefined;
+
+    const fontStyleValue = input.fontStyle
+        ? (typeof input.fontStyle === "string"
+            ? East.value(variant(input.fontStyle as any, null), FontStyleType)
+            : input.fontStyle)
+        : undefined;
+
+    const fontSizeValue = input.fontSize
+        ? (typeof input.fontSize === "string"
+            ? East.value(variant(input.fontSize as any, null), SizeType)
+            : input.fontSize)
+        : undefined;
+
+    const textAlignValue = input.textAlign
+        ? (typeof input.textAlign === "string"
+            ? East.value(variant(input.textAlign as any, null), TextAlignType)
+            : input.textAlign)
+        : undefined;
+
     return East.value({
         start: input.start,
         end: input.end ? variant("some", input.end) : variant("none", null),
         label: input.label ? variant("some", input.label) : variant("none", null),
         colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
+        color: input.color ? variant("some", input.color) : variant("none", null),
+        background: input.background ? variant("some", input.background) : variant("none", null),
+        opacity: input.opacity ? variant("some", input.opacity) : variant("none", null),
+        fontWeight: fontWeightValue ? variant("some", fontWeightValue) : variant("none", null),
+        fontStyle: fontStyleValue ? variant("some", fontStyleValue) : variant("none", null),
+        fontSize: fontSizeValue ? variant("some", fontSizeValue) : variant("none", null),
+        textAlign: textAlignValue ? variant("some", textAlignValue) : variant("none", null),
     }, PlannerEventType);
 }
 

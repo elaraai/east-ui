@@ -16,7 +16,6 @@ import {
 } from "@elaraai/east";
 
 import {
-    ChartSeriesType,
     ChartAxisType,
     ChartGridType,
     ChartTooltipType,
@@ -27,6 +26,44 @@ import {
     type CurveLiteral,
     type BaseChartStyle,
 } from "../types.js";
+
+// ============================================================================
+// Line Chart Series Type
+// ============================================================================
+
+/**
+ * Series configuration for Line charts.
+ *
+ * @remarks
+ * Line-specific series type that includes all base series properties
+ * plus line-specific options like showDots and showLine.
+ *
+ * @property name - Data key name (matches keys in data points)
+ * @property color - Chakra color token (e.g., "teal.solid", "blue.500")
+ * @property stackId - Stack group ID (same stackId = stacked together)
+ * @property label - Display label (defaults to name)
+ * @property stroke - Stroke/line color (defaults to color)
+ * @property strokeWidth - Stroke/line width in pixels
+ * @property strokeDasharray - Dash pattern for dashed lines (e.g., "5 5")
+ * @property showDots - Whether to show dots at data points (per-series override)
+ * @property showLine - Whether to show the line (per-series override)
+ */
+export const LineChartSeriesType = StructType({
+    name: StringType,
+    color: OptionType(StringType),
+    stackId: OptionType(StringType),
+    label: OptionType(StringType),
+    stroke: OptionType(StringType),
+    strokeWidth: OptionType(IntegerType),
+    strokeDasharray: OptionType(StringType),
+    showDots: OptionType(BooleanType),
+    showLine: OptionType(BooleanType),
+});
+
+/**
+ * Type representing line chart series configuration.
+ */
+export type LineChartSeriesType = typeof LineChartSeriesType;
 
 // ============================================================================
 // Line Chart Type
@@ -54,15 +91,15 @@ import {
  * @property tooltip - Tooltip configuration
  * @property legend - Legend configuration
  * @property margin - Chart margin configuration
- * @property showDots - Show dots at data points
- * @property strokeWidth - Line stroke width in pixels
+ * @property showDots - Show dots at data points (global default)
+ * @property strokeWidth - Line stroke width in pixels (global default)
  * @property connectNulls - Connect line across null data points
  */
 export const LineChartType = StructType({
     data: ArrayType(DictType(StringType, LiteralValueType)),
     dataSeries: OptionType(MultiSeriesDataType),
     valueKey: OptionType(StringType),
-    series: ArrayType(ChartSeriesType),
+    series: ArrayType(LineChartSeriesType),
     xAxis: OptionType(ChartAxisType),
     yAxis: OptionType(ChartAxisType),
     curveType: OptionType(CurveType),
@@ -116,7 +153,7 @@ export interface LineChartStyle extends BaseChartStyle {
 }
 
 /**
- * Series configuration for Line charts.
+ * TypeScript interface for Line chart series configuration.
  *
  * @remarks
  * Configures how a data field is rendered as a series in the line chart.
@@ -126,6 +163,8 @@ export interface LineChartStyle extends BaseChartStyle {
  * @property stroke - Stroke/line color (defaults to color)
  * @property strokeWidth - Stroke/line width in pixels
  * @property strokeDasharray - Dash pattern for dashed lines (e.g., "5 5")
+ * @property showDots - Whether to show dots at data points (per-series override)
+ * @property showLine - Whether to show the line (per-series override)
  */
 export interface LineChartSeriesConfig {
     /** Chakra color token (e.g., "teal.solid", "blue.500") */
@@ -138,4 +177,8 @@ export interface LineChartSeriesConfig {
     strokeWidth?: SubtypeExprOrValue<IntegerType>;
     /** Dash pattern for dashed lines (e.g., "5 5") */
     strokeDasharray?: SubtypeExprOrValue<StringType>;
+    /** Whether to show dots at data points (per-series override) */
+    showDots?: SubtypeExprOrValue<BooleanType>;
+    /** Whether to show the line (per-series override) */
+    showLine?: SubtypeExprOrValue<BooleanType>;
 }
