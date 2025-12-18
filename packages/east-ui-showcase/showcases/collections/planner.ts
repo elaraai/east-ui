@@ -490,6 +490,7 @@ export default East.function(
                             end: 9n,
                             label: "Centered",
                             background: "#ff69b4",
+                            stroke: "#c71585",
                             color: "white",
                             fontWeight: "semibold",
                             textAlign: "center",
@@ -518,11 +519,11 @@ export default East.function(
                                 colorPalette: "gray", color: "red.600",
                                 fontWeight: "bold", fontSize: "md",
                             }),
-                            // Custom background with centered text
+                            // Custom background/stroke with centered text
                             Planner.Event({
                                 start: 7n, end: 9n, label: "Centered",
-                                background: "#ff69b4", color: "white",
-                                fontWeight: "semibold", textAlign: "center",
+                                background: "#ff69b4", stroke: "#c71585",
+                                color: "white", fontWeight: "semibold", textAlign: "center",
                             }),
                             // Faded with italic
                             Planner.Event({

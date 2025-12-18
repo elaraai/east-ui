@@ -85,7 +85,8 @@ export type SlotModeLiteral = "single" | "span";
  * @property label - Optional label to display on the event
  * @property colorPalette - Optional color scheme for the event
  * @property color - Optional text color (overrides colorPalette)
- * @property background - Optional background color (overrides colorPalette)
+ * @property background - Optional background/fill color (overrides colorPalette)
+ * @property stroke - Optional stroke/border color (overrides colorPalette)
  * @property opacity - Optional opacity (0-1)
  * @property fontWeight - Optional font weight for label
  * @property fontStyle - Optional font style for label
@@ -100,6 +101,7 @@ export const PlannerEventType = StructType({
     // Text styling
     color: OptionType(StringType),
     background: OptionType(StringType),
+    stroke: OptionType(StringType),
     opacity: OptionType(FloatType),
     fontWeight: OptionType(FontWeightType),
     fontStyle: OptionType(FontStyleType),

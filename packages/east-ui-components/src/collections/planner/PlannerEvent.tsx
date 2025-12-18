@@ -107,16 +107,18 @@ export const PlannerEvent = ({
     // Text styling from event
     const textColor = useMemo(() => getSomeorUndefined(value.color), [value.color]);
     const backgroundColor = useMemo(() => getSomeorUndefined(value.background), [value.background]);
+    const customStrokeColor = useMemo(() => getSomeorUndefined(value.stroke), [value.stroke]);
     const eventOpacity = useMemo(() => getSomeorUndefined(value.opacity), [value.opacity]);
     const fontWeight = useMemo(() => getSomeorUndefined(value.fontWeight)?.type, [value.fontWeight]);
     const fontStyle = useMemo(() => getSomeorUndefined(value.fontStyle)?.type, [value.fontStyle]);
     const customFontSize = useMemo(() => getSomeorUndefined(value.fontSize)?.type, [value.fontSize]);
     const textAlign = useMemo(() => getSomeorUndefined(value.textAlign)?.type, [value.textAlign]);
 
-    const [fillColor, strokeColor] = useToken("colors", [`${colorPalette}.500`, `${colorPalette}.600`]);
+    const [fillColor, paletteStrokeColor] = useToken("colors", [`${colorPalette}.500`, `${colorPalette}.600`]);
 
-    // Use custom background color if provided, otherwise use colorPalette
+    // Use custom colors if provided, otherwise use colorPalette
     const actualFillColor = backgroundColor ?? fillColor;
+    const actualStrokeColor = customStrokeColor ?? paletteStrokeColor;
 
     // Calculate base x and width from local slots
     const { baseX, baseWidth } = useMemo(() => {
@@ -299,7 +301,7 @@ export const PlannerEvent = ({
                 width={eventWidth}
                 height={height}
                 fill={actualFillColor}
-                stroke={strokeColor}
+                stroke={actualStrokeColor}
                 strokeWidth={isActive ? 3 : 2}
                 opacity={baseOpacity}
                 rx={4}

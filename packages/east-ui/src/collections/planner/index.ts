@@ -154,8 +154,10 @@ export interface EventInput {
     colorPalette?: SubtypeExprOrValue<ColorSchemeType> | string;
     /** Text color (overrides colorPalette) */
     color?: SubtypeExprOrValue<StringType>;
-    /** Background color (overrides colorPalette) */
+    /** Background/fill color (overrides colorPalette) */
     background?: SubtypeExprOrValue<StringType>;
+    /** Stroke/border color (overrides colorPalette) */
+    stroke?: SubtypeExprOrValue<StringType>;
     /** Opacity (0-1) */
     opacity?: SubtypeExprOrValue<FloatType>;
     /** Font weight for label */
@@ -235,6 +237,7 @@ function createEvent(input: EventInput): ExprType<PlannerEventType> {
         colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
         color: input.color ? variant("some", input.color) : variant("none", null),
         background: input.background ? variant("some", input.background) : variant("none", null),
+        stroke: input.stroke ? variant("some", input.stroke) : variant("none", null),
         opacity: input.opacity ? variant("some", input.opacity) : variant("none", null),
         fontWeight: fontWeightValue ? variant("some", fontWeightValue) : variant("none", null),
         fontStyle: fontStyleValue ? variant("some", fontStyleValue) : variant("none", null),
