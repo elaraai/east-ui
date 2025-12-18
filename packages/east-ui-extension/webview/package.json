@@ -12,7 +12,7 @@
     "dependencies": {
         "@chakra-ui/react": "^3.30.0",
         "@elaraai/e3-api-client": "^0.0.2-beta.5",
-        "@elaraai/east": "^0.0.1-beta.17",
+        "@elaraai/east": "^0.0.1-beta.18",
         "@elaraai/east-ui": "*",
         "@elaraai/east-ui-components": "*",
         "@emotion/react": "^11.14.0",
