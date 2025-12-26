@@ -4,146 +4,233 @@
  */
 
 import {
-    type ExprType, type SubtypeExprOrValue, type TypeOf, ArrayType, DictType, East, Expr, LiteralValueType, none, some, StringType, StructType, variant
+    type ExprType,
+    type SubtypeExprOrValue,
+    type TypeOf,
+    ArrayType,
+    DictType,
+    East,
+    Expr,
+    LiteralValueType,
+    none,
+    some,
+    StringType,
+    StructType,
+    variant,
+    IntegerType,
+    FloatType,
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
 import { MultiSeriesDataType } from "../types.js";
-import type { ScatterChartStyle, ScatterChartSeriesConfig } from "./types.js";
+import type {
+    ScatterChartStyle,
+    ScatterChartMultiStyle,
+    ScatterChartSeriesConfig,
+    ScatterChartStyleBase,
+} from "./types.js";
 
 // Re-export types
-export { ScatterChartType, type ScatterChartStyle, type ScatterChartSeriesConfig } from "./types.js";
+export {
+    ScatterChartType,
+    type ScatterChartStyle,
+    type ScatterChartMultiStyle,
+    type ScatterChartSeriesConfig,
+    type ScatterChartStyleBase,
+} from "./types.js";
 
 // ============================================================================
-// Scatter Chart Function
+// Type Helpers
+// ============================================================================
+
+// Numeric types that can be used as axis values
+type NumericEastType = IntegerType | FloatType;
+
+// Extract struct fields from array type
+type ExtractStructFields<T> = T extends ArrayType<infer S>
+    ? S extends StructType
+        ? S["fields"]
+        : never
+    : never;
+
+// Extract fields from data (handles SubtypeExprOrValue wrapping)
+type DataFields<T extends SubtypeExprOrValue<ArrayType<StructType>>> = ExtractStructFields<TypeOf<T>>;
+
+// Extract only numeric field keys from a struct's fields
+type NumericFieldKeys<Fields> = {
+    [K in keyof Fields]: Fields[K] extends NumericEastType ? K : never
+}[keyof Fields];
+
+// ============================================================================
+// Series Specification
 // ============================================================================
 
 /**
- * Helper to check if a value is an East expression.
- */
-function isExpr(value: unknown): value is Expr {
-    return value !== null && typeof value === "object" && value instanceof Expr;
-}
-
-/**
- * Helper to check if data is in record form (multiple series arrays).
- */
-function isRecordForm(data: unknown): data is Record<string, unknown> {
-    if (data === null || data === undefined) return false;
-    if (Array.isArray(data)) return false;
-    if (isExpr(data)) return false;
-    if (typeof data !== "object") return false;
-    const keys = Object.keys(data);
-    if (keys.length === 0) return false;
-    return keys.some(key => {
-        const val = (data as Record<string, unknown>)[key];
-        return Array.isArray(val) || isExpr(val);
-    });
-}
-
-/**
- * Helper to map a single array to Dict format.
- */
-function mapArrayToDict(data_expr: ExprType<ArrayType<StructType>>): ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>> {
-    return data_expr.map(($, datum) => {
-        const ret = $.let(new Map(), DictType(StringType, LiteralValueType));
-        for (const [field_name, field_type] of Object.entries(Expr.type(data_expr).value.fields)) {
-            $(ret.insert(field_name, variant(field_type.type, datum[field_name] as any)));
-        }
-        return ret;
-    });
-}
-
-/**
- * Creates a Scatter chart component.
+ * Series specification for the Scatter chart API.
  *
- * @param data - Array of data points, OR a record of arrays for multi-series sparse data
- * @param series - Series configuration keyed by field names (array form) or record keys (record form)
- * @param style - Optional styling configuration
+ * @remarks
+ * - **Array form**: Only numeric field keys allowed (e.g., `["y1", "y2"]`)
+ * - **Object form**: Numeric fields with optional per-series config
+ */
+type SeriesSpec<T extends SubtypeExprOrValue<ArrayType<StructType>>> =
+    | NumericFieldKeys<DataFields<NoInfer<T>>>[]
+    | { [K in NumericFieldKeys<DataFields<NoInfer<T>>>]?: ScatterChartSeriesConfig };
+
+// ============================================================================
+// Scatter Chart (Single Array Form)
+// ============================================================================
+
+/**
+ * Creates a Scatter chart component from a single data array.
+ *
+ * @typeParam T - The array type containing data structs
+ * @param data - Array of data points (each point has x + y values)
+ * @param series - Series specification: array of numeric field names, or object with config
+ * @param style - Optional styling with type-safe xDataKey and yDataKey
  * @returns An East expression representing the scatter chart component
  *
  * @remarks
- * Scatter charts display data points on a 2D coordinate plane.
- * Useful for showing correlations between variables.
+ * All series share the same data points. Series keys are numeric field names.
  *
- * Supports two data formats:
- * - **Single array**: All series share the same data points. Series keys are field names.
- * - **Record of arrays**: Each series has its own array (for sparse data). Series keys are record keys.
- *   Use `style.valueKey` to specify which field contains the Y value in each array.
- *
- * @example Single array form
+ * @example Array form (just field names)
  * ```ts
  * Chart.Scatter(
  *     [
  *         { x: 10n, y: 30n },
  *         { x: 20n, y: 40n },
  *     ],
- *     { y: { color: "purple.solid" } },
- *     { xAxis: Chart.Axis({ dataKey: "x" }) }
+ *     ["y"],
+ *     { xDataKey: "x", yDataKey: "y" }
  * );
  * ```
  *
- * @example Record form (for sparse data)
+ * @example Object form (with per-series config)
  * ```ts
  * Chart.Scatter(
- *     {
- *         series1: [{ x: 10n, value: 30n }, { x: 20n, value: 40n }],
- *         series2: [{ x: 15n, value: 35n }, { x: 25n, value: 45n }],
- *     },
- *     {
- *         series1: { color: "purple.solid" },
- *         series2: { color: "teal.solid" },
- *     },
- *     { xAxis: Chart.Axis({ dataKey: "x" }), valueKey: "value" }
+ *     data,
+ *     { y: { color: "purple.solid" } },
+ *     { xDataKey: "x" }
  * );
  * ```
  */
-// Overload 1: Single array form
 export function createScatterChart<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
     data: T,
-    series: {
-        [K in TypeOf<NoInfer<T>> extends ArrayType<StructType> ? keyof TypeOf<NoInfer<T>>["value"]["fields"] : never]?: ScatterChartSeriesConfig
-    },
-    style?: ScatterChartStyle
-): ExprType<UIComponentType>;
-
-// Overload 2: Record form (multi-series)
-export function createScatterChart<K extends string, T extends SubtypeExprOrValue<ArrayType<StructType>>>(
-    data: Record<K, T>,
-    series: { [P in K]?: ScatterChartSeriesConfig },
-    style?: ScatterChartStyle
-): ExprType<UIComponentType>;
-
-// Implementation
-export function createScatterChart(
-    data: SubtypeExprOrValue<ArrayType<StructType>> | Record<string, SubtypeExprOrValue<ArrayType<StructType>>>,
-    series: Record<string, ScatterChartSeriesConfig | undefined>,
-    style?: ScatterChartStyle
+    series: SeriesSpec<T>,
+    style?: ScatterChartStyle<NumericFieldKeys<DataFields<T>> & string>
 ): ExprType<UIComponentType> {
-    let data_mapped: ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>;
-    let dataSeries_mapped: ExprType<typeof MultiSeriesDataType> | undefined;
+    const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
+    const field_types = Expr.type(data_expr).value.fields;
 
-    if (isRecordForm(data)) {
-        const dataRecord = data as Record<string, SubtypeExprOrValue<ArrayType<StructType>>>;
-        data_mapped = East.value([], ArrayType(DictType(StringType, LiteralValueType)));
-        const seriesDataMap = new Map<string, ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>>();
-        for (const [seriesName, seriesData] of Object.entries(dataRecord)) {
-            const series_expr = isExpr(seriesData)
-                ? seriesData as ExprType<ArrayType<StructType>>
-                : East.value(seriesData) as ExprType<ArrayType<StructType>>;
-            seriesDataMap.set(seriesName, mapArrayToDict(series_expr));
+    // Map each data row to a Dict<String, LiteralValueType>
+    const data_mapped = data_expr.map(($, datum) => {
+        const ret = $.let(new Map(), DictType(StringType, LiteralValueType));
+        for (const [field_name, field_type] of Object.entries(field_types)) {
+            $(ret.insert(field_name, variant(field_type.type, (datum as any)[field_name])));
         }
-        dataSeries_mapped = East.value(seriesDataMap, MultiSeriesDataType);
-    } else {
-        const data_expr = isExpr(data)
-            ? data as ExprType<ArrayType<StructType>>
-            : East.value(data) as ExprType<ArrayType<StructType>>;
-        data_mapped = mapArrayToDict(data_expr);
-        dataSeries_mapped = undefined;
+        return ret;
+    });
+
+    // Normalize series to entries
+    const seriesEntries: readonly (readonly [string, ScatterChartSeriesConfig | undefined])[] = Array.isArray(series)
+        ? (series as string[]).map(key => [key, undefined] as const)
+        : Object.entries(series) as [string, ScatterChartSeriesConfig | undefined][];
+
+    return buildScatterChart(data_mapped, undefined, seriesEntries, style);
+}
+
+// ============================================================================
+// Scatter Chart Multi (Multi-Series with Separate Arrays)
+// ============================================================================
+
+/**
+ * Creates a Scatter chart component from multiple data arrays (one per series).
+ *
+ * @typeParam K - Union of series names (record keys)
+ * @typeParam T - The array type containing data structs for each series
+ * @param data - Record mapping series names to their data arrays
+ * @param style - Styling with type-safe xDataKey and valueKey
+ * @returns An East expression representing the scatter chart component
+ *
+ * @remarks
+ * Each series has its own data array, allowing sparse data where series
+ * don't need to have values at every x-axis point.
+ *
+ * @example
+ * ```ts
+ * Chart.ScatterMulti(
+ *     {
+ *         series1: [
+ *             { x: 10n, value: 30n },
+ *             { x: 20n, value: 40n },
+ *         ],
+ *         series2: [
+ *             { x: 15n, value: 35n },
+ *             { x: 25n, value: 45n },
+ *         ],
+ *     },
+ *     {
+ *         xDataKey: "x",
+ *         valueKey: "value",
+ *         series: { series1: { color: "purple.solid" } },
+ *     }
+ * );
+ * ```
+ */
+export function createScatterChartMulti<
+    K extends string,
+    T extends SubtypeExprOrValue<ArrayType<StructType>>
+>(
+    data: Record<K, T>,
+    style: ScatterChartMultiStyle<
+        NumericFieldKeys<DataFields<T>> & string,
+        K
+    >
+): ExprType<UIComponentType> {
+    // Create empty data array (renderer will use dataSeries instead)
+    const data_mapped = East.value([], ArrayType(DictType(StringType, LiteralValueType)));
+
+    // Map each series array to Dict format
+    const seriesDataMap = new Map<string, ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>>();
+
+    for (const [seriesName, seriesData] of Object.entries(data) as [string, T][]) {
+        const series_expr = East.value(seriesData) as ExprType<ArrayType<StructType>>;
+        const field_types = Expr.type(series_expr).value.fields;
+
+        const series_mapped = series_expr.map(($, datum) => {
+            const ret = $.let(new Map(), DictType(StringType, LiteralValueType));
+            for (const [field_name, field_type] of Object.entries(field_types)) {
+                $(ret.insert(field_name, variant(field_type.type, (datum as any)[field_name])));
+            }
+            return ret;
+        });
+
+        seriesDataMap.set(seriesName, series_mapped);
     }
 
-    const series_mapped = Object.entries(series as Record<string, ScatterChartSeriesConfig>).map(([name, config]) => ({
-        name: name as string,
+    const dataSeries_mapped = East.value(seriesDataMap, MultiSeriesDataType);
+
+    // Build series entries from record keys and optional config
+    const seriesEntries = Object.keys(data).map(key => [
+        key,
+        style.series?.[key as K]
+    ] as const);
+
+    return buildScatterChart(data_mapped, dataSeries_mapped, seriesEntries, style, style.valueKey);
+}
+
+// ============================================================================
+// Shared Chart Builder
+// ============================================================================
+
+function buildScatterChart(
+    data_mapped: ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>,
+    dataSeries_mapped: ExprType<typeof MultiSeriesDataType> | undefined,
+    seriesEntries: readonly (readonly [string, ScatterChartSeriesConfig | undefined])[],
+    style?: ScatterChartStyleBase & { xDataKey?: string; yDataKey?: string },
+    valueKey?: string
+): ExprType<UIComponentType> {
+    const series_mapped = seriesEntries.map(([name, config]) => ({
+        name: name,
         color: config?.color !== undefined ? some(config.color) : none,
         stackId: none,
         label: config?.label !== undefined ? some(config.label) : none,
@@ -157,7 +244,7 @@ export function createScatterChart(
     return East.value(variant("ScatterChart", {
         data: data_mapped,
         dataSeries: dataSeries_mapped ? variant("some", dataSeries_mapped) : variant("none", null),
-        valueKey: style?.valueKey !== undefined ? variant("some", style.valueKey) : variant("none", null),
+        valueKey: valueKey !== undefined ? variant("some", valueKey) : variant("none", null),
         series: series_mapped,
         xAxis: style?.xAxis ? variant("some", style.xAxis) : variant("none", null),
         yAxis: style?.yAxis ? variant("some", style.yAxis) : variant("none", null),

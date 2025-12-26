@@ -20,6 +20,8 @@ Usage guide for East UI component definitions.
 - [Disclosure](#disclosure)
 - [Overlays](#overlays)
 - [Container](#container)
+- [State Management](#state-management)
+- [Reactive Components](#reactive-components)
 
 ---
 
@@ -900,7 +902,7 @@ import { Chart, UIComponentType } from "@elaraai/east-ui";
 const example = East.function([], UIComponentType, $ => {
     const data = $.let([{ month: "Jan", revenue: 186 }, { month: "Feb", revenue: 305 }]);
     return Chart.Line(data, { revenue: { color: "teal.solid" } }, {
-        xAxis: Chart.Axis({ dataKey: "month" }),
+        xAxis: { dataKey: "month" },
         grid: Chart.Grid({ show: true }),
     });
 });
@@ -1432,6 +1434,155 @@ const example = East.function([], UIComponentType, $ => {
 | `description` | `SubtypeExprOrValue<StringType>` | Card description |
 | `variant` | `SubtypeExprOrValue<CardVariantType> \| CardVariantLiteral` | "elevated", "outline", "subtle" |
 | `size` | `SubtypeExprOrValue<SizeType> \| SizeLiteral` | Card size |
+
+---
+
+## State Management
+
+East UI provides reactive state management through the `State` namespace. State is stored as Beast2-encoded blobs, allowing any East type to be stored and retrieved.
+
+### State.readTyped / State.writeTyped
+
+Typed convenience wrappers that handle Beast2 encoding automatically.
+
+```typescript
+import { East, IntegerType, NullType, some } from "@elaraai/east";
+import { State, Button, Text, Stack, UIComponentType } from "@elaraai/east-ui";
+
+const counter = East.function([], UIComponentType, $ => {
+    // Initialize state (only writes if key doesn't exist)
+    $(State.initTyped("counter", 0n, IntegerType)());
+
+    // Read typed value - returns Option<Integer>
+    const count = $.let(State.readTyped("counter", IntegerType)());
+
+    return Stack.VStack([
+        Text.Root(East.str`Count: ${count.unwrap("some")}`),
+        Button.Root("Increment", {
+            onClick: East.function([], NullType, $ => {
+                const current = $.let(State.readTyped("counter", IntegerType)());
+                $(State.writeTyped("counter", some(current.unwrap("some").add(1n)), IntegerType)());
+            })
+        }),
+    ], { gap: "4" });
+});
+
+// Compile with State.Implementation to enable state functionality
+const compiled = counter.toIR().compile(State.Implementation);
+```
+
+| Signature | Description | Example |
+|-----------|-------------|---------|
+| `State.readTyped(key: string, type: EastType)(): ExprType<OptionType<T>>` | Read typed value from state | `State.readTyped("counter", IntegerType)()` |
+| `State.writeTyped(key: string, value: Option<T>, type: EastType)(): ExprType<NullType>` | Write typed value to state | `State.writeTyped("key", some(42n), IntegerType)()` |
+| `State.initTyped(key: string, defaultValue: T, type: EastType)(): ExprType<NullType>` | Initialize state if not set | `State.initTyped("counter", 0n, IntegerType)()` |
+| `State.has(key: string): ExprType<BooleanType>` | Check if key exists | `State.has("counter")` |
+| `State.Implementation` | Platform functions for compile | `ir.compile(State.Implementation)` |
+| `State.store` | Singleton UI store instance | `State.store.subscribe(...)` |
+
+**Important:** The `readTyped`, `writeTyped`, and `initTyped` functions return East functions that must be invoked with `()`:
+
+```typescript
+// Correct - invoke the returned function
+const value = $.let(State.readTyped("key", IntegerType)());
+$(State.writeTyped("key", some(42n), IntegerType)());
+
+// Wrong - missing ()
+const value = $.let(State.readTyped("key", IntegerType));  // Error!
+```
+
+### State.read / State.write (Low-level)
+
+Low-level functions for manual Beast2 encoding/decoding.
+
+```typescript
+import { East, IntegerType, NullType, some } from "@elaraai/east";
+import { State, UIComponentType, Text } from "@elaraai/east-ui";
+
+const example = East.function([], UIComponentType, $ => {
+    // Read raw blob
+    const count = $.let(0n);
+    $.match($(State.read("counter")), {
+        some: ($, blob) => $.assign(count, blob.decodeBeast(IntegerType, "v2")),
+    });
+
+    // Write raw blob
+    const onClick = East.function([], NullType, $ => {
+        const newBlob = East.Blob.encodeBeast(East.value(42n), "v2");
+        $(State.write("counter", some(newBlob)));
+    });
+
+    return Text.Root(East.str`Count: ${count}`);
+});
+```
+
+---
+
+## Reactive Components
+
+`Reactive.Root` creates components that re-render independently when their state dependencies change. This enables efficient updates where only affected parts of the UI re-render.
+
+### Reactive.Root
+
+```typescript
+import { East, IntegerType, NullType, some } from "@elaraai/east";
+import { Reactive, State, Text, Button, Stack, UIComponentType } from "@elaraai/east-ui";
+
+const app = East.function([], UIComponentType, $ => {
+    // Initialize state
+    $(State.initTyped("counter", 0n, IntegerType)());
+
+    return Stack.VStack([
+        // This component re-renders only when "counter" changes
+        Reactive.Root($ => {
+            const count = $.let(State.readTyped("counter", IntegerType)());
+            return Text.Root(East.str`Count: ${count.unwrap("some")}`);
+        }),
+
+        // Button triggers state update
+        Button.Root("Increment", {
+            onClick: East.function([], NullType, $ => {
+                const current = $.let(State.readTyped("counter", IntegerType)());
+                $(State.writeTyped("counter", some(current.unwrap("some").add(1n)), IntegerType)());
+            })
+        }),
+    ], { gap: "4" });
+});
+```
+
+| Signature | Description | Example |
+|-----------|-------------|---------|
+| `Reactive.Root(body: ($) => UIComponentType): ExprType<UIComponentType>` | Create reactive component | `Reactive.Root($ => Text.Root("Hi"))` |
+
+**Important Constraints:**
+
+The body function passed to `Reactive.Root` must be a **free function** with no captures from parent East scope:
+
+```typescript
+// ✅ Correct - no captures, state read inside body
+Reactive.Root($ => {
+    const count = $.let(State.readTyped("counter", IntegerType)());
+    return Text.Root(East.str`Count: ${count.unwrap("some")}`);
+});
+
+// ❌ Wrong - captures 'parentValue' from parent scope
+const parentValue = $.let(42n);
+Reactive.Root($ => {
+    return Text.Root(East.str`Value: ${parentValue}`);  // Error! Capture detected
+});
+```
+
+**What IS allowed inside Reactive.Root:**
+- Platform functions (`State.readTyped`, `State.writeTyped`, etc.)
+- Module-level constants and functions
+- Callbacks defined inside the body (`East.function`)
+- Variables defined inside the body (`$.let`)
+
+**What is NOT allowed:**
+- Parent East function scope variables (`$.let`, parameters)
+- Any variable captured from enclosing East function scope
+
+If you need to share data between parent and reactive components, use `State` for that shared data.
 
 ---
 

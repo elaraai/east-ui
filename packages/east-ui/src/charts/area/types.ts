@@ -90,23 +90,9 @@ export type AreaChartType = typeof AreaChartType;
 // ============================================================================
 
 /**
- * TypeScript interface for Area chart style options.
- *
- * @remarks
- * All properties are optional and accept either static values or East expressions.
- *
- * @property xAxis - X-axis configuration
- * @property yAxis - Y-axis configuration
- * @property curveType - Line curve interpolation type
- * @property stacked - Enable stacking of series
- * @property stackOffset - Stack offset mode (none, expand for 100%, etc.)
- * @property fillOpacity - Fill opacity (0-1, applies to all series unless overridden)
- * @property connectNulls - Connect line across null data points
- * @property margin - Chart margin configuration
+ * Base style options shared by Area and AreaMulti charts.
  */
-export interface AreaChartStyle extends BaseChartStyle {
-    /** X-axis configuration */
-    xAxis?: SubtypeExprOrValue<ChartAxisType>;
+export interface AreaChartStyleBase extends BaseChartStyle {
     /** Y-axis configuration */
     yAxis?: SubtypeExprOrValue<ChartAxisType>;
     /** Line curve interpolation type */
@@ -121,6 +107,36 @@ export interface AreaChartStyle extends BaseChartStyle {
     connectNulls?: SubtypeExprOrValue<BooleanType>;
     /** Chart margin configuration */
     margin?: SubtypeExprOrValue<ChartMarginType>;
+}
+
+/**
+ * Style for Area charts (single array form).
+ *
+ * @typeParam DataKey - Union of field keys from the data struct
+ */
+export interface AreaChartStyle<DataKey extends string = string> extends AreaChartStyleBase {
+    /** X-axis configuration with type-safe dataKey */
+    xAxis?: { dataKey: DataKey };
+}
+
+/**
+ * Style for AreaMulti charts (multi-series with separate arrays).
+ *
+ * @typeParam DataKey - Union of field keys from series array structs
+ * @typeParam NumericKey - Union of numeric field keys (for valueKey)
+ * @typeParam SeriesKey - Union of series names (record keys)
+ */
+export interface AreaChartMultiStyle<
+    DataKey extends string = string,
+    NumericKey extends string = string,
+    SeriesKey extends string = string
+> extends AreaChartStyleBase {
+    /** X-axis configuration with type-safe dataKey */
+    xAxis?: { dataKey: DataKey };
+    /** Field name containing Y values in each series array (must be numeric) */
+    valueKey: NumericKey;
+    /** Per-series configuration (keyed by series name) */
+    series?: { [K in SeriesKey]?: AreaChartSeriesConfig };
 }
 
 /**

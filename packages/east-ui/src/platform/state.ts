@@ -145,7 +145,6 @@ export const state_read = East.platform("state_read", [StringType], OptionType(B
 export const state_has = East.platform("state_has", [StringType], BooleanType);
 
 
-
 /**
  * Singleton UI store instance for state management.
  *

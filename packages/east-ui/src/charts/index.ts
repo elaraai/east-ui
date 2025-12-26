@@ -12,10 +12,14 @@
  * Chakra-native for BarList and BarSegment).
  *
  * All charts are accessed via the `Chart` namespace:
- * - `Chart.Area` - filled area charts
- * - `Chart.Bar` - bar charts (vertical or horizontal)
- * - `Chart.Line` - line charts
- * - `Chart.Scatter` - scatter plots
+ * - `Chart.Area` - filled area charts (single array, all series share data points)
+ * - `Chart.AreaMulti` - filled area charts (multi-series with separate arrays, sparse data)
+ * - `Chart.Bar` - bar charts (single array, all series share data points)
+ * - `Chart.BarMulti` - bar charts (multi-series with separate arrays, sparse data)
+ * - `Chart.Line` - line charts (single array, all series share data points)
+ * - `Chart.LineMulti` - line charts (multi-series with separate arrays, sparse data)
+ * - `Chart.Scatter` - scatter plots (single array, all series share data points)
+ * - `Chart.ScatterMulti` - scatter plots (multi-series with separate arrays, sparse data)
  * - `Chart.Pie` - pie/donut charts
  * - `Chart.Radar` - radar/spider charts
  * - `Chart.BarList` - horizontal bar comparison (Chakra-native)
@@ -47,20 +51,20 @@ export {
 } from "./types.js";
 
 // Area chart
-import { createAreaChart } from "./area/index.js";
-export { AreaChartType, type AreaChartStyle } from "./area/index.js";
+import { createAreaChart, createAreaChartMulti } from "./area/index.js";
+export { AreaChartType, type AreaChartStyle, type AreaChartMultiStyle, type AreaChartSeriesConfig } from "./area/index.js";
 
 // Bar chart
-import { createBarChart } from "./bar/index.js";
-export { BarChartType, type BarChartStyle } from "./bar/index.js";
+import { createBarChart, createBarChartMulti } from "./bar/index.js";
+export { BarChartType, type BarChartStyle, type BarChartMultiStyle, type BarChartSeriesConfig } from "./bar/index.js";
 
 // Line chart
-import { createLineChart } from "./line/index.js";
-export { LineChartType, type LineChartStyle } from "./line/index.js";
+import { createLineChart, createLineChartMulti } from "./line/index.js";
+export { LineChartType, LineChartSeriesType, type LineChartStyle, type LineChartMultiStyle, type LineChartSeriesConfig } from "./line/index.js";
 
 // Scatter chart
-import { createScatterChart } from "./scatter/index.js";
-export { ScatterChartType, type ScatterChartStyle } from "./scatter/index.js";
+import { createScatterChart, createScatterChartMulti } from "./scatter/index.js";
+export { ScatterChartType, type ScatterChartStyle, type ScatterChartMultiStyle, type ScatterChartSeriesConfig } from "./scatter/index.js";
 
 // Pie chart
 import { createPieChart } from "./pie/index.js";
@@ -135,134 +139,277 @@ import { BarSegmentType, BarSegmentItemType } from "./bar-segment/index.js";
  */
 export const Chart = {
     /**
-     * Creates an Area chart component.
+     * Creates an Area chart component from a single data array.
      *
-     * @param data - Array of data points
-     * @param series - Series configuration keyed by field names
-     * @param style - Optional styling configuration
+     * @param data - Array of data points (each point has x-axis value + y-axis values)
+     * @param series - Series specification: array of numeric field names, or object with config
+     * @param style - Optional styling with type-safe xAxis.dataKey
      * @returns An East expression representing the area chart component
      *
      * @remarks
-     * Area charts display quantitative data as filled areas under lines.
-     * Supports stacking for showing part-to-whole relationships.
+     * All series share the same data points. Series keys are numeric field names.
+     * Use this when all series have values at the same x-axis points.
+     * For sparse data where series don't share all points, use `Chart.AreaMulti`.
      *
-     * @example
+     * @example Array form (just field names)
      * ```ts
-     * import { East } from "@elaraai/east";
-     * import { Chart, UIComponentType } from "@elaraai/east-ui";
+     * Chart.Area(
+     *     [
+     *         { month: "Jan", revenue: 100n, profit: 50n },
+     *         { month: "Feb", revenue: 200n, profit: 80n },
+     *     ],
+     *     ["revenue", "profit"],
+     *     { xAxis: { dataKey: "month" } }
+     * );
+     * ```
      *
-     * const example = East.function([], UIComponentType, $ => {
-     *     return Chart.Area(
-     *         [
-     *             { month: "Jan", revenue: 186n, profit: 80n },
-     *             { month: "Feb", revenue: 305n, profit: 120n },
-     *         ],
-     *         {
-     *             revenue: { color: "teal.solid" },
-     *             profit: { color: "purple.solid" },
-     *         },
-     *         { xAxis: Chart.Axis({ dataKey: "month" }) }
-     *     );
-     * });
+     * @example Object form (with per-series config)
+     * ```ts
+     * Chart.Area(
+     *     data,
+     *     { revenue: { color: "teal.solid" }, profit: { color: "purple.solid" } },
+     *     { xAxis: { dataKey: "month" }, stacked: true }
+     * );
      * ```
      */
     Area: createAreaChart,
     /**
-     * Creates a Bar chart component.
+     * Creates an Area chart component from multiple data arrays (one per series).
      *
-     * @param data - Array of data points
-     * @param series - Series configuration keyed by field names
-     * @param style - Optional styling configuration
-     * @returns An East expression representing the bar chart component
+     * @param data - Record mapping series names to their data arrays
+     * @param style - Styling with type-safe xAxis.dataKey and valueKey
+     * @returns An East expression representing the area chart component
      *
      * @remarks
-     * Bar charts display categorical data with rectangular bars.
-     * Supports vertical and horizontal layouts, stacked and grouped modes.
+     * Each series has its own data array, allowing sparse data where series
+     * don't need to have values at every x-axis point.
      *
      * @example
      * ```ts
-     * import { East } from "@elaraai/east";
-     * import { Chart, UIComponentType } from "@elaraai/east-ui";
-     *
-     * const example = East.function([], UIComponentType, $ => {
-     *     return Chart.Bar(
-     *         [
-     *             { category: "A", value: 100n },
-     *             { category: "B", value: 200n },
+     * Chart.AreaMulti(
+     *     {
+     *         revenue: [
+     *             { month: "Jan", value: 100n },
+     *             { month: "Feb", value: 200n },
      *         ],
-     *         { value: { color: "blue.solid" } },
-     *         { xAxis: Chart.Axis({ dataKey: "category" }) }
-     *     );
-     * });
+     *         profit: [
+     *             { month: "Jan", value: 50n },
+     *             { month: "Mar", value: 150n },
+     *         ],
+     *     },
+     *     {
+     *         xAxis: { dataKey: "month" },
+     *         valueKey: "value",
+     *         series: { revenue: { color: "teal.solid" } },
+     *     }
+     * );
+     * ```
+     */
+    AreaMulti: createAreaChartMulti,
+    /**
+     * Creates a Bar chart component from a single data array.
+     *
+     * @param data - Array of data points (each point has x-axis value + y-axis values)
+     * @param series - Series specification: array of numeric field names, or object with config
+     * @param style - Optional styling with type-safe xAxis.dataKey
+     * @returns An East expression representing the bar chart component
+     *
+     * @remarks
+     * All series share the same data points. Series keys are numeric field names.
+     * Use this when all series have values at the same x-axis points.
+     * For sparse data where series don't share all points, use `Chart.BarMulti`.
+     *
+     * @example Array form (just field names)
+     * ```ts
+     * Chart.Bar(
+     *     [
+     *         { month: "Jan", revenue: 100n, profit: 50n },
+     *         { month: "Feb", revenue: 200n, profit: 80n },
+     *     ],
+     *     ["revenue", "profit"],
+     *     { xAxis: { dataKey: "month" } }
+     * );
+     * ```
+     *
+     * @example Object form (with per-series config)
+     * ```ts
+     * Chart.Bar(
+     *     data,
+     *     { revenue: { color: "teal.solid" }, profit: { color: "purple.solid" } },
+     *     { xAxis: { dataKey: "month" }, stacked: true }
+     * );
      * ```
      */
     Bar: createBarChart,
     /**
-     * Creates a Line chart component.
+     * Creates a Bar chart component from multiple data arrays (one per series).
      *
-     * @param data - Array of data points
-     * @param series - Series configuration keyed by field names
-     * @param style - Optional styling configuration
-     * @returns An East expression representing the line chart component
+     * @param data - Record mapping series names to their data arrays
+     * @param style - Styling with type-safe xAxis.dataKey and valueKey
+     * @returns An East expression representing the bar chart component
      *
      * @remarks
-     * Line charts display data points connected by line segments.
-     * Ideal for showing trends over time.
+     * Each series has its own data array, allowing sparse data where series
+     * don't need to have values at every x-axis point.
      *
      * @example
      * ```ts
-     * import { East } from "@elaraai/east";
-     * import { Chart, UIComponentType } from "@elaraai/east-ui";
-     *
-     * const example = East.function([], UIComponentType, $ => {
-     *     return Chart.Line(
-     *         [
-     *             { month: "Jan", revenue: 186n, profit: 80n },
-     *             { month: "Feb", revenue: 305n, profit: 120n },
+     * Chart.BarMulti(
+     *     {
+     *         revenue: [
+     *             { month: "Jan", value: 100n },
+     *             { month: "Feb", value: 200n },
      *         ],
-     *         {
-     *             revenue: { color: "teal.solid" },
-     *             profit: { color: "purple.solid" },
-     *         },
-     *         {
-     *             xAxis: Chart.Axis({ dataKey: "month" }),
-     *             showDots: true,
-     *         }
-     *     );
-     * });
+     *         profit: [
+     *             { month: "Jan", value: 50n },
+     *             { month: "Mar", value: 150n },
+     *         ],
+     *     },
+     *     {
+     *         xAxis: { dataKey: "month" },
+     *         valueKey: "value",
+     *         series: { revenue: { color: "teal.solid" } },
+     *     }
+     * );
+     * ```
+     */
+    BarMulti: createBarChartMulti,
+    /**
+     * Creates a Line chart component from a single data array.
+     *
+     * @param data - Array of data points (each point has x-axis value + y-axis values)
+     * @param series - Series specification: array of numeric field names, or object with config
+     * @param style - Optional styling with type-safe xAxis.dataKey
+     * @returns An East expression representing the line chart component
+     *
+     * @remarks
+     * All series share the same data points. Series keys are numeric field names.
+     * Use this when all series have values at the same x-axis points.
+     * For sparse data where series don't share all points, use `Chart.LineMulti`.
+     *
+     * @example Array form (just field names)
+     * ```ts
+     * Chart.Line(
+     *     [
+     *         { month: "Jan", revenue: 100n, profit: 50n },
+     *         { month: "Feb", revenue: 200n, profit: 80n },
+     *     ],
+     *     ["revenue", "profit"],
+     *     { xAxis: { dataKey: "month" } }
+     * );
+     * ```
+     *
+     * @example Object form (with per-series config)
+     * ```ts
+     * Chart.Line(
+     *     data,
+     *     { revenue: { color: "teal.solid" }, profit: { color: "purple.solid" } },
+     *     { xAxis: { dataKey: "month" }, showDots: true }
+     * );
      * ```
      */
     Line: createLineChart,
     /**
-     * Creates a Scatter chart component.
+     * Creates a Line chart component from multiple data arrays (one per series).
      *
-     * @param data - Array of data points
-     * @param series - Series configuration keyed by field names
-     * @param style - Optional styling configuration
-     * @returns An East expression representing the scatter chart component
+     * @param data - Record mapping series names to their data arrays
+     * @param style - Styling with type-safe xAxis.dataKey and valueKey
+     * @returns An East expression representing the line chart component
      *
      * @remarks
-     * Scatter charts display individual data points on a coordinate plane.
-     * Ideal for showing relationships between two variables.
+     * Each series has its own data array, allowing sparse data where series
+     * don't need to have values at every x-axis point.
      *
      * @example
      * ```ts
-     * import { East } from "@elaraai/east";
-     * import { Chart, UIComponentType } from "@elaraai/east-ui";
-     *
-     * const example = East.function([], UIComponentType, $ => {
-     *     return Chart.Scatter(
-     *         [
-     *             { x: 10n, y: 30n },
-     *             { x: 20n, y: 40n },
+     * Chart.LineMulti(
+     *     {
+     *         revenue: [
+     *             { month: "Jan", value: 100n },
+     *             { month: "Feb", value: 200n },
      *         ],
-     *         { y: { color: "purple.solid" } },
-     *         { xAxis: Chart.Axis({ dataKey: "x" }) }
-     *     );
-     * });
+     *         profit: [
+     *             { month: "Jan", value: 50n },
+     *             // Feb is missing - sparse data!
+     *             { month: "Mar", value: 150n },
+     *         ],
+     *     },
+     *     {
+     *         xAxis: { dataKey: "month" },
+     *         valueKey: "value",
+     *         series: { revenue: { color: "teal.solid" } },
+     *     }
+     * );
+     * ```
+     */
+    LineMulti: createLineChartMulti,
+    /**
+     * Creates a Scatter chart component from a single data array.
+     *
+     * @param data - Array of data points (each point has x + y values)
+     * @param series - Series specification: array of numeric field names, or object with config
+     * @param style - Optional styling with type-safe xDataKey and yDataKey
+     * @returns An East expression representing the scatter chart component
+     *
+     * @remarks
+     * All series share the same data points. Series keys are numeric field names.
+     * For sparse data where series don't share all points, use `Chart.ScatterMulti`.
+     *
+     * @example Array form (just field names)
+     * ```ts
+     * Chart.Scatter(
+     *     [
+     *         { x: 10n, y: 30n },
+     *         { x: 20n, y: 40n },
+     *     ],
+     *     ["y"],
+     *     { xDataKey: "x", yDataKey: "y" }
+     * );
+     * ```
+     *
+     * @example Object form (with per-series config)
+     * ```ts
+     * Chart.Scatter(
+     *     data,
+     *     { y: { color: "purple.solid" } },
+     *     { xDataKey: "x" }
+     * );
      * ```
      */
     Scatter: createScatterChart,
+    /**
+     * Creates a Scatter chart component from multiple data arrays (one per series).
+     *
+     * @param data - Record mapping series names to their data arrays
+     * @param style - Styling with type-safe xDataKey and valueKey
+     * @returns An East expression representing the scatter chart component
+     *
+     * @remarks
+     * Each series has its own data array, allowing sparse data where series
+     * don't need to have values at every x-axis point.
+     *
+     * @example
+     * ```ts
+     * Chart.ScatterMulti(
+     *     {
+     *         series1: [
+     *             { x: 10n, value: 30n },
+     *             { x: 20n, value: 40n },
+     *         ],
+     *         series2: [
+     *             { x: 15n, value: 35n },
+     *             { x: 25n, value: 45n },
+     *         ],
+     *     },
+     *     {
+     *         xDataKey: "x",
+     *         valueKey: "value",
+     *         series: { series1: { color: "purple.solid" } },
+     *     }
+     * );
+     * ```
+     */
+    ScatterMulti: createScatterChartMulti,
     /**
      * Creates a Pie or Donut chart component.
      *

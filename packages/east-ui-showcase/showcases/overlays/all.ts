@@ -168,7 +168,7 @@ export default East.function(
                                 value: { color: "blue.solid", },
                             },
                             {
-                                xAxis: Chart.Axis({ dataKey: "day", }),
+                                xAxis: { dataKey: "day" },
                                 fillOpacity: 0.3,
                                 margin: Chart.Margin({ top: 30n, right: 0n, bottom: 0n, left: -20n }),
                             }
@@ -179,7 +179,7 @@ export default East.function(
                 some(`
                     Popover.Root(
                         Button.Root("View Stats", { variant: "solid", colorPalette: "blue" }),
-                        [Chart.Area(data, series, { xAxis: Chart.Axis({ dataKey: "day" }) })],
+                        [Chart.Area(data, series, { xAxis: { dataKey: "day" } })],
                         { hasArrow: true, title: "Weekly Sales" }
                     )
                 `)

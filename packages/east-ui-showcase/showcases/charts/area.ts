@@ -27,7 +27,7 @@ export default East.function(
                             revenue: { color: "teal.solid" },
                         },
                         {
-                            xAxis: Chart.Axis({ dataKey: "month" }),
+                            xAxis: { dataKey: "month" },
                             grid: Chart.Grid({ show: true }),
                         }
                     ),
@@ -46,7 +46,7 @@ export default East.function(
                                 revenue: { color: "teal.solid" },
                             },
                             {
-                                xAxis: Chart.Axis({ dataKey: "month" }),
+                                xAxis: { dataKey: "month" },
                                 grid: Chart.Grid({ show: true }),
                             }
                         ),
@@ -74,7 +74,7 @@ export default East.function(
                             linux: { color: "blue.solid" },
                         },
                         {
-                            xAxis: Chart.Axis({ dataKey: "month" }),
+                            xAxis: { dataKey: "month" },
                             legend: Chart.Legend({ show: true }),
                             tooltip: Chart.Tooltip({ show: true }),
                         }
@@ -95,7 +95,7 @@ export default East.function(
                                 linux: { color: "blue.solid" },
                             },
                             {
-                                xAxis: Chart.Axis({ dataKey: "month" }),
+                                xAxis: { dataKey: "month" },
                                 legend: Chart.Legend({ show: true }),
                                 tooltip: Chart.Tooltip({ show: true }),
                             }
@@ -123,7 +123,7 @@ export default East.function(
                             linux: { color: "blue.solid", stackId: "a" },
                         },
                         {
-                            xAxis: Chart.Axis({ dataKey: "month" }),
+                            xAxis: { dataKey: "month" },
                             stacked: true,
                             legend: Chart.Legend({ show: true }),
                         }
@@ -143,7 +143,7 @@ export default East.function(
                                 linux: { color: "blue.solid", stackId: "a" },
                             },
                             {
-                                xAxis: Chart.Axis({ dataKey: "month" }),
+                                xAxis: { dataKey: "month" },
                                 stacked: true,
                                 legend: Chart.Legend({ show: true }),
                             }
@@ -171,7 +171,7 @@ export default East.function(
                             linux: { color: "blue.solid", stackId: "a" },
                         },
                         {
-                            xAxis: Chart.Axis({ dataKey: "month" }),
+                            xAxis: { dataKey: "month" },
                             yAxis: Chart.Axis({ tickFormat: "percent" }),
                             stacked: true,
                             stackOffset: "expand",
@@ -193,7 +193,7 @@ export default East.function(
                                 linux: { color: "blue.solid", stackId: "a" },
                             },
                             {
-                                xAxis: Chart.Axis({ dataKey: "month" }),
+                                xAxis: { dataKey: "month" },
                                 yAxis: Chart.Axis({ tickFormat: "percent" }),
                                 stacked: true,
                                 stackOffset: "expand",
@@ -223,7 +223,7 @@ export default East.function(
                             revenue: { color: "green.solid" },
                         },
                         {
-                            xAxis: Chart.Axis({ dataKey: "month" }),
+                            xAxis: { dataKey: "month" },
                             curveType: "natural",
                             fillOpacity: 0.3,
                             grid: Chart.Grid({ show: true }),
@@ -244,7 +244,7 @@ export default East.function(
                                 revenue: { color: "green.solid" },
                             },
                             {
-                                xAxis: Chart.Axis({ dataKey: "month" }),
+                                xAxis: { dataKey: "month" },
                                 curveType: "natural",
                                 fillOpacity: 0.3,
                                 grid: Chart.Grid({ show: true }),
@@ -272,7 +272,7 @@ export default East.function(
                             sales: { color: "blue.solid" },
                         },
                         {
-                            xAxis: Chart.Axis({ dataKey: "month" }),
+                            xAxis: { dataKey: "month" },
                             fillOpacity: 0.2,
                             grid: Chart.Grid({ show: true }),
                             tooltip: Chart.Tooltip({ show: true }),
@@ -292,7 +292,7 @@ export default East.function(
                                 sales: { color: "blue.solid" },
                             },
                             {
-                                xAxis: Chart.Axis({ dataKey: "month" }),
+                                xAxis: { dataKey: "month" },
                                 fillOpacity: 0.2,
                                 grid: Chart.Grid({ show: true }),
                                 tooltip: Chart.Tooltip({ show: true }),
@@ -309,7 +309,7 @@ export default East.function(
                 "Sparse Multi-Series",
                 "Separate arrays for each series (avoids null values)",
                 Box.Root([
-                    Chart.Area(
+                    Chart.AreaMulti(
                         {
                             windows: [
                                 { month: "Jan", value: 186n },
@@ -325,12 +325,12 @@ export default East.function(
                             ],
                         },
                         {
-                            windows: { color: "teal.solid" },
-                            mac: { color: "purple.solid" },
-                        },
-                        {
-                            xAxis: Chart.Axis({ dataKey: "month" }),
+                            xAxis: { dataKey: "month" },
                             valueKey: "value",
+                            series: {
+                                windows: { color: "teal.solid" },
+                                mac: { color: "purple.solid" },
+                            },
                             connectNulls: true,
                             tooltip: Chart.Tooltip({ show: true }),
                             legend: Chart.Legend({ show: true }),
@@ -340,7 +340,7 @@ export default East.function(
                 ], { height: "220px", width: "100%" }),
                 some(`
                     Box.Root([
-                        Chart.Area(
+                        Chart.AreaMulti(
                             {
                                 windows: [
                                     { month: "Jan", value: 186n },
@@ -356,12 +356,12 @@ export default East.function(
                                 ],
                             },
                             {
-                                windows: { color: "teal.solid" },
-                                mac: { color: "purple.solid" },
-                            },
-                            {
-                                xAxis: Chart.Axis({ dataKey: "month" }),
+                                xAxis: { dataKey: "month" },
                                 valueKey: "value",
+                                series: {
+                                    windows: { color: "teal.solid" },
+                                    mac: { color: "purple.solid" },
+                                },
                                 connectNulls: true,
                                 tooltip: Chart.Tooltip({ show: true }),
                                 legend: Chart.Legend({ show: true }),

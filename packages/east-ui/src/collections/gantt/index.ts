@@ -23,6 +23,7 @@ import {
     type EastType,
     type EastTypeValue,
     LiteralValueType,
+    isTypeValueEqual,
 } from "@elaraai/east";
 
 import { ColorSchemeType } from "../../style.js";
@@ -295,15 +296,20 @@ function createGantt<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
     const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
     const field_types = Expr.type(data_expr).value.fields;
 
-    // Normalize columns to object format, converting field types to EastTypeValue
-    const columns_obj = Array.isArray(columns)
-        ? Object.fromEntries((columns as string[]).map(key => [key, {
-            type: toEastTypeValue(field_types[key as keyof typeof field_types] as EastType)
-        }])) as Record<string, TableColumnConfig & { type: EastTypeValue }>
-        : Object.fromEntries((Object.entries(columns)).map(([key, value]) => [key, {
-            ...value,
-            type: toEastTypeValue(field_types[key as keyof typeof field_types] as EastType)
-        }])) as Record<string, TableColumnConfig & { type: EastTypeValue }>;
+    // Normalize columns to object format
+    // dataType: the original field type from the data struct
+    // valueType: the type after applying value function (computed during row mapping)
+    const columnEntries = Array.isArray(columns)
+        ? (columns as string[]).map(key => [key, undefined] as const)
+        : Object.entries(columns);
+
+    const columns_obj = Object.fromEntries(columnEntries.map(([key, config]) => {
+        const fieldType = field_types[key as keyof typeof field_types] as EastType;
+        return [key, {
+            ...config,
+            dataType: toEastTypeValue(fieldType),
+        }];
+    })) as Record<string, TableColumnConfig & { dataType: EastTypeValue; valueType: EastTypeValue }>;
 
     // Map each data row to a GanttRow with cells and events
     const rows_mapped = data_expr.map(($, datum) => {
@@ -325,6 +331,29 @@ function createGantt<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
                 cellValue = variant(customValueType.type as any, customValue);
             } else {
                 cellValue = variant(field_type.type, field_value);
+            }
+
+            // get the value type tag from cellValue
+            const valueTypeTag = cellValue.type as string;
+
+            // check that the type is a valid LiteralValueType (primitive) tag
+            if (valueTypeTag !== "Null" && valueTypeTag !== "Boolean" && valueTypeTag !== "Integer" &&
+                valueTypeTag !== "Float" && valueTypeTag !== "String" && valueTypeTag !== "DateTime" &&
+                valueTypeTag !== "Blob") {
+                throw new Error(`Column "${col_key}" has value type "${valueTypeTag}" which is not a valid column type. Complex types require a value function that returns a primitive type.`);
+            }
+
+            // get the valueType as EastTypeValue
+            const valueType = variant(valueTypeTag, null) as EastTypeValue;
+
+            // if valueType in columns_obj is already defined, check it matches
+            if (col_config.valueType !== undefined) {
+                if (!isTypeValueEqual(col_config.valueType, valueType)) {
+                    throw new Error(`Column "${col_key}" has inconsistent value types across rows: expected "${col_config.valueType.type}" but got "${valueTypeTag}"`);
+                }
+            } else {
+                // set the valueType for this column
+                (col_config as any).valueType = valueType;
             }
 
             $(cells.insert(col_key, {
@@ -356,7 +385,8 @@ function createGantt<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
     for (const [key, config] of Object.entries(columns_obj)) {
         columns_mapped.push({
             key: key,
-            type: config.type,
+            dataType: config.dataType,
+            valueType: config.valueType,
             header: config?.header !== undefined ? some(config.header) : some(key) as any,
             width: config?.width !== undefined ? some(config.width) : none as any,
             minWidth: config?.minWidth !== undefined ? some(config.minWidth) : none as any,

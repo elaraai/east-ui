@@ -30,7 +30,7 @@ const areaChartExample = East.function([], UIComponentType, $ => {
             revenue: { color: "teal.solid" },
             profit: { color: "purple.solid" },
         },
-        { xAxis: Chart.Axis({ dataKey: "month" }) }
+        { xAxis: { dataKey: "month" } }
     );
 });
 areaChartExample.toIR().compile([])();
@@ -47,7 +47,7 @@ const chartAreaExample = East.function([], UIComponentType, $ => {
             revenue: { color: "teal.solid" },
             profit: { color: "purple.solid" },
         },
-        { xAxis: Chart.Axis({ dataKey: "month" }) }
+        { xAxis: { dataKey: "month" } }
     );
 });
 chartAreaExample.toIR().compile([])();
@@ -65,7 +65,7 @@ const chartBarExample = East.function([], UIComponentType, $ => {
             { category: "B", value: 200n },
         ],
         { value: { color: "blue.solid" } },
-        { xAxis: Chart.Axis({ dataKey: "category" }) }
+        { xAxis: { dataKey: "category" } }
     );
 });
 chartBarExample.toIR().compile([])();
@@ -87,7 +87,7 @@ const chartLineExample = East.function([], UIComponentType, $ => {
             profit: { color: "purple.solid" },
         },
         {
-            xAxis: Chart.Axis({ dataKey: "month" }),
+            xAxis: { dataKey: "month" },
             showDots: true,
         }
     );
@@ -103,11 +103,11 @@ chartLineExample.toIR().compile([])();
 const chartScatterExample = East.function([], UIComponentType, $ => {
     return Chart.Scatter(
         [
-            { x: 10n, y: 30n },
-            { x: 20n, y: 40n },
+            { x: 10, y: 30 },
+            { x: 20, y: 40 },
         ],
         { y: { color: "purple.solid" } },
-        { xAxis: Chart.Axis({ dataKey: "x" }) }
+        { xDataKey: "x", yDataKey: "y" }
     );
 });
 chartScatterExample.toIR().compile([])();

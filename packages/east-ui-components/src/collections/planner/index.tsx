@@ -268,8 +268,8 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
     // Create TanStack Table columns from East UI columns
     const columns = useMemo<ColumnDef<PlannerRowValue, PlannerCellValue | undefined>[]>(() => {
         return value.columns.map((col) => {
-            const print = printFor(col.type);
-            const compare = compareFor(col.type);
+            const print = printFor(col.valueType);
+            const compare = compareFor(col.valueType);
 
             // Extract width values from column config
             const width = getSomeorUndefined(col.width);

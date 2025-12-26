@@ -135,9 +135,10 @@ export type LineChartType = typeof LineChartType;
  * @property connectNulls - Connect line across null data points
  * @property margin - Chart margin configuration
  */
-export interface LineChartStyle extends BaseChartStyle {
-    /** X-axis configuration */
-    xAxis?: SubtypeExprOrValue<ChartAxisType>;
+/**
+ * Base style options shared by Line and LineMulti charts.
+ */
+export interface LineChartStyleBase extends BaseChartStyle {
     /** Y-axis configuration */
     yAxis?: SubtypeExprOrValue<ChartAxisType>;
     /** Line curve interpolation type */
@@ -150,6 +151,36 @@ export interface LineChartStyle extends BaseChartStyle {
     connectNulls?: SubtypeExprOrValue<BooleanType>;
     /** Chart margin configuration */
     margin?: SubtypeExprOrValue<ChartMarginType>;
+}
+
+/**
+ * Style for Line charts (single array form).
+ *
+ * @typeParam DataKey - Union of field keys from the data struct
+ */
+export interface LineChartStyle<DataKey extends string = string> extends LineChartStyleBase {
+    /** X-axis configuration with type-safe dataKey */
+    xAxis?: { dataKey: DataKey };
+}
+
+/**
+ * Style for LineMulti charts (multi-series with separate arrays).
+ *
+ * @typeParam DataKey - Union of field keys from series array structs
+ * @typeParam NumericKey - Union of numeric field keys (for valueKey)
+ * @typeParam SeriesKey - Union of series names (record keys)
+ */
+export interface LineChartMultiStyle<
+    DataKey extends string = string,
+    NumericKey extends string = string,
+    SeriesKey extends string = string
+> extends LineChartStyleBase {
+    /** X-axis configuration with type-safe dataKey */
+    xAxis?: { dataKey: DataKey };
+    /** Field name containing Y values in each series array (must be numeric) */
+    valueKey: NumericKey;
+    /** Per-series configuration (keyed by series name) */
+    series?: { [K in SeriesKey]?: LineChartSeriesConfig };
 }
 
 /**

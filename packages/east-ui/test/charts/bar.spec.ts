@@ -14,10 +14,10 @@ describeEast("Chart.Bar", (test) => {
     test("creates basic bar chart (vertical bars)", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { type: "Stock", allocation: 60 },
-                { type: "Crypto", allocation: 45 },
-                { type: "ETF", allocation: 12 },
-                { type: "Cash", allocation: 4 },
+                { type: "Stock", allocation: 60n },
+                { type: "Crypto", allocation: 45n },
+                { type: "ETF", allocation: 12n },
+                { type: "Cash", allocation: 4n },
             ],
             { allocation: { color: "teal.solid" } }
         ));
@@ -28,13 +28,25 @@ describeEast("Chart.Bar", (test) => {
         $(assertEast.equal(chart.unwrap("BarChart").series.get(0n).color.unwrap("some"), "teal.solid"));
     });
 
+    test("creates bar chart with array series spec", $ => {
+        const chart = $.let(Chart.Bar(
+            [
+                { type: "Stock", allocation: 60n },
+            ],
+            ["allocation"]
+        ));
+
+        $(assertEast.equal(chart.unwrap("BarChart").series.size(), 1n));
+        $(assertEast.equal(chart.unwrap("BarChart").series.get(0n).name, "allocation"));
+    });
+
     test("creates bar chart with x-axis dataKey", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { type: "Stock", allocation: 60 },
+                { type: "Stock", allocation: 60n },
             ],
             { allocation: { color: "teal.solid" } },
-            { xAxis: Chart.Axis({ dataKey: "type" }) }
+            { xAxis: { dataKey: "type" } }
         ));
 
         $(assertEast.equal(chart.unwrap("BarChart").xAxis.unwrap("some").dataKey.unwrap("some"), "type"));
@@ -47,15 +59,15 @@ describeEast("Chart.Bar", (test) => {
     test("creates stacked bar chart", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { month: "January", windows: 186, mac: 80, linux: 120 },
-                { month: "February", windows: 165, mac: 95, linux: 110 },
+                { month: "January", windows: 186n, mac: 80n, linux: 120n },
+                { month: "February", windows: 165n, mac: 95n, linux: 110n },
             ],
             {
                 windows: { color: "teal.solid", stackId: "a" },
                 mac: { color: "purple.solid", stackId: "a" },
                 linux: { color: "blue.solid", stackId: "a" },
             },
-            { xAxis: Chart.Axis({ dataKey: "month" }) }
+            { xAxis: { dataKey: "month" } }
         ));
 
         $(assertEast.equal(chart.unwrap("BarChart").series.size(), 3n));
@@ -67,7 +79,7 @@ describeEast("Chart.Bar", (test) => {
     test("creates 100% stacked bar chart with stackOffset expand", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { month: "January", windows: 186, mac: 80, linux: 120 },
+                { month: "January", windows: 186n, mac: 80n, linux: 120n },
             ],
             {
                 windows: { color: "teal.solid", stackId: "a" },
@@ -91,7 +103,7 @@ describeEast("Chart.Bar", (test) => {
     test("creates horizontal bar chart (layout vertical)", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { month: "January", windows: 186, mac: 80, linux: 120 },
+                { month: "January", windows: 186n, mac: 80n, linux: 120n },
             ],
             {
                 windows: { color: "teal.solid", stackId: "a" },
@@ -115,8 +127,8 @@ describeEast("Chart.Bar", (test) => {
     test("creates grouped bar chart (multiple bars per category)", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { type: "mobile", poor: 40, fair: 100, good: 200, excellent: 70 },
-                { type: "marketing", poor: 15, fair: 40, good: 120, excellent: 90 },
+                { type: "mobile", poor: 40n, fair: 100n, good: 200n, excellent: 70n },
+                { type: "marketing", poor: 15n, fair: 40n, good: 120n, excellent: 90n },
             ],
             {
                 poor: { color: "blue.solid" },
@@ -124,7 +136,7 @@ describeEast("Chart.Bar", (test) => {
                 good: { color: "yellow.solid" },
                 excellent: { color: "green.solid" },
             },
-            { xAxis: Chart.Axis({ dataKey: "type" }) }
+            { xAxis: { dataKey: "type" } }
         ));
 
         $(assertEast.equal(chart.unwrap("BarChart").series.size(), 4n));
@@ -139,7 +151,7 @@ describeEast("Chart.Bar", (test) => {
     test("creates bar chart with custom bar size", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { type: "Stock", allocation: 60 },
+                { type: "Stock", allocation: 60n },
             ],
             { allocation: { color: "teal.solid" } },
             { barSize: 30n }
@@ -151,7 +163,7 @@ describeEast("Chart.Bar", (test) => {
     test("creates bar chart with custom bar gap", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { type: "Stock", allocation: 60 },
+                { type: "Stock", allocation: 60n },
             ],
             { allocation: { color: "teal.solid" } },
             { barGap: 10n }
@@ -167,7 +179,7 @@ describeEast("Chart.Bar", (test) => {
     test("creates bar chart with percent y-axis formatter", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { type: "Stock", allocation: 60 },
+                { type: "Stock", allocation: 60n },
             ],
             { allocation: { color: "teal.solid" } },
             { yAxis: Chart.Axis({ tickFormat: "percent", domain: [0, 100] }) }
@@ -179,12 +191,12 @@ describeEast("Chart.Bar", (test) => {
     test("creates bar chart with currency y-axis formatter", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { month: "June", sales: 63000 },
-                { month: "July", sales: 72000 },
+                { month: "June", sales: 63000n },
+                { month: "July", sales: 72000n },
             ],
             { sales: { color: "teal.solid" } },
             {
-                xAxis: Chart.Axis({ dataKey: "month" }),
+                xAxis: { dataKey: "month" },
                 yAxis: Chart.Axis({ tickFormat: Chart.TickFormat.Currency({ currency: "USD" }) })
             }
         ));
@@ -195,7 +207,7 @@ describeEast("Chart.Bar", (test) => {
     test("creates bar chart with compact y-axis formatter", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { month: "June", sales: 63000 },
+                { month: "June", sales: 63000n },
             ],
             { sales: { color: "teal.solid" } },
             { yAxis: Chart.Axis({ tickFormat: "compact" }) }
@@ -211,7 +223,7 @@ describeEast("Chart.Bar", (test) => {
     test("creates bar chart with grid", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { type: "Stock", allocation: 60 },
+                { type: "Stock", allocation: 60n },
             ],
             { allocation: { color: "teal.solid" } },
             { grid: Chart.Grid({ show: true }) }
@@ -223,7 +235,7 @@ describeEast("Chart.Bar", (test) => {
     test("creates bar chart with legend", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { type: "Stock", allocation: 60 },
+                { type: "Stock", allocation: 60n },
             ],
             { allocation: { color: "teal.solid" } },
             { legend: Chart.Legend({ show: true }) }
@@ -235,7 +247,7 @@ describeEast("Chart.Bar", (test) => {
     test("creates bar chart with tooltip", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { type: "Stock", allocation: 60 },
+                { type: "Stock", allocation: 60n },
             ],
             { allocation: { color: "teal.solid" } },
             { tooltip: Chart.Tooltip({ show: true }) }
@@ -251,7 +263,7 @@ describeEast("Chart.Bar", (test) => {
     test("creates bar chart with custom margin", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { type: "Stock", allocation: 60 },
+                { type: "Stock", allocation: 60n },
             ],
             { allocation: { color: "teal.solid" } },
             { margin: Chart.Margin({ top: 20n, right: 30n, bottom: 20n, left: 30n }) }
@@ -268,14 +280,14 @@ describeEast("Chart.Bar", (test) => {
     test("creates complete bar chart matching Chakra BarChartBasic example", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { type: "Stock", allocation: 60 },
-                { type: "Crypto", allocation: 45 },
-                { type: "ETF", allocation: 12 },
-                { type: "Cash", allocation: 4 },
+                { type: "Stock", allocation: 60n },
+                { type: "Crypto", allocation: 45n },
+                { type: "ETF", allocation: 12n },
+                { type: "Cash", allocation: 4n },
             ],
             { allocation: { color: "teal.solid" } },
             {
-                xAxis: Chart.Axis({ dataKey: "type" }),
+                xAxis: { dataKey: "type" },
                 yAxis: Chart.Axis({ domain: [0, 100] }),
                 grid: Chart.Grid({ show: true })
             }
@@ -289,8 +301,8 @@ describeEast("Chart.Bar", (test) => {
     test("creates complete stacked bar chart matching Chakra BarChartStacked example", $ => {
         const chart = $.let(Chart.Bar(
             [
-                { month: "January", windows: 186, mac: 80, linux: 120 },
-                { month: "February", windows: 165, mac: 95, linux: 110 },
+                { month: "January", windows: 186n, mac: 80n, linux: 120n },
+                { month: "February", windows: 165n, mac: 95n, linux: 110n },
             ],
             {
                 windows: { color: "teal.solid", stackId: "a" },
@@ -298,7 +310,7 @@ describeEast("Chart.Bar", (test) => {
                 linux: { color: "blue.solid", stackId: "a" },
             },
             {
-                xAxis: Chart.Axis({ dataKey: "month" }),
+                xAxis: { dataKey: "month" },
                 grid: Chart.Grid({ show: true }),
                 tooltip: Chart.Tooltip({ show: true }),
                 legend: Chart.Legend({ show: true })
@@ -308,5 +320,35 @@ describeEast("Chart.Bar", (test) => {
         $(assertEast.equal(chart.unwrap("BarChart").series.size(), 3n));
         $(assertEast.equal(chart.unwrap("BarChart").series.get(0n).stackId.unwrap("some"), "a"));
         $(assertEast.equal(chart.unwrap("BarChart").legend.unwrap("some").show.unwrap("some"), true));
+    });
+});
+
+describeEast("Chart.BarMulti", (test) => {
+    test("creates bar chart with multi-series data", $ => {
+        const chart = $.let(Chart.BarMulti(
+            {
+                sales: [
+                    { month: "January", value: 186n },
+                    { month: "February", value: 305n },
+                ],
+                returns: [
+                    { month: "January", value: 20n },
+                    { month: "March", value: 35n },
+                ],
+            },
+            {
+                xAxis: { dataKey: "month" },
+                valueKey: "value",
+                series: {
+                    sales: { color: "teal.solid" },
+                    returns: { color: "red.solid" },
+                },
+            }
+        ));
+
+        $(assertEast.equal(chart.getTag(), "BarChart"));
+        $(assertEast.equal(chart.unwrap("BarChart").series.size(), 2n));
+        $(assertEast.equal(chart.unwrap("BarChart").valueKey.unwrap("some"), "value"));
+        $(assertEast.equal(chart.unwrap("BarChart").dataSeries.hasTag("some"), true));
     });
 });

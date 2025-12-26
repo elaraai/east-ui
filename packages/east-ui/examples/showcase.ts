@@ -240,7 +240,7 @@ const example = East.function(
                         Chart.Bar(weeklyMetrics, {
                             orders: { color: "blue.solid" },
                         }, {
-                            xAxis: Chart.Axis({ dataKey: "day" }),
+                            xAxis: { dataKey: "day" },
                             grid: Chart.Grid({ show: true }),
                         }),
                     ], { title: "Orders by Day", variant: "outline" }),
@@ -251,7 +251,7 @@ const example = East.function(
                         Chart.Area(weeklyMetrics, {
                             revenue: { color: "teal.solid" },
                         }, {
-                            xAxis: Chart.Axis({ dataKey: "day" }),
+                            xAxis: { dataKey: "day" },
                             grid: Chart.Grid({ show: true }),
                         }),
                     ], { title: "Revenue Trend", variant: "outline" }),

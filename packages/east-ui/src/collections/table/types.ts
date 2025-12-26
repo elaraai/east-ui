@@ -283,7 +283,8 @@ export interface TableStyle {
  */
 export const TableColumnType = StructType({
     key: StringType,
-    type: EastTypeType,
+    dataType: EastTypeType,
+    valueType: EastTypeType,
     header: OptionType(StringType),
     width: OptionType(StringType),
     minWidth: OptionType(StringType),

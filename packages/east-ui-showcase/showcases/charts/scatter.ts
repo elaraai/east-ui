@@ -193,7 +193,7 @@ export default East.function(
                 "Sparse Multi-Series",
                 "Separate arrays for each series (avoids null values)",
                 Box.Root([
-                    Chart.Scatter(
+                    Chart.ScatterMulti(
                         {
                             groupA: [
                                 { x: 10n, value: 30n },
@@ -208,12 +208,12 @@ export default East.function(
                             ],
                         },
                         {
-                            groupA: { color: "purple.solid" },
-                            groupB: { color: "teal.solid" },
-                        },
-                        {
-                            xAxis: Chart.Axis({ dataKey: "x" }),
+                            xDataKey: "x",
                             valueKey: "value",
+                            series: {
+                                groupA: { color: "purple.solid" },
+                                groupB: { color: "teal.solid" },
+                            },
                             tooltip: Chart.Tooltip({ show: true }),
                             legend: Chart.Legend({ show: true }),
                             grid: Chart.Grid({ show: true }),
@@ -222,7 +222,7 @@ export default East.function(
                 ], { height: "220px", width: "100%" }),
                 some(`
                     Box.Root([
-                        Chart.Scatter(
+                        Chart.ScatterMulti(
                             {
                                 groupA: [
                                     { x: 10n, value: 30n },
@@ -238,12 +238,12 @@ export default East.function(
                                 ],
                             },
                             {
-                                groupA: { color: "purple.solid" },
-                                groupB: { color: "teal.solid" },
-                            },
-                            {
-                                xAxis: Chart.Axis({ dataKey: "x" }),
+                                xDataKey: "x",
                                 valueKey: "value",
+                                series: {
+                                    groupA: { color: "purple.solid" },
+                                    groupB: { color: "teal.solid" },
+                                },
                                 tooltip: Chart.Tooltip({ show: true }),
                                 legend: Chart.Legend({ show: true }),
                                 grid: Chart.Grid({ show: true }),

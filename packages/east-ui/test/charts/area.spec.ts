@@ -14,12 +14,12 @@ describeEast("Chart.Area", (test) => {
     test("creates basic area chart with single series", $ => {
         const chart = $.let(Chart.Area(
             [
-                { "month": "January", "revenue": 186 },
-                { "month": "February", "revenue": 305 },
-                { "month": "March", "revenue": 237 },
-            ], {
-            revenue: { color: "teal.solid" }
-        }));
+                { "month": "January", "revenue": 186n },
+                { "month": "February", "revenue": 305n },
+                { "month": "March", "revenue": 237n },
+            ],
+            { revenue: { color: "teal.solid" } }
+        ));
 
         $(assertEast.equal(chart.getTag(), "AreaChart"));
         $(assertEast.equal(chart.unwrap("AreaChart").series.size(), 1n));
@@ -27,11 +27,23 @@ describeEast("Chart.Area", (test) => {
         $(assertEast.equal(chart.unwrap("AreaChart").series.get(0n).color.unwrap("some"), "teal.solid"));
     });
 
+    test("creates area chart with array series spec", $ => {
+        const chart = $.let(Chart.Area(
+            [
+                { month: "January", revenue: 186n },
+            ],
+            ["revenue"]
+        ));
+
+        $(assertEast.equal(chart.unwrap("AreaChart").series.size(), 1n));
+        $(assertEast.equal(chart.unwrap("AreaChart").series.get(0n).name, "revenue"));
+    });
+
     test("creates area chart with multiple series", $ => {
         const chart = $.let(Chart.Area(
             [
-                { month: "January", windows: 186, mac: 80, linux: 120 },
-                { month: "February", windows: 165, mac: 95, linux: 110 },
+                { month: "January", windows: 186n, mac: 80n, linux: 120n },
+                { month: "February", windows: 165n, mac: 95n, linux: 110n },
             ],
             {
                 windows: { color: "teal.solid" },
@@ -51,7 +63,7 @@ describeEast("Chart.Area", (test) => {
     test("creates stacked area chart", $ => {
         const chart = $.let(Chart.Area(
             [
-                { month: "January", windows: 186, mac: 80, linux: 120 },
+                { month: "January", windows: 186n, mac: 80n, linux: 120n },
             ],
             {
                 windows: { color: "teal.solid", stackId: "a" },
@@ -68,7 +80,7 @@ describeEast("Chart.Area", (test) => {
     test("creates 100% stacked area chart with stackOffset expand", $ => {
         const chart = $.let(Chart.Area(
             [
-                { month: "January", windows: 186, mac: 80 },
+                { month: "January", windows: 186n, mac: 80n },
             ],
             {
                 windows: { color: "teal.solid" },
@@ -88,10 +100,10 @@ describeEast("Chart.Area", (test) => {
     test("creates area chart with x-axis dataKey", $ => {
         const chart = $.let(Chart.Area(
             [
-                { month: "January", revenue: 186 },
+                { month: "January", revenue: 186n },
             ],
             { revenue: { color: "teal.solid" } },
-            { xAxis: Chart.Axis({ dataKey: "month" }) }
+            { xAxis: { dataKey: "month" } }
         ));
 
         $(assertEast.equal(chart.unwrap("AreaChart").xAxis.hasTag("some"), true));
@@ -101,7 +113,7 @@ describeEast("Chart.Area", (test) => {
     test("creates area chart with y-axis percent tick format", $ => {
         const chart = $.let(Chart.Area(
             [
-                { month: "January", revenue: 186 },
+                { month: "January", revenue: 186n },
             ],
             { revenue: { color: "teal.solid" } },
             { yAxis: Chart.Axis({ tickFormat: "percent" }) }
@@ -118,7 +130,7 @@ describeEast("Chart.Area", (test) => {
     test("creates area chart with natural curve", $ => {
         const chart = $.let(Chart.Area(
             [
-                { month: "January", revenue: 186 },
+                { month: "January", revenue: 186n },
             ],
             { revenue: { color: "teal.solid" } },
             { curveType: "natural" }
@@ -130,7 +142,7 @@ describeEast("Chart.Area", (test) => {
     test("creates area chart with monotone curve", $ => {
         const chart = $.let(Chart.Area(
             [
-                { month: "January", revenue: 186 },
+                { month: "January", revenue: 186n },
             ],
             { revenue: { color: "teal.solid" } },
             { curveType: "monotone" }
@@ -146,7 +158,7 @@ describeEast("Chart.Area", (test) => {
     test("creates area chart with grid", $ => {
         const chart = $.let(Chart.Area(
             [
-                { month: "January", revenue: 186 },
+                { month: "January", revenue: 186n },
             ],
             { revenue: { color: "teal.solid" } },
             { grid: Chart.Grid({ show: true }) }
@@ -158,7 +170,7 @@ describeEast("Chart.Area", (test) => {
     test("creates area chart with legend", $ => {
         const chart = $.let(Chart.Area(
             [
-                { month: "January", revenue: 186 },
+                { month: "January", revenue: 186n },
             ],
             { revenue: { color: "teal.solid" } },
             { legend: Chart.Legend({ show: true }) }
@@ -170,7 +182,7 @@ describeEast("Chart.Area", (test) => {
     test("creates area chart with tooltip", $ => {
         const chart = $.let(Chart.Area(
             [
-                { month: "January", revenue: 186 },
+                { month: "January", revenue: 186n },
             ],
             { revenue: { color: "teal.solid" } },
             { tooltip: Chart.Tooltip({ show: true }) }
@@ -182,7 +194,7 @@ describeEast("Chart.Area", (test) => {
     test("creates area chart with custom fill opacity", $ => {
         const chart = $.let(Chart.Area(
             [
-                { month: "January", revenue: 186 },
+                { month: "January", revenue: 186n },
             ],
             { revenue: { color: "teal.solid" } },
             { fillOpacity: 0.3 }
@@ -198,7 +210,7 @@ describeEast("Chart.Area", (test) => {
     test("creates area chart with custom margin", $ => {
         const chart = $.let(Chart.Area(
             [
-                { month: "January", revenue: 186 },
+                { month: "January", revenue: 186n },
             ],
             { revenue: { color: "teal.solid" } },
             { margin: Chart.Margin({ top: 20n, right: 30n, bottom: 20n, left: 30n }) }
@@ -215,9 +227,9 @@ describeEast("Chart.Area", (test) => {
     test("creates complete area chart matching Chakra example", $ => {
         const chart = $.let(Chart.Area(
             [
-                { month: "January", windows: 186, mac: 80, linux: 120 },
-                { month: "February", windows: 165, mac: 95, linux: 110 },
-                { month: "March", windows: 190, mac: 87, linux: 125 },
+                { month: "January", windows: 186n, mac: 80n, linux: 120n },
+                { month: "February", windows: 165n, mac: 95n, linux: 110n },
+                { month: "March", windows: 190n, mac: 87n, linux: 125n },
             ],
             {
                 windows: { color: "teal.solid", stackId: "a" },
@@ -225,7 +237,7 @@ describeEast("Chart.Area", (test) => {
                 linux: { color: "blue.solid", stackId: "a" },
             },
             {
-                xAxis: Chart.Axis({ dataKey: "month" }),
+                xAxis: { dataKey: "month" },
                 stacked: true,
                 stackOffset: "expand",
                 grid: Chart.Grid({ show: true }),
@@ -239,5 +251,35 @@ describeEast("Chart.Area", (test) => {
         $(assertEast.equal(chart.unwrap("AreaChart").series.size(), 3n));
         $(assertEast.equal(chart.unwrap("AreaChart").grid.unwrap("some").show.unwrap("some"), true));
         $(assertEast.equal(chart.unwrap("AreaChart").fillOpacity.unwrap("some"), 0.2));
+    });
+});
+
+describeEast("Chart.AreaMulti", (test) => {
+    test("creates area chart with multi-series data", $ => {
+        const chart = $.let(Chart.AreaMulti(
+            {
+                revenue: [
+                    { month: "January", value: 186n },
+                    { month: "February", value: 305n },
+                ],
+                profit: [
+                    { month: "January", value: 80n },
+                    { month: "March", value: 150n },
+                ],
+            },
+            {
+                xAxis: { dataKey: "month" },
+                valueKey: "value",
+                series: {
+                    revenue: { color: "teal.solid" },
+                    profit: { color: "purple.solid" },
+                },
+            }
+        ));
+
+        $(assertEast.equal(chart.getTag(), "AreaChart"));
+        $(assertEast.equal(chart.unwrap("AreaChart").series.size(), 2n));
+        $(assertEast.equal(chart.unwrap("AreaChart").valueKey.unwrap("some"), "value"));
+        $(assertEast.equal(chart.unwrap("AreaChart").dataSeries.hasTag("some"), true));
     });
 });

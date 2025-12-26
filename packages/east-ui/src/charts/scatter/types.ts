@@ -80,28 +80,48 @@ export type ScatterChartType = typeof ScatterChartType;
 // ============================================================================
 
 /**
- * TypeScript interface for Scatter chart style options.
- *
- * @remarks
- * All properties are optional and accept either static values or East expressions.
- *
- * @property xAxis - X-axis configuration
- * @property yAxis - Y-axis configuration
- * @property xDataKey - Data key for X values
- * @property yDataKey - Data key for Y values
- * @property pointSize - Size of scatter points
+ * Base style options shared by Scatter and ScatterMulti charts.
  */
-export interface ScatterChartStyle extends BaseChartStyle {
+export interface ScatterChartStyleBase extends BaseChartStyle {
     /** X-axis configuration */
     xAxis?: SubtypeExprOrValue<ChartAxisType>;
     /** Y-axis configuration */
     yAxis?: SubtypeExprOrValue<ChartAxisType>;
-    /** Data key for X values */
-    xDataKey?: SubtypeExprOrValue<StringType>;
-    /** Data key for Y values */
-    yDataKey?: SubtypeExprOrValue<StringType>;
     /** Size of scatter points */
     pointSize?: SubtypeExprOrValue<IntegerType>;
+    /** Chart margin configuration */
+    margin?: SubtypeExprOrValue<ChartMarginType>;
+}
+
+/**
+ * Style for Scatter charts (single array form).
+ *
+ * @typeParam NumericKey - Union of numeric field keys from the data struct
+ */
+export interface ScatterChartStyle<NumericKey extends string = string> extends ScatterChartStyleBase {
+    /** Data key for X values (must be numeric) */
+    xDataKey?: NumericKey;
+    /** Data key for Y values (must be numeric) */
+    yDataKey?: NumericKey;
+}
+
+/**
+ * Style for ScatterMulti charts (multi-series with separate arrays).
+ *
+ * @typeParam DataKey - Union of field keys from series array structs
+ * @typeParam NumericKey - Union of numeric field keys (for valueKey, xDataKey, yDataKey)
+ * @typeParam SeriesKey - Union of series names (record keys)
+ */
+export interface ScatterChartMultiStyle<
+    NumericKey extends string = string,
+    SeriesKey extends string = string
+> extends ScatterChartStyleBase {
+    /** Data key for X values (must be numeric) */
+    xDataKey?: NumericKey;
+    /** Field name containing Y values in each series array (must be numeric) */
+    valueKey: NumericKey;
+    /** Per-series configuration (keyed by series name) */
+    series?: { [K in SeriesKey]?: ScatterChartSeriesConfig };
 }
 
 /**

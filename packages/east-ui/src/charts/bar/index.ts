@@ -4,152 +4,239 @@
  */
 
 import {
-    type ExprType, type SubtypeExprOrValue, type TypeOf, ArrayType, DictType, East, Expr, LiteralValueType, none, some, StringType, StructType, variant
+    type ExprType,
+    type SubtypeExprOrValue,
+    type TypeOf,
+    ArrayType,
+    DictType,
+    East,
+    Expr,
+    LiteralValueType,
+    none,
+    some,
+    StringType,
+    StructType,
+    variant,
+    IntegerType,
+    FloatType,
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
-import {
-    BarLayoutType,
-    StackOffsetType,
-    MultiSeriesDataType,
-} from "../types.js";
-import type { BarChartStyle, BarChartSeriesConfig } from "./types.js";
+import { BarLayoutType, StackOffsetType, MultiSeriesDataType } from "../types.js";
+import type {
+    BarChartStyle,
+    BarChartMultiStyle,
+    BarChartSeriesConfig,
+    BarChartStyleBase,
+} from "./types.js";
 
 // Re-export types
-export { BarChartType, type BarChartStyle, type BarChartSeriesConfig } from "./types.js";
-
+export {
+    BarChartType,
+    type BarChartStyle,
+    type BarChartMultiStyle,
+    type BarChartSeriesConfig,
+    type BarChartStyleBase,
+} from "./types.js";
 
 // ============================================================================
-// Bar Chart Function
+// Type Helpers
+// ============================================================================
+
+// Numeric types that can be used as Y-axis values
+type NumericEastType = IntegerType | FloatType;
+
+// Extract struct fields from array type
+type ExtractStructFields<T> = T extends ArrayType<infer S>
+    ? S extends StructType
+        ? S["fields"]
+        : never
+    : never;
+
+// Extract fields from data (handles SubtypeExprOrValue wrapping)
+type DataFields<T extends SubtypeExprOrValue<ArrayType<StructType>>> = ExtractStructFields<TypeOf<T>>;
+
+// Extract only numeric field keys from a struct's fields
+type NumericFieldKeys<Fields> = {
+    [K in keyof Fields]: Fields[K] extends NumericEastType ? K : never
+}[keyof Fields];
+
+// All field keys as strings
+type FieldKeys<Fields> = keyof Fields & string;
+
+// ============================================================================
+// Series Specification (like Table's ColumnSpec)
 // ============================================================================
 
 /**
- * Helper to check if a value is an East expression.
- */
-function isExpr(value: unknown): value is Expr {
-    return value !== null && typeof value === "object" && value instanceof Expr;
-}
-
-/**
- * Helper to check if data is in record form (multiple series arrays).
- */
-function isRecordForm(data: unknown): data is Record<string, unknown> {
-    if (data === null || data === undefined) return false;
-    if (Array.isArray(data)) return false;
-    if (isExpr(data)) return false;
-    if (typeof data !== "object") return false;
-    const keys = Object.keys(data);
-    if (keys.length === 0) return false;
-    return keys.some(key => {
-        const val = (data as Record<string, unknown>)[key];
-        return Array.isArray(val) || isExpr(val);
-    });
-}
-
-/**
- * Helper to map a single array to Dict format.
- */
-function mapArrayToDict(data_expr: ExprType<ArrayType<StructType>>): ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>> {
-    return data_expr.map(($, datum) => {
-        const ret = $.let(new Map(), DictType(StringType, LiteralValueType));
-        for (const [field_name, field_type] of Object.entries(Expr.type(data_expr).value.fields)) {
-            $(ret.insert(field_name, variant(field_type.type, datum[field_name] as any)));
-        }
-        return ret;
-    });
-}
-
-/**
- * Creates a Bar chart component.
+ * Series specification for the Bar chart API.
  *
- * @param data - Array of data points, OR a record of arrays for multi-series sparse data
- * @param series - Series configuration keyed by field names (array form) or record keys (record form)
- * @param style - Optional styling configuration
+ * @remarks
+ * - **Array form**: Only numeric field keys allowed (e.g., `["revenue", "profit"]`)
+ * - **Object form**: Numeric fields with optional per-series config
+ */
+type SeriesSpec<T extends SubtypeExprOrValue<ArrayType<StructType>>> =
+    | NumericFieldKeys<DataFields<NoInfer<T>>>[]
+    | { [K in NumericFieldKeys<DataFields<NoInfer<T>>>]?: BarChartSeriesConfig };
+
+// ============================================================================
+// Bar Chart (Single Array Form)
+// ============================================================================
+
+/**
+ * Creates a Bar chart component from a single data array.
+ *
+ * @typeParam T - The array type containing data structs
+ * @param data - Array of data points (each point has x-axis value + y-axis values)
+ * @param series - Series specification: array of numeric field names, or object with config
+ * @param style - Optional styling with type-safe xAxis.dataKey
  * @returns An East expression representing the bar chart component
  *
  * @remarks
- * Bar charts display categorical data with rectangular bars.
- * Use layout="vertical" for horizontal bars, stacked=true for stacked bars,
- * or stackOffset="expand" for 100% stacked bar charts.
+ * All series share the same data points. Series keys are numeric field names.
+ * Use this when all series have values at the same x-axis points.
  *
- * Supports two data formats:
- * - **Single array**: All series share the same data points. Series keys are field names.
- * - **Record of arrays**: Each series has its own array (for sparse data). Series keys are record keys.
- *   Use `style.valueKey` to specify which field contains the Y value in each array.
- *
- * @example Single array form
+ * @example Array form (just field names)
  * ```ts
  * Chart.Bar(
  *     [
- *         { category: "A", value: 100n },
- *         { category: "B", value: 200n },
+ *         { month: "Jan", revenue: 100n, profit: 50n },
+ *         { month: "Feb", revenue: 200n, profit: 80n },
  *     ],
- *     { value: { color: "blue.solid" } },
- *     { xAxis: Chart.Axis({ dataKey: "category" }) }
+ *     ["revenue", "profit"],
+ *     { xAxis: { dataKey: "month" } }
  * );
  * ```
  *
- * @example Record form (for sparse data)
+ * @example Object form (with per-series config)
  * ```ts
  * Chart.Bar(
- *     {
- *         sales: [{ month: "Jan", value: 186n }, { month: "Feb", value: 305n }],
- *         returns: [{ month: "Jan", value: 20n }, { month: "Mar", value: 35n }],
- *     },
- *     {
- *         sales: { color: "teal.solid" },
- *         returns: { color: "red.solid" },
- *     },
- *     { xAxis: Chart.Axis({ dataKey: "month" }), valueKey: "value" }
+ *     data,
+ *     { revenue: { color: "teal.solid" }, profit: { color: "purple.solid" } },
+ *     { xAxis: { dataKey: "month" }, stacked: true }
  * );
  * ```
  */
-// Overload 1: Single array form
 export function createBarChart<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
     data: T,
-    series: {
-        [K in TypeOf<NoInfer<T>> extends ArrayType<StructType> ? keyof TypeOf<NoInfer<T>>["value"]["fields"] : never]?: BarChartSeriesConfig
-    },
-    style?: BarChartStyle
-): ExprType<UIComponentType>;
-
-// Overload 2: Record form (multi-series)
-export function createBarChart<K extends string, T extends SubtypeExprOrValue<ArrayType<StructType>>>(
-    data: Record<K, T>,
-    series: { [P in K]?: BarChartSeriesConfig },
-    style?: BarChartStyle
-): ExprType<UIComponentType>;
-
-// Implementation
-export function createBarChart(
-    data: SubtypeExprOrValue<ArrayType<StructType>> | Record<string, SubtypeExprOrValue<ArrayType<StructType>>>,
-    series: Record<string, BarChartSeriesConfig | undefined>,
-    style?: BarChartStyle
+    series: SeriesSpec<T>,
+    style?: BarChartStyle<FieldKeys<DataFields<T>>>
 ): ExprType<UIComponentType> {
-    let data_mapped: ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>;
-    let dataSeries_mapped: ExprType<typeof MultiSeriesDataType> | undefined;
+    const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
+    const field_types = Expr.type(data_expr).value.fields;
 
-    if (isRecordForm(data)) {
-        const dataRecord = data as Record<string, SubtypeExprOrValue<ArrayType<StructType>>>;
-        data_mapped = East.value([], ArrayType(DictType(StringType, LiteralValueType)));
-        const seriesDataMap = new Map<string, ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>>();
-        for (const [seriesName, seriesData] of Object.entries(dataRecord)) {
-            const series_expr = isExpr(seriesData)
-                ? seriesData as ExprType<ArrayType<StructType>>
-                : East.value(seriesData) as ExprType<ArrayType<StructType>>;
-            seriesDataMap.set(seriesName, mapArrayToDict(series_expr));
+    // Map each data row to a Dict<String, LiteralValueType>
+    const data_mapped = data_expr.map(($, datum) => {
+        const ret = $.let(new Map(), DictType(StringType, LiteralValueType));
+        for (const [field_name, field_type] of Object.entries(field_types)) {
+            $(ret.insert(field_name, variant(field_type.type, (datum as any)[field_name])));
         }
-        dataSeries_mapped = East.value(seriesDataMap, MultiSeriesDataType);
-    } else {
-        const data_expr = isExpr(data)
-            ? data as ExprType<ArrayType<StructType>>
-            : East.value(data) as ExprType<ArrayType<StructType>>;
-        data_mapped = mapArrayToDict(data_expr);
-        dataSeries_mapped = undefined;
+        return ret;
+    });
+
+    // Normalize series to entries
+    const seriesEntries: readonly (readonly [string, BarChartSeriesConfig | undefined])[] = Array.isArray(series)
+        ? (series as string[]).map(key => [key, undefined] as const)
+        : Object.entries(series) as [string, BarChartSeriesConfig | undefined][];
+
+    return buildBarChart(data_mapped, undefined, seriesEntries, style);
+}
+
+// ============================================================================
+// Bar Chart Multi (Multi-Series with Separate Arrays)
+// ============================================================================
+
+/**
+ * Creates a Bar chart component from multiple data arrays (one per series).
+ *
+ * @typeParam K - Union of series names (record keys)
+ * @typeParam T - The array type containing data structs for each series
+ * @param data - Record mapping series names to their data arrays
+ * @param style - Styling with type-safe xAxis.dataKey and valueKey
+ * @returns An East expression representing the bar chart component
+ *
+ * @remarks
+ * Each series has its own data array, allowing sparse data where series
+ * don't need to have values at every x-axis point.
+ *
+ * @example
+ * ```ts
+ * Chart.BarMulti(
+ *     {
+ *         revenue: [
+ *             { month: "Jan", value: 100n },
+ *             { month: "Feb", value: 200n },
+ *         ],
+ *         profit: [
+ *             { month: "Jan", value: 50n },
+ *             // Feb is missing - sparse data!
+ *             { month: "Mar", value: 150n },
+ *         ],
+ *     },
+ *     {
+ *         xAxis: { dataKey: "month" },
+ *         valueKey: "value",
+ *         series: { revenue: { color: "teal.solid" } },
+ *     }
+ * );
+ * ```
+ */
+export function createBarChartMulti<
+    K extends string,
+    T extends SubtypeExprOrValue<ArrayType<StructType>>
+>(
+    data: Record<K, T>,
+    style: BarChartMultiStyle<
+        FieldKeys<DataFields<T>>,
+        NumericFieldKeys<DataFields<T>> & string,
+        K
+    >
+): ExprType<UIComponentType> {
+    // Create empty data array (renderer will use dataSeries instead)
+    const data_mapped = East.value([], ArrayType(DictType(StringType, LiteralValueType)));
+
+    // Map each series array to Dict format
+    const seriesDataMap = new Map<string, ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>>();
+
+    for (const [seriesName, seriesData] of Object.entries(data) as [string, T][]) {
+        const series_expr = East.value(seriesData) as ExprType<ArrayType<StructType>>;
+        const field_types = Expr.type(series_expr).value.fields;
+
+        const series_mapped = series_expr.map(($, datum) => {
+            const ret = $.let(new Map(), DictType(StringType, LiteralValueType));
+            for (const [field_name, field_type] of Object.entries(field_types)) {
+                $(ret.insert(field_name, variant(field_type.type, (datum as any)[field_name])));
+            }
+            return ret;
+        });
+
+        seriesDataMap.set(seriesName, series_mapped);
     }
 
-    const series_mapped = Object.entries(series as Record<string, BarChartSeriesConfig>).map(([name, config]) => ({
-        name: name as string,
+    const dataSeries_mapped = East.value(seriesDataMap, MultiSeriesDataType);
+
+    // Build series entries from record keys and optional config
+    const seriesEntries = Object.keys(data).map(key => [
+        key,
+        style.series?.[key as K]
+    ] as const);
+
+    return buildBarChart(data_mapped, dataSeries_mapped, seriesEntries, style, style.valueKey);
+}
+
+// ============================================================================
+// Shared Chart Builder
+// ============================================================================
+
+function buildBarChart(
+    data_mapped: ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>,
+    dataSeries_mapped: ExprType<typeof MultiSeriesDataType> | undefined,
+    seriesEntries: readonly (readonly [string, BarChartSeriesConfig | undefined])[],
+    style?: BarChartStyleBase & { xAxis?: { dataKey: string } },
+    valueKey?: string
+): ExprType<UIComponentType> {
+    const series_mapped = seriesEntries.map(([name, config]) => ({
+        name: name,
         color: config?.color !== undefined ? some(config.color) : none,
         stackId: config?.stackId !== undefined ? some(config.stackId) : none,
         label: config?.label !== undefined ? some(config.label) : none,
@@ -172,12 +259,29 @@ export function createBarChart(
             : style.stackOffset)
         : undefined;
 
+    // Build xAxis value with dataKey
+    const xAxisValue = style?.xAxis
+        ? variant("some", {
+            dataKey: variant("some", style.xAxis.dataKey),
+            label: none,
+            tickFormat: none,
+            domain: none,
+            hide: none,
+            axisLine: none,
+            tickLine: none,
+            tickMargin: none,
+            strokeColor: none,
+            orientation: none,
+            axisId: none,
+        })
+        : variant("none", null);
+
     return East.value(variant("BarChart", {
         data: data_mapped,
         dataSeries: dataSeries_mapped ? variant("some", dataSeries_mapped) : variant("none", null),
-        valueKey: style?.valueKey !== undefined ? variant("some", style.valueKey) : variant("none", null),
+        valueKey: valueKey !== undefined ? variant("some", valueKey) : variant("none", null),
         series: series_mapped,
-        xAxis: style?.xAxis ? variant("some", style.xAxis) : variant("none", null),
+        xAxis: xAxisValue,
         yAxis: style?.yAxis ? variant("some", style.yAxis) : variant("none", null),
         layout: layoutValue ? variant("some", layoutValue) : variant("none", null),
         stacked: style?.stacked !== undefined ? variant("some", style.stacked) : variant("none", null),

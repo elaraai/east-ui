@@ -27,6 +27,18 @@ describeEast("Chart.Scatter", (test) => {
         $(assertEast.equal(chart.unwrap("ScatterChart").series.get(0n).color.unwrap("some"), "teal.solid"));
     });
 
+    test("creates scatter chart with array series spec", $ => {
+        const chart = $.let(Chart.Scatter(
+            [
+                { temp: 10, sales: 30 },
+            ],
+            ["temp"]
+        ));
+
+        $(assertEast.equal(chart.unwrap("ScatterChart").series.size(), 1n));
+        $(assertEast.equal(chart.unwrap("ScatterChart").series.get(0n).name, "temp"));
+    });
+
     test("creates scatter chart with x and y data keys", $ => {
         const chart = $.let(Chart.Scatter(
             [
@@ -226,5 +238,35 @@ describeEast("Chart.Scatter", (test) => {
 
         $(assertEast.equal(chart.unwrap("ScatterChart").series.size(), 2n));
         $(assertEast.equal(chart.unwrap("ScatterChart").tooltip.unwrap("some").show.unwrap("some"), true));
+    });
+});
+
+describeEast("Chart.ScatterMulti", (test) => {
+    test("creates scatter chart with multi-series data", $ => {
+        const chart = $.let(Chart.ScatterMulti(
+            {
+                temperature: [
+                    { x: 10, value: 30 },
+                    { x: 20, value: 50 },
+                ],
+                humidity: [
+                    { x: 10, value: 45 },
+                    { x: 25, value: 60 },
+                ],
+            },
+            {
+                xDataKey: "x",
+                valueKey: "value",
+                series: {
+                    temperature: { color: "teal.solid" },
+                    humidity: { color: "blue.solid" },
+                },
+            }
+        ));
+
+        $(assertEast.equal(chart.getTag(), "ScatterChart"));
+        $(assertEast.equal(chart.unwrap("ScatterChart").series.size(), 2n));
+        $(assertEast.equal(chart.unwrap("ScatterChart").valueKey.unwrap("some"), "value"));
+        $(assertEast.equal(chart.unwrap("ScatterChart").dataSeries.hasTag("some"), true));
     });
 });
