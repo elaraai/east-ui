@@ -63,7 +63,7 @@
         "lint": "eslint ."
     },
     "dependencies": {
-        "@elaraai/e3-api-server": "^0.0.2-beta.5",
+        "@elaraai/e3-api-server": "^0.0.2-beta.7",
         "get-port": "^7.1.0"
     },
     "devDependencies": {
