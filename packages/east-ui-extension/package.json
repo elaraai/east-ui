@@ -2,7 +2,7 @@
     "name": "east-ui-preview",
     "displayName": "East UI Preview",
     "description": "Browse e3 repositories and preview task outputs as East UI components",
-    "version": "0.0.17",
+    "version": "0.0.18",
     "publisher": "ElaraAI",
     "license": "SEE LICENSE IN LICENSE",
     "engines": {
