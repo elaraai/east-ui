@@ -10,8 +10,9 @@ export interface PlannerSlotCellProps {
     y: number;
     width: number;
     height: number;
-    slot: bigint;
-    onClick?: ((slot: bigint) => void) | undefined;
+    slot: number;
+    readOnly?: boolean | undefined;
+    onClick?: ((slot: number) => void) | undefined;
 }
 
 export const PlannerSlotCell = ({
@@ -20,20 +21,35 @@ export const PlannerSlotCell = ({
     width,
     height,
     slot,
+    readOnly = false,
     onClick,
 }: PlannerSlotCellProps) => {
     const [isHovered, setIsHovered] = useState(false);
 
-    const handleMouseEnter = useCallback(() => setIsHovered(true), []);
-    const handleMouseLeave = useCallback(() => setIsHovered(false), []);
-    const handleClick = useCallback(() => {
-        if (onClick) onClick(slot);
-    }, [onClick, slot]);
+    const handleMouseEnter = useCallback(() => {
+        if (!readOnly) setIsHovered(true);
+    }, [readOnly]);
 
-    // Plus icon dimensions - half the cell height
-    const iconSize = useMemo(() => Math.min(height * 0.5, 24), [height]);
-    const iconX = useMemo(() => x + (width - iconSize) / 2, [x, width, iconSize]);
-    const iconY = useMemo(() => y + (height - iconSize) / 2, [y, height, iconSize]);
+    const handleMouseLeave = useCallback(() => {
+        if (!readOnly) setIsHovered(false)
+    }, [readOnly]);
+
+    const handleClick = useCallback(() => {
+        if (!readOnly && onClick) onClick(slot);
+    }, [readOnly, onClick, slot]);
+
+    // Plus icon dimensions - only show if cell is large enough
+    const icon = useMemo(() => {
+        const minIconSize = 18;
+        const size = Math.min(Math.min(width, height) * 0.4, minIconSize);
+        return {
+            visible: width >= minIconSize + 12 && height >= minIconSize + 12,
+            size,
+            x: x + (width - size) / 2,
+            y: y + (height - size) / 2,
+        }
+    }, [x, y, width, height]);
+
 
     return (
         <g>
@@ -50,33 +66,50 @@ export const PlannerSlotCell = ({
                 style={{ cursor: isHovered ? "pointer" : "default" }}
             />
 
-            {/* Plus icon - only visible on hover */}
+            {/* Hover outline and plus icon - only visible on hover */}
             {isHovered && (
-                <g
-                    transform={`translate(${iconX}, ${iconY})`}
-                    style={{ pointerEvents: "none" }}
-                >
-                    {/* Horizontal line of plus */}
-                    <line
-                        x1={iconSize * 0.25}
-                        y1={iconSize / 2}
-                        x2={iconSize * 0.75}
-                        y2={iconSize / 2}
+                <>
+                    {/* Dashed outline */}
+                    <rect
+                        x={x + 6}
+                        y={y + 6}
+                        width={Math.max(width - 12, 0)}
+                        height={Math.max(height - 12, 0)}
+                        fill="none"
                         stroke="gray"
                         strokeWidth={2}
-                        strokeLinecap="round"
+                        strokeDasharray="4 2"
+                        rx={4}
+                        ry={4}
+                        style={{ pointerEvents: "none" }}
                     />
-                    {/* Vertical line of plus */}
-                    <line
-                        x1={iconSize / 2}
-                        y1={iconSize * 0.25}
-                        x2={iconSize / 2}
-                        y2={iconSize * 0.75}
-                        stroke="gray"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                    />
-                </g>
+                    {/* Plus icon - only if cell is large enough */}
+                    {icon.visible && (
+                        <g
+                            transform={`translate(${icon.x}, ${icon.y})`}
+                            style={{ pointerEvents: "none" }}
+                        >
+                            <line
+                                x1={icon.size * 0.25}
+                                y1={icon.size / 2}
+                                x2={icon.size * 0.75}
+                                y2={icon.size / 2}
+                                stroke="gray"
+                                strokeWidth={2}
+                                strokeLinecap="round"
+                            />
+                            <line
+                                x1={icon.size / 2}
+                                y1={icon.size * 0.25}
+                                x2={icon.size / 2}
+                                y2={icon.size * 0.75}
+                                stroke="gray"
+                                strokeWidth={2}
+                                strokeLinecap="round"
+                            />
+                        </g>
+                    )}
+                </>
             )}
         </g>
     );

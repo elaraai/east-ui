@@ -94,8 +94,8 @@ export type SlotModeLiteral = "single" | "span";
  * @property textAlign - Optional text alignment for label
  */
 export const PlannerEventType = StructType({
-    start: IntegerType,
-    end: OptionType(IntegerType),
+    start: FloatType,
+    end: OptionType(FloatType),
     label: OptionType(StringType),
     colorPalette: OptionType(ColorSchemeType),
     // Text styling
@@ -129,8 +129,8 @@ export type PlannerEventType = typeof PlannerEventType;
 export const EventClickEventType = StructType({
     rowIndex: IntegerType,
     eventIndex: IntegerType,
-    start: IntegerType,
-    end: IntegerType,
+    start: FloatType,
+    end: FloatType,
 });
 
 export type EventClickEventType = typeof EventClickEventType;
@@ -148,10 +148,10 @@ export type EventClickEventType = typeof EventClickEventType;
 export const EventDragEventType = StructType({
     rowIndex: IntegerType,
     eventIndex: IntegerType,
-    previousStart: IntegerType,
-    previousEnd: IntegerType,
-    newStart: IntegerType,
-    newEnd: IntegerType,
+    previousStart: FloatType,
+    previousEnd: FloatType,
+    newStart: FloatType,
+    newEnd: FloatType,
 });
 
 export type EventDragEventType = typeof EventDragEventType;
@@ -183,10 +183,10 @@ export type ResizeEdgeType = typeof ResizeEdgeType;
 export const EventResizeEventType = StructType({
     rowIndex: IntegerType,
     eventIndex: IntegerType,
-    previousStart: IntegerType,
-    previousEnd: IntegerType,
-    newStart: IntegerType,
-    newEnd: IntegerType,
+    previousStart: FloatType,
+    previousEnd: FloatType,
+    newStart: FloatType,
+    newEnd: FloatType,
     edge: ResizeEdgeType,
 });
 
@@ -200,7 +200,7 @@ export type EventResizeEventType = typeof EventResizeEventType;
  */
 export const EventAddEventType = StructType({
     rowIndex: IntegerType,
-    slot: IntegerType,
+    slot: FloatType,
 });
 
 export type EventAddEventType = typeof EventAddEventType;
@@ -216,8 +216,8 @@ export type EventAddEventType = typeof EventAddEventType;
 export const EventDeleteEventType = StructType({
     rowIndex: IntegerType,
     eventIndex: IntegerType,
-    start: IntegerType,
-    end: IntegerType,
+    start: FloatType,
+    end: FloatType,
 });
 
 export type EventDeleteEventType = typeof EventDeleteEventType;
@@ -235,8 +235,8 @@ export type EventDeleteEventType = typeof EventDeleteEventType;
 export const EventPopoverContextType = StructType({
     rowIndex: IntegerType,
     eventIndex: IntegerType,
-    start: IntegerType,
-    end: IntegerType,
+    start: FloatType,
+    end: FloatType,
     label: OptionType(StringType),
     colorPalette: OptionType(ColorSchemeType),
 });
@@ -262,7 +262,7 @@ export type EventPopoverContextType = typeof EventPopoverContextType;
  * @property strokeOpacity - Line opacity (0-1)
  */
 export const PlannerBoundaryType = StructType({
-    x: IntegerType,
+    x: FloatType,
     stroke: OptionType(StringType),
     strokeWidth: OptionType(FloatType),
     strokeDash: OptionType(StringType),
@@ -282,7 +282,7 @@ export type PlannerBoundaryType = typeof PlannerBoundaryType;
  */
 export interface PlannerBoundary {
     /** The slot position for the boundary line */
-    x: SubtypeExprOrValue<IntegerType>;
+    x: SubtypeExprOrValue<FloatType>;
     /** Line color (CSS color value) */
     stroke?: SubtypeExprOrValue<StringType>;
     /** Line width in pixels */
@@ -313,9 +313,11 @@ export interface PlannerBoundary {
  * @property slotMode - single or span (default: span)
  * @property minSlot - Optional min slot override (else derived from data)
  * @property maxSlot - Optional max slot override (else derived from data)
+ * @property stepSize - Step size for snapping (e.g., 0.25 for quarter steps, 0.5 for half steps)
  * @property slotLabel - Custom slot label function
  * @property slotMinWidth - Min width per slot (CSS value, default "60px")
  * @property colorPalette - Default color scheme for events
+ * @property readOnly - When true, disables all event interactions (drag, resize, add, delete)
  * @property slotLineStroke - Vertical grid line color
  * @property slotLineWidth - Vertical grid line width in pixels
  * @property slotLineDash - Vertical grid line dash pattern
@@ -345,11 +347,13 @@ export const PlannerStyleType = StructType({
 
     // Planner-specific
     slotMode: OptionType(SlotModeType),
-    minSlot: OptionType(IntegerType),
-    maxSlot: OptionType(IntegerType),
-    slotLabel: OptionType(FunctionType([IntegerType], StringType)),
+    minSlot: OptionType(FloatType),
+    maxSlot: OptionType(FloatType),
+    stepSize: OptionType(FloatType),
+    slotLabel: OptionType(FunctionType([FloatType], StringType)),
     slotMinWidth: OptionType(StringType),
     colorPalette: OptionType(ColorSchemeType),
+    readOnly: OptionType(BooleanType),
 
     // Slot line styling (vertical grid lines)
     slotLineStroke: OptionType(StringType),
@@ -402,15 +406,19 @@ export interface PlannerStyle {
     /** Slot mode: single or span (default: span) */
     slotMode?: SubtypeExprOrValue<SlotModeType> | SlotModeLiteral;
     /** Optional min slot override (else derived from data) */
-    minSlot?: SubtypeExprOrValue<IntegerType>;
+    minSlot?: SubtypeExprOrValue<FloatType>;
     /** Optional max slot override (else derived from data) */
-    maxSlot?: SubtypeExprOrValue<IntegerType>;
+    maxSlot?: SubtypeExprOrValue<FloatType>;
+    /** Step size for snapping (e.g., 0.25 for quarter steps, 0.5 for half steps) */
+    stepSize?: SubtypeExprOrValue<FloatType>;
     /** Custom slot label function */
-    slotLabel?: SubtypeExprOrValue<FunctionType<[IntegerType], StringType>>;
+    slotLabel?: SubtypeExprOrValue<FunctionType<[FloatType], StringType>>;
     /** Min width per slot (CSS value, default "60px") */
     slotMinWidth?: SubtypeExprOrValue<StringType>;
     /** Default color scheme for events */
     colorPalette?: SubtypeExprOrValue<ColorSchemeType> | ColorSchemeLiteral;
+    /** When true, disables all event interactions (drag, resize, add, delete) */
+    readOnly?: SubtypeExprOrValue<BooleanType>;
     /** Vertical grid line color */
     slotLineStroke?: SubtypeExprOrValue<StringType>;
     /** Vertical grid line width in pixels */

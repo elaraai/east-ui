@@ -18,15 +18,17 @@ export interface PlannerEventProps {
     y: number;
     height: number;
     slotWidth: number;
-    slotRangeStart: bigint;
+    slotRangeStart: number;
     slotMode: "single" | "span";
-    minSlot?: bigint | undefined;
-    maxSlot?: bigint | undefined;
+    minSlot?: number | undefined;
+    maxSlot?: number | undefined;
+    stepSize?: number | undefined;
+    readOnly?: boolean | undefined;
     onClick?: (() => void) | undefined;
     onDoubleClick?: (() => void) | undefined;
-    onDrag?: ((previousStart: bigint, previousEnd: bigint, newStart: bigint, newEnd: bigint) => void) | undefined;
-    onResize?: ((previousStart: bigint, previousEnd: bigint, newStart: bigint, newEnd: bigint, edge: "start" | "end") => void) | undefined;
-    onPositionChange?: ((start: bigint, end: bigint) => void) | undefined;
+    onDrag?: ((previousStart: number, previousEnd: number, newStart: number, newEnd: number) => void) | undefined;
+    onResize?: ((previousStart: number, previousEnd: number, newStart: number, newEnd: number, edge: "start" | "end") => void) | undefined;
+    onPositionChange?: ((start: number, end: number) => void) | undefined;
     onEdit?: (() => void) | undefined;
     onDelete?: (() => void) | undefined;
 }
@@ -55,6 +57,8 @@ export const PlannerEvent = ({
     slotMode,
     minSlot,
     maxSlot,
+    stepSize = 1,
+    readOnly = false,
     onClick,
     onDoubleClick,
     onDrag,
@@ -98,7 +102,7 @@ export const PlannerEvent = ({
     const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
 
     // Show context menu if either callback is defined
-    const hasContextMenu = useMemo(() => onEdit != null || onDelete != null, [onEdit, onDelete]);
+    const hasContextMenu = useMemo(() => !readOnly && (onEdit != null || onDelete != null), [readOnly, onEdit, onDelete]);
 
     // Derived from props
     const colorPalette = useMemo(() => getSomeorUndefined(value.colorPalette)?.type ?? "blue", [value.colorPalette]);
@@ -123,15 +127,15 @@ export const PlannerEvent = ({
     // Calculate base x and width from local slots
     const { baseX, baseWidth } = useMemo(() => {
         const { start, end } = localSlots;
-        const slotIndex = Number(start - slotRangeStart);
+        const slotIndex = start - slotRangeStart;
         const x = slotIndex * slotWidth + 6; // 6px padding
         const w = slotMode === "span"
-            ? (Number(end - start) + 1) * slotWidth - 12 // 12px total padding
+            ? (end - start + 1) * slotWidth - 12 // 12px total padding
             : slotWidth - 12;
         return { baseX: x, baseWidth: w };
     }, [localSlots, slotRangeStart, slotWidth, slotMode]);
 
-    const minWidth = useMemo(() => Math.max(slotWidth - 12, 20), [slotWidth]);
+    const minWidth = useMemo(() => Math.max(slotWidth * stepSize - 12, 20), [slotWidth, stepSize]);
 
     // Apply interaction offset to get current visual position
     const { currentX, currentWidth } = useMemo(() => {
@@ -157,14 +161,19 @@ export const PlannerEvent = ({
     // Compute actual opacity
     const baseOpacity = eventOpacity ?? (isActive ? 1 : 0.9);
 
-    // Conversions
-    const pixelsToSlots = useCallback((px: number): bigint => BigInt(Math.round(px / slotWidth)), [slotWidth]);
-    const slotsToPixels = useCallback((slots: bigint): number => Number(slots) * slotWidth, [slotWidth]);
+    // Conversions with stepSize snapping
+    const pixelsToSlots = useCallback((px: number): number => {
+        const rawSlots = px / slotWidth;
+        // Snap to stepSize
+        return Math.round(rawSlots / stepSize) * stepSize;
+    }, [slotWidth, stepSize]);
+    const slotsToPixels = useCallback((slots: number): number => slots * slotWidth, [slotWidth]);
 
-    // Clamp delta to bounds
-    const clampDelta = useCallback((delta: bigint, type: "drag" | "resize", edge: "start" | "end" | null): bigint => {
+    // Clamp delta to bounds (minimum event size is stepSize)
+    const clampDelta = useCallback((delta: number, type: "drag" | "resize", edge: "start" | "end" | null): number => {
         let clamped = delta;
         const { start, end } = localSlots;
+        const minEventSize = stepSize; // Minimum event size is one step
 
         if (type === "drag") {
             if (minSlot !== undefined) {
@@ -176,14 +185,16 @@ export const PlannerEvent = ({
                 if (clamped > max) clamped = max;
             }
         } else if (edge === "end") {
-            const min = start - end;
+            // For end resize, minimum is when end = start + minEventSize
+            const min = (start + minEventSize) - end;
             if (clamped < min) clamped = min;
             if (maxSlot !== undefined) {
                 const max = maxSlot - end;
                 if (clamped > max) clamped = max;
             }
         } else {
-            const max = end - start;
+            // For start resize, maximum is when start = end - minEventSize
+            const max = (end - minEventSize) - start;
             if (clamped > max) clamped = max;
             if (minSlot !== undefined) {
                 const min = minSlot - start;
@@ -191,25 +202,25 @@ export const PlannerEvent = ({
             }
         }
         return clamped;
-    }, [localSlots, minSlot, maxSlot]);
+    }, [localSlots, minSlot, maxSlot, stepSize]);
 
     const handlePointerDown = useCallback((e: React.PointerEvent) => {
-        if (!onDrag) return;
+        if (readOnly || !onDrag) return;
         (e.target as Element).setPointerCapture(e.pointerId);
         startRef.current = { type: "drag", edge: null, startX: e.clientX };
         setInteraction({ offset: 0, type: "drag", edge: null, hasMoved: false });
         e.preventDefault();
         e.stopPropagation();
-    }, [onDrag]);
+    }, [readOnly, onDrag]);
 
     const handleResizePointerDown = useCallback((e: React.PointerEvent, edge: "start" | "end") => {
-        if (!onResize) return;
+        if (readOnly || !onResize) return;
         (e.target as Element).setPointerCapture(e.pointerId);
         startRef.current = { type: "resize", edge, startX: e.clientX };
         setInteraction({ offset: 0, type: "resize", edge, hasMoved: false });
         e.preventDefault();
         e.stopPropagation();
-    }, [onResize]);
+    }, [readOnly, onResize]);
 
     const handlePointerMove = useCallback((e: React.PointerEvent) => {
         const start = startRef.current;
@@ -243,12 +254,15 @@ export const PlannerEvent = ({
             } else if (start.type === "resize") {
                 let newStart = localSlots.start;
                 let newEnd = localSlots.end;
+                const minEventSize = stepSize; // Minimum event size is one step
                 if (start.edge === "end") {
                     newEnd = localSlots.end + slotDelta;
-                    if (newEnd < newStart) newEnd = newStart;
+                    // Enforce minimum size
+                    if (newEnd < newStart + minEventSize) newEnd = newStart + minEventSize;
                 } else {
                     newStart = localSlots.start + slotDelta;
-                    if (newStart > newEnd) newStart = newEnd;
+                    // Enforce minimum size
+                    if (newStart > newEnd - minEventSize) newStart = newEnd - minEventSize;
                 }
                 setLocalSlots({ start: newStart, end: newEnd });
                 if (onResize) onResize(prevStart, prevEnd, newStart, newEnd, start.edge!);
@@ -289,8 +303,8 @@ export const PlannerEvent = ({
     }, [onDelete]);
 
     const cursor = useMemo(() =>
-        interaction.type === "drag" ? "grabbing" : onDrag ? "grab" : (onClick || onDoubleClick ? "pointer" : "default"),
-        [interaction.type, onDrag, onClick, onDoubleClick]
+        readOnly ? "default" : (interaction.type === "drag" ? "grabbing" : onDrag ? "grab" : (onClick || onDoubleClick ? "pointer" : "default")),
+        [readOnly, interaction.type, onDrag, onClick, onDoubleClick]
     );
 
     return (
@@ -343,7 +357,7 @@ export const PlannerEvent = ({
                 </foreignObject>
             )}
 
-            {onResize && (
+            {!readOnly && onResize && (
                 <>
                     <rect
                         x={currentX - 6}

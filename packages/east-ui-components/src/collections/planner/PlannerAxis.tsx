@@ -7,21 +7,21 @@ import { useMemo } from "react";
 import { Box, HStack, Text } from "@chakra-ui/react";
 
 export interface PlannerAxisProps {
-    startSlot: bigint;
-    endSlot: bigint;
+    startSlot: number;
+    endSlot: number;
     width: number;
     height: number;
     slotWidth: number;
     /** Optional function to format slot labels */
-    getSlotLabel?: (slot: bigint) => string;
+    getSlotLabel?: (slot: number) => string;
 }
 
-const defaultFormatSlot = (slot: bigint): string => {
+const defaultFormatSlot = (slot: number): string => {
     return String(slot);
 };
 
-export const getSlotPosition = (slot: bigint, startSlot: bigint, slotWidth: number): number => {
-    const slotIndex = Number(slot - startSlot);
+export const getSlotPosition = (slot: number, startSlot: number, slotWidth: number): number => {
+    const slotIndex = slot - startSlot;
     return slotIndex * slotWidth + slotWidth / 2; // Center of the slot
 };
 
@@ -39,13 +39,13 @@ export const PlannerAxis = ({
     const formatSlot = getSlotLabel ?? defaultFormatSlot;
 
     const ticks = useMemo(() => {
-        const totalSlots = Number(endSlot - startSlot) + 1;
-        const result: { slot: bigint; x: number; index: number }[] = [];
+        const totalSlots = Math.floor(endSlot - startSlot) + 1;
+        const result: { slot: number; x: number; index: number }[] = [];
 
         // Calculate how many slots we can show labels for
         // Show fewer labels if slots are very narrow
         for (let i = 0; i < totalSlots; i += 1) {
-            const slot = startSlot + BigInt(i);
+            const slot = startSlot + i;
             const x = getSlotPosition(slot, startSlot, slotWidth);
 
             // Only include if the label won't be cut off at edges

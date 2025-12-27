@@ -199,10 +199,16 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
     const [rowStates, setRowStates] = useState<Map<RowKey, RowState>>(new Map());
     const visibleRowsRef = useRef<Set<RowKey>>(new Set());
 
+    // Extract stepSize from style
+    const stepSize = useMemo(() => style ? getSomeorUndefined(style.stepSize) ?? 1 : 1, [style]);
+
+    // Extract readOnly from style (disables all event interactions)
+    const readOnly = useMemo(() => style ? getSomeorUndefined(style.readOnly) ?? false : false, [style]);
+
     // Calculate slot range from events
     const slotRange = useMemo(() => {
-        let minSlot: bigint | null = null;
-        let maxSlot: bigint | null = null;
+        let minSlot: number | null = null;
+        let maxSlot: number | null = null;
 
         value.rows.forEach((row) => {
             row.events.forEach((event) => {
@@ -225,8 +231,8 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
         }
 
         // Fallback to 0-10 if no events
-        if (minSlot === null) minSlot = 0n;
-        if (maxSlot === null) maxSlot = 10n;
+        if (minSlot === null) minSlot = 0;
+        if (maxSlot === null) maxSlot = 10;
 
         return {
             start: minSlot,
@@ -236,9 +242,10 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
 
     // Generate slot positions
     const slots = useMemo(() => {
-        const result: bigint[] = [];
-        for (let i = slotRange.start; i <= slotRange.end; i++) {
-            result.push(i);
+        const result: number[] = [];
+        const count = Math.floor(slotRange.end - slotRange.start) + 1;
+        for (let i = 0; i < count; i++) {
+            result.push(slotRange.start + i);
         }
         return result;
     }, [slotRange]);
@@ -515,7 +522,7 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
 
     // Get slot label
     const getSlotLabel = useCallback(
-        (slot: bigint): string => {
+        (slot: number): string => {
             if (slotLabelFn) {
                 try {
                     return slotLabelFn(slot);
@@ -531,7 +538,7 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
 
     // Handle event drag
     const handleEventDrag = useCallback(
-        (rowIndex: number, eventIndex: number, previousStart: bigint, previousEnd: bigint, newStart: bigint, newEnd: bigint) => {
+        (rowIndex: number, eventIndex: number, previousStart: number, previousEnd: number, newStart: number, newEnd: number) => {
             if (onEventDragFn) {
                 queueMicrotask(() => onEventDragFn({
                     rowIndex: BigInt(rowIndex),
@@ -548,7 +555,7 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
 
     // Handle event resize
     const handleEventResize = useCallback(
-        (rowIndex: number, eventIndex: number, previousStart: bigint, previousEnd: bigint, newStart: bigint, newEnd: bigint, edge: "start" | "end") => {
+        (rowIndex: number, eventIndex: number, previousStart: number, previousEnd: number, newStart: number, newEnd: number, edge: "start" | "end") => {
             if (onEventResizeFn) {
                 queueMicrotask(() => onEventResizeFn({
                     rowIndex: BigInt(rowIndex),
@@ -566,7 +573,7 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
 
     // Handle event add (click on empty slot)
     const handleEventAdd = useCallback(
-        (rowIndex: number, slot: bigint) => {
+        (rowIndex: number, slot: number) => {
             if (onEventAddFn) {
                 queueMicrotask(() => onEventAddFn({
                     rowIndex: BigInt(rowIndex),
@@ -664,7 +671,7 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
             {/* Boundary lines */}
             {boundaries?.map((boundary, index) => {
                 // Calculate x position from slot value
-                const slotOffset = Number(boundary.x - slotRange.start);
+                const slotOffset = boundary.x - slotRange.start;
                 const x = (slotOffset + 1) * slotMinWidth; // Center in slot
                 const stroke = getSomeorUndefined(boundary.stroke) ?? "red";
                 const strokeWidth = getSomeorUndefined(boundary.strokeWidth) ?? 2;
@@ -1064,6 +1071,8 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
                                                             slotCount={slots.length}
                                                             minSlot={slotRange.start}
                                                             maxSlot={slotRange.end}
+                                                            stepSize={stepSize}
+                                                            readOnly={readOnly}
                                                             onEventClick={handleEventClick}
                                                             onEventDoubleClick={handleEventDoubleClick}
                                                             onEventDrag={handleEventDrag}

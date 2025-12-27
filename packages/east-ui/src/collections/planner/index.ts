@@ -12,7 +12,6 @@ import {
     ArrayType,
     DictType,
     StringType,
-    IntegerType,
     FloatType,
     OptionType,
     variant,
@@ -149,8 +148,8 @@ export type PlannerRootType = typeof PlannerRootType;
  * @property textAlign - Optional text alignment for label
  */
 export interface EventInput {
-    start: SubtypeExprOrValue<IntegerType>;
-    end?: SubtypeExprOrValue<IntegerType>;
+    start: SubtypeExprOrValue<FloatType>;
+    end?: SubtypeExprOrValue<FloatType>;
     label?: SubtypeExprOrValue<StringType>;
     colorPalette?: SubtypeExprOrValue<ColorSchemeType> | string;
     /** Text color (overrides colorPalette) */
@@ -456,9 +455,11 @@ function createPlanner<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
         slotMode: slotModeValue ? some(slotModeValue) : none,
         minSlot: style.minSlot !== undefined ? some(style.minSlot) : none,
         maxSlot: style.maxSlot !== undefined ? some(style.maxSlot) : none,
+        stepSize: style.stepSize !== undefined ? some(style.stepSize) : none,
         slotLabel: style.slotLabel ? some(style.slotLabel) : none,
         slotMinWidth: style.slotMinWidth ? some(style.slotMinWidth) : none,
         colorPalette: colorPaletteValue ? some(colorPaletteValue) : none,
+        readOnly: style.readOnly !== undefined ? some(style.readOnly) : none,
         slotLineStroke: style.slotLineStroke ? some(style.slotLineStroke) : none,
         slotLineWidth: style.slotLineWidth !== undefined ? some(style.slotLineWidth) : none,
         slotLineDash: style.slotLineDash ? some(style.slotLineDash) : none,

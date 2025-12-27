@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { East, IntegerType, StringType } from "@elaraai/east";
+import { East, FloatType, StringType } from "@elaraai/east";
 import { describeEast, assertEast } from "../platforms.spec.js";
 import { Planner, Text, Badge } from "../../src/index.js";
 
@@ -14,10 +14,10 @@ describeEast("Planner", (test) => {
 
     test("creates event with start only", $ => {
         const event = $.let(Planner.Event({
-            start: 1n,
+            start: 1.0,
         }));
 
-        $(assertEast.equal(event.start, 1n));
+        $(assertEast.equal(event.start, 1.0));
         $(assertEast.equal(event.end.hasTag("none"), true));
         $(assertEast.equal(event.label.hasTag("none"), true));
         $(assertEast.equal(event.colorPalette.hasTag("none"), true));
@@ -25,19 +25,19 @@ describeEast("Planner", (test) => {
 
     test("creates event with start and end", $ => {
         const event = $.let(Planner.Event({
-            start: 1n,
-            end: 5n,
+            start: 1.0,
+            end: 5.0,
         }));
 
-        $(assertEast.equal(event.start, 1n));
+        $(assertEast.equal(event.start, 1.0));
         $(assertEast.equal(event.end.hasTag("some"), true));
-        $(assertEast.equal(event.end.unwrap("some"), 5n));
+        $(assertEast.equal(event.end.unwrap("some"), 5.0));
     });
 
     test("creates event with label", $ => {
         const event = $.let(Planner.Event({
-            start: 1n,
-            end: 3n,
+            start: 1.0,
+            end: 3.0,
             label: "Task A",
         }));
 
@@ -47,8 +47,8 @@ describeEast("Planner", (test) => {
 
     test("creates event with colorPalette", $ => {
         const event = $.let(Planner.Event({
-            start: 1n,
-            end: 3n,
+            start: 1.0,
+            end: 3.0,
             colorPalette: "blue",
         }));
 
@@ -58,14 +58,14 @@ describeEast("Planner", (test) => {
 
     test("creates event with all options", $ => {
         const event = $.let(Planner.Event({
-            start: 2n,
-            end: 6n,
+            start: 2.0,
+            end: 6.0,
             label: "Important Task",
             colorPalette: "green",
         }));
 
-        $(assertEast.equal(event.start, 2n));
-        $(assertEast.equal(event.end.unwrap("some"), 6n));
+        $(assertEast.equal(event.start, 2.0));
+        $(assertEast.equal(event.end.unwrap("some"), 6.0));
         $(assertEast.equal(event.label.unwrap("some"), "Important Task"));
         $(assertEast.equal(event.colorPalette.unwrap("some").hasTag("green"), true));
     });
@@ -77,8 +77,8 @@ describeEast("Planner", (test) => {
     test("creates basic planner", $ => {
         const planner = $.let(Planner.Root(
             [
-                { name: "Alice", start: 1n, end: 3n },
-                { name: "Bob", start: 2n, end: 5n },
+                { name: "Alice", start: 1.0, end: 3.0 },
+                { name: "Bob", start: 2.0, end: 5.0 },
             ],
             ["name"],
             row => [Planner.Event({ start: row.start, end: row.end })],
@@ -90,7 +90,7 @@ describeEast("Planner", (test) => {
     test("creates planner with style", $ => {
         const planner = $.let(Planner.Root(
             [
-                { name: "Task 1", slot: 1n },
+                { name: "Task 1", slot: 1.0 },
             ],
             ["name"],
             row => [Planner.Event({ start: row.slot })],
@@ -107,7 +107,7 @@ describeEast("Planner", (test) => {
 
     test("creates planner with span mode", $ => {
         const planner = $.let(Planner.Root(
-            [{ name: "Task", start: 1n, end: 5n }],
+            [{ name: "Task", start: 1.0, end: 5.0 }],
             ["name"],
             row => [Planner.Event({ start: row.start, end: row.end })],
             {
@@ -120,22 +120,22 @@ describeEast("Planner", (test) => {
 
     test("creates planner with minSlot and maxSlot", $ => {
         const planner = $.let(Planner.Root(
-            [{ name: "Task", start: 3n, end: 5n }],
+            [{ name: "Task", start: 3.0, end: 5.0 }],
             ["name"],
             row => [Planner.Event({ start: row.start, end: row.end })],
             {
-                minSlot: 1n,
-                maxSlot: 10n,
+                minSlot: 1.0,
+                maxSlot: 10.0,
             }
         ));
 
-        $(assertEast.equal(planner.unwrap("Planner").style.unwrap("some").minSlot.unwrap("some"), 1n));
-        $(assertEast.equal(planner.unwrap("Planner").style.unwrap("some").maxSlot.unwrap("some"), 10n));
+        $(assertEast.equal(planner.unwrap("Planner").style.unwrap("some").minSlot.unwrap("some"), 1.0));
+        $(assertEast.equal(planner.unwrap("Planner").style.unwrap("some").maxSlot.unwrap("some"), 10.0));
     });
 
     test("creates planner with slotMinWidth", $ => {
         const planner = $.let(Planner.Root(
-            [{ name: "Task", start: 1n }],
+            [{ name: "Task", start: 1.0 }],
             ["name"],
             row => [Planner.Event({ start: row.start })],
             {
@@ -147,12 +147,12 @@ describeEast("Planner", (test) => {
     });
 
     test("creates planner with slotLabel function", $ => {
-        const labelFn = East.function([IntegerType], StringType, ($, slot) => {
+        const labelFn = East.function([FloatType], StringType, ($, slot) => {
             return East.str`Day ${slot}`;
         });
 
         const planner = $.let(Planner.Root(
-            [{ name: "Task", start: 1n }],
+            [{ name: "Task", start: 1.0 }],
             ["name"],
             row => [Planner.Event({ start: row.start })],
             {
@@ -169,7 +169,7 @@ describeEast("Planner", (test) => {
 
     test("creates planner with slot line stroke", $ => {
         const planner = $.let(Planner.Root(
-            [{ name: "Task", start: 1n }],
+            [{ name: "Task", start: 1.0 }],
             ["name"],
             row => [Planner.Event({ start: row.start })],
             {
@@ -182,7 +182,7 @@ describeEast("Planner", (test) => {
 
     test("creates planner with slot line width", $ => {
         const planner = $.let(Planner.Root(
-            [{ name: "Task", start: 1n }],
+            [{ name: "Task", start: 1.0 }],
             ["name"],
             row => [Planner.Event({ start: row.start })],
             {
@@ -195,7 +195,7 @@ describeEast("Planner", (test) => {
 
     test("creates planner with slot line dash", $ => {
         const planner = $.let(Planner.Root(
-            [{ name: "Task", start: 1n }],
+            [{ name: "Task", start: 1.0 }],
             ["name"],
             row => [Planner.Event({ start: row.start })],
             {
@@ -208,7 +208,7 @@ describeEast("Planner", (test) => {
 
     test("creates planner with slot line opacity", $ => {
         const planner = $.let(Planner.Root(
-            [{ name: "Task", start: 1n }],
+            [{ name: "Task", start: 1.0 }],
             ["name"],
             row => [Planner.Event({ start: row.start })],
             {
@@ -225,7 +225,7 @@ describeEast("Planner", (test) => {
 
     test("creates planner with table variant", $ => {
         const planner = $.let(Planner.Root(
-            [{ name: "Task", start: 1n }],
+            [{ name: "Task", start: 1.0 }],
             ["name"],
             row => [Planner.Event({ start: row.start })],
             {
@@ -238,7 +238,7 @@ describeEast("Planner", (test) => {
 
     test("creates planner with size", $ => {
         const planner = $.let(Planner.Root(
-            [{ name: "Task", start: 1n }],
+            [{ name: "Task", start: 1.0 }],
             ["name"],
             row => [Planner.Event({ start: row.start })],
             {
@@ -251,7 +251,7 @@ describeEast("Planner", (test) => {
 
     test("creates planner with striped", $ => {
         const planner = $.let(Planner.Root(
-            [{ name: "Task", start: 1n }],
+            [{ name: "Task", start: 1.0 }],
             ["name"],
             row => [Planner.Event({ start: row.start })],
             {
@@ -264,7 +264,7 @@ describeEast("Planner", (test) => {
 
     test("creates planner with interactive", $ => {
         const planner = $.let(Planner.Root(
-            [{ name: "Task", start: 1n }],
+            [{ name: "Task", start: 1.0 }],
             ["name"],
             row => [Planner.Event({ start: row.start })],
             {
@@ -277,7 +277,7 @@ describeEast("Planner", (test) => {
 
     test("creates planner with stickyHeader", $ => {
         const planner = $.let(Planner.Root(
-            [{ name: "Task", start: 1n }],
+            [{ name: "Task", start: 1.0 }],
             ["name"],
             row => [Planner.Event({ start: row.start })],
             {
@@ -295,7 +295,7 @@ describeEast("Planner", (test) => {
     test("creates planner with multiple events per row", $ => {
         const planner = $.let(Planner.Root(
             [
-                { name: "Alice", slot1: 1n, slot2: 3n, slot3: 5n },
+                { name: "Alice", slot1: 1.0, slot2: 3.0, slot3: 5.0 },
             ],
             ["name"],
             row => [
@@ -315,8 +315,8 @@ describeEast("Planner", (test) => {
     test("creates planner with multiple columns", $ => {
         const planner = $.let(Planner.Root(
             [
-                { name: "Task A", category: "Development", start: 1n, end: 3n },
-                { name: "Task B", category: "Design", start: 2n, end: 4n },
+                { name: "Task A", category: "Development", start: 1.0, end: 3.0 },
+                { name: "Task B", category: "Design", start: 2.0, end: 4.0 },
             ],
             ["name", "category"],
             row => [Planner.Event({ start: row.start, end: row.end })],
@@ -328,7 +328,7 @@ describeEast("Planner", (test) => {
     test("creates planner with column config object", $ => {
         const planner = $.let(Planner.Root(
             [
-                { name: "Task A", priority: 1n },
+                { name: "Task A", priority: 1.0 },
             ],
             {
                 name: { header: "Task Name" },
@@ -346,7 +346,7 @@ describeEast("Planner", (test) => {
 
     test("creates planner with default colorPalette", $ => {
         const planner = $.let(Planner.Root(
-            [{ name: "Task", start: 1n }],
+            [{ name: "Task", start: 1.0 }],
             ["name"],
             row => [Planner.Event({ start: row.start })],
             {
@@ -364,8 +364,8 @@ describeEast("Planner", (test) => {
     test("column render function receives row parameter to access other fields", $ => {
         const planner = $.let(Planner.Root(
             [
-                { name: "Alice", role: "Developer", start: 1n, end: 3n },
-                { name: "Bob", role: "Designer", start: 2n, end: 5n },
+                { name: "Alice", role: "Developer", start: 1.0, end: 3.0 },
+                { name: "Bob", role: "Designer", start: 2.0, end: 5.0 },
             ],
             {
                 name: {
@@ -384,8 +384,8 @@ describeEast("Planner", (test) => {
     test("column render function uses row field for conditional styling", $ => {
         const planner = $.let(Planner.Root(
             [
-                { task: "Bug Fix", priority: "high", start: 1n, end: 3n },
-                { task: "Feature", priority: "low", start: 2n, end: 4n },
+                { task: "Bug Fix", priority: "high", start: 1.0, end: 3.0 },
+                { task: "Feature", priority: "low", start: 2.0, end: 4.0 },
             ],
             {
                 task: { header: "Task" },
@@ -407,7 +407,7 @@ describeEast("Planner", (test) => {
     test("column render function accesses multiple row fields", $ => {
         const planner = $.let(Planner.Root(
             [
-                { firstName: "Alice", lastName: "Smith", department: "Eng", start: 1n, end: 5n },
+                { firstName: "Alice", lastName: "Smith", department: "Eng", start: 1.0, end: 5.0 },
             ],
             {
                 firstName: {
@@ -430,8 +430,8 @@ describeEast("Planner", (test) => {
     test("creates planner with array field using value function", $ => {
         const planner = $.let(Planner.Root(
             [
-                { name: "Alice", skills: ["TypeScript", "React"], start: 1n, end: 3n },
-                { name: "Bob", skills: ["Python", "Django", "FastAPI"], start: 2n, end: 5n },
+                { name: "Alice", skills: ["TypeScript", "React"], start: 1.0, end: 3.0 },
+                { name: "Bob", skills: ["Python", "Django", "FastAPI"], start: 2.0, end: 5.0 },
             ],
             {
                 name: { header: "Name" },
@@ -452,8 +452,8 @@ describeEast("Planner", (test) => {
     test("creates planner with struct field using value function", $ => {
         const planner = $.let(Planner.Root(
             [
-                { name: "Task A", info: { priority: 1n, category: "urgent" }, start: 1n, end: 3n },
-                { name: "Task B", info: { priority: 3n, category: "normal" }, start: 2n, end: 4n },
+                { name: "Task A", info: { priority: 1n, category: "urgent" }, start: 1.0, end: 3.0 },
+                { name: "Task B", info: { priority: 3n, category: "normal" }, start: 2.0, end: 4.0 },
             ],
             {
                 name: { header: "Task" },
@@ -474,8 +474,8 @@ describeEast("Planner", (test) => {
     test("creates planner mixing primitive and complex columns", $ => {
         const planner = $.let(Planner.Root(
             [
-                { id: 1n, name: "Alice", contact: { email: "alice@example.com", phone: "555-1234" }, start: 1n, end: 3n },
-                { id: 2n, name: "Bob", contact: { email: "bob@example.com", phone: "555-5678" }, start: 2n, end: 5n },
+                { id: 1n, name: "Alice", contact: { email: "alice@example.com", phone: "555-1234" }, start: 1.0, end: 3.0 },
+                { id: 2n, name: "Bob", contact: { email: "bob@example.com", phone: "555-5678" }, start: 2.0, end: 5.0 },
             ],
             {
                 id: { header: "ID" },  // Primitive - no value function needed

@@ -22,18 +22,20 @@ export interface PlannerEventRowProps {
     width: number;
     height: number;
     slotWidth: number;
-    slotRangeStart: bigint;
+    slotRangeStart: number;
     slotMode: "single" | "span";
     slotCount: number;
-    minSlot?: bigint;
-    maxSlot?: bigint;
+    minSlot?: number;
+    maxSlot?: number;
+    stepSize?: number;
+    readOnly?: boolean;
     onEventClick?: ((event: PlannerEventValue, rowIndex: number, eventIndex: number) => void) | undefined;
     onEventDoubleClick?: ((event: PlannerEventValue, rowIndex: number, eventIndex: number) => void) | undefined;
-    onEventDrag?: ((rowIndex: number, eventIndex: number, previousStart: bigint, previousEnd: bigint, newStart: bigint, newEnd: bigint) => void) | undefined;
-    onEventResize?: ((rowIndex: number, eventIndex: number, previousStart: bigint, previousEnd: bigint, newStart: bigint, newEnd: bigint, edge: "start" | "end") => void) | undefined;
+    onEventDrag?: ((rowIndex: number, eventIndex: number, previousStart: number, previousEnd: number, newStart: number, newEnd: number) => void) | undefined;
+    onEventResize?: ((rowIndex: number, eventIndex: number, previousStart: number, previousEnd: number, newStart: number, newEnd: number, edge: "start" | "end") => void) | undefined;
     onEventEdit?: ((event: PlannerEventValue, rowIndex: number, eventIndex: number) => void) | undefined;
     onEventDelete?: ((event: PlannerEventValue, rowIndex: number, eventIndex: number) => void) | undefined;
-    onSlotClick?: ((slot: bigint) => void) | undefined;
+    onSlotClick?: ((slot: number) => void) | undefined;
 }
 
 export const PlannerEventRow = ({
@@ -47,6 +49,8 @@ export const PlannerEventRow = ({
     slotCount,
     minSlot,
     maxSlot,
+    stepSize,
+    readOnly = false,
     onEventClick,
     onEventDoubleClick,
     onEventDrag,
@@ -56,10 +60,10 @@ export const PlannerEventRow = ({
     onSlotClick,
 }: PlannerEventRowProps) => {
     // Track current positions of all events (updated via callbacks from PlannerEvent)
-    const [eventPositions, setEventPositions] = useState<Map<number, { start: bigint; end: bigint }>>(new Map());
+    const [eventPositions, setEventPositions] = useState<Map<number, { start: number; end: number }>>(new Map());
 
     // Callback for events to report their current position
-    const handlePositionChange = useCallback((eventIndex: number, start: bigint, end: bigint) => {
+    const handlePositionChange = useCallback((eventIndex: number, start: number, end: number) => {
         setEventPositions(prev => {
             const next = new Map(prev);
             next.set(eventIndex, { start, end });
@@ -67,45 +71,38 @@ export const PlannerEventRow = ({
         });
     }, []);
 
-    // Build a set of occupied slots from tracked positions
-    const occupiedSlots = useMemo(() => {
-        const occupied = new Set<bigint>();
-        eventPositions.forEach(({ start, end }) => {
-            for (let s = start; s <= end; s++) {
-                occupied.add(s);
-            }
-        });
-        return occupied;
-    }, [eventPositions]);
-
-    // Render slot cells only for unoccupied slots
+    // Render slot cells only for unoccupied slots (sub-divided by stepSize)
     const renderedSlotCells = useMemo(() => {
         const cells = [];
-        for (let i = 0; i < slotCount; i++) {
-            const slot = slotRangeStart + BigInt(i);
-            // Skip slots that have events
-            if (occupiedSlots.has(slot)) continue;
+        const effectiveStepSize = stepSize ?? 1;
+        const subSlotWidth = slotWidth * effectiveStepSize;
+        const subSlotCount = Math.ceil(slotCount / effectiveStepSize);
 
-            const x = i * slotWidth;
+        for (let i = 0; i < subSlotCount; i++) {
+            const slot = slotRangeStart + (i * effectiveStepSize);
+            // Skip slots that have events (check the whole slot this sub-slot belongs to)
+
+            const x = i * subSlotWidth;
             cells.push(
                 <PlannerSlotCell
-                    key={`slot-${i}`}
+                    key={`slot-${slot}`}
                     x={x}
                     y={y}
-                    width={slotWidth}
+                    width={subSlotWidth}
                     height={height}
                     slot={slot}
+                    readOnly={readOnly}
                     onClick={onSlotClick}
                 />
             );
         }
         return cells;
-    }, [onSlotClick, slotCount, slotRangeStart, slotWidth, y, height, occupiedSlots]);
+    }, [onSlotClick, slotCount, slotRangeStart, slotWidth, stepSize, y, height, readOnly]);
 
     const renderedEvents = useMemo(() => {
         const eventHeight = height - 12;
         const eventY = y + 6;
-        const slotRangeEnd = slotRangeStart + BigInt(slotCount);
+        const slotRangeEnd = slotRangeStart + slotCount;
 
         return events.map((event, eventIndex) => {
             // Check if event is visible in the current slot range
@@ -123,6 +120,8 @@ export const PlannerEventRow = ({
                     slotMode={slotMode}
                     minSlot={minSlot}
                     maxSlot={maxSlot}
+                    stepSize={stepSize}
+                    readOnly={readOnly}
                     onClick={onEventClick ? () => onEventClick(event, rowIndex, eventIndex) : undefined}
                     onDoubleClick={onEventDoubleClick ? () => onEventDoubleClick(event, rowIndex, eventIndex) : undefined}
                     onDrag={onEventDrag ? (prevStart, prevEnd, newStart, newEnd) => onEventDrag(rowIndex, eventIndex, prevStart, prevEnd, newStart, newEnd) : undefined}
@@ -133,7 +132,7 @@ export const PlannerEventRow = ({
                 />
             );
         }).filter(Boolean);
-    }, [events, rowIndex, y, height, slotWidth, slotRangeStart, slotMode, slotCount, minSlot, maxSlot, onEventClick, onEventDoubleClick, onEventDrag, onEventResize, onEventEdit, onEventDelete, handlePositionChange]);
+    }, [events, rowIndex, y, height, slotWidth, slotRangeStart, slotMode, slotCount, minSlot, maxSlot, stepSize, readOnly, onEventClick, onEventDoubleClick, onEventDrag, onEventResize, onEventEdit, onEventDelete, handlePositionChange]);
 
     return (
         <g>
