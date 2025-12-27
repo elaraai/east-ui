@@ -137,7 +137,7 @@ export default East.function(
                         { resource: "Room B", slots: [2.0, 4.0, 6.0, 8.0] },
                     ],
                     ["resource"],
-                    row => row.slots.map(($, slot) =>
+                    row => row.slots.map((_$, slot) =>
                         Planner.Event({ start: slot, colorPalette: "teal" })
                     ),
                     { slotMode: "single", maxSlot: 10.0 }
@@ -212,7 +212,7 @@ export default East.function(
                     {
                         minSlot: 0.0,
                         maxSlot: 7.0,
-                        slotLabel: East.function([FloatType], StringType, ($, slot) => {
+                        slotLabel: East.function([FloatType], StringType, (_$, slot) => {
                             return East.str`Day ${slot}`;
                         }),
                     }
@@ -459,11 +459,11 @@ export default East.function(
                     row => [Planner.Event({ start: row.start, end: row.end, label: row.task, colorPalette: "blue" })],
                     {
                         maxSlot: 8.0,
-                        onEventEdit: East.function([Planner.Types.ClickEvent], NullType, ($, ev) => {
+                        onEventEdit: East.function([Planner.Types.ClickEvent], NullType, () => {
                             // In a real app, this would open an edit dialog
                             return null;
                         }),
-                        onEventDelete: East.function([Planner.Types.DeleteEvent], NullType, ($, ev) => {
+                        onEventDelete: East.function([Planner.Types.DeleteEvent], NullType, () => {
                             // In a real app, this would delete the event
                             return null;
                         }),
@@ -543,7 +543,7 @@ export default East.function(
                         { task: "Faded", start: 1.0, end: 4.0 },
                     ],
                     ["task"],
-                    row => [
+                    () => [
                         Planner.Event({
                             start: 1.0,
                             end: 3.0,

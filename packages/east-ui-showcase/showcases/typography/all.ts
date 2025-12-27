@@ -15,7 +15,7 @@ import codeBlockShowcase from "./code-block";
 export default East.function(
     [],
     UIComponentType,
-    ($) => {
+    () => {
         return Stack.VStack([
             Text.Root("Text", { fontWeight: "bold", fontSize: "lg" }),
             textShowcase(),

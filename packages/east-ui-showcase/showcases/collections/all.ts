@@ -12,7 +12,7 @@ import plannerShowcase from "./planner";
 export default East.function(
     [],
     UIComponentType,
-    ($) => {
+    (_$) => {
         return Stack.VStack([
             Text.Root("DataList", { fontWeight: "bold", fontSize: "lg" }),
             dataListShowcase(),

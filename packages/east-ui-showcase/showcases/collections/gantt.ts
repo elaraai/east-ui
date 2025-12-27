@@ -523,7 +523,10 @@ export default East.function(
                             }
                         ),
                         Badge.Root(
-                            East.equal(lastEvent.unwrap('some').length(), 0n).ifElse($ => "Interact with the Gantt chart", $ => lastEvent.unwrap('some')),
+                            East.equal(lastEvent.unwrap('some').length(), 0n).ifElse(
+                                _$ => "Interact with the Gantt chart", 
+                                _$ => lastEvent.unwrap('some')
+                            ),
                             { colorPalette: "blue", variant: "outline" }
                         ),
                     ], { gap: "3", align: "stretch" });

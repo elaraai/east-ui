@@ -1,4 +1,4 @@
-import { East, some, FloatType, NullType, ArrayType } from "@elaraai/east";
+import { East, some, FloatType, NullType } from "@elaraai/east";
 import { Splitter, Text, UIComponentType, Stack, Box, State, Reactive, Badge } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 

@@ -14,18 +14,18 @@ const dedent = East.function([StringType], StringType, ($, str) => {
     const lines = $.let(str.split("\n"));
 
     // Remove first line if empty
-    $.if(East.greater(lines.size(), 0n).and($ => East.equal(lines.get(0n).trim().length(), 0n)), $ => {
+    $.if(East.greater(lines.size(), 0n).and(() => East.equal(lines.get(0n).trim().length(), 0n)), $ => {
         $(lines.popFirst());
     });
 
     // Remove last line if empty
-    $.if(East.greater(lines.size(), 0n).and($ => East.equal(lines.get(lines.size().subtract(1n)).trim().length(), 0n)), $ => {
+    $.if(East.greater(lines.size(), 0n).and(() => East.equal(lines.get(lines.size().subtract(1n)).trim().length(), 0n)), $ => {
         $(lines.popLast());
     });
 
     // Find minimum indentation of non-empty lines
-    const nonEmpty = $.let(lines.filter(($, line) => East.greater(line.trim().length(), 0n)));
-    const indents = $.let(nonEmpty.map(($, line) => line.length().subtract(line.trimStart().length())));
+    const nonEmpty = $.let(lines.filter((_, line) => East.greater(line.trim().length(), 0n)));
+    const indents = $.let(nonEmpty.map((_, line) => line.length().subtract(line.trimStart().length())));
 
     const minIndent = $.let(0n);
     $.if(East.greater(indents.size(), 0n), $ => {
@@ -33,7 +33,7 @@ const dedent = East.function([StringType], StringType, ($, str) => {
     });
 
     // Strip indentation and join
-    $.return(lines.map(($, line) => line.substring(minIndent, line.length())).stringJoin("\n"));
+    $.return(lines.map((_, line) => line.substring(minIndent, line.length())).stringJoin("\n"));
 });
 
 /**

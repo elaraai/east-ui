@@ -13,7 +13,7 @@ import splitterShowcase from "./splitter";
 export default East.function(
     [],
     UIComponentType,
-    ($) => {
+    () => {
         return Stack.VStack([
             Text.Root("Box", { fontWeight: "bold", fontSize: "lg" }),
             boxShowcase(),

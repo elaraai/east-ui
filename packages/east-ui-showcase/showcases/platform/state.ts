@@ -9,7 +9,6 @@ import {
     UIComponentType,
     Stack,
     Grid, Stat, State,
-    Chart
 } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 

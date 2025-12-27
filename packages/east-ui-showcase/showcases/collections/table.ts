@@ -314,7 +314,7 @@ export default East.function(
                         },
                         status: {
                             header: "Status",
-                            render: (value, row) => Badge.Root(
+                            render: (value) => Badge.Root(
                                 value,
                                 {
                                     variant: "solid",
@@ -323,7 +323,7 @@ export default East.function(
                         },
                         score: {
                             header: "Score",
-                            render: (value, row) => Text.Root(
+                            render: (value) => Text.Root(
                                 East.str`${value}`,
                             ),
                         },

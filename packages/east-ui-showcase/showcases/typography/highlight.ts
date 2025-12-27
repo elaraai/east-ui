@@ -1,5 +1,5 @@
 import { East, some } from "@elaraai/east";
-import { Highlight, UIComponentType, Stack, Grid } from "@elaraai/east-ui";
+import { Highlight, UIComponentType, Grid } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
 /**

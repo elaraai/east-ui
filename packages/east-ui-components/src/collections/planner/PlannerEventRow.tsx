@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { useMemo, useState, useCallback } from "react";
+import { useMemo } from "react";
 import type { ValueTypeOf } from "@elaraai/east";
 import type { Planner } from "@elaraai/east-ui";
 import { PlannerEvent } from "./PlannerEvent";
@@ -59,17 +59,7 @@ export const PlannerEventRow = ({
     onEventDelete,
     onSlotClick,
 }: PlannerEventRowProps) => {
-    // Track current positions of all events (updated via callbacks from PlannerEvent)
-    const [eventPositions, setEventPositions] = useState<Map<number, { start: number; end: number }>>(new Map());
-
-    // Callback for events to report their current position
-    const handlePositionChange = useCallback((eventIndex: number, start: number, end: number) => {
-        setEventPositions(prev => {
-            const next = new Map(prev);
-            next.set(eventIndex, { start, end });
-            return next;
-        });
-    }, []);
+    
 
     // Render slot cells only for unoccupied slots (sub-divided by stepSize)
     const renderedSlotCells = useMemo(() => {
@@ -128,12 +118,10 @@ export const PlannerEventRow = ({
                     onResize={onEventResize ? (prevStart, prevEnd, newStart, newEnd, edge) => onEventResize(rowIndex, eventIndex, prevStart, prevEnd, newStart, newEnd, edge) : undefined}
                     onEdit={onEventEdit ? () => onEventEdit(event, rowIndex, eventIndex) : undefined}
                     onDelete={onEventDelete ? () => onEventDelete(event, rowIndex, eventIndex) : undefined}
-                    onPositionChange={(start, end) => handlePositionChange(eventIndex, start, end)}
                 />
             );
         }).filter(Boolean);
-    }, [events, rowIndex, y, height, slotWidth, slotRangeStart, slotMode, slotCount, minSlot, maxSlot, stepSize, readOnly, onEventClick, onEventDoubleClick, onEventDrag, onEventResize, onEventEdit, onEventDelete, handlePositionChange]);
-
+    }, [events, rowIndex, y, height, slotWidth, slotRangeStart, slotMode, slotCount, minSlot, maxSlot, stepSize, readOnly, onEventClick, onEventDoubleClick, onEventDrag, onEventResize, onEventEdit, onEventDelete]);
     return (
         <g>
             {renderedSlotCells}

@@ -10,7 +10,7 @@ import tabsShowcase from "./tabs";
 export default East.function(
     [],
     UIComponentType,
-    ($) => {
+    () => {
         return Stack.VStack([
             Text.Root("Accordion", { fontWeight: "bold", fontSize: "lg" }),
             accordionShowcase(),

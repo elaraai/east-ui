@@ -272,7 +272,7 @@ export const PlannerEvent = ({
         startRef.current = null;
         setInteraction({ offset: 0, type: null, edge: null, hasMoved: false });
         setIsHovered(false);
-    }, [interaction, localSlots, onClick, onDrag, onResize, pixelsToSlots]);
+    }, [interaction, localSlots, stepSize, onClick, onDrag, onResize, pixelsToSlots]);
 
     const handleDoubleClick = useCallback(() => {
         if (onDoubleClick && !interaction.type) onDoubleClick();

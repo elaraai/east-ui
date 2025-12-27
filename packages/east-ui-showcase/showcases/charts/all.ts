@@ -16,7 +16,7 @@ import barSegmentShowcase from "./bar-segment";
 export default East.function(
     [],
     UIComponentType,
-    ($) => {
+    (_$) => {
         return Stack.VStack([
             Text.Root("Sparkline", { fontWeight: "bold", fontSize: "lg" }),
             sparklineShowcase(),
