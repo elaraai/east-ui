@@ -14,14 +14,14 @@ describeEast("Button", (test) => {
     test("creates button with label only", $ => {
         const button = $.let(Button.Root("Click me"));
 
-        $(assertEast.equal(button.unwrap("Button").label, "Click me"));
-        $(assertEast.equal(button.unwrap("Button").style.hasTag("none"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").label, "Click me"));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.hasTag("none"), true));
     });
 
     test("creates button with different label", $ => {
         const button = $.let(Button.Root("Submit"));
 
-        $(assertEast.equal(button.unwrap("Button").label, "Submit"));
+        $(assertEast.equal(button.unwrap().unwrap("Button").label, "Submit"));
     });
 
     // =========================================================================
@@ -33,9 +33,9 @@ describeEast("Button", (test) => {
             variant: "solid",
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.hasTag("some"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").variant.hasTag("some"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("solid"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.hasTag("some"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").variant.hasTag("some"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("solid"), true));
     });
 
     test("creates subtle button", $ => {
@@ -43,7 +43,7 @@ describeEast("Button", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates outline button", $ => {
@@ -51,7 +51,7 @@ describeEast("Button", (test) => {
             variant: "outline",
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
     });
 
     test("creates ghost button", $ => {
@@ -59,7 +59,7 @@ describeEast("Button", (test) => {
             variant: "ghost",
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("ghost"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("ghost"), true));
     });
 
     test("creates button with string literal variant", $ => {
@@ -67,7 +67,7 @@ describeEast("Button", (test) => {
             variant: "outline",
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
     });
 
     // =========================================================================
@@ -79,8 +79,8 @@ describeEast("Button", (test) => {
             colorPalette: "blue",
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").colorPalette.hasTag("some"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").colorPalette.unwrap("some").hasTag("blue"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").colorPalette.hasTag("some"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").colorPalette.unwrap("some").hasTag("blue"), true));
     });
 
     test("creates button with red color palette", $ => {
@@ -88,7 +88,7 @@ describeEast("Button", (test) => {
             colorPalette: "red",
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").colorPalette.unwrap("some").hasTag("red"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").colorPalette.unwrap("some").hasTag("red"), true));
     });
 
     test("creates button with green color palette", $ => {
@@ -96,7 +96,7 @@ describeEast("Button", (test) => {
             colorPalette: "green",
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").colorPalette.unwrap("some").hasTag("green"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").colorPalette.unwrap("some").hasTag("green"), true));
     });
 
     test("creates button with Style.ColorScheme helper", $ => {
@@ -104,7 +104,7 @@ describeEast("Button", (test) => {
             colorPalette: Style.ColorScheme("teal"),
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").colorPalette.unwrap("some").hasTag("teal"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").colorPalette.unwrap("some").hasTag("teal"), true));
     });
 
     // =========================================================================
@@ -116,8 +116,8 @@ describeEast("Button", (test) => {
             size: "xs",
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").size.hasTag("some"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").size.unwrap("some").hasTag("xs"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").size.hasTag("some"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").size.unwrap("some").hasTag("xs"), true));
     });
 
     test("creates small button", $ => {
@@ -125,7 +125,7 @@ describeEast("Button", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").size.unwrap("some").hasTag("sm"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates medium button", $ => {
@@ -133,7 +133,7 @@ describeEast("Button", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").size.unwrap("some").hasTag("md"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates large button", $ => {
@@ -141,7 +141,7 @@ describeEast("Button", (test) => {
             size: "lg",
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").size.unwrap("some").hasTag("lg"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").size.unwrap("some").hasTag("lg"), true));
     });
 
     test("creates button with Style.Size helper", $ => {
@@ -149,7 +149,7 @@ describeEast("Button", (test) => {
             size: Style.Size("md"),
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").size.unwrap("some").hasTag("md"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").size.unwrap("some").hasTag("md"), true));
     });
 
     // =========================================================================
@@ -161,8 +161,8 @@ describeEast("Button", (test) => {
             loading: true,
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").loading.hasTag("some"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").loading.unwrap("some"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").loading.hasTag("some"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").loading.unwrap("some"), true));
     });
 
     test("creates non-loading button explicitly", $ => {
@@ -170,8 +170,8 @@ describeEast("Button", (test) => {
             loading: false,
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").loading.hasTag("some"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").loading.unwrap("some"), false));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").loading.hasTag("some"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").loading.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -183,8 +183,8 @@ describeEast("Button", (test) => {
             disabled: true,
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").disabled.hasTag("some"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").disabled.unwrap("some"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").disabled.hasTag("some"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").disabled.unwrap("some"), true));
     });
 
     test("creates enabled button explicitly", $ => {
@@ -192,8 +192,8 @@ describeEast("Button", (test) => {
             disabled: false,
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").disabled.hasTag("some"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").disabled.unwrap("some"), false));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").disabled.hasTag("some"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").disabled.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -209,7 +209,7 @@ describeEast("Button", (test) => {
             disabled: false,
         }));
 
-        const style = button.unwrap("Button").style.unwrap("some");
+        const style = button.unwrap().unwrap("Button").style.unwrap("some");
         $(assertEast.equal(style.variant.unwrap("some").hasTag("solid"), true));
         $(assertEast.equal(style.colorPalette.unwrap("some").hasTag("blue"), true));
         $(assertEast.equal(style.size.unwrap("some").hasTag("md"), true));
@@ -224,9 +224,9 @@ describeEast("Button", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(button.unwrap("Button").label, "Save Changes"));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("solid"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").colorPalette.unwrap("some").hasTag("blue"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").label, "Save Changes"));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("solid"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").colorPalette.unwrap("some").hasTag("blue"), true));
     });
 
     test("creates danger button", $ => {
@@ -235,8 +235,8 @@ describeEast("Button", (test) => {
             colorPalette: "red",
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("solid"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").colorPalette.unwrap("some").hasTag("red"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("solid"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").colorPalette.unwrap("some").hasTag("red"), true));
     });
 
     test("creates secondary action button", $ => {
@@ -245,8 +245,8 @@ describeEast("Button", (test) => {
             colorPalette: "gray",
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").colorPalette.unwrap("some").hasTag("gray"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").colorPalette.unwrap("some").hasTag("gray"), true));
     });
 
     test("creates icon-style ghost button", $ => {
@@ -255,8 +255,8 @@ describeEast("Button", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("ghost"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").size.unwrap("some").hasTag("sm"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").variant.unwrap("some").hasTag("ghost"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").size.unwrap("some").hasTag("sm"), true));
     });
 
     // =========================================================================
@@ -266,17 +266,17 @@ describeEast("Button", (test) => {
     test("button without style has none for all properties", $ => {
         const button = $.let(Button.Root("Plain"));
 
-        $(assertEast.equal(button.unwrap("Button").style.hasTag("none"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.hasTag("none"), true));
     });
 
     test("button with empty style object still has options", $ => {
         const button = $.let(Button.Root("Empty Style", {}));
 
-        $(assertEast.equal(button.unwrap("Button").style.hasTag("some"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").variant.hasTag("none"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").colorPalette.hasTag("none"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").size.hasTag("none"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").loading.hasTag("none"), true));
-        $(assertEast.equal(button.unwrap("Button").style.unwrap("some").disabled.hasTag("none"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.hasTag("some"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").variant.hasTag("none"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").colorPalette.hasTag("none"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").size.hasTag("none"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").loading.hasTag("none"), true));
+        $(assertEast.equal(button.unwrap().unwrap("Button").style.unwrap("some").disabled.hasTag("none"), true));
     });
 });

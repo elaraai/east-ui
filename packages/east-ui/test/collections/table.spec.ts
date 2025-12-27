@@ -21,9 +21,9 @@ describeEast("Table", (test) => {
             ["name", "email"]
         ));
 
-        $(assertEast.equal(table.getTag(), "Table"));
-        $(assertEast.equal(table.unwrap("Table").columns.size(), 2n));
-        $(assertEast.equal(table.unwrap("Table").rows.size(), 2n));
+        $(assertEast.equal(table.unwrap().getTag(), "Table"));
+        $(assertEast.equal(table.unwrap().unwrap("Table").columns.size(), 2n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").rows.size(), 2n));
     });
 
     // =========================================================================
@@ -42,8 +42,8 @@ describeEast("Table", (test) => {
             }
         ));
 
-        $(assertEast.equal(table.getTag(), "Table"));
-        $(assertEast.equal(table.unwrap("Table").columns.size(), 2n));
+        $(assertEast.equal(table.unwrap().getTag(), "Table"));
+        $(assertEast.equal(table.unwrap().unwrap("Table").columns.size(), 2n));
     });
 
     test("creates table with column subset", $ => {
@@ -59,7 +59,7 @@ describeEast("Table", (test) => {
             }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").columns.size(), 2n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").columns.size(), 2n));
     });
 
     test("creates table with non-string fields (auto converts to string)", $ => {
@@ -74,7 +74,7 @@ describeEast("Table", (test) => {
             }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").columns.size(), 3n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").columns.size(), 3n));
     });
 
     // =========================================================================
@@ -92,7 +92,7 @@ describeEast("Table", (test) => {
             }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").columns.get(0n).header.unwrap("some"), "First Name"));
+        $(assertEast.equal(table.unwrap().unwrap("Table").columns.get(0n).header.unwrap("some"), "First Name"));
     });
 
     test("creates table with custom render for text alignment", $ => {
@@ -106,7 +106,7 @@ describeEast("Table", (test) => {
             }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").columns.size(), 2n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").columns.size(), 2n));
     });
 
     // =========================================================================
@@ -125,7 +125,7 @@ describeEast("Table", (test) => {
             }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").rows.size(), 2n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").rows.size(), 2n));
     });
 
     // =========================================================================
@@ -139,7 +139,7 @@ describeEast("Table", (test) => {
             { variant: "line" }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").style.unwrap("some").variant.unwrap("some").hasTag("line"), true));
+        $(assertEast.equal(table.unwrap().unwrap("Table").style.unwrap("some").variant.unwrap("some").hasTag("line"), true));
     });
 
     test("creates striped table", $ => {
@@ -149,7 +149,7 @@ describeEast("Table", (test) => {
             { striped: true }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").style.unwrap("some").striped.unwrap("some"), true));
+        $(assertEast.equal(table.unwrap().unwrap("Table").style.unwrap("some").striped.unwrap("some"), true));
     });
 
     test("creates table with size", $ => {
@@ -159,7 +159,7 @@ describeEast("Table", (test) => {
             { size: "lg" }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").style.unwrap("some").size.unwrap("some").hasTag("lg"), true));
+        $(assertEast.equal(table.unwrap().unwrap("Table").style.unwrap("some").size.unwrap("some").hasTag("lg"), true));
     });
 
     test("creates table with all style options", $ => {
@@ -179,9 +179,9 @@ describeEast("Table", (test) => {
             }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
-        $(assertEast.equal(table.unwrap("Table").style.unwrap("some").striped.unwrap("some"), true));
-        $(assertEast.equal(table.unwrap("Table").style.unwrap("some").interactive.unwrap("some"), true));
+        $(assertEast.equal(table.unwrap().unwrap("Table").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
+        $(assertEast.equal(table.unwrap().unwrap("Table").style.unwrap("some").striped.unwrap("some"), true));
+        $(assertEast.equal(table.unwrap().unwrap("Table").style.unwrap("some").interactive.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -206,8 +206,8 @@ describeEast("Table", (test) => {
             }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").rows.size(), 2n));
-        $(assertEast.equal(table.unwrap("Table").columns.size(), 2n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").rows.size(), 2n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").columns.size(), 2n));
     });
 
     test("render function uses row field for conditional styling", $ => {
@@ -227,7 +227,7 @@ describeEast("Table", (test) => {
             }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").rows.size(), 2n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").rows.size(), 2n));
     });
 
     test("render function accesses multiple row fields", $ => {
@@ -244,7 +244,7 @@ describeEast("Table", (test) => {
             }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").columns.size(), 2n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").columns.size(), 2n));
     });
 
     // =========================================================================
@@ -265,8 +265,8 @@ describeEast("Table", (test) => {
             { variant: "line", striped: true }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").rows.size(), 2n));
-        $(assertEast.equal(table.unwrap("Table").columns.size(), 3n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").rows.size(), 2n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").columns.size(), 3n));
     });
 
     // =========================================================================
@@ -286,13 +286,13 @@ describeEast("Table", (test) => {
                     header: "Tags",
                     // Extract array length as sortable integer value
                     value: (tags) => tags.size(),
-                    render: (tags) => Stack.HStack(tags.map(($, tag) => Badge.Root(tag, { variant: "subtle" })) as any),
+                    render: (tags) => Stack.HStack(tags.map(($, tag) => Badge.Root(tag, { variant: "subtle" }))),
                 },
             }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").columns.size(), 2n));
-        $(assertEast.equal(table.unwrap("Table").rows.size(), 2n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").columns.size(), 2n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").rows.size(), 2n));
     });
 
     test("creates table with struct field using value function", $ => {
@@ -313,8 +313,8 @@ describeEast("Table", (test) => {
             }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").columns.size(), 2n));
-        $(assertEast.equal(table.unwrap("Table").rows.size(), 2n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").columns.size(), 2n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").rows.size(), 2n));
     });
 
     test("creates table with array field extracting string value", $ => {
@@ -335,7 +335,7 @@ describeEast("Table", (test) => {
             }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").columns.size(), 2n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").columns.size(), 2n));
     });
 
     test("creates table mixing primitive and complex columns", $ => {
@@ -357,7 +357,7 @@ describeEast("Table", (test) => {
             }
         ));
 
-        $(assertEast.equal(table.unwrap("Table").columns.size(), 3n));
-        $(assertEast.equal(table.unwrap("Table").rows.size(), 2n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").columns.size(), 3n));
+        $(assertEast.equal(table.unwrap().unwrap("Table").rows.size(), 2n));
     });
 });

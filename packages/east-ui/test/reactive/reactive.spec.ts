@@ -29,7 +29,7 @@ describeEast("Reactive.Root - Valid Cases", (test) => {
             return Stat.Root("Counter", East.str`${count.unwrap("some")}`);
         }));
 
-        $(assertEast.equal(reactive.getTag(), "ReactiveComponent"));
+        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
     // Test 2: Multiple state reads
@@ -41,7 +41,7 @@ describeEast("Reactive.Root - Valid Cases", (test) => {
             return Text.Root(East.str`${a.unwrap("some")} ${b.unwrap("some")} ${c.unwrap("some")}`);
         }));
 
-        $(assertEast.equal(reactive.getTag(), "ReactiveComponent"));
+        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
     // Test 3: Dynamic/computed key
@@ -55,7 +55,7 @@ describeEast("Reactive.Root - Valid Cases", (test) => {
             return Text.Root(userData.unwrap("some"));
         }));
 
-        $(assertEast.equal(reactive.getTag(), "ReactiveComponent"));
+        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
     // =========================================================================
@@ -68,7 +68,7 @@ describeEast("Reactive.Root - Valid Cases", (test) => {
             return Text.Root("Hello, World!");
         }));
 
-        $(assertEast.equal(reactive.getTag(), "ReactiveComponent"));
+        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
     // =========================================================================
@@ -83,7 +83,7 @@ describeEast("Reactive.Root - Valid Cases", (test) => {
             return Stat.Root(TITLE, East.str`${count.unwrap("some")}`);
         }));
 
-        $(assertEast.equal(reactive.getTag(), "ReactiveComponent"));
+        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
     // =========================================================================
@@ -103,7 +103,7 @@ describeEast("Reactive.Root - Valid Cases", (test) => {
             });
         }));
 
-        $(assertEast.equal(reactive.getTag(), "ReactiveComponent"));
+        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
     // Test 9: State write in onClick
@@ -117,7 +117,7 @@ describeEast("Reactive.Root - Valid Cases", (test) => {
             });
         }));
 
-        $(assertEast.equal(reactive.getTag(), "ReactiveComponent"));
+        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
     // =========================================================================
@@ -137,7 +137,7 @@ describeEast("Reactive.Root - Valid Cases", (test) => {
             ]);
         }));
 
-        $(assertEast.equal(reactive.getTag(), "ReactiveComponent"));
+        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
     // =========================================================================
@@ -157,7 +157,7 @@ describeEast("Reactive.Root - Valid Cases", (test) => {
             })
         }));
 
-        $(assertEast.equal(reactive.getTag(), "ReactiveComponent"));
+        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
 });

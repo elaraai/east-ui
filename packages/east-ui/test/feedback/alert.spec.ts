@@ -14,27 +14,27 @@ describeEast("Alert", (test) => {
     test("creates info alert", $ => {
         const alert = $.let(Alert.Root("info"));
 
-        $(assertEast.equal(alert.unwrap("Alert").status.hasTag("info"), true));
-        $(assertEast.equal(alert.unwrap("Alert").title.hasTag("none"), true));
-        $(assertEast.equal(alert.unwrap("Alert").description.hasTag("none"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").status.hasTag("info"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").title.hasTag("none"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").description.hasTag("none"), true));
     });
 
     test("creates warning alert", $ => {
         const alert = $.let(Alert.Root("warning"));
 
-        $(assertEast.equal(alert.unwrap("Alert").status.hasTag("warning"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").status.hasTag("warning"), true));
     });
 
     test("creates success alert", $ => {
         const alert = $.let(Alert.Root("success"));
 
-        $(assertEast.equal(alert.unwrap("Alert").status.hasTag("success"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").status.hasTag("success"), true));
     });
 
     test("creates error alert", $ => {
         const alert = $.let(Alert.Root("error"));
 
-        $(assertEast.equal(alert.unwrap("Alert").status.hasTag("error"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").status.hasTag("error"), true));
     });
 
     // =========================================================================
@@ -44,25 +44,25 @@ describeEast("Alert", (test) => {
     test("creates info alert with string status", $ => {
         const alert = $.let(Alert.Root("info"));
 
-        $(assertEast.equal(alert.unwrap("Alert").status.hasTag("info"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").status.hasTag("info"), true));
     });
 
     test("creates warning alert with string status", $ => {
         const alert = $.let(Alert.Root("warning"));
 
-        $(assertEast.equal(alert.unwrap("Alert").status.hasTag("warning"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").status.hasTag("warning"), true));
     });
 
     test("creates success alert with string status", $ => {
         const alert = $.let(Alert.Root("success"));
 
-        $(assertEast.equal(alert.unwrap("Alert").status.hasTag("success"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").status.hasTag("success"), true));
     });
 
     test("creates error alert with string status", $ => {
         const alert = $.let(Alert.Root("error"));
 
-        $(assertEast.equal(alert.unwrap("Alert").status.hasTag("error"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").status.hasTag("error"), true));
     });
 
     // =========================================================================
@@ -74,8 +74,8 @@ describeEast("Alert", (test) => {
             title: "Success!",
         }));
 
-        $(assertEast.equal(alert.unwrap("Alert").title.hasTag("some"), true));
-        $(assertEast.equal(alert.unwrap("Alert").title.unwrap("some"), "Success!"));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").title.hasTag("some"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").title.unwrap("some"), "Success!"));
     });
 
     test("creates alert with long title", $ => {
@@ -83,7 +83,7 @@ describeEast("Alert", (test) => {
             title: "Important Information About Your Account",
         }));
 
-        $(assertEast.equal(alert.unwrap("Alert").title.unwrap("some"), "Important Information About Your Account"));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").title.unwrap("some"), "Important Information About Your Account"));
     });
 
     // =========================================================================
@@ -95,8 +95,8 @@ describeEast("Alert", (test) => {
             description: "Your session will expire soon.",
         }));
 
-        $(assertEast.equal(alert.unwrap("Alert").description.hasTag("some"), true));
-        $(assertEast.equal(alert.unwrap("Alert").description.unwrap("some"), "Your session will expire soon."));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").description.hasTag("some"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").description.unwrap("some"), "Your session will expire soon."));
     });
 
     test("creates alert with title and description", $ => {
@@ -105,8 +105,8 @@ describeEast("Alert", (test) => {
             description: "Failed to save changes. Please try again.",
         }));
 
-        $(assertEast.equal(alert.unwrap("Alert").title.unwrap("some"), "Error"));
-        $(assertEast.equal(alert.unwrap("Alert").description.unwrap("some"), "Failed to save changes. Please try again."));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").title.unwrap("some"), "Error"));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").description.unwrap("some"), "Failed to save changes. Please try again."));
     });
 
     // =========================================================================
@@ -118,8 +118,8 @@ describeEast("Alert", (test) => {
             variant: "solid",
         }));
 
-        $(assertEast.equal(alert.unwrap("Alert").variant.hasTag("some"), true));
-        $(assertEast.equal(alert.unwrap("Alert").variant.unwrap("some").hasTag("solid"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").variant.hasTag("some"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").variant.unwrap("some").hasTag("solid"), true));
     });
 
     test("creates subtle variant alert", $ => {
@@ -127,7 +127,7 @@ describeEast("Alert", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(alert.unwrap("Alert").variant.unwrap("some").hasTag("subtle"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates outline variant alert", $ => {
@@ -135,7 +135,7 @@ describeEast("Alert", (test) => {
             variant: "outline",
         }));
 
-        $(assertEast.equal(alert.unwrap("Alert").variant.unwrap("some").hasTag("outline"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").variant.unwrap("some").hasTag("outline"), true));
     });
 
     test("creates alert with AlertVariant helper", $ => {
@@ -143,7 +143,7 @@ describeEast("Alert", (test) => {
             variant: "solid",
         }));
 
-        $(assertEast.equal(alert.unwrap("Alert").variant.unwrap("some").hasTag("solid"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").variant.unwrap("some").hasTag("solid"), true));
     });
 
     // =========================================================================
@@ -157,10 +157,10 @@ describeEast("Alert", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(alert.unwrap("Alert").status.hasTag("success"), true));
-        $(assertEast.equal(alert.unwrap("Alert").title.unwrap("some"), "Changes Saved"));
-        $(assertEast.equal(alert.unwrap("Alert").description.unwrap("some"), "Your changes have been saved successfully."));
-        $(assertEast.equal(alert.unwrap("Alert").variant.unwrap("some").hasTag("subtle"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").status.hasTag("success"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").title.unwrap("some"), "Changes Saved"));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").description.unwrap("some"), "Your changes have been saved successfully."));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates form submission success alert", $ => {
@@ -169,8 +169,8 @@ describeEast("Alert", (test) => {
             description: "Thank you for your submission.",
         }));
 
-        $(assertEast.equal(alert.unwrap("Alert").status.hasTag("success"), true));
-        $(assertEast.equal(alert.unwrap("Alert").title.unwrap("some"), "Form Submitted"));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").status.hasTag("success"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").title.unwrap("some"), "Form Submitted"));
     });
 
     test("creates validation error alert", $ => {
@@ -180,8 +180,8 @@ describeEast("Alert", (test) => {
             variant: "solid",
         }));
 
-        $(assertEast.equal(alert.unwrap("Alert").status.hasTag("error"), true));
-        $(assertEast.equal(alert.unwrap("Alert").variant.unwrap("some").hasTag("solid"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").status.hasTag("error"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").variant.unwrap("some").hasTag("solid"), true));
     });
 
     test("creates update notification alert", $ => {
@@ -191,8 +191,8 @@ describeEast("Alert", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(alert.unwrap("Alert").status.hasTag("info"), true));
-        $(assertEast.equal(alert.unwrap("Alert").variant.unwrap("some").hasTag("subtle"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").status.hasTag("info"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates session expiry warning alert", $ => {
@@ -202,7 +202,7 @@ describeEast("Alert", (test) => {
             variant: "outline",
         }));
 
-        $(assertEast.equal(alert.unwrap("Alert").status.hasTag("warning"), true));
-        $(assertEast.equal(alert.unwrap("Alert").variant.unwrap("some").hasTag("outline"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").status.hasTag("warning"), true));
+        $(assertEast.equal(alert.unwrap().unwrap("Alert").variant.unwrap("some").hasTag("outline"), true));
     });
 });

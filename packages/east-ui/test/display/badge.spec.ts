@@ -14,22 +14,22 @@ describeEast("Badge", (test) => {
     test("creates badge with string value", $ => {
         const badge = $.let(Badge.Root("New"));
 
-        $(assertEast.equal(badge.unwrap("Badge").value, "New"));
-        $(assertEast.equal(badge.unwrap("Badge").variant.hasTag("none"), true));
-        $(assertEast.equal(badge.unwrap("Badge").colorPalette.hasTag("none"), true));
-        $(assertEast.equal(badge.unwrap("Badge").size.hasTag("none"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").value, "New"));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").variant.hasTag("none"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").colorPalette.hasTag("none"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").size.hasTag("none"), true));
     });
 
     test("creates badge with expression value", $ => {
         const badge = $.let(Badge.Root("Active"));
 
-        $(assertEast.equal(badge.unwrap("Badge").value, "Active"));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").value, "Active"));
     });
 
     test("creates badge with number text", $ => {
         const badge = $.let(Badge.Root("42"));
 
-        $(assertEast.equal(badge.unwrap("Badge").value, "42"));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").value, "42"));
     });
 
     // =========================================================================
@@ -41,8 +41,8 @@ describeEast("Badge", (test) => {
             variant: "solid",
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").variant.hasTag("some"), true));
-        $(assertEast.equal(badge.unwrap("Badge").variant.unwrap("some").hasTag("solid"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").variant.hasTag("some"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").variant.unwrap("some").hasTag("solid"), true));
     });
 
     test("creates subtle variant badge", $ => {
@@ -50,7 +50,7 @@ describeEast("Badge", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").variant.unwrap("some").hasTag("subtle"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates outline variant badge", $ => {
@@ -58,7 +58,7 @@ describeEast("Badge", (test) => {
             variant: "outline",
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").variant.unwrap("some").hasTag("outline"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").variant.unwrap("some").hasTag("outline"), true));
     });
 
     test("creates badge with Style.StyleVariant helper", $ => {
@@ -66,7 +66,7 @@ describeEast("Badge", (test) => {
             variant: Style.StyleVariant("solid"),
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").variant.unwrap("some").hasTag("solid"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").variant.unwrap("some").hasTag("solid"), true));
     });
 
     // =========================================================================
@@ -78,8 +78,8 @@ describeEast("Badge", (test) => {
             colorPalette: "green",
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").colorPalette.hasTag("some"), true));
-        $(assertEast.equal(badge.unwrap("Badge").colorPalette.unwrap("some").hasTag("green"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").colorPalette.hasTag("some"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").colorPalette.unwrap("some").hasTag("green"), true));
     });
 
     test("creates badge with red color palette", $ => {
@@ -87,7 +87,7 @@ describeEast("Badge", (test) => {
             colorPalette: "red",
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").colorPalette.unwrap("some").hasTag("red"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").colorPalette.unwrap("some").hasTag("red"), true));
     });
 
     test("creates badge with blue color palette", $ => {
@@ -95,7 +95,7 @@ describeEast("Badge", (test) => {
             colorPalette: "blue",
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").colorPalette.unwrap("some").hasTag("blue"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").colorPalette.unwrap("some").hasTag("blue"), true));
     });
 
     test("creates badge with Style.ColorScheme helper", $ => {
@@ -103,7 +103,7 @@ describeEast("Badge", (test) => {
             colorPalette: Style.ColorScheme("purple"),
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").colorPalette.unwrap("some").hasTag("purple"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").colorPalette.unwrap("some").hasTag("purple"), true));
     });
 
     // =========================================================================
@@ -115,8 +115,8 @@ describeEast("Badge", (test) => {
             size: "xs",
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").size.hasTag("some"), true));
-        $(assertEast.equal(badge.unwrap("Badge").size.unwrap("some").hasTag("xs"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").size.hasTag("some"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").size.unwrap("some").hasTag("xs"), true));
     });
 
     test("creates small badge", $ => {
@@ -124,7 +124,7 @@ describeEast("Badge", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").size.unwrap("some").hasTag("sm"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates medium badge", $ => {
@@ -132,7 +132,7 @@ describeEast("Badge", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").size.unwrap("some").hasTag("md"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates large badge", $ => {
@@ -140,7 +140,7 @@ describeEast("Badge", (test) => {
             size: "lg",
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").size.unwrap("some").hasTag("lg"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").size.unwrap("some").hasTag("lg"), true));
     });
 
     test("creates badge with Style.Size helper", $ => {
@@ -148,7 +148,7 @@ describeEast("Badge", (test) => {
             size: Style.Size("md"),
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").size.unwrap("some").hasTag("md"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").size.unwrap("some").hasTag("md"), true));
     });
 
     // =========================================================================
@@ -162,10 +162,10 @@ describeEast("Badge", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").value, "Active"));
-        $(assertEast.equal(badge.unwrap("Badge").variant.unwrap("some").hasTag("solid"), true));
-        $(assertEast.equal(badge.unwrap("Badge").colorPalette.unwrap("some").hasTag("green"), true));
-        $(assertEast.equal(badge.unwrap("Badge").size.unwrap("some").hasTag("sm"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").value, "Active"));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").variant.unwrap("some").hasTag("solid"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").colorPalette.unwrap("some").hasTag("green"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates status badge", $ => {
@@ -174,8 +174,8 @@ describeEast("Badge", (test) => {
             variant: "solid",
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").value, "Online"));
-        $(assertEast.equal(badge.unwrap("Badge").colorPalette.unwrap("some").hasTag("green"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").value, "Online"));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").colorPalette.unwrap("some").hasTag("green"), true));
     });
 
     test("creates notification count badge", $ => {
@@ -185,8 +185,8 @@ describeEast("Badge", (test) => {
             size: "xs",
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").value, "99+"));
-        $(assertEast.equal(badge.unwrap("Badge").colorPalette.unwrap("some").hasTag("red"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").value, "99+"));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").colorPalette.unwrap("some").hasTag("red"), true));
     });
 
     test("creates category tag badge", $ => {
@@ -196,8 +196,8 @@ describeEast("Badge", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").value, "Technology"));
-        $(assertEast.equal(badge.unwrap("Badge").variant.unwrap("some").hasTag("subtle"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").value, "Technology"));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates premium label badge", $ => {
@@ -206,7 +206,7 @@ describeEast("Badge", (test) => {
             variant: "outline",
         }));
 
-        $(assertEast.equal(badge.unwrap("Badge").value, "PRO"));
-        $(assertEast.equal(badge.unwrap("Badge").variant.unwrap("some").hasTag("outline"), true));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").value, "PRO"));
+        $(assertEast.equal(badge.unwrap().unwrap("Badge").variant.unwrap("some").hasTag("outline"), true));
     });
 });

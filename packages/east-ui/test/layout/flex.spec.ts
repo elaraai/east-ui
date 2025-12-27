@@ -14,16 +14,16 @@ describeEast("Flex", (test) => {
     test("creates flex with empty children", $ => {
         const flex = $.let(Flex.Root([]));
 
-        $(assertEast.equal(flex.unwrap("Flex").children.size(), 0n));
-        $(assertEast.equal(flex.unwrap("Flex").style.hasTag("none"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").children.size(), 0n));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.hasTag("none"), true));
     });
 
     test("creates flex with single text child", $ => {
         const textChild = Text.Root("Hello");
         const flex = $.let(Flex.Root([textChild]));
 
-        $(assertEast.equal(flex.unwrap("Flex").children.size(), 1n));
-        $(assertEast.equal(flex.unwrap("Flex").style.hasTag("none"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").children.size(), 1n));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.hasTag("none"), true));
     });
 
     test("creates flex with multiple text children", $ => {
@@ -34,7 +34,7 @@ describeEast("Flex", (test) => {
             child2,
         ]));
 
-        $(assertEast.equal(flex.unwrap("Flex").children.size(), 2n));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").children.size(), 2n));
     });
 
     // =========================================================================
@@ -46,9 +46,9 @@ describeEast("Flex", (test) => {
             direction: Style.FlexDirection("column"),
         }));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").direction.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").direction.unwrap("some").hasTag("column"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").direction.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").direction.unwrap("some").hasTag("column"), true));
     });
 
     test("creates flex with direction string literal", $ => {
@@ -56,8 +56,8 @@ describeEast("Flex", (test) => {
             direction: "row",
         }));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").direction.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").direction.unwrap("some").hasTag("row"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").direction.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").direction.unwrap("some").hasTag("row"), true));
     });
 
     test("creates flex with wrap style", $ => {
@@ -65,8 +65,8 @@ describeEast("Flex", (test) => {
             wrap: Style.FlexWrap("wrap"),
         }));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").wrap.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").wrap.unwrap("some").hasTag("wrap"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").wrap.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").wrap.unwrap("some").hasTag("wrap"), true));
     });
 
     test("creates flex with wrap string literal", $ => {
@@ -74,8 +74,8 @@ describeEast("Flex", (test) => {
             wrap: "nowrap",
         }));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").wrap.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").wrap.unwrap("some").hasTag("nowrap"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").wrap.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").wrap.unwrap("some").hasTag("nowrap"), true));
     });
 
     test("creates flex with justifyContent", $ => {
@@ -83,8 +83,8 @@ describeEast("Flex", (test) => {
             justifyContent: Style.JustifyContent("center"),
         }));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").justifyContent.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").justifyContent.unwrap("some").hasTag("center"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").justifyContent.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").justifyContent.unwrap("some").hasTag("center"), true));
     });
 
     test("creates flex with justifyContent string literal", $ => {
@@ -92,8 +92,8 @@ describeEast("Flex", (test) => {
             justifyContent: "space-between",
         }));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").justifyContent.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-between"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").justifyContent.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-between"), true));
     });
 
     test("creates flex with alignItems", $ => {
@@ -101,8 +101,8 @@ describeEast("Flex", (test) => {
             alignItems: Style.AlignItems("center"),
         }));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").alignItems.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").alignItems.unwrap("some").hasTag("center"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").alignItems.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").alignItems.unwrap("some").hasTag("center"), true));
     });
 
     test("creates flex with alignItems string literal", $ => {
@@ -110,8 +110,8 @@ describeEast("Flex", (test) => {
             alignItems: "flex-start",
         }));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").alignItems.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").alignItems.unwrap("some").hasTag("flex-start"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").alignItems.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").alignItems.unwrap("some").hasTag("flex-start"), true));
     });
 
     test("creates flex with gap", $ => {
@@ -119,8 +119,8 @@ describeEast("Flex", (test) => {
             gap: "4",
         }));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").gap.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").gap.unwrap("some"), "4"));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").gap.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").gap.unwrap("some"), "4"));
     });
 
     test("creates flex with width", $ => {
@@ -128,8 +128,8 @@ describeEast("Flex", (test) => {
             width: "100%",
         }));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").width.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").width.unwrap("some"), "100%"));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").width.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").width.unwrap("some"), "100%"));
     });
 
     test("creates flex with height", $ => {
@@ -137,8 +137,8 @@ describeEast("Flex", (test) => {
             height: "200px",
         }));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").height.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").height.unwrap("some"), "200px"));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").height.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").height.unwrap("some"), "200px"));
     });
 
     test("creates flex with padding", $ => {
@@ -146,11 +146,11 @@ describeEast("Flex", (test) => {
             padding: Flex.Padding({ top: "4", right: "4", bottom: "4", left: "4" }),
         }));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").padding.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").padding.unwrap("some").top.unwrap("some"), "4"));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").padding.unwrap("some").right.unwrap("some"), "4"));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").padding.unwrap("some").bottom.unwrap("some"), "4"));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").padding.unwrap("some").left.unwrap("some"), "4"));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").padding.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").padding.unwrap("some").top.unwrap("some"), "4"));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").padding.unwrap("some").right.unwrap("some"), "4"));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").padding.unwrap("some").bottom.unwrap("some"), "4"));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").padding.unwrap("some").left.unwrap("some"), "4"));
     });
 
     test("creates flex with margin", $ => {
@@ -158,8 +158,8 @@ describeEast("Flex", (test) => {
             margin: Flex.Margin({ top: "2", right: "2", bottom: "2", left: "2" }),
         }));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").margin.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").margin.unwrap("some").top.unwrap("some"), "2"));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").margin.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").margin.unwrap("some").top.unwrap("some"), "2"));
     });
 
     test("creates flex with background", $ => {
@@ -167,8 +167,8 @@ describeEast("Flex", (test) => {
             background: "gray.100",
         }));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").background.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").background.unwrap("some"), "gray.100"));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").background.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").background.unwrap("some"), "gray.100"));
     });
 
     test("creates flex with color", $ => {
@@ -176,8 +176,8 @@ describeEast("Flex", (test) => {
             color: "blue.500",
         }));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").color.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").color.unwrap("some"), "blue.500"));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").color.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").color.unwrap("some"), "blue.500"));
     });
 
     test("creates flex with borderRadius", $ => {
@@ -185,8 +185,8 @@ describeEast("Flex", (test) => {
             borderRadius: "md",
         }));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").borderRadius.hasTag("some"), true));
-        $(assertEast.equal(flex.unwrap("Flex").style.unwrap("some").borderRadius.unwrap("some"), "md"));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").borderRadius.hasTag("some"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").borderRadius.unwrap("some"), "md"));
     });
 
     // =========================================================================
@@ -196,7 +196,7 @@ describeEast("Flex", (test) => {
     test("creates flex with no style - style option is none", $ => {
         const flex = $.let(Flex.Root([]));
 
-        $(assertEast.equal(flex.unwrap("Flex").style.hasTag("none"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Flex").style.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -215,7 +215,7 @@ describeEast("Flex", (test) => {
             borderRadius: "md",
         }));
 
-        const style = flex.unwrap("Flex").style.unwrap("some");
+        const style = flex.unwrap().unwrap("Flex").style.unwrap("some");
         $(assertEast.equal(style.direction.unwrap("some").hasTag("row"), true));
         $(assertEast.equal(style.wrap.unwrap("some").hasTag("wrap"), true));
         $(assertEast.equal(style.justifyContent.unwrap("some").hasTag("center"), true));
@@ -241,10 +241,10 @@ describeEast("Flex", (test) => {
         const rowReverse = $.let(Flex.Root([], { direction: "row-reverse" }));
         const columnReverse = $.let(Flex.Root([], { direction: "column-reverse" }));
 
-        $(assertEast.equal(row.unwrap("Flex").style.unwrap("some").direction.unwrap("some").hasTag("row"), true));
-        $(assertEast.equal(column.unwrap("Flex").style.unwrap("some").direction.unwrap("some").hasTag("column"), true));
-        $(assertEast.equal(rowReverse.unwrap("Flex").style.unwrap("some").direction.unwrap("some").hasTag("row-reverse"), true));
-        $(assertEast.equal(columnReverse.unwrap("Flex").style.unwrap("some").direction.unwrap("some").hasTag("column-reverse"), true));
+        $(assertEast.equal(row.unwrap().unwrap("Flex").style.unwrap("some").direction.unwrap("some").hasTag("row"), true));
+        $(assertEast.equal(column.unwrap().unwrap("Flex").style.unwrap("some").direction.unwrap("some").hasTag("column"), true));
+        $(assertEast.equal(rowReverse.unwrap().unwrap("Flex").style.unwrap("some").direction.unwrap("some").hasTag("row-reverse"), true));
+        $(assertEast.equal(columnReverse.unwrap().unwrap("Flex").style.unwrap("some").direction.unwrap("some").hasTag("column-reverse"), true));
     });
 
     // =========================================================================
@@ -256,9 +256,9 @@ describeEast("Flex", (test) => {
         const wrap = $.let(Flex.Root([], { wrap: "wrap" }));
         const wrapReverse = $.let(Flex.Root([], { wrap: "wrap-reverse" }));
 
-        $(assertEast.equal(nowrap.unwrap("Flex").style.unwrap("some").wrap.unwrap("some").hasTag("nowrap"), true));
-        $(assertEast.equal(wrap.unwrap("Flex").style.unwrap("some").wrap.unwrap("some").hasTag("wrap"), true));
-        $(assertEast.equal(wrapReverse.unwrap("Flex").style.unwrap("some").wrap.unwrap("some").hasTag("wrap-reverse"), true));
+        $(assertEast.equal(nowrap.unwrap().unwrap("Flex").style.unwrap("some").wrap.unwrap("some").hasTag("nowrap"), true));
+        $(assertEast.equal(wrap.unwrap().unwrap("Flex").style.unwrap("some").wrap.unwrap("some").hasTag("wrap"), true));
+        $(assertEast.equal(wrapReverse.unwrap().unwrap("Flex").style.unwrap("some").wrap.unwrap("some").hasTag("wrap-reverse"), true));
     });
 
     // =========================================================================
@@ -273,12 +273,12 @@ describeEast("Flex", (test) => {
         const spaceAround = $.let(Flex.Root([], { justifyContent: "space-around" }));
         const spaceEvenly = $.let(Flex.Root([], { justifyContent: "space-evenly" }));
 
-        $(assertEast.equal(flexStart.unwrap("Flex").style.unwrap("some").justifyContent.unwrap("some").hasTag("flex-start"), true));
-        $(assertEast.equal(flexEnd.unwrap("Flex").style.unwrap("some").justifyContent.unwrap("some").hasTag("flex-end"), true));
-        $(assertEast.equal(center.unwrap("Flex").style.unwrap("some").justifyContent.unwrap("some").hasTag("center"), true));
-        $(assertEast.equal(spaceBetween.unwrap("Flex").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-between"), true));
-        $(assertEast.equal(spaceAround.unwrap("Flex").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-around"), true));
-        $(assertEast.equal(spaceEvenly.unwrap("Flex").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-evenly"), true));
+        $(assertEast.equal(flexStart.unwrap().unwrap("Flex").style.unwrap("some").justifyContent.unwrap("some").hasTag("flex-start"), true));
+        $(assertEast.equal(flexEnd.unwrap().unwrap("Flex").style.unwrap("some").justifyContent.unwrap("some").hasTag("flex-end"), true));
+        $(assertEast.equal(center.unwrap().unwrap("Flex").style.unwrap("some").justifyContent.unwrap("some").hasTag("center"), true));
+        $(assertEast.equal(spaceBetween.unwrap().unwrap("Flex").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-between"), true));
+        $(assertEast.equal(spaceAround.unwrap().unwrap("Flex").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-around"), true));
+        $(assertEast.equal(spaceEvenly.unwrap().unwrap("Flex").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-evenly"), true));
     });
 
     // =========================================================================
@@ -292,11 +292,11 @@ describeEast("Flex", (test) => {
         const baseline = $.let(Flex.Root([], { alignItems: "baseline" }));
         const stretch = $.let(Flex.Root([], { alignItems: "stretch" }));
 
-        $(assertEast.equal(flexStart.unwrap("Flex").style.unwrap("some").alignItems.unwrap("some").hasTag("flex-start"), true));
-        $(assertEast.equal(flexEnd.unwrap("Flex").style.unwrap("some").alignItems.unwrap("some").hasTag("flex-end"), true));
-        $(assertEast.equal(center.unwrap("Flex").style.unwrap("some").alignItems.unwrap("some").hasTag("center"), true));
-        $(assertEast.equal(baseline.unwrap("Flex").style.unwrap("some").alignItems.unwrap("some").hasTag("baseline"), true));
-        $(assertEast.equal(stretch.unwrap("Flex").style.unwrap("some").alignItems.unwrap("some").hasTag("stretch"), true));
+        $(assertEast.equal(flexStart.unwrap().unwrap("Flex").style.unwrap("some").alignItems.unwrap("some").hasTag("flex-start"), true));
+        $(assertEast.equal(flexEnd.unwrap().unwrap("Flex").style.unwrap("some").alignItems.unwrap("some").hasTag("flex-end"), true));
+        $(assertEast.equal(center.unwrap().unwrap("Flex").style.unwrap("some").alignItems.unwrap("some").hasTag("center"), true));
+        $(assertEast.equal(baseline.unwrap().unwrap("Flex").style.unwrap("some").alignItems.unwrap("some").hasTag("baseline"), true));
+        $(assertEast.equal(stretch.unwrap().unwrap("Flex").style.unwrap("some").alignItems.unwrap("some").hasTag("stretch"), true));
     });
 
     // =========================================================================
@@ -316,8 +316,8 @@ describeEast("Flex", (test) => {
             gap: "4",
         }));
 
-        $(assertEast.equal(flexContainer.unwrap("Flex").children.size(), 2n));
-        const style = flexContainer.unwrap("Flex").style.unwrap("some");
+        $(assertEast.equal(flexContainer.unwrap().unwrap("Flex").children.size(), 2n));
+        const style = flexContainer.unwrap().unwrap("Flex").style.unwrap("some");
         $(assertEast.equal(style.direction.unwrap("some").hasTag("row"), true));
         $(assertEast.equal(style.justifyContent.unwrap("some").hasTag("space-between"), true));
         $(assertEast.equal(style.alignItems.unwrap("some").hasTag("center"), true));
@@ -345,8 +345,8 @@ describeEast("Flex", (test) => {
             background: "gray.100",
         }));
 
-        $(assertEast.equal(outerFlex.unwrap("Flex").children.size(), 1n));
-        $(assertEast.equal(outerFlex.unwrap("Flex").style.unwrap("some").padding.unwrap("some").top.unwrap("some"), "4"));
-        $(assertEast.equal(outerFlex.unwrap("Flex").style.unwrap("some").background.unwrap("some"), "gray.100"));
+        $(assertEast.equal(outerFlex.unwrap().unwrap("Flex").children.size(), 1n));
+        $(assertEast.equal(outerFlex.unwrap().unwrap("Flex").style.unwrap("some").padding.unwrap("some").top.unwrap("some"), "4"));
+        $(assertEast.equal(outerFlex.unwrap().unwrap("Flex").style.unwrap("some").background.unwrap("some"), "gray.100"));
     });
 });

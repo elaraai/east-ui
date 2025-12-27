@@ -14,16 +14,16 @@ describeEast("Box", (test) => {
     test("creates box with empty children", $ => {
         const box = $.let(Box.Root([]));
 
-        $(assertEast.equal(box.unwrap("Box").children.size(), 0n));
-        $(assertEast.equal(box.unwrap("Box").style.hasTag("none"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").children.size(), 0n));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.hasTag("none"), true));
     });
 
     test("creates box with single text child", $ => {
         const textChild = Text.Root("Hello");
         const box = $.let(Box.Root([textChild]));
 
-        $(assertEast.equal(box.unwrap("Box").children.size(), 1n));
-        $(assertEast.equal(box.unwrap("Box").style.hasTag("none"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").children.size(), 1n));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.hasTag("none"), true));
     });
 
     test("creates box with multiple text children", $ => {
@@ -34,7 +34,7 @@ describeEast("Box", (test) => {
             child2,
         ]));
 
-        $(assertEast.equal(box.unwrap("Box").children.size(), 2n));
+        $(assertEast.equal(box.unwrap().unwrap("Box").children.size(), 2n));
     });
 
     // =========================================================================
@@ -46,9 +46,9 @@ describeEast("Box", (test) => {
             display: Style.Display("flex"),
         }));
 
-        $(assertEast.equal(box.unwrap("Box").style.hasTag("some"), true));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").display.hasTag("some"), true));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("flex"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.hasTag("some"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").display.hasTag("some"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("flex"), true));
     });
 
     test("creates box with width", $ => {
@@ -56,8 +56,8 @@ describeEast("Box", (test) => {
             width: "100%",
         }));
 
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").width.hasTag("some"), true));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").width.unwrap("some"), "100%"));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").width.hasTag("some"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").width.unwrap("some"), "100%"));
     });
 
     test("creates box with height", $ => {
@@ -65,8 +65,8 @@ describeEast("Box", (test) => {
             height: "200px",
         }));
 
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").height.hasTag("some"), true));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").height.unwrap("some"), "200px"));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").height.hasTag("some"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").height.unwrap("some"), "200px"));
     });
 
     test("creates box with padding", $ => {
@@ -74,11 +74,11 @@ describeEast("Box", (test) => {
             padding: Box.Padding({ top: "4", right: "4", bottom: "4", left: "4" }),
         }));
 
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").padding.hasTag("some"), true));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").padding.unwrap("some").top.unwrap("some"), "4"));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").padding.unwrap("some").right.unwrap("some"), "4"));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").padding.unwrap("some").bottom.unwrap("some"), "4"));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").padding.unwrap("some").left.unwrap("some"), "4"));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").padding.hasTag("some"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").padding.unwrap("some").top.unwrap("some"), "4"));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").padding.unwrap("some").right.unwrap("some"), "4"));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").padding.unwrap("some").bottom.unwrap("some"), "4"));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").padding.unwrap("some").left.unwrap("some"), "4"));
     });
 
     test("creates box with margin", $ => {
@@ -86,8 +86,8 @@ describeEast("Box", (test) => {
             margin: Box.Margin({ top: "2", right: "2", bottom: "2", left: "2" }),
         }));
 
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").margin.hasTag("some"), true));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").margin.unwrap("some").top.unwrap("some"), "2"));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").margin.hasTag("some"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").margin.unwrap("some").top.unwrap("some"), "2"));
     });
 
     test("creates box with background", $ => {
@@ -95,8 +95,8 @@ describeEast("Box", (test) => {
             background: "gray.100",
         }));
 
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").background.hasTag("some"), true));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").background.unwrap("some"), "gray.100"));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").background.hasTag("some"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").background.unwrap("some"), "gray.100"));
     });
 
     test("creates box with color", $ => {
@@ -104,8 +104,8 @@ describeEast("Box", (test) => {
             color: "blue.500",
         }));
 
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").color.hasTag("some"), true));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").color.unwrap("some"), "blue.500"));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").color.hasTag("some"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").color.unwrap("some"), "blue.500"));
     });
 
     test("creates box with borderRadius", $ => {
@@ -113,8 +113,8 @@ describeEast("Box", (test) => {
             borderRadius: "md",
         }));
 
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").borderRadius.hasTag("some"), true));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").borderRadius.unwrap("some"), "md"));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").borderRadius.hasTag("some"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").borderRadius.unwrap("some"), "md"));
     });
 
     test("creates box with flexDirection", $ => {
@@ -122,8 +122,8 @@ describeEast("Box", (test) => {
             flexDirection: Style.FlexDirection("column"),
         }));
 
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").flexDirection.hasTag("some"), true));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").flexDirection.unwrap("some").hasTag("column"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").flexDirection.hasTag("some"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").flexDirection.unwrap("some").hasTag("column"), true));
     });
 
     test("creates box with justifyContent", $ => {
@@ -131,8 +131,8 @@ describeEast("Box", (test) => {
             justifyContent: Style.JustifyContent("center"),
         }));
 
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").justifyContent.hasTag("some"), true));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("center"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").justifyContent.hasTag("some"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("center"), true));
     });
 
     test("creates box with alignItems", $ => {
@@ -140,8 +140,8 @@ describeEast("Box", (test) => {
             alignItems: Style.AlignItems("center"),
         }));
 
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").alignItems.hasTag("some"), true));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("center"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").alignItems.hasTag("some"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("center"), true));
     });
 
     test("creates box with gap", $ => {
@@ -149,8 +149,8 @@ describeEast("Box", (test) => {
             gap: "4",
         }));
 
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").gap.hasTag("some"), true));
-        $(assertEast.equal(box.unwrap("Box").style.unwrap("some").gap.unwrap("some"), "4"));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").gap.hasTag("some"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.unwrap("some").gap.unwrap("some"), "4"));
     });
 
     // =========================================================================
@@ -160,7 +160,7 @@ describeEast("Box", (test) => {
     test("creates box with no style - style option is none", $ => {
         const box = $.let(Box.Root([]));
 
-        $(assertEast.equal(box.unwrap("Box").style.hasTag("none"), true));
+        $(assertEast.equal(box.unwrap().unwrap("Box").style.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -179,7 +179,7 @@ describeEast("Box", (test) => {
             borderRadius: "md",
         }));
 
-        const style = box.unwrap("Box").style.unwrap("some");
+        const style = box.unwrap().unwrap("Box").style.unwrap("some");
         $(assertEast.equal(style.display.unwrap("some").hasTag("flex"), true));
         $(assertEast.equal(style.flexDirection.unwrap("some").hasTag("column"), true));
         $(assertEast.equal(style.justifyContent.unwrap("some").hasTag("center"), true));
@@ -209,14 +209,14 @@ describeEast("Box", (test) => {
         const inlineGrid = $.let(Box.Root([], { display: Style.Display("inline-grid") }));
         const none = $.let(Box.Root([], { display: Style.Display("none") }));
 
-        $(assertEast.equal(block.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("block"), true));
-        $(assertEast.equal(inline.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("inline"), true));
-        $(assertEast.equal(inlineBlock.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("inline-block"), true));
-        $(assertEast.equal(flex.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("flex"), true));
-        $(assertEast.equal(inlineFlex.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("inline-flex"), true));
-        $(assertEast.equal(grid.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("grid"), true));
-        $(assertEast.equal(inlineGrid.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("inline-grid"), true));
-        $(assertEast.equal(none.unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("none"), true));
+        $(assertEast.equal(block.unwrap().unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("block"), true));
+        $(assertEast.equal(inline.unwrap().unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("inline"), true));
+        $(assertEast.equal(inlineBlock.unwrap().unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("inline-block"), true));
+        $(assertEast.equal(flex.unwrap().unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("flex"), true));
+        $(assertEast.equal(inlineFlex.unwrap().unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("inline-flex"), true));
+        $(assertEast.equal(grid.unwrap().unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("grid"), true));
+        $(assertEast.equal(inlineGrid.unwrap().unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("inline-grid"), true));
+        $(assertEast.equal(none.unwrap().unwrap("Box").style.unwrap("some").display.unwrap("some").hasTag("none"), true));
     });
 
     // =========================================================================
@@ -229,10 +229,10 @@ describeEast("Box", (test) => {
         const rowReverse = $.let(Box.Root([], { flexDirection: Style.FlexDirection("row-reverse") }));
         const columnReverse = $.let(Box.Root([], { flexDirection: Style.FlexDirection("column-reverse") }));
 
-        $(assertEast.equal(row.unwrap("Box").style.unwrap("some").flexDirection.unwrap("some").hasTag("row"), true));
-        $(assertEast.equal(column.unwrap("Box").style.unwrap("some").flexDirection.unwrap("some").hasTag("column"), true));
-        $(assertEast.equal(rowReverse.unwrap("Box").style.unwrap("some").flexDirection.unwrap("some").hasTag("row-reverse"), true));
-        $(assertEast.equal(columnReverse.unwrap("Box").style.unwrap("some").flexDirection.unwrap("some").hasTag("column-reverse"), true));
+        $(assertEast.equal(row.unwrap().unwrap("Box").style.unwrap("some").flexDirection.unwrap("some").hasTag("row"), true));
+        $(assertEast.equal(column.unwrap().unwrap("Box").style.unwrap("some").flexDirection.unwrap("some").hasTag("column"), true));
+        $(assertEast.equal(rowReverse.unwrap().unwrap("Box").style.unwrap("some").flexDirection.unwrap("some").hasTag("row-reverse"), true));
+        $(assertEast.equal(columnReverse.unwrap().unwrap("Box").style.unwrap("some").flexDirection.unwrap("some").hasTag("column-reverse"), true));
     });
 
     // =========================================================================
@@ -247,12 +247,12 @@ describeEast("Box", (test) => {
         const spaceAround = $.let(Box.Root([], { justifyContent: Style.JustifyContent("space-around") }));
         const spaceEvenly = $.let(Box.Root([], { justifyContent: Style.JustifyContent("space-evenly") }));
 
-        $(assertEast.equal(flexStart.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("flex-start"), true));
-        $(assertEast.equal(flexEnd.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("flex-end"), true));
-        $(assertEast.equal(center.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("center"), true));
-        $(assertEast.equal(spaceBetween.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-between"), true));
-        $(assertEast.equal(spaceAround.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-around"), true));
-        $(assertEast.equal(spaceEvenly.unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-evenly"), true));
+        $(assertEast.equal(flexStart.unwrap().unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("flex-start"), true));
+        $(assertEast.equal(flexEnd.unwrap().unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("flex-end"), true));
+        $(assertEast.equal(center.unwrap().unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("center"), true));
+        $(assertEast.equal(spaceBetween.unwrap().unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-between"), true));
+        $(assertEast.equal(spaceAround.unwrap().unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-around"), true));
+        $(assertEast.equal(spaceEvenly.unwrap().unwrap("Box").style.unwrap("some").justifyContent.unwrap("some").hasTag("space-evenly"), true));
     });
 
     // =========================================================================
@@ -266,11 +266,11 @@ describeEast("Box", (test) => {
         const baseline = $.let(Box.Root([], { alignItems: Style.AlignItems("baseline") }));
         const stretch = $.let(Box.Root([], { alignItems: Style.AlignItems("stretch") }));
 
-        $(assertEast.equal(flexStart.unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("flex-start"), true));
-        $(assertEast.equal(flexEnd.unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("flex-end"), true));
-        $(assertEast.equal(center.unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("center"), true));
-        $(assertEast.equal(baseline.unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("baseline"), true));
-        $(assertEast.equal(stretch.unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("stretch"), true));
+        $(assertEast.equal(flexStart.unwrap().unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("flex-start"), true));
+        $(assertEast.equal(flexEnd.unwrap().unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("flex-end"), true));
+        $(assertEast.equal(center.unwrap().unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("center"), true));
+        $(assertEast.equal(baseline.unwrap().unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("baseline"), true));
+        $(assertEast.equal(stretch.unwrap().unwrap("Box").style.unwrap("some").alignItems.unwrap("some").hasTag("stretch"), true));
     });
 
     // =========================================================================
@@ -291,8 +291,8 @@ describeEast("Box", (test) => {
             gap: "4",
         }));
 
-        $(assertEast.equal(flexContainer.unwrap("Box").children.size(), 2n));
-        const style = flexContainer.unwrap("Box").style.unwrap("some");
+        $(assertEast.equal(flexContainer.unwrap().unwrap("Box").children.size(), 2n));
+        const style = flexContainer.unwrap().unwrap("Box").style.unwrap("some");
         $(assertEast.equal(style.display.unwrap("some").hasTag("flex"), true));
         $(assertEast.equal(style.flexDirection.unwrap("some").hasTag("row"), true));
         $(assertEast.equal(style.justifyContent.unwrap("some").hasTag("space-between"), true));
@@ -319,8 +319,8 @@ describeEast("Box", (test) => {
             background: "gray.100",
         }));
 
-        $(assertEast.equal(outerBox.unwrap("Box").children.size(), 1n));
-        $(assertEast.equal(outerBox.unwrap("Box").style.unwrap("some").padding.unwrap("some").top.unwrap("some"), "4"));
-        $(assertEast.equal(outerBox.unwrap("Box").style.unwrap("some").background.unwrap("some"), "gray.100"));
+        $(assertEast.equal(outerBox.unwrap().unwrap("Box").children.size(), 1n));
+        $(assertEast.equal(outerBox.unwrap().unwrap("Box").style.unwrap("some").padding.unwrap("some").top.unwrap("some"), "4"));
+        $(assertEast.equal(outerBox.unwrap().unwrap("Box").style.unwrap("some").background.unwrap("some"), "gray.100"));
     });
 });

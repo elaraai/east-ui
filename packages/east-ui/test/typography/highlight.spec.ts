@@ -14,20 +14,20 @@ describeEast("Highlight", (test) => {
     test("creates highlight with value and single query", $ => {
         const highlight = $.let(Highlight.Root("Hello World", ["World"]));
 
-        $(assertEast.equal(highlight.unwrap("Highlight").value, "Hello World"));
+        $(assertEast.equal(highlight.unwrap().unwrap("Highlight").value, "Hello World"));
     });
 
     test("creates highlight with multiple queries", $ => {
         const highlight = $.let(Highlight.Root("The quick brown fox", ["quick", "fox"]));
 
-        $(assertEast.equal(highlight.unwrap("Highlight").value, "The quick brown fox"));
+        $(assertEast.equal(highlight.unwrap().unwrap("Highlight").value, "The quick brown fox"));
     });
 
     test("creates highlight with no style - color is none", $ => {
         const highlight = $.let(Highlight.Root("Search results", ["results"]));
 
-        $(assertEast.equal(highlight.unwrap("Highlight").value, "Search results"));
-        $(assertEast.equal(highlight.unwrap("Highlight").color.hasTag("none"), true));
+        $(assertEast.equal(highlight.unwrap().unwrap("Highlight").value, "Search results"));
+        $(assertEast.equal(highlight.unwrap().unwrap("Highlight").color.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -39,8 +39,8 @@ describeEast("Highlight", (test) => {
             color: "yellow.200",
         }));
 
-        $(assertEast.equal(highlight.unwrap("Highlight").color.hasTag("some"), true));
-        $(assertEast.equal(highlight.unwrap("Highlight").color.unwrap("some"), "yellow.200"));
+        $(assertEast.equal(highlight.unwrap().unwrap("Highlight").color.hasTag("some"), true));
+        $(assertEast.equal(highlight.unwrap().unwrap("Highlight").color.unwrap("some"), "yellow.200"));
     });
 
     test("creates highlight with green color", $ => {
@@ -48,7 +48,7 @@ describeEast("Highlight", (test) => {
             color: "green.100",
         }));
 
-        $(assertEast.equal(highlight.unwrap("Highlight").color.unwrap("some"), "green.100"));
+        $(assertEast.equal(highlight.unwrap().unwrap("Highlight").color.unwrap("some"), "green.100"));
     });
 
     // =========================================================================
@@ -62,8 +62,8 @@ describeEast("Highlight", (test) => {
             { color: "blue.100" }
         ));
 
-        $(assertEast.equal(highlight.unwrap("Highlight").value, "React is a JavaScript library for building user interfaces"));
-        $(assertEast.equal(highlight.unwrap("Highlight").color.unwrap("some"), "blue.100"));
+        $(assertEast.equal(highlight.unwrap().unwrap("Highlight").value, "React is a JavaScript library for building user interfaces"));
+        $(assertEast.equal(highlight.unwrap().unwrap("Highlight").color.unwrap("some"), "blue.100"));
     });
 
     test("creates keyword highlight", $ => {
@@ -73,14 +73,14 @@ describeEast("Highlight", (test) => {
             { color: "red.100" }
         ));
 
-        $(assertEast.equal(highlight.unwrap("Highlight").value, "The error occurred at line 42"));
-        $(assertEast.equal(highlight.unwrap("Highlight").color.unwrap("some"), "red.100"));
+        $(assertEast.equal(highlight.unwrap().unwrap("Highlight").value, "The error occurred at line 42"));
+        $(assertEast.equal(highlight.unwrap().unwrap("Highlight").color.unwrap("some"), "red.100"));
     });
 
     test("creates empty query array", $ => {
         const highlight = $.let(Highlight.Root("No highlights", []));
 
-        $(assertEast.equal(highlight.unwrap("Highlight").value, "No highlights"));
-        $(assertEast.equal(highlight.unwrap("Highlight").color.hasTag("none"), true));
+        $(assertEast.equal(highlight.unwrap().unwrap("Highlight").value, "No highlights"));
+        $(assertEast.equal(highlight.unwrap().unwrap("Highlight").color.hasTag("none"), true));
     });
 });

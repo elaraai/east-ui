@@ -19,11 +19,11 @@ describeEast("Chart.BarSegment", (test) => {
             { name: "Bing", value: 200000, color: some("orange.solid") },
         ]));
 
-        $(assertEast.equal(chart.getTag(), "BarSegment"));
-        $(assertEast.equal(chart.unwrap("BarSegment").data.size(), 3n));
-        $(assertEast.equal(chart.unwrap("BarSegment").data.get(0n).name, "Google"));
-        $(assertEast.equal(chart.unwrap("BarSegment").data.get(0n).value, 500000));
-        $(assertEast.equal(chart.unwrap("BarSegment").data.get(0n).color.unwrap("some"), "teal.solid"));
+        $(assertEast.equal(chart.unwrap().getTag(), "BarSegment"));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").data.size(), 3n));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").data.get(0n).name, "Google"));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").data.get(0n).value, 500000));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").data.get(0n).color.unwrap("some"), "teal.solid"));
     });
 
     test("creates bar segment with four items", $ => {
@@ -34,9 +34,9 @@ describeEast("Chart.BarSegment", (test) => {
             { name: "Yandex", value: 100000, color: some("purple.solid") },
         ]));
 
-        $(assertEast.equal(chart.unwrap("BarSegment").data.size(), 4n));
-        $(assertEast.equal(chart.unwrap("BarSegment").data.get(3n).name, "Yandex"));
-        $(assertEast.equal(chart.unwrap("BarSegment").data.get(3n).color.unwrap("some"), "purple.solid"));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").data.size(), 4n));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").data.get(3n).name, "Yandex"));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").data.get(3n).color.unwrap("some"), "purple.solid"));
     });
 
     // =========================================================================
@@ -51,9 +51,9 @@ describeEast("Chart.BarSegment", (test) => {
             sort: { by: "value", direction: "desc" },
         }));
 
-        $(assertEast.equal(chart.unwrap("BarSegment").sort.hasTag("some"), true));
-        $(assertEast.equal(chart.unwrap("BarSegment").sort.unwrap("some").by, "value"));
-        $(assertEast.equal(chart.unwrap("BarSegment").sort.unwrap("some").direction.hasTag("desc"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").sort.hasTag("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").sort.unwrap("some").by, "value"));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").sort.unwrap("some").direction.hasTag("desc"), true));
     });
 
     test("creates bar segment with ascending sort", $ => {
@@ -64,7 +64,7 @@ describeEast("Chart.BarSegment", (test) => {
             sort: { by: "value", direction: "asc" },
         }));
 
-        $(assertEast.equal(chart.unwrap("BarSegment").sort.unwrap("some").direction.hasTag("asc"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").sort.unwrap("some").direction.hasTag("asc"), true));
     });
 
     test("creates bar segment with sort by name", $ => {
@@ -75,7 +75,7 @@ describeEast("Chart.BarSegment", (test) => {
             sort: { by: "name", direction: "asc" },
         }));
 
-        $(assertEast.equal(chart.unwrap("BarSegment").sort.unwrap("some").by, "name"));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").sort.unwrap("some").by, "name"));
     });
 
     // =========================================================================
@@ -89,7 +89,7 @@ describeEast("Chart.BarSegment", (test) => {
             showValue: true,
         }));
 
-        $(assertEast.equal(chart.unwrap("BarSegment").showValue.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").showValue.unwrap("some"), true));
     });
 
     test("creates bar segment without value display", $ => {
@@ -99,7 +99,7 @@ describeEast("Chart.BarSegment", (test) => {
             showValue: false,
         }));
 
-        $(assertEast.equal(chart.unwrap("BarSegment").showValue.unwrap("some"), false));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").showValue.unwrap("some"), false));
     });
 
     test("creates bar segment with label display", $ => {
@@ -109,7 +109,7 @@ describeEast("Chart.BarSegment", (test) => {
             showLabel: true,
         }));
 
-        $(assertEast.equal(chart.unwrap("BarSegment").showLabel.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").showLabel.unwrap("some"), true));
     });
 
     test("creates bar segment without label display", $ => {
@@ -119,7 +119,7 @@ describeEast("Chart.BarSegment", (test) => {
             showLabel: false,
         }));
 
-        $(assertEast.equal(chart.unwrap("BarSegment").showLabel.unwrap("some"), false));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").showLabel.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -135,8 +135,8 @@ describeEast("Chart.BarSegment", (test) => {
             showLabel: true,
         }));
 
-        $(assertEast.equal(chart.unwrap("BarSegment").showValue.unwrap("some"), true));
-        $(assertEast.equal(chart.unwrap("BarSegment").showLabel.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").showValue.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").showLabel.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -155,12 +155,12 @@ describeEast("Chart.BarSegment", (test) => {
             showLabel: true,
         }));
 
-        $(assertEast.equal(chart.getTag(), "BarSegment"));
-        $(assertEast.equal(chart.unwrap("BarSegment").data.size(), 4n));
-        $(assertEast.equal(chart.unwrap("BarSegment").sort.unwrap("some").by, "value"));
-        $(assertEast.equal(chart.unwrap("BarSegment").sort.unwrap("some").direction.hasTag("desc"), true));
-        $(assertEast.equal(chart.unwrap("BarSegment").showValue.unwrap("some"), true));
-        $(assertEast.equal(chart.unwrap("BarSegment").showLabel.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().getTag(), "BarSegment"));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").data.size(), 4n));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").sort.unwrap("some").by, "value"));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").sort.unwrap("some").direction.hasTag("desc"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").showValue.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").showLabel.unwrap("some"), true));
     });
 
     test("creates bar segment for traffic sources visualization", $ => {
@@ -176,10 +176,10 @@ describeEast("Chart.BarSegment", (test) => {
             showLabel: true,
         }));
 
-        $(assertEast.equal(chart.unwrap("BarSegment").data.size(), 5n));
-        $(assertEast.equal(chart.unwrap("BarSegment").data.get(0n).name, "Search"));
-        $(assertEast.equal(chart.unwrap("BarSegment").data.get(0n).value, 450000));
-        $(assertEast.equal(chart.unwrap("BarSegment").data.get(0n).color.unwrap("some"), "green.solid"));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").data.size(), 5n));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").data.get(0n).name, "Search"));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").data.get(0n).value, 450000));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").data.get(0n).color.unwrap("some"), "green.solid"));
     });
 
     test("creates bar segment for budget allocation", $ => {
@@ -192,7 +192,7 @@ describeEast("Chart.BarSegment", (test) => {
             showLabel: true,
         }));
 
-        $(assertEast.equal(chart.unwrap("BarSegment").data.size(), 4n));
-        $(assertEast.equal(chart.unwrap("BarSegment").showLabel.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").data.size(), 4n));
+        $(assertEast.equal(chart.unwrap().unwrap("BarSegment").showLabel.unwrap("some"), true));
     });
 });

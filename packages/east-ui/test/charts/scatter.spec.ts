@@ -21,10 +21,10 @@ describeEast("Chart.Scatter", (test) => {
             { temp: { color: "teal.solid" } }
         ));
 
-        $(assertEast.equal(chart.getTag(), "ScatterChart"));
-        $(assertEast.equal(chart.unwrap("ScatterChart").series.size(), 1n));
-        $(assertEast.equal(chart.unwrap("ScatterChart").series.get(0n).name, "temp"));
-        $(assertEast.equal(chart.unwrap("ScatterChart").series.get(0n).color.unwrap("some"), "teal.solid"));
+        $(assertEast.equal(chart.unwrap().getTag(), "ScatterChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").series.size(), 1n));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").series.get(0n).name, "temp"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").series.get(0n).color.unwrap("some"), "teal.solid"));
     });
 
     test("creates scatter chart with array series spec", $ => {
@@ -35,8 +35,8 @@ describeEast("Chart.Scatter", (test) => {
             ["temp"]
         ));
 
-        $(assertEast.equal(chart.unwrap("ScatterChart").series.size(), 1n));
-        $(assertEast.equal(chart.unwrap("ScatterChart").series.get(0n).name, "temp"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").series.size(), 1n));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").series.get(0n).name, "temp"));
     });
 
     test("creates scatter chart with x and y data keys", $ => {
@@ -51,8 +51,8 @@ describeEast("Chart.Scatter", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap("ScatterChart").xDataKey.unwrap("some"), "temp"));
-        $(assertEast.equal(chart.unwrap("ScatterChart").yDataKey.unwrap("some"), "sales"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").xDataKey.unwrap("some"), "temp"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").yDataKey.unwrap("some"), "sales"));
     });
 
     // =========================================================================
@@ -71,9 +71,9 @@ describeEast("Chart.Scatter", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap("ScatterChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap("ScatterChart").series.get(0n).name, "x"));
-        $(assertEast.equal(chart.unwrap("ScatterChart").series.get(0n).label.unwrap("some"), "X Position"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").series.size(), 2n));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").series.get(0n).name, "x"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").series.get(0n).label.unwrap("some"), "X Position"));
     });
 
     // =========================================================================
@@ -89,8 +89,8 @@ describeEast("Chart.Scatter", (test) => {
             { xAxis: Chart.Axis({ dataKey: "temp", label: "Temperature" }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("ScatterChart").xAxis.unwrap("some").dataKey.unwrap("some"), "temp"));
-        $(assertEast.equal(chart.unwrap("ScatterChart").xAxis.unwrap("some").label.unwrap("some"), "Temperature"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").xAxis.unwrap("some").dataKey.unwrap("some"), "temp"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").xAxis.unwrap("some").label.unwrap("some"), "Temperature"));
     });
 
     test("creates scatter chart with y-axis configuration", $ => {
@@ -102,8 +102,8 @@ describeEast("Chart.Scatter", (test) => {
             { yAxis: Chart.Axis({ dataKey: "sales", label: "Sales" }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("ScatterChart").yAxis.unwrap("some").dataKey.unwrap("some"), "sales"));
-        $(assertEast.equal(chart.unwrap("ScatterChart").yAxis.unwrap("some").label.unwrap("some"), "Sales"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").yAxis.unwrap("some").dataKey.unwrap("some"), "sales"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").yAxis.unwrap("some").label.unwrap("some"), "Sales"));
     });
 
     test("creates scatter chart with axis domain", $ => {
@@ -118,8 +118,8 @@ describeEast("Chart.Scatter", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap("ScatterChart").xAxis.hasTag("some"), true));
-        $(assertEast.equal(chart.unwrap("ScatterChart").yAxis.hasTag("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").xAxis.hasTag("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").yAxis.hasTag("some"), true));
     });
 
     // =========================================================================
@@ -135,7 +135,7 @@ describeEast("Chart.Scatter", (test) => {
             { grid: Chart.Grid({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("ScatterChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates scatter chart with legend", $ => {
@@ -147,7 +147,7 @@ describeEast("Chart.Scatter", (test) => {
             { legend: Chart.Legend({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("ScatterChart").legend.unwrap("some").show.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates scatter chart with tooltip", $ => {
@@ -159,7 +159,7 @@ describeEast("Chart.Scatter", (test) => {
             { tooltip: Chart.Tooltip({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("ScatterChart").tooltip.unwrap("some").show.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -175,7 +175,7 @@ describeEast("Chart.Scatter", (test) => {
             { pointSize: 8n }
         ));
 
-        $(assertEast.equal(chart.unwrap("ScatterChart").pointSize.unwrap("some"), 8n));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").pointSize.unwrap("some"), 8n));
     });
 
     // =========================================================================
@@ -191,8 +191,8 @@ describeEast("Chart.Scatter", (test) => {
             { margin: Chart.Margin({ top: 20n, right: 30n, bottom: 20n, left: 30n }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("ScatterChart").margin.unwrap("some").top.unwrap("some"), 20n));
-        $(assertEast.equal(chart.unwrap("ScatterChart").margin.unwrap("some").left.unwrap("some"), 30n));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").margin.unwrap("some").top.unwrap("some"), 20n));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").margin.unwrap("some").left.unwrap("some"), 30n));
     });
 
     // =========================================================================
@@ -214,9 +214,9 @@ describeEast("Chart.Scatter", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.getTag(), "ScatterChart"));
-        $(assertEast.equal(chart.unwrap("ScatterChart").series.get(0n).color.unwrap("some"), "teal.solid"));
-        $(assertEast.equal(chart.unwrap("ScatterChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().getTag(), "ScatterChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").series.get(0n).color.unwrap("some"), "teal.solid"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates complete multi-series scatter chart", $ => {
@@ -236,8 +236,8 @@ describeEast("Chart.Scatter", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap("ScatterChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap("ScatterChart").tooltip.unwrap("some").show.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").series.size(), 2n));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
 });
 
@@ -264,9 +264,9 @@ describeEast("Chart.ScatterMulti", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.getTag(), "ScatterChart"));
-        $(assertEast.equal(chart.unwrap("ScatterChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap("ScatterChart").valueKey.unwrap("some"), "value"));
-        $(assertEast.equal(chart.unwrap("ScatterChart").dataSeries.hasTag("some"), true));
+        $(assertEast.equal(chart.unwrap().getTag(), "ScatterChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").series.size(), 2n));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").valueKey.unwrap("some"), "value"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").dataSeries.hasTag("some"), true));
     });
 });

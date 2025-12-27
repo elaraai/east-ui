@@ -14,16 +14,16 @@ describeEast("Checkbox", (test) => {
     test("creates checkbox with checked true", $ => {
         const checkbox = $.let(Checkbox.Root(true));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").checked, true));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").label.hasTag("none"), true));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").indeterminate.hasTag("none"), true));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").disabled.hasTag("none"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").checked, true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").label.hasTag("none"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").indeterminate.hasTag("none"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").disabled.hasTag("none"), true));
     });
 
     test("creates checkbox with checked false", $ => {
         const checkbox = $.let(Checkbox.Root(false));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").checked, false));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").checked, false));
     });
 
     // =========================================================================
@@ -35,8 +35,8 @@ describeEast("Checkbox", (test) => {
             label: "Accept terms",
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").label.hasTag("some"), true));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").label.unwrap("some"), "Accept terms"));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").label.hasTag("some"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").label.unwrap("some"), "Accept terms"));
     });
 
     test("creates checkbox with long label", $ => {
@@ -44,7 +44,7 @@ describeEast("Checkbox", (test) => {
             label: "I agree to the terms and conditions and privacy policy",
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").label.unwrap("some"), "I agree to the terms and conditions and privacy policy"));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").label.unwrap("some"), "I agree to the terms and conditions and privacy policy"));
     });
 
     // =========================================================================
@@ -56,8 +56,8 @@ describeEast("Checkbox", (test) => {
             indeterminate: true,
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").indeterminate.hasTag("some"), true));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").indeterminate.unwrap("some"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").indeterminate.hasTag("some"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").indeterminate.unwrap("some"), true));
     });
 
     test("creates non-indeterminate checkbox explicitly", $ => {
@@ -65,7 +65,7 @@ describeEast("Checkbox", (test) => {
             indeterminate: false,
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").indeterminate.unwrap("some"), false));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").indeterminate.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -77,8 +77,8 @@ describeEast("Checkbox", (test) => {
             disabled: true,
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").disabled.hasTag("some"), true));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").disabled.unwrap("some"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").disabled.hasTag("some"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").disabled.unwrap("some"), true));
     });
 
     test("creates enabled checkbox explicitly", $ => {
@@ -86,7 +86,7 @@ describeEast("Checkbox", (test) => {
             disabled: false,
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").disabled.unwrap("some"), false));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").disabled.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -98,8 +98,8 @@ describeEast("Checkbox", (test) => {
             colorPalette: "blue",
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").colorPalette.hasTag("some"), true));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").colorPalette.unwrap("some").hasTag("blue"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").colorPalette.hasTag("some"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").colorPalette.unwrap("some").hasTag("blue"), true));
     });
 
     test("creates checkbox with green color palette", $ => {
@@ -107,7 +107,7 @@ describeEast("Checkbox", (test) => {
             colorPalette: "green",
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").colorPalette.unwrap("some").hasTag("green"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").colorPalette.unwrap("some").hasTag("green"), true));
     });
 
     test("creates checkbox with Style.ColorScheme helper", $ => {
@@ -115,7 +115,7 @@ describeEast("Checkbox", (test) => {
             colorPalette: Style.ColorScheme("purple"),
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").colorPalette.unwrap("some").hasTag("purple"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").colorPalette.unwrap("some").hasTag("purple"), true));
     });
 
     // =========================================================================
@@ -127,8 +127,8 @@ describeEast("Checkbox", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").size.hasTag("some"), true));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").size.unwrap("some").hasTag("sm"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").size.hasTag("some"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates medium checkbox", $ => {
@@ -136,7 +136,7 @@ describeEast("Checkbox", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").size.unwrap("some").hasTag("md"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates large checkbox", $ => {
@@ -144,7 +144,7 @@ describeEast("Checkbox", (test) => {
             size: "lg",
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").size.unwrap("some").hasTag("lg"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").size.unwrap("some").hasTag("lg"), true));
     });
 
     test("creates checkbox with Style.Size helper", $ => {
@@ -152,7 +152,7 @@ describeEast("Checkbox", (test) => {
             size: Style.Size("md"),
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").size.unwrap("some").hasTag("md"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").size.unwrap("some").hasTag("md"), true));
     });
 
     // =========================================================================
@@ -168,12 +168,12 @@ describeEast("Checkbox", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").checked, true));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").label.unwrap("some"), "Enable feature"));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").indeterminate.unwrap("some"), false));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").disabled.unwrap("some"), false));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").colorPalette.unwrap("some").hasTag("blue"), true));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").size.unwrap("some").hasTag("md"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").checked, true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").label.unwrap("some"), "Enable feature"));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").indeterminate.unwrap("some"), false));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").disabled.unwrap("some"), false));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").colorPalette.unwrap("some").hasTag("blue"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates terms acceptance checkbox", $ => {
@@ -182,9 +182,9 @@ describeEast("Checkbox", (test) => {
             colorPalette: "blue",
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").checked, false));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").label.unwrap("some"), "I accept the terms and conditions"));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").colorPalette.unwrap("some").hasTag("blue"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").checked, false));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").label.unwrap("some"), "I accept the terms and conditions"));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").colorPalette.unwrap("some").hasTag("blue"), true));
     });
 
     test("creates select all checkbox with indeterminate", $ => {
@@ -193,8 +193,8 @@ describeEast("Checkbox", (test) => {
             indeterminate: true,
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").label.unwrap("some"), "Select all"));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").indeterminate.unwrap("some"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").label.unwrap("some"), "Select all"));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").indeterminate.unwrap("some"), true));
     });
 
     test("creates disabled readonly checkbox", $ => {
@@ -204,8 +204,8 @@ describeEast("Checkbox", (test) => {
             colorPalette: "gray",
         }));
 
-        $(assertEast.equal(checkbox.unwrap("Checkbox").checked, true));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").disabled.unwrap("some"), true));
-        $(assertEast.equal(checkbox.unwrap("Checkbox").colorPalette.unwrap("some").hasTag("gray"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").checked, true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").disabled.unwrap("some"), true));
+        $(assertEast.equal(checkbox.unwrap().unwrap("Checkbox").colorPalette.unwrap("some").hasTag("gray"), true));
     });
 });

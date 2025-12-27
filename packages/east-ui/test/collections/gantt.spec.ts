@@ -22,9 +22,9 @@ describeEast("Gantt", (test) => {
             row => [Gantt.Task({ start: row.start, end: row.end })]
         ));
 
-        $(assertEast.equal(gantt.getTag(), "Gantt"));
-        $(assertEast.equal(gantt.unwrap("Gantt").columns.size(), 1n));
-        $(assertEast.equal(gantt.unwrap("Gantt").rows.size(), 2n));
+        $(assertEast.equal(gantt.unwrap().getTag(), "Gantt"));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").columns.size(), 1n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").rows.size(), 2n));
     });
 
     test("creates gantt with object column config", $ => {
@@ -39,7 +39,7 @@ describeEast("Gantt", (test) => {
             row => [Gantt.Task({ start: row.start, end: row.end })]
         ));
 
-        $(assertEast.equal(gantt.unwrap("Gantt").columns.size(), 2n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").columns.size(), 2n));
     });
 
     // =========================================================================
@@ -53,7 +53,7 @@ describeEast("Gantt", (test) => {
             row => [Gantt.Task({ start: row.start, end: row.end })]
         ));
 
-        const events = gantt.unwrap("Gantt").rows.get(0n).events;
+        const events = gantt.unwrap().unwrap("Gantt").rows.get(0n).events;
         $(assertEast.equal(events.size(), 1n));
         $(assertEast.equal(events.get(0n).hasTag("Task"), true));
     });
@@ -65,7 +65,7 @@ describeEast("Gantt", (test) => {
             row => [Gantt.Task({ start: row.start, end: row.end, label: "Design Phase" })]
         ));
 
-        const task = gantt.unwrap("Gantt").rows.get(0n).events.get(0n).unwrap("Task");
+        const task = gantt.unwrap().unwrap("Gantt").rows.get(0n).events.get(0n).unwrap("Task");
         $(assertEast.equal(task.label.unwrap("some"), "Design Phase"));
     });
 
@@ -76,7 +76,7 @@ describeEast("Gantt", (test) => {
             row => [Gantt.Task({ start: row.start, end: row.end, progress: 0.75 })]
         ));
 
-        const task = gantt.unwrap("Gantt").rows.get(0n).events.get(0n).unwrap("Task");
+        const task = gantt.unwrap().unwrap("Gantt").rows.get(0n).events.get(0n).unwrap("Task");
         $(assertEast.equal(task.progress.unwrap("some"), 0.75));
     });
 
@@ -87,7 +87,7 @@ describeEast("Gantt", (test) => {
             row => [Gantt.Task({ start: row.start, end: row.end, colorPalette: "blue" })]
         ));
 
-        const task = gantt.unwrap("Gantt").rows.get(0n).events.get(0n).unwrap("Task");
+        const task = gantt.unwrap().unwrap("Gantt").rows.get(0n).events.get(0n).unwrap("Task");
         $(assertEast.equal(task.colorPalette.unwrap("some").hasTag("blue"), true));
     });
 
@@ -102,7 +102,7 @@ describeEast("Gantt", (test) => {
             row => [Gantt.Milestone({ date: row.date })]
         ));
 
-        const events = gantt.unwrap("Gantt").rows.get(0n).events;
+        const events = gantt.unwrap().unwrap("Gantt").rows.get(0n).events;
         $(assertEast.equal(events.size(), 1n));
         $(assertEast.equal(events.get(0n).hasTag("Milestone"), true));
     });
@@ -114,7 +114,7 @@ describeEast("Gantt", (test) => {
             row => [Gantt.Milestone({ date: row.date, label: "Product Launch" })]
         ));
 
-        const milestone = gantt.unwrap("Gantt").rows.get(0n).events.get(0n).unwrap("Milestone");
+        const milestone = gantt.unwrap().unwrap("Gantt").rows.get(0n).events.get(0n).unwrap("Milestone");
         $(assertEast.equal(milestone.label.unwrap("some"), "Product Launch"));
     });
 
@@ -125,7 +125,7 @@ describeEast("Gantt", (test) => {
             row => [Gantt.Milestone({ date: row.date, colorPalette: "red" })]
         ));
 
-        const milestone = gantt.unwrap("Gantt").rows.get(0n).events.get(0n).unwrap("Milestone");
+        const milestone = gantt.unwrap().unwrap("Gantt").rows.get(0n).events.get(0n).unwrap("Milestone");
         $(assertEast.equal(milestone.colorPalette.unwrap("some").hasTag("red"), true));
     });
 
@@ -143,7 +143,7 @@ describeEast("Gantt", (test) => {
             ]
         ));
 
-        const events = gantt.unwrap("Gantt").rows.get(0n).events;
+        const events = gantt.unwrap().unwrap("Gantt").rows.get(0n).events;
         $(assertEast.equal(events.size(), 2n));
         $(assertEast.equal(events.get(0n).hasTag("Task"), true));
         $(assertEast.equal(events.get(1n).hasTag("Milestone"), true));
@@ -161,7 +161,7 @@ describeEast("Gantt", (test) => {
             { variant: "line" }
         ));
 
-        $(assertEast.equal(gantt.unwrap("Gantt").style.unwrap("some").variant.unwrap("some").hasTag("line"), true));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").style.unwrap("some").variant.unwrap("some").hasTag("line"), true));
     });
 
     test("creates gantt with showToday", $ => {
@@ -172,7 +172,7 @@ describeEast("Gantt", (test) => {
             { showToday: true }
         ));
 
-        $(assertEast.equal(gantt.unwrap("Gantt").style.unwrap("some").showToday.unwrap("some"), true));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").style.unwrap("some").showToday.unwrap("some"), true));
     });
 
     test("creates gantt with all style options", $ => {
@@ -191,9 +191,9 @@ describeEast("Gantt", (test) => {
             }
         ));
 
-        $(assertEast.equal(gantt.unwrap("Gantt").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
-        $(assertEast.equal(gantt.unwrap("Gantt").style.unwrap("some").striped.unwrap("some"), true));
-        $(assertEast.equal(gantt.unwrap("Gantt").style.unwrap("some").showToday.unwrap("some"), true));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").style.unwrap("some").striped.unwrap("some"), true));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").style.unwrap("some").showToday.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -218,8 +218,8 @@ describeEast("Gantt", (test) => {
             { variant: "line", striped: true, showToday: true }
         ));
 
-        $(assertEast.equal(gantt.unwrap("Gantt").rows.size(), 4n));
-        $(assertEast.equal(gantt.unwrap("Gantt").columns.size(), 2n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").rows.size(), 4n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").columns.size(), 2n));
     });
 
     test("creates gantt with tasks and milestones", $ => {
@@ -235,10 +235,10 @@ describeEast("Gantt", (test) => {
             ]
         ));
 
-        $(assertEast.equal(gantt.unwrap("Gantt").rows.size(), 2n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").rows.size(), 2n));
         // Each row has 2 events (task + milestone)
-        $(assertEast.equal(gantt.unwrap("Gantt").rows.get(0n).events.size(), 2n));
-        $(assertEast.equal(gantt.unwrap("Gantt").rows.get(1n).events.size(), 2n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").rows.get(0n).events.size(), 2n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").rows.get(1n).events.size(), 2n));
     });
 
     // =========================================================================
@@ -260,8 +260,8 @@ describeEast("Gantt", (test) => {
             row => [Gantt.Task({ start: row.start, end: row.end })]
         ));
 
-        $(assertEast.equal(gantt.unwrap("Gantt").rows.size(), 2n));
-        $(assertEast.equal(gantt.unwrap("Gantt").columns.size(), 1n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").rows.size(), 2n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").columns.size(), 1n));
     });
 
     test("column render function uses row field for conditional styling", $ => {
@@ -282,8 +282,8 @@ describeEast("Gantt", (test) => {
             row => [Gantt.Task({ start: row.start, end: row.end })]
         ));
 
-        $(assertEast.equal(gantt.unwrap("Gantt").rows.size(), 2n));
-        $(assertEast.equal(gantt.unwrap("Gantt").columns.size(), 2n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").rows.size(), 2n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").columns.size(), 2n));
     });
 
     test("column render function accesses multiple row fields", $ => {
@@ -301,8 +301,8 @@ describeEast("Gantt", (test) => {
             row => [Gantt.Task({ start: row.start, end: row.end })]
         ));
 
-        $(assertEast.equal(gantt.unwrap("Gantt").rows.size(), 1n));
-        $(assertEast.equal(gantt.unwrap("Gantt").columns.size(), 2n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").rows.size(), 1n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").columns.size(), 2n));
     });
 
     // =========================================================================
@@ -327,8 +327,8 @@ describeEast("Gantt", (test) => {
             row => [Gantt.Task({ start: row.start, end: row.end })]
         ));
 
-        $(assertEast.equal(gantt.unwrap("Gantt").columns.size(), 2n));
-        $(assertEast.equal(gantt.unwrap("Gantt").rows.size(), 2n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").columns.size(), 2n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").rows.size(), 2n));
     });
 
     test("creates gantt with struct field using value function", $ => {
@@ -349,8 +349,8 @@ describeEast("Gantt", (test) => {
             row => [Gantt.Task({ start: row.start, end: row.end })]
         ));
 
-        $(assertEast.equal(gantt.unwrap("Gantt").columns.size(), 2n));
-        $(assertEast.equal(gantt.unwrap("Gantt").rows.size(), 2n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").columns.size(), 2n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").rows.size(), 2n));
     });
 
     test("creates gantt mixing primitive and complex columns", $ => {
@@ -372,7 +372,7 @@ describeEast("Gantt", (test) => {
             row => [Gantt.Task({ start: row.start, end: row.end })]
         ));
 
-        $(assertEast.equal(gantt.unwrap("Gantt").columns.size(), 3n));
-        $(assertEast.equal(gantt.unwrap("Gantt").rows.size(), 2n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").columns.size(), 3n));
+        $(assertEast.equal(gantt.unwrap().unwrap("Gantt").rows.size(), 2n));
     });
 });

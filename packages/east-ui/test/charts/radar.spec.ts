@@ -21,10 +21,10 @@ describeEast("Chart.Radar", (test) => {
             { windows: { color: "teal.solid" } }
         ));
 
-        $(assertEast.equal(chart.getTag(), "RadarChart"));
-        $(assertEast.equal(chart.unwrap("RadarChart").series.size(), 1n));
-        $(assertEast.equal(chart.unwrap("RadarChart").series.get(0n).name, "windows"));
-        $(assertEast.equal(chart.unwrap("RadarChart").series.get(0n).color.unwrap("some"), "teal.solid"));
+        $(assertEast.equal(chart.unwrap().getTag(), "RadarChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").series.size(), 1n));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").series.get(0n).name, "windows"));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").series.get(0n).color.unwrap("some"), "teal.solid"));
     });
 
     test("creates radar chart with dataKey", $ => {
@@ -36,7 +36,7 @@ describeEast("Chart.Radar", (test) => {
             { dataKey: "month" }
         ));
 
-        $(assertEast.equal(chart.unwrap("RadarChart").dataKey.unwrap("some"), "month"));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").dataKey.unwrap("some"), "month"));
     });
 
     // =========================================================================
@@ -56,9 +56,9 @@ describeEast("Chart.Radar", (test) => {
             { dataKey: "month" }
         ));
 
-        $(assertEast.equal(chart.unwrap("RadarChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap("RadarChart").series.get(0n).name, "windows"));
-        $(assertEast.equal(chart.unwrap("RadarChart").series.get(1n).name, "mac"));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").series.size(), 2n));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").series.get(0n).name, "windows"));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").series.get(1n).name, "mac"));
     });
 
     test("creates skills comparison radar chart", $ => {
@@ -75,8 +75,8 @@ describeEast("Chart.Radar", (test) => {
             { dataKey: "subject" }
         ));
 
-        $(assertEast.equal(chart.unwrap("RadarChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap("RadarChart").dataKey.unwrap("some"), "subject"));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").series.size(), 2n));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").dataKey.unwrap("some"), "subject"));
     });
 
     // =========================================================================
@@ -92,7 +92,7 @@ describeEast("Chart.Radar", (test) => {
             { grid: Chart.Grid({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("RadarChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates radar chart with legend", $ => {
@@ -104,7 +104,7 @@ describeEast("Chart.Radar", (test) => {
             { legend: Chart.Legend({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("RadarChart").legend.unwrap("some").show.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates radar chart with tooltip", $ => {
@@ -116,7 +116,7 @@ describeEast("Chart.Radar", (test) => {
             { tooltip: Chart.Tooltip({ show: true }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("RadarChart").tooltip.unwrap("some").show.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -132,7 +132,7 @@ describeEast("Chart.Radar", (test) => {
             { fillOpacity: 0.5 }
         ));
 
-        $(assertEast.equal(chart.unwrap("RadarChart").fillOpacity.unwrap("some"), 0.5));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").fillOpacity.unwrap("some"), 0.5));
     });
 
     test("creates radar chart with low fill opacity for overlapping series", $ => {
@@ -147,7 +147,7 @@ describeEast("Chart.Radar", (test) => {
             { fillOpacity: 0.2 }
         ));
 
-        $(assertEast.equal(chart.unwrap("RadarChart").fillOpacity.unwrap("some"), 0.2));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").fillOpacity.unwrap("some"), 0.2));
     });
 
     // =========================================================================
@@ -163,8 +163,8 @@ describeEast("Chart.Radar", (test) => {
             { margin: Chart.Margin({ top: 20n, right: 30n, bottom: 20n, left: 30n }) }
         ));
 
-        $(assertEast.equal(chart.unwrap("RadarChart").margin.unwrap("some").top.unwrap("some"), 20n));
-        $(assertEast.equal(chart.unwrap("RadarChart").margin.unwrap("some").left.unwrap("some"), 30n));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").margin.unwrap("some").top.unwrap("some"), 20n));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").margin.unwrap("some").left.unwrap("some"), 30n));
     });
 
     // =========================================================================
@@ -186,11 +186,11 @@ describeEast("Chart.Radar", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.getTag(), "RadarChart"));
-        $(assertEast.equal(chart.unwrap("RadarChart").series.get(0n).name, "windows"));
-        $(assertEast.equal(chart.unwrap("RadarChart").dataKey.unwrap("some"), "month"));
-        $(assertEast.equal(chart.unwrap("RadarChart").grid.unwrap("some").show.unwrap("some"), true));
-        $(assertEast.equal(chart.unwrap("RadarChart").fillOpacity.unwrap("some"), 0.5));
+        $(assertEast.equal(chart.unwrap().getTag(), "RadarChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").series.get(0n).name, "windows"));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").dataKey.unwrap("some"), "month"));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").fillOpacity.unwrap("some"), 0.5));
     });
 
     test("creates complete multi-series radar chart matching Chakra RadarChartMultiple example", $ => {
@@ -212,9 +212,9 @@ describeEast("Chart.Radar", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap("RadarChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap("RadarChart").grid.unwrap("some").show.unwrap("some"), true));
-        $(assertEast.equal(chart.unwrap("RadarChart").legend.unwrap("some").show.unwrap("some"), true));
-        $(assertEast.equal(chart.unwrap("RadarChart").fillOpacity.unwrap("some"), 0.2));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").series.size(), 2n));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").legend.unwrap("some").show.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("RadarChart").fillOpacity.unwrap("some"), 0.2));
     });
 });

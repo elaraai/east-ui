@@ -14,16 +14,16 @@ describeEast("Sparkline", (test) => {
     test("creates sparkline with data array", $ => {
         const sparkline = $.let(Sparkline.Root([1.0, 2.0, 1.5, 3.0, 2.5]));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").type.hasTag("none"), true));
-        $(assertEast.equal(sparkline.unwrap("Sparkline").color.hasTag("none"), true));
-        $(assertEast.equal(sparkline.unwrap("Sparkline").height.hasTag("none"), true));
-        $(assertEast.equal(sparkline.unwrap("Sparkline").width.hasTag("none"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").type.hasTag("none"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").color.hasTag("none"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").height.hasTag("none"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").width.hasTag("none"), true));
     });
 
     test("creates sparkline with single value", $ => {
         const sparkline = $.let(Sparkline.Root([42.0]));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").type.hasTag("none"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").type.hasTag("none"), true));
     });
 
     test("creates sparkline with many values", $ => {
@@ -31,7 +31,7 @@ describeEast("Sparkline", (test) => {
             10.0, 20.0, 15.0, 25.0, 18.0, 30.0, 22.0, 28.0, 35.0, 40.0
         ]));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").type.hasTag("none"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").type.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -43,8 +43,8 @@ describeEast("Sparkline", (test) => {
             type: "line",
         }));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").type.hasTag("some"), true));
-        $(assertEast.equal(sparkline.unwrap("Sparkline").type.unwrap("some").hasTag("line"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").type.hasTag("some"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").type.unwrap("some").hasTag("line"), true));
     });
 
     test("creates area sparkline", $ => {
@@ -52,8 +52,8 @@ describeEast("Sparkline", (test) => {
             type: "area",
         }));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").type.hasTag("some"), true));
-        $(assertEast.equal(sparkline.unwrap("Sparkline").type.unwrap("some").hasTag("area"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").type.hasTag("some"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").type.unwrap("some").hasTag("area"), true));
     });
 
     // =========================================================================
@@ -65,8 +65,8 @@ describeEast("Sparkline", (test) => {
             color: "blue.500",
         }));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").color.hasTag("some"), true));
-        $(assertEast.equal(sparkline.unwrap("Sparkline").color.unwrap("some"), "blue.500"));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").color.hasTag("some"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").color.unwrap("some"), "blue.500"));
     });
 
     test("creates sparkline with CSS color", $ => {
@@ -74,7 +74,7 @@ describeEast("Sparkline", (test) => {
             color: "#3182ce",
         }));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").color.unwrap("some"), "#3182ce"));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").color.unwrap("some"), "#3182ce"));
     });
 
     test("creates sparkline with teal color", $ => {
@@ -82,7 +82,7 @@ describeEast("Sparkline", (test) => {
             color: "teal.500",
         }));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").color.unwrap("some"), "teal.500"));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").color.unwrap("some"), "teal.500"));
     });
 
     // =========================================================================
@@ -94,8 +94,8 @@ describeEast("Sparkline", (test) => {
             height: "40px",
         }));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").height.hasTag("some"), true));
-        $(assertEast.equal(sparkline.unwrap("Sparkline").height.unwrap("some"), "40px"));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").height.hasTag("some"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").height.unwrap("some"), "40px"));
     });
 
     test("creates sparkline with width", $ => {
@@ -103,8 +103,8 @@ describeEast("Sparkline", (test) => {
             width: "120px",
         }));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").width.hasTag("some"), true));
-        $(assertEast.equal(sparkline.unwrap("Sparkline").width.unwrap("some"), "120px"));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").width.hasTag("some"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").width.unwrap("some"), "120px"));
     });
 
     test("creates sparkline with both dimensions", $ => {
@@ -113,8 +113,8 @@ describeEast("Sparkline", (test) => {
             width: "200px",
         }));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").height.unwrap("some"), "50px"));
-        $(assertEast.equal(sparkline.unwrap("Sparkline").width.unwrap("some"), "200px"));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").height.unwrap("some"), "50px"));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").width.unwrap("some"), "200px"));
     });
 
     test("creates sparkline with percentage width", $ => {
@@ -122,7 +122,7 @@ describeEast("Sparkline", (test) => {
             width: "100%",
         }));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").width.unwrap("some"), "100%"));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").width.unwrap("some"), "100%"));
     });
 
     // =========================================================================
@@ -137,10 +137,10 @@ describeEast("Sparkline", (test) => {
             width: "120px",
         }));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").type.unwrap("some").hasTag("area"), true));
-        $(assertEast.equal(sparkline.unwrap("Sparkline").color.unwrap("some"), "green.500"));
-        $(assertEast.equal(sparkline.unwrap("Sparkline").height.unwrap("some"), "40px"));
-        $(assertEast.equal(sparkline.unwrap("Sparkline").width.unwrap("some"), "120px"));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").type.unwrap("some").hasTag("area"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").color.unwrap("some"), "green.500"));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").height.unwrap("some"), "40px"));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").width.unwrap("some"), "120px"));
     });
 
     test("creates line sparkline with styling", $ => {
@@ -150,8 +150,8 @@ describeEast("Sparkline", (test) => {
             height: "32px",
         }));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").type.unwrap("some").hasTag("line"), true));
-        $(assertEast.equal(sparkline.unwrap("Sparkline").color.unwrap("some"), "blue.400"));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").type.unwrap("some").hasTag("line"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").color.unwrap("some"), "blue.400"));
     });
 
     // =========================================================================
@@ -169,8 +169,8 @@ describeEast("Sparkline", (test) => {
             }
         ));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").type.unwrap("some").hasTag("area"), true));
-        $(assertEast.equal(sparkline.unwrap("Sparkline").color.unwrap("some"), "green.500"));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").type.unwrap("some").hasTag("area"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").color.unwrap("some"), "green.500"));
     });
 
     test("creates table cell sparkline", $ => {
@@ -184,8 +184,8 @@ describeEast("Sparkline", (test) => {
             }
         ));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").height.unwrap("some"), "24px"));
-        $(assertEast.equal(sparkline.unwrap("Sparkline").width.unwrap("some"), "80px"));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").height.unwrap("some"), "24px"));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").width.unwrap("some"), "80px"));
     });
 
     test("creates dashboard metric sparkline", $ => {
@@ -197,7 +197,7 @@ describeEast("Sparkline", (test) => {
             }
         ));
 
-        $(assertEast.equal(sparkline.unwrap("Sparkline").type.unwrap("some").hasTag("area"), true));
-        $(assertEast.equal(sparkline.unwrap("Sparkline").color.unwrap("some"), "teal.400"));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").type.unwrap("some").hasTag("area"), true));
+        $(assertEast.equal(sparkline.unwrap().unwrap("Sparkline").color.unwrap("some"), "teal.400"));
     });
 });

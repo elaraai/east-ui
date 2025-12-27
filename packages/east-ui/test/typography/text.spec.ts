@@ -14,7 +14,7 @@ describeEast("Text", (test) => {
     test("creates text with string value", $ => {
         const text = $.let(Text.Root("Hello"));
 
-        $(assertEast.equal(text.unwrap("Text").value, "Hello"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").value, "Hello"));
     });
 
     // =========================================================================
@@ -26,9 +26,9 @@ describeEast("Text", (test) => {
             color: "blue.500",
         }));
 
-        $(assertEast.equal(text.unwrap("Text").value, "Colored"));
-        $(assertEast.equal(text.unwrap("Text").color.hasTag("some"), true));
-        $(assertEast.equal(text.unwrap("Text").color.unwrap("some"), "blue.500"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").value, "Colored"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").color.hasTag("some"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").color.unwrap("some"), "blue.500"));
     });
 
     test("creates text with background", $ => {
@@ -36,9 +36,9 @@ describeEast("Text", (test) => {
             background: "gray.100",
         }));
 
-        $(assertEast.equal(text.unwrap("Text").value, "Background"));
-        $(assertEast.equal(text.unwrap("Text").background.hasTag("some"), true));
-        $(assertEast.equal(text.unwrap("Text").background.unwrap("some"), "gray.100"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").value, "Background"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").background.hasTag("some"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").background.unwrap("some"), "gray.100"));
     });
 
     test("creates text with fontWeight", $ => {
@@ -46,9 +46,9 @@ describeEast("Text", (test) => {
             fontWeight: Style.FontWeight("bold"),
         }));
 
-        $(assertEast.equal(text.unwrap("Text").value, "Bold"));
-        $(assertEast.equal(text.unwrap("Text").fontWeight.hasTag("some"), true));
-        $(assertEast.equal(text.unwrap("Text").fontWeight.unwrap("some").hasTag("bold"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").value, "Bold"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").fontWeight.hasTag("some"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").fontWeight.unwrap("some").hasTag("bold"), true));
     });
 
     test("creates text with fontStyle", $ => {
@@ -56,9 +56,9 @@ describeEast("Text", (test) => {
             fontStyle: Style.FontStyle("italic"),
         }));
 
-        $(assertEast.equal(text.unwrap("Text").value, "Italic"));
-        $(assertEast.equal(text.unwrap("Text").fontStyle.hasTag("some"), true));
-        $(assertEast.equal(text.unwrap("Text").fontStyle.unwrap("some").hasTag("italic"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").value, "Italic"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").fontStyle.hasTag("some"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").fontStyle.unwrap("some").hasTag("italic"), true));
     });
 
     test("creates text with textTransform", $ => {
@@ -66,9 +66,9 @@ describeEast("Text", (test) => {
             textTransform: Style.TextTransform("uppercase"),
         }));
 
-        $(assertEast.equal(text.unwrap("Text").value, "uppercase"));
-        $(assertEast.equal(text.unwrap("Text").textTransform.hasTag("some"), true));
-        $(assertEast.equal(text.unwrap("Text").textTransform.unwrap("some").hasTag("uppercase"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").value, "uppercase"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").textTransform.hasTag("some"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").textTransform.unwrap("some").hasTag("uppercase"), true));
     });
 
     test("creates text with textAlign", $ => {
@@ -76,9 +76,9 @@ describeEast("Text", (test) => {
             textAlign: Style.TextAlign("center"),
         }));
 
-        $(assertEast.equal(text.unwrap("Text").value, "Centered"));
-        $(assertEast.equal(text.unwrap("Text").textAlign.hasTag("some"), true));
-        $(assertEast.equal(text.unwrap("Text").textAlign.unwrap("some").hasTag("center"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").value, "Centered"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").textAlign.hasTag("some"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").textAlign.unwrap("some").hasTag("center"), true));
     });
 
     test("creates text with borderWidth", $ => {
@@ -86,9 +86,9 @@ describeEast("Text", (test) => {
             borderWidth: Style.BorderWidth("thin"),
         }));
 
-        $(assertEast.equal(text.unwrap("Text").value, "Bordered"));
-        $(assertEast.equal(text.unwrap("Text").borderWidth.hasTag("some"), true));
-        $(assertEast.equal(text.unwrap("Text").borderWidth.unwrap("some").hasTag("thin"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").value, "Bordered"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").borderWidth.hasTag("some"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").borderWidth.unwrap("some").hasTag("thin"), true));
     });
 
     test("creates text with borderStyle", $ => {
@@ -96,9 +96,9 @@ describeEast("Text", (test) => {
             borderStyle: Style.BorderStyle("solid"),
         }));
 
-        $(assertEast.equal(text.unwrap("Text").value, "Bordered"));
-        $(assertEast.equal(text.unwrap("Text").borderStyle.hasTag("some"), true));
-        $(assertEast.equal(text.unwrap("Text").borderStyle.unwrap("some").hasTag("solid"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").value, "Bordered"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").borderStyle.hasTag("some"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").borderStyle.unwrap("some").hasTag("solid"), true));
     });
 
     test("creates text with borderColor", $ => {
@@ -106,9 +106,9 @@ describeEast("Text", (test) => {
             borderColor: "red.500",
         }));
 
-        $(assertEast.equal(text.unwrap("Text").value, "Bordered"));
-        $(assertEast.equal(text.unwrap("Text").borderColor.hasTag("some"), true));
-        $(assertEast.equal(text.unwrap("Text").borderColor.unwrap("some"), "red.500"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").value, "Bordered"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").borderColor.hasTag("some"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").borderColor.unwrap("some"), "red.500"));
     });
 
     // =========================================================================
@@ -118,16 +118,16 @@ describeEast("Text", (test) => {
     test("creates text with no style - all options are none", $ => {
         const text = $.let(Text.Root("Plain"));
 
-        $(assertEast.equal(text.unwrap("Text").value, "Plain"));
-        $(assertEast.equal(text.unwrap("Text").color.hasTag("none"), true));
-        $(assertEast.equal(text.unwrap("Text").background.hasTag("none"), true));
-        $(assertEast.equal(text.unwrap("Text").fontWeight.hasTag("none"), true));
-        $(assertEast.equal(text.unwrap("Text").fontStyle.hasTag("none"), true));
-        $(assertEast.equal(text.unwrap("Text").textTransform.hasTag("none"), true));
-        $(assertEast.equal(text.unwrap("Text").textAlign.hasTag("none"), true));
-        $(assertEast.equal(text.unwrap("Text").borderWidth.hasTag("none"), true));
-        $(assertEast.equal(text.unwrap("Text").borderStyle.hasTag("none"), true));
-        $(assertEast.equal(text.unwrap("Text").borderColor.hasTag("none"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").value, "Plain"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").color.hasTag("none"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").background.hasTag("none"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").fontWeight.hasTag("none"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").fontStyle.hasTag("none"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").textTransform.hasTag("none"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").textAlign.hasTag("none"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").borderWidth.hasTag("none"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").borderStyle.hasTag("none"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").borderColor.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -142,14 +142,14 @@ describeEast("Text", (test) => {
             background: "yellow.100",
         }));
 
-        $(assertEast.equal(text.unwrap("Text").value, "Styled"));
-        $(assertEast.equal(text.unwrap("Text").color.unwrap("some"), "blue.500"));
-        $(assertEast.equal(text.unwrap("Text").fontWeight.unwrap("some").hasTag("bold"), true));
-        $(assertEast.equal(text.unwrap("Text").textAlign.unwrap("some").hasTag("center"), true));
-        $(assertEast.equal(text.unwrap("Text").background.unwrap("some"), "yellow.100"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").value, "Styled"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").color.unwrap("some"), "blue.500"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").fontWeight.unwrap("some").hasTag("bold"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").textAlign.unwrap("some").hasTag("center"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").background.unwrap("some"), "yellow.100"));
         // Other styles should be none
-        $(assertEast.equal(text.unwrap("Text").fontStyle.hasTag("none"), true));
-        $(assertEast.equal(text.unwrap("Text").borderWidth.hasTag("none"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").fontStyle.hasTag("none"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").borderWidth.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -163,11 +163,11 @@ describeEast("Text", (test) => {
         const medium = $.let(Text.Root("medium", { fontWeight: Style.FontWeight("medium") }));
         const light = $.let(Text.Root("light", { fontWeight: Style.FontWeight("light") }));
 
-        $(assertEast.equal(normal.unwrap("Text").fontWeight.unwrap("some").hasTag("normal"), true));
-        $(assertEast.equal(bold.unwrap("Text").fontWeight.unwrap("some").hasTag("bold"), true));
-        $(assertEast.equal(semibold.unwrap("Text").fontWeight.unwrap("some").hasTag("semibold"), true));
-        $(assertEast.equal(medium.unwrap("Text").fontWeight.unwrap("some").hasTag("medium"), true));
-        $(assertEast.equal(light.unwrap("Text").fontWeight.unwrap("some").hasTag("light"), true));
+        $(assertEast.equal(normal.unwrap().unwrap("Text").fontWeight.unwrap("some").hasTag("normal"), true));
+        $(assertEast.equal(bold.unwrap().unwrap("Text").fontWeight.unwrap("some").hasTag("bold"), true));
+        $(assertEast.equal(semibold.unwrap().unwrap("Text").fontWeight.unwrap("some").hasTag("semibold"), true));
+        $(assertEast.equal(medium.unwrap().unwrap("Text").fontWeight.unwrap("some").hasTag("medium"), true));
+        $(assertEast.equal(light.unwrap().unwrap("Text").fontWeight.unwrap("some").hasTag("light"), true));
     });
 
     // =========================================================================
@@ -180,10 +180,10 @@ describeEast("Text", (test) => {
         const right = $.let(Text.Root("right", { textAlign: Style.TextAlign("right") }));
         const justify = $.let(Text.Root("justify", { textAlign: Style.TextAlign("justify") }));
 
-        $(assertEast.equal(left.unwrap("Text").textAlign.unwrap("some").hasTag("left"), true));
-        $(assertEast.equal(center.unwrap("Text").textAlign.unwrap("some").hasTag("center"), true));
-        $(assertEast.equal(right.unwrap("Text").textAlign.unwrap("some").hasTag("right"), true));
-        $(assertEast.equal(justify.unwrap("Text").textAlign.unwrap("some").hasTag("justify"), true));
+        $(assertEast.equal(left.unwrap().unwrap("Text").textAlign.unwrap("some").hasTag("left"), true));
+        $(assertEast.equal(center.unwrap().unwrap("Text").textAlign.unwrap("some").hasTag("center"), true));
+        $(assertEast.equal(right.unwrap().unwrap("Text").textAlign.unwrap("some").hasTag("right"), true));
+        $(assertEast.equal(justify.unwrap().unwrap("Text").textAlign.unwrap("some").hasTag("justify"), true));
     });
 
     // =========================================================================
@@ -196,10 +196,10 @@ describeEast("Text", (test) => {
         const capitalize = $.let(Text.Root("hello", { textTransform: Style.TextTransform("capitalize") }));
         const none = $.let(Text.Root("Hello", { textTransform: Style.TextTransform("none") }));
 
-        $(assertEast.equal(uppercase.unwrap("Text").textTransform.unwrap("some").hasTag("uppercase"), true));
-        $(assertEast.equal(lowercase.unwrap("Text").textTransform.unwrap("some").hasTag("lowercase"), true));
-        $(assertEast.equal(capitalize.unwrap("Text").textTransform.unwrap("some").hasTag("capitalize"), true));
-        $(assertEast.equal(none.unwrap("Text").textTransform.unwrap("some").hasTag("none"), true));
+        $(assertEast.equal(uppercase.unwrap().unwrap("Text").textTransform.unwrap("some").hasTag("uppercase"), true));
+        $(assertEast.equal(lowercase.unwrap().unwrap("Text").textTransform.unwrap("some").hasTag("lowercase"), true));
+        $(assertEast.equal(capitalize.unwrap().unwrap("Text").textTransform.unwrap("some").hasTag("capitalize"), true));
+        $(assertEast.equal(none.unwrap().unwrap("Text").textTransform.unwrap("some").hasTag("none"), true));
     });
 
     // =========================================================================
@@ -212,10 +212,10 @@ describeEast("Text", (test) => {
         const medium = $.let(Text.Root("medium", { borderWidth: Style.BorderWidth("medium") }));
         const thick = $.let(Text.Root("thick", { borderWidth: Style.BorderWidth("thick") }));
 
-        $(assertEast.equal(noBorder.unwrap("Text").borderWidth.unwrap("some").hasTag("none"), true));
-        $(assertEast.equal(thin.unwrap("Text").borderWidth.unwrap("some").hasTag("thin"), true));
-        $(assertEast.equal(medium.unwrap("Text").borderWidth.unwrap("some").hasTag("medium"), true));
-        $(assertEast.equal(thick.unwrap("Text").borderWidth.unwrap("some").hasTag("thick"), true));
+        $(assertEast.equal(noBorder.unwrap().unwrap("Text").borderWidth.unwrap("some").hasTag("none"), true));
+        $(assertEast.equal(thin.unwrap().unwrap("Text").borderWidth.unwrap("some").hasTag("thin"), true));
+        $(assertEast.equal(medium.unwrap().unwrap("Text").borderWidth.unwrap("some").hasTag("medium"), true));
+        $(assertEast.equal(thick.unwrap().unwrap("Text").borderWidth.unwrap("some").hasTag("thick"), true));
     });
 
     // =========================================================================
@@ -229,11 +229,11 @@ describeEast("Text", (test) => {
         const double_ = $.let(Text.Root("double", { borderStyle: Style.BorderStyle("double") }));
         const noBorder = $.let(Text.Root("none", { borderStyle: Style.BorderStyle("none") }));
 
-        $(assertEast.equal(solid.unwrap("Text").borderStyle.unwrap("some").hasTag("solid"), true));
-        $(assertEast.equal(dashed.unwrap("Text").borderStyle.unwrap("some").hasTag("dashed"), true));
-        $(assertEast.equal(dotted.unwrap("Text").borderStyle.unwrap("some").hasTag("dotted"), true));
-        $(assertEast.equal(double_.unwrap("Text").borderStyle.unwrap("some").hasTag("double"), true));
-        $(assertEast.equal(noBorder.unwrap("Text").borderStyle.unwrap("some").hasTag("none"), true));
+        $(assertEast.equal(solid.unwrap().unwrap("Text").borderStyle.unwrap("some").hasTag("solid"), true));
+        $(assertEast.equal(dashed.unwrap().unwrap("Text").borderStyle.unwrap("some").hasTag("dashed"), true));
+        $(assertEast.equal(dotted.unwrap().unwrap("Text").borderStyle.unwrap("some").hasTag("dotted"), true));
+        $(assertEast.equal(double_.unwrap().unwrap("Text").borderStyle.unwrap("some").hasTag("double"), true));
+        $(assertEast.equal(noBorder.unwrap().unwrap("Text").borderStyle.unwrap("some").hasTag("none"), true));
     });
 
     // =========================================================================
@@ -247,8 +247,8 @@ describeEast("Text", (test) => {
             borderColor: "gray.300",
         }));
 
-        $(assertEast.equal(text.unwrap("Text").borderWidth.unwrap("some").hasTag("medium"), true));
-        $(assertEast.equal(text.unwrap("Text").borderStyle.unwrap("some").hasTag("solid"), true));
-        $(assertEast.equal(text.unwrap("Text").borderColor.unwrap("some"), "gray.300"));
+        $(assertEast.equal(text.unwrap().unwrap("Text").borderWidth.unwrap("some").hasTag("medium"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").borderStyle.unwrap("some").hasTag("solid"), true));
+        $(assertEast.equal(text.unwrap().unwrap("Text").borderColor.unwrap("some"), "gray.300"));
     });
 });

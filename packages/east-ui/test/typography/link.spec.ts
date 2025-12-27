@@ -14,18 +14,18 @@ describeEast("Link", (test) => {
     test("creates link with value and href", $ => {
         const link = $.let(Link.Root("Click here", "https://example.com"));
 
-        $(assertEast.equal(link.unwrap("Link").value, "Click here"));
-        $(assertEast.equal(link.unwrap("Link").href, "https://example.com"));
+        $(assertEast.equal(link.unwrap().unwrap("Link").value, "Click here"));
+        $(assertEast.equal(link.unwrap().unwrap("Link").href, "https://example.com"));
     });
 
     test("creates link with no style - all options are none", $ => {
         const link = $.let(Link.Root("Link", "/about"));
 
-        $(assertEast.equal(link.unwrap("Link").value, "Link"));
-        $(assertEast.equal(link.unwrap("Link").href, "/about"));
-        $(assertEast.equal(link.unwrap("Link").external.hasTag("none"), true));
-        $(assertEast.equal(link.unwrap("Link").variant.hasTag("none"), true));
-        $(assertEast.equal(link.unwrap("Link").colorPalette.hasTag("none"), true));
+        $(assertEast.equal(link.unwrap().unwrap("Link").value, "Link"));
+        $(assertEast.equal(link.unwrap().unwrap("Link").href, "/about"));
+        $(assertEast.equal(link.unwrap().unwrap("Link").external.hasTag("none"), true));
+        $(assertEast.equal(link.unwrap().unwrap("Link").variant.hasTag("none"), true));
+        $(assertEast.equal(link.unwrap().unwrap("Link").colorPalette.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -37,8 +37,8 @@ describeEast("Link", (test) => {
             external: true,
         }));
 
-        $(assertEast.equal(link.unwrap("Link").external.hasTag("some"), true));
-        $(assertEast.equal(link.unwrap("Link").external.unwrap("some"), true));
+        $(assertEast.equal(link.unwrap().unwrap("Link").external.hasTag("some"), true));
+        $(assertEast.equal(link.unwrap().unwrap("Link").external.unwrap("some"), true));
     });
 
     test("creates non-external link", $ => {
@@ -46,7 +46,7 @@ describeEast("Link", (test) => {
             external: false,
         }));
 
-        $(assertEast.equal(link.unwrap("Link").external.unwrap("some"), false));
+        $(assertEast.equal(link.unwrap().unwrap("Link").external.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -58,8 +58,8 @@ describeEast("Link", (test) => {
             variant: "underline",
         }));
 
-        $(assertEast.equal(link.unwrap("Link").variant.hasTag("some"), true));
-        $(assertEast.equal(link.unwrap("Link").variant.unwrap("some").hasTag("underline"), true));
+        $(assertEast.equal(link.unwrap().unwrap("Link").variant.hasTag("some"), true));
+        $(assertEast.equal(link.unwrap().unwrap("Link").variant.unwrap("some").hasTag("underline"), true));
     });
 
     test("creates plain variant link", $ => {
@@ -67,7 +67,7 @@ describeEast("Link", (test) => {
             variant: "plain",
         }));
 
-        $(assertEast.equal(link.unwrap("Link").variant.unwrap("some").hasTag("plain"), true));
+        $(assertEast.equal(link.unwrap().unwrap("Link").variant.unwrap("some").hasTag("plain"), true));
     });
 
     // =========================================================================
@@ -79,8 +79,8 @@ describeEast("Link", (test) => {
             colorPalette: "blue",
         }));
 
-        $(assertEast.equal(link.unwrap("Link").colorPalette.hasTag("some"), true));
-        $(assertEast.equal(link.unwrap("Link").colorPalette.unwrap("some"), "blue"));
+        $(assertEast.equal(link.unwrap().unwrap("Link").colorPalette.hasTag("some"), true));
+        $(assertEast.equal(link.unwrap().unwrap("Link").colorPalette.unwrap("some"), "blue"));
     });
 
     test("creates link with teal colorPalette", $ => {
@@ -88,7 +88,7 @@ describeEast("Link", (test) => {
             colorPalette: "teal",
         }));
 
-        $(assertEast.equal(link.unwrap("Link").colorPalette.unwrap("some"), "teal"));
+        $(assertEast.equal(link.unwrap().unwrap("Link").colorPalette.unwrap("some"), "teal"));
     });
 
     // =========================================================================
@@ -102,11 +102,11 @@ describeEast("Link", (test) => {
             colorPalette: "blue",
         }));
 
-        $(assertEast.equal(link.unwrap("Link").value, "Documentation"));
-        $(assertEast.equal(link.unwrap("Link").href, "https://docs.example.com"));
-        $(assertEast.equal(link.unwrap("Link").external.unwrap("some"), true));
-        $(assertEast.equal(link.unwrap("Link").variant.unwrap("some").hasTag("underline"), true));
-        $(assertEast.equal(link.unwrap("Link").colorPalette.unwrap("some"), "blue"));
+        $(assertEast.equal(link.unwrap().unwrap("Link").value, "Documentation"));
+        $(assertEast.equal(link.unwrap().unwrap("Link").href, "https://docs.example.com"));
+        $(assertEast.equal(link.unwrap().unwrap("Link").external.unwrap("some"), true));
+        $(assertEast.equal(link.unwrap().unwrap("Link").variant.unwrap("some").hasTag("underline"), true));
+        $(assertEast.equal(link.unwrap().unwrap("Link").colorPalette.unwrap("some"), "blue"));
     });
 
     test("creates navigation link", $ => {
@@ -114,9 +114,9 @@ describeEast("Link", (test) => {
             variant: "plain",
         }));
 
-        $(assertEast.equal(link.unwrap("Link").value, "Home"));
-        $(assertEast.equal(link.unwrap("Link").href, "/"));
-        $(assertEast.equal(link.unwrap("Link").variant.unwrap("some").hasTag("plain"), true));
+        $(assertEast.equal(link.unwrap().unwrap("Link").value, "Home"));
+        $(assertEast.equal(link.unwrap().unwrap("Link").href, "/"));
+        $(assertEast.equal(link.unwrap().unwrap("Link").variant.unwrap("some").hasTag("plain"), true));
     });
 
     test("creates social link", $ => {
@@ -125,7 +125,7 @@ describeEast("Link", (test) => {
             colorPalette: "gray",
         }));
 
-        $(assertEast.equal(link.unwrap("Link").value, "GitHub"));
-        $(assertEast.equal(link.unwrap("Link").external.unwrap("some"), true));
+        $(assertEast.equal(link.unwrap().unwrap("Link").value, "GitHub"));
+        $(assertEast.equal(link.unwrap().unwrap("Link").external.unwrap("some"), true));
     });
 });
