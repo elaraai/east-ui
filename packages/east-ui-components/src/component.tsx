@@ -19,7 +19,7 @@ import { EastChakraCodeBlock } from "./typography/code-block";
 import { EastChakraButton } from "./buttons/button";
 import { EastChakraIconButton } from "./buttons/icon-button";
 import { EastChakraSparkline } from "./charts/sparkline";
-import { EastChakraAreaChart } from "./charts/area";
+import { EastChakraAreaChart, EastChakraAreaRangeChart } from "./charts/area";
 import { EastChakraBarChart } from "./charts/bar";
 import { EastChakraLineChart } from "./charts/line";
 import { EastChakraScatterChart } from "./charts/scatter";
@@ -27,6 +27,7 @@ import { EastChakraPieChart } from "./charts/pie";
 import { EastChakraRadarChart } from "./charts/radar";
 import { EastChakraBarList } from "./charts/bar-list";
 import { EastChakraBarSegment } from "./charts/bar-segment";
+import { EastChakraComposedChart } from "./charts/composed";
 import { EastChakraBox } from "./layout/box";
 import { EastChakraFlex } from "./layout/flex";
 import { EastChakraStack } from "./layout/stack";
@@ -147,6 +148,7 @@ export const EastChakraComponent = memo(function EastChakraComponent({ value }: 
             // Charts
             Sparkline: (v) => <EastChakraSparkline value={v} />,
             AreaChart: (v) => <EastChakraAreaChart value={v} />,
+            AreaRangeChart: (v) => <EastChakraAreaRangeChart value={v} />,
             BarChart: (v) => <EastChakraBarChart value={v} />,
             LineChart: (v) => <EastChakraLineChart value={v} />,
             ScatterChart: (v) => <EastChakraScatterChart value={v} />,
@@ -154,6 +156,7 @@ export const EastChakraComponent = memo(function EastChakraComponent({ value }: 
             RadarChart: (v) => <EastChakraRadarChart value={v} />,
             BarList: (v) => <EastChakraBarList value={v} />,
             BarSegment: (v) => <EastChakraBarSegment value={v} />,
+            ComposedChart: (v) => <EastChakraComposedChart value={v} />,
 
             TreeView: (v) => <EastChakraTreeView value={v} />,
 

@@ -4,6 +4,7 @@ import sparklineShowcase from "./sparkline";
 import areaShowcase from "./area";
 import barShowcase from "./bar";
 import lineShowcase from "./line";
+import composedShowcase from "./composed";
 import scatterShowcase from "./scatter";
 import pieShowcase from "./pie";
 import radarShowcase from "./radar";
@@ -28,6 +29,8 @@ export default East.function(
             lineShowcase(),
             Text.Root("Scatter Chart", { fontWeight: "bold", fontSize: "lg" }),
             scatterShowcase(),
+            Text.Root("Composed Chart", { fontWeight: "bold", fontSize: "lg" }),
+            composedShowcase(),
             Text.Root("Pie Chart", { fontWeight: "bold", fontSize: "lg" }),
             pieShowcase(),
             Text.Root("Radar Chart", { fontWeight: "bold", fontSize: "lg" }),

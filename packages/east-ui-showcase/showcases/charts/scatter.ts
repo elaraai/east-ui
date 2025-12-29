@@ -25,9 +25,9 @@ export default East.function(
                         ],
                         { temp: { color: "teal.solid" } },
                         {
-                            xDataKey: "temp",
-                            yDataKey: "sales",
-                            grid: Chart.Grid({ show: true }),
+                            xAxis: { dataKey: "temp" },
+                            yAxis: { dataKey: "sales" },
+                            grid: { show: true },
                         }
                     ),
                 ], { height: "200px", width: "100%" }),
@@ -43,9 +43,9 @@ export default East.function(
                             ],
                             { temp: { color: "teal.solid" } },
                             {
-                                xDataKey: "temp",
-                                yDataKey: "sales",
-                                grid: Chart.Grid({ show: true }),
+                                xAxis: { dataKey: "temp" },
+                                yAxis: { dataKey: "sales" },
+                                grid: { show: true },
                             }
                         ),
                     ], { height: "200px", width: "100%" })
@@ -69,10 +69,10 @@ export default East.function(
                         ],
                         { temp: { color: "blue.solid" } },
                         {
-                            xAxis: Chart.Axis({ dataKey: "temp", label: "Temperature" }),
-                            yAxis: Chart.Axis({ dataKey: "sales", label: "Sales" }),
-                            grid: Chart.Grid({ show: true }),
-                            tooltip: Chart.Tooltip({ show: true }),
+                            xAxis: { dataKey: "temp", label: "Temperature" },
+                            yAxis: { dataKey: "sales", label: "Sales" },
+                            grid: { show: true },
+                            tooltip: { show: true },
                         }
                     ),
                 ], { height: "220px", width: "100%" }),
@@ -88,10 +88,10 @@ export default East.function(
                             ],
                             { temp: { color: "blue.solid" } },
                             {
-                                xAxis: Chart.Axis({ dataKey: "temp", label: "Temperature" }),
-                                yAxis: Chart.Axis({ dataKey: "sales", label: "Sales" }),
-                                grid: Chart.Grid({ show: true }),
-                                tooltip: Chart.Tooltip({ show: true }),
+                                xAxis: { dataKey: "temp", label: "Temperature" },
+                                yAxis: { dataKey: "sales", label: "Sales" },
+                                grid: { show: true },
+                                tooltip: { show: true },
                             }
                         ),
                     ], { height: "220px", width: "100%" })
@@ -114,9 +114,9 @@ export default East.function(
                         ],
                         { x: { color: "purple.solid" } },
                         {
-                            xAxis: Chart.Axis({ domain: [0, 50] }),
-                            yAxis: Chart.Axis({ domain: [0, 100] }),
-                            grid: Chart.Grid({ show: true }),
+                            xAxis: { dataKey: "x", domain: [0, 50] },
+                            yAxis: { dataKey: "y", domain: [0, 100] },
+                            grid: { show: true },
                         }
                     ),
                 ], { height: "200px", width: "100%" }),
@@ -131,9 +131,11 @@ export default East.function(
                             ],
                             { x: { color: "purple.solid" } },
                             {
-                                xAxis: Chart.Axis({ domain: [0, 50] }),
-                                yAxis: Chart.Axis({ domain: [0, 100] }),
-                                grid: Chart.Grid({ show: true }),
+                                xAxis: { dataKey: "x" },
+                                yAxis: { dataKey: "y" },
+                                xAxis: { domain: [0, 50] },
+                                yAxis: { domain: [0, 100] },
+                                grid: { show: true },
                             }
                         ),
                     ], { height: "200px", width: "100%" })
@@ -157,10 +159,10 @@ export default East.function(
                         ],
                         { hours: { color: "green.solid", label: "Study Hours" } },
                         {
-                            xDataKey: "hours",
-                            yDataKey: "score",
-                            tooltip: Chart.Tooltip({ show: true }),
-                            grid: Chart.Grid({ show: true }),
+                            xAxis: { dataKey: "hours" },
+                            yAxis: { dataKey: "score" },
+                            tooltip: { show: true },
+                            grid: { show: true },
                         }
                     ),
                 ], { height: "200px", width: "100%" }),
@@ -176,10 +178,10 @@ export default East.function(
                             ],
                             { hours: { color: "green.solid", label: "Study Hours" } },
                             {
-                                xDataKey: "hours",
-                                yDataKey: "score",
-                                tooltip: Chart.Tooltip({ show: true }),
-                                grid: Chart.Grid({ show: true }),
+                                xAxis: { dataKey: "hours" },
+                                yAxis: { dataKey: "score" },
+                                tooltip: { show: true },
+                                grid: { show: true },
                             }
                         ),
                     ], { height: "200px", width: "100%" })
@@ -208,15 +210,15 @@ export default East.function(
                             ],
                         },
                         {
-                            xDataKey: "x",
+                            xAxis: { dataKey: "x" },
                             valueKey: "value",
                             series: {
                                 groupA: { color: "purple.solid" },
                                 groupB: { color: "teal.solid" },
                             },
-                            tooltip: Chart.Tooltip({ show: true }),
-                            legend: Chart.Legend({ show: true }),
-                            grid: Chart.Grid({ show: true }),
+                            tooltip: { show: true },
+                            legend: { show: true },
+                            grid: { show: true },
                         }
                     ),
                 ], { height: "220px", width: "100%" }),
@@ -238,18 +240,247 @@ export default East.function(
                                 ],
                             },
                             {
-                                xDataKey: "x",
+                                xAxis: { dataKey: "x" },
                                 valueKey: "value",
                                 series: {
                                     groupA: { color: "purple.solid" },
                                     groupB: { color: "teal.solid" },
                                 },
-                                tooltip: Chart.Tooltip({ show: true }),
-                                legend: Chart.Legend({ show: true }),
-                                grid: Chart.Grid({ show: true }),
+                                tooltip: { show: true },
+                                legend: { show: true },
+                                grid: { show: true },
                             }
                         ),
                     ], { height: "220px", width: "100%" })
+                `)
+            )
+        );
+
+        // With legend (multiple series)
+        const withLegend = $.let(
+            ShowcaseCard(
+                "With Legend",
+                "Multiple series with legend",
+                Box.Root([
+                    Chart.Scatter(
+                        [
+                            { temp: 10, sales: 30, traffic: 50 },
+                            { temp: 15, sales: 50, traffic: 70 },
+                            { temp: 20, sales: 80, traffic: 90 },
+                            { temp: 25, sales: 95, traffic: 85 },
+                            { temp: 30, sales: 110, traffic: 100 },
+                        ],
+                        {
+                            sales: { color: "teal.solid", label: "Sales" },
+                            traffic: { color: "purple.solid", label: "Traffic" },
+                        },
+                        {
+                            xAxis: { dataKey: "temp", label: "Temperature" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "240px", width: "100%" }),
+                some(`
+                    Chart.Scatter(
+                        [...data],
+                        {
+                            sales: { color: "teal.solid", label: "Sales" },
+                            traffic: { color: "purple.solid", label: "Traffic" },
+                        },
+                        {
+                            xAxis: { dataKey: "temp", label: "Temperature" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    )
+                `)
+            )
+        );
+
+        // Reference lines (quadrant dividers)
+        const withReferenceLines = $.let(
+            ShowcaseCard(
+                "Reference Lines",
+                "Quadrant dividers at x=50 and y=50",
+                Box.Root([
+                    Chart.Scatter(
+                        [
+                            { x: 20, y: 30 },
+                            { x: 40, y: 70 },
+                            { x: 60, y: 45 },
+                            { x: 80, y: 85 },
+                            { x: 30, y: 55 },
+                            { x: 70, y: 35 },
+                        ],
+                        ["y"],
+                        {
+                            xAxis: { dataKey: "x" },
+                            yAxis: { dataKey: "y" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            referenceLines: [
+                                { x: 50, stroke: "gray", strokeDasharray: "3 3" },
+                                { y: 50, stroke: "gray", strokeDasharray: "3 3" }
+                            ],
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Chart.Scatter(
+                        [...data],
+                        ["y"],
+                        {
+                            xAxis: { dataKey: "x" },
+                            yAxis: { dataKey: "y" },
+                            grid: { show: true },
+                            referenceLines: [
+                                { x: 50, stroke: "gray", strokeDasharray: "3 3" },
+                                { y: 50, stroke: "gray", strokeDasharray: "3 3" }
+                            ],
+                        }
+                    )
+                `)
+            )
+        );
+
+        // Reference area (highlight region)
+        const withReferenceArea = $.let(
+            ShowcaseCard(
+                "Reference Area",
+                "Highlight optimal region",
+                Box.Root([
+                    Chart.Scatter(
+                        [
+                            { x: 20, y: 30 },
+                            { x: 40, y: 70 },
+                            { x: 60, y: 45 },
+                            { x: 80, y: 85 },
+                            { x: 55, y: 65 },
+                            { x: 70, y: 75 },
+                        ],
+                        ["y"],
+                        {
+                            xAxis: { dataKey: "x" },
+                            yAxis: { dataKey: "y" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            referenceAreas: [
+                                { x1: 50, x2: 80, y1: 60, y2: 90, fill: "green", fillOpacity: 0.15, label: "Optimal", labelPosition: "insideTopRight" }
+                            ],
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Chart.Scatter(
+                        [...data],
+                        ["y"],
+                        {
+                            xAxis: { dataKey: "x" },
+                            yAxis: { dataKey: "y" },
+                            grid: { show: true },
+                            referenceAreas: [
+                                { x1: 50, x2: 80, y1: 60, y2: 90, fill: "green", fillOpacity: 0.15, label: "Optimal", labelPosition: "insideTopRight" }
+                            ],
+                        }
+                    )
+                `)
+            )
+        );
+
+        // Dual Y-Axis (secondary axis on right)
+        const dualYAxis = $.let(
+            ShowcaseCard(
+                "Dual Y-Axis",
+                "Price (left) vs Volume (right) correlation",
+                Box.Root([
+                    Chart.Scatter(
+                        [
+                            { day: 1, price: 100, volume: 5000 },
+                            { day: 2, price: 105, volume: 7500 },
+                            { day: 3, price: 102, volume: 4200 },
+                            { day: 4, price: 110, volume: 9000 },
+                            { day: 5, price: 108, volume: 6800 },
+                        ],
+                        {
+                            price: { color: "teal.solid", label: "Price", yAxisId: "left" },
+                            volume: { color: "purple.solid", label: "Volume", yAxisId: "right" },
+                        },
+                        {
+                            xAxis: { dataKey: "day", label: "Day" },
+                            yAxis: { label: "Price ($)" },
+                            yAxis2: { label: "Volume" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "250px", width: "100%" }),
+                some(`
+                    Chart.Scatter(
+                        [
+                            { day: 1, price: 100, volume: 5000 },
+                            { day: 2, price: 105, volume: 7500 },
+                            // ...
+                        ],
+                        {
+                            price: { color: "teal.solid", yAxisId: "left" },
+                            volume: { color: "purple.solid", yAxisId: "right" },
+                        },
+                        {
+                            xAxis: { dataKey: "day", label: "Day" },
+                            yAxis: { label: "Price ($)" },
+                            yAxis2: { label: "Volume" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    )
+                `)
+            )
+        );
+
+        // Reference dot (highlight outlier)
+        const withReferenceDot = $.let(
+            ShowcaseCard(
+                "Reference Dot",
+                "Highlight an outlier point",
+                Box.Root([
+                    Chart.Scatter(
+                        [
+                            { x: 20, y: 30 },
+                            { x: 40, y: 45 },
+                            { x: 60, y: 50 },
+                            { x: 80, y: 55 },
+                            { x: 50, y: 95 },
+                        ],
+                        ["y"],
+                        {
+                            xAxis: { dataKey: "x" },
+                            yAxis: { dataKey: "y" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            referenceDots: [
+                                { x: 50, y: 95, fill: "red", r: 10n, stroke: "darkred", strokeWidth: 2n, label: "Outlier", labelPosition: "top" }
+                            ],
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Chart.Scatter(
+                        [...data],
+                        ["y"],
+                        {
+                            xAxis: { dataKey: "x" },
+                            yAxis: { dataKey: "y" },
+                            grid: { show: true },
+                            referenceDots: [
+                                { x: 50, y: 95, fill: "red", r: 10n, stroke: "darkred", strokeWidth: 2n, label: "Outlier", labelPosition: "top" }
+                            ],
+                        }
+                    )
                 `)
             )
         );
@@ -261,6 +492,11 @@ export default East.function(
                 Grid.Item(customDomain),
                 Grid.Item(withTooltip),
                 Grid.Item(sparseMultiSeries),
+                Grid.Item(withLegend),
+                Grid.Item(withReferenceLines),
+                Grid.Item(withReferenceArea),
+                Grid.Item(withReferenceDot),
+                Grid.Item(dualYAxis),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

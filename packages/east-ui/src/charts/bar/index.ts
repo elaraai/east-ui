@@ -22,12 +22,31 @@ import {
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
-import { BarLayoutType, StackOffsetType, MultiSeriesDataType } from "../types.js";
+import {
+    ChartBrushType,
+    BarLayoutType,
+    StackOffsetType,
+    MultiSeriesDataType,
+    ReferenceLineType,
+    ReferenceDotType,
+    ReferenceAreaType,
+    YAxisIdType,
+    axisStyleToType,
+    gridStyleToType,
+    tooltipStyleToType,
+    legendStyleToType,
+    marginStyleToType,
+    referenceLineStyleToType,
+    referenceDotStyleToType,
+    referenceAreaStyleToType,
+    type ChartAxisStyle,
+} from "../types.js";
 import type {
     BarChartStyle,
     BarChartMultiStyle,
     BarChartSeriesConfig,
     BarChartStyleBase,
+    BarChartBrushStyle,
 } from "./types.js";
 
 // Re-export types
@@ -37,6 +56,7 @@ export {
     type BarChartMultiStyle,
     type BarChartSeriesConfig,
     type BarChartStyleBase,
+    type BarChartBrushStyle,
 } from "./types.js";
 
 // ============================================================================
@@ -232,20 +252,30 @@ function buildBarChart(
     data_mapped: ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>,
     dataSeries_mapped: ExprType<typeof MultiSeriesDataType> | undefined,
     seriesEntries: readonly (readonly [string, BarChartSeriesConfig | undefined])[],
-    style?: BarChartStyleBase & { xAxis?: { dataKey: string } },
+    style?: BarChartStyleBase<string> & { brush?: BarChartBrushStyle<string> },
     valueKey?: string
 ): ExprType<UIComponentType> {
-    const series_mapped = seriesEntries.map(([name, config]) => ({
-        name: name,
-        color: config?.color !== undefined ? some(config.color) : none,
-        stackId: config?.stackId !== undefined ? some(config.stackId) : none,
-        label: config?.label !== undefined ? some(config.label) : none,
-        stroke: config?.stroke !== undefined ? some(config.stroke) : none,
-        strokeWidth: config?.strokeWidth !== undefined ? some(config.strokeWidth) : none,
-        fill: config?.fill !== undefined ? some(config.fill) : none,
-        fillOpacity: config?.fillOpacity !== undefined ? some(config.fillOpacity) : none,
-        strokeDasharray: config?.strokeDasharray !== undefined ? some(config.strokeDasharray) : none,
-    }));
+    const series_mapped = seriesEntries.map(([name, config]) => {
+        // Convert yAxisId string literal to variant
+        const yAxisIdValue = config?.yAxisId !== undefined
+            ? (typeof config.yAxisId === "string"
+                ? some(East.value(variant(config.yAxisId, null), YAxisIdType))
+                : some(config.yAxisId))
+            : none;
+
+        return {
+            name: name,
+            color: config?.color !== undefined ? some(config.color) : none,
+            stackId: config?.stackId !== undefined ? some(config.stackId) : none,
+            label: config?.label !== undefined ? some(config.label) : none,
+            stroke: config?.stroke !== undefined ? some(config.stroke) : none,
+            strokeWidth: config?.strokeWidth !== undefined ? some(config.strokeWidth) : none,
+            fill: config?.fill !== undefined ? some(config.fill) : none,
+            fillOpacity: config?.fillOpacity !== undefined ? some(config.fillOpacity) : none,
+            strokeDasharray: config?.strokeDasharray !== undefined ? some(config.strokeDasharray) : none,
+            yAxisId: yAxisIdValue,
+        };
+    });
 
     const layoutValue = style?.layout
         ? (typeof style.layout === "string"
@@ -259,21 +289,39 @@ function buildBarChart(
             : style.stackOffset)
         : undefined;
 
-    // Build xAxis value with dataKey
-    const xAxisValue = style?.xAxis
-        ? variant("some", {
-            dataKey: variant("some", style.xAxis.dataKey),
-            label: none,
-            tickFormat: none,
-            domain: none,
-            hide: none,
-            axisLine: none,
-            tickLine: none,
-            tickMargin: none,
-            strokeColor: none,
-            orientation: none,
-            axisId: none,
-        })
+    // Convert axis styles to types
+    const xAxisExpr = axisStyleToType(style?.xAxis as ChartAxisStyle | undefined);
+    const yAxisExpr = axisStyleToType(style?.yAxis as ChartAxisStyle | undefined);
+    const yAxis2Expr = axisStyleToType(style?.yAxis2 as ChartAxisStyle | undefined);
+
+    // Convert other style properties
+    const gridExpr = gridStyleToType(style?.grid);
+    const tooltipExpr = tooltipStyleToType(style?.tooltip);
+    const legendExpr = legendStyleToType(style?.legend);
+    const marginExpr = marginStyleToType(style?.margin);
+
+    // Build brush value
+    const brushValue = style?.brush
+        ? variant("some", East.value({
+            dataKey: style.brush.dataKey !== undefined ? some(style.brush.dataKey) : none,
+            height: style.brush.height !== undefined ? some(style.brush.height) : none,
+            travellerWidth: style.brush.travellerWidth !== undefined ? some(style.brush.travellerWidth) : none,
+            startIndex: style.brush.startIndex !== undefined ? some(style.brush.startIndex) : none,
+            endIndex: style.brush.endIndex !== undefined ? some(style.brush.endIndex) : none,
+            stroke: style.brush.stroke !== undefined ? some(style.brush.stroke) : none,
+            fill: style.brush.fill !== undefined ? some(style.brush.fill) : none,
+        }, ChartBrushType))
+        : variant("none", null);
+
+    // Convert reference annotations
+    const referenceLinesExpr = style?.referenceLines?.length
+        ? variant("some", East.value(style.referenceLines.map(referenceLineStyleToType), ArrayType(ReferenceLineType)))
+        : variant("none", null);
+    const referenceDotsExpr = style?.referenceDots?.length
+        ? variant("some", East.value(style.referenceDots.map(referenceDotStyleToType), ArrayType(ReferenceDotType)))
+        : variant("none", null);
+    const referenceAreasExpr = style?.referenceAreas?.length
+        ? variant("some", East.value(style.referenceAreas.map(referenceAreaStyleToType), ArrayType(ReferenceAreaType)))
         : variant("none", null);
 
     return East.value(variant("BarChart", {
@@ -281,17 +329,22 @@ function buildBarChart(
         dataSeries: dataSeries_mapped ? variant("some", dataSeries_mapped) : variant("none", null),
         valueKey: valueKey !== undefined ? variant("some", valueKey) : variant("none", null),
         series: series_mapped,
-        xAxis: xAxisValue,
-        yAxis: style?.yAxis ? variant("some", style.yAxis) : variant("none", null),
+        xAxis: xAxisExpr ? variant("some", xAxisExpr) : variant("none", null),
+        yAxis: yAxisExpr ? variant("some", yAxisExpr) : variant("none", null),
+        yAxis2: yAxis2Expr ? variant("some", yAxis2Expr) : variant("none", null),
         layout: layoutValue ? variant("some", layoutValue) : variant("none", null),
         stacked: style?.stacked !== undefined ? variant("some", style.stacked) : variant("none", null),
         stackOffset: stackOffsetValue ? variant("some", stackOffsetValue) : variant("none", null),
-        grid: style?.grid !== undefined ? variant("some", style.grid) : variant("none", null),
-        tooltip: style?.tooltip !== undefined ? variant("some", style.tooltip) : variant("none", null),
-        legend: style?.legend !== undefined ? variant("some", style.legend) : variant("none", null),
-        margin: style?.margin !== undefined ? variant("some", style.margin) : variant("none", null),
+        grid: gridExpr ? variant("some", gridExpr) : variant("none", null),
+        tooltip: tooltipExpr ? variant("some", tooltipExpr) : variant("none", null),
+        legend: legendExpr ? variant("some", legendExpr) : variant("none", null),
+        margin: marginExpr ? variant("some", marginExpr) : variant("none", null),
+        brush: brushValue,
         barSize: style?.barSize !== undefined ? variant("some", style.barSize) : variant("none", null),
         barGap: style?.barGap !== undefined ? variant("some", style.barGap) : variant("none", null),
         radius: style?.radius !== undefined ? variant("some", style.radius) : variant("none", null),
+        referenceLines: referenceLinesExpr,
+        referenceDots: referenceDotsExpr,
+        referenceAreas: referenceAreasExpr,
     }), UIComponentType);
 }

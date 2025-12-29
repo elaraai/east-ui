@@ -48,7 +48,13 @@ export type { DrawerSizeLiteral, DrawerPlacementLiteral } from "./types.js";
  * @property description - Optional drawer description
  * @property style - Optional style configuration
  */
-export const DrawerType = StructType({
+export const DrawerType: StructType<{
+    trigger: UIComponentType,
+    body: ArrayType<UIComponentType>,
+    title: OptionType<StringType>,
+    description: OptionType<StringType>,
+    style: OptionType<DrawerStyleType>,
+}> = StructType({
     trigger: UIComponentType,
     body: ArrayType(UIComponentType),
     title: OptionType(StringType),
@@ -78,7 +84,12 @@ export type DrawerType = typeof DrawerType;
  * @property description - Optional drawer description
  * @property style - Optional style configuration
  */
-export const DrawerOpenInputType = StructType({
+export const DrawerOpenInputType: StructType<{
+    body: ArrayType<UIComponentType>,
+    title: OptionType<StringType>,
+    description: OptionType<StringType>,
+    style: OptionType<DrawerStyleType>,
+}> = StructType({
     body: ArrayType(UIComponentType),
     title: OptionType(StringType),
     description: OptionType(StringType),

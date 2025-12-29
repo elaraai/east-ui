@@ -5,7 +5,7 @@
 
 import { memo, useMemo } from "react";
 import { Chart, useChart } from "@chakra-ui/charts";
-import { Scatter, ScatterChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from "recharts";
+import { Scatter, ScatterChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis, ReferenceLine, ReferenceDot, ReferenceArea } from "recharts";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Chart as EastChart } from "@elaraai/east-ui";
 import { getSomeorUndefined } from "../../utils";
@@ -23,7 +23,11 @@ import {
     toRechartsTooltip,
     shouldShowTooltip,
     toRechartsMargin,
+    DEFAULT_CHART_MARGIN,
     createTickFormatter,
+    toRechartsReferenceLine,
+    toRechartsReferenceDot,
+    toRechartsReferenceArea,
 } from "../utils";
 
 // Pre-define the equality function at module level
@@ -40,155 +44,195 @@ export interface EastChakraScatterChartProps {
  * Renders an East UI ScatterChart value using Chakra UI Charts.
  */
 export const EastChakraScatterChart = memo(function EastChakraScatterChart({ value }: EastChakraScatterChartProps) {
-    // Check if we have multi-series data (record form)
-    const dataSeries = useMemo(() => getSomeorUndefined(value.dataSeries), [value.dataSeries]);
-    const valueKey = useMemo(() => getSomeorUndefined(value.valueKey), [value.valueKey]);
-    const xAxisDataKey = useMemo(() => {
+    // Extract xDataKey for data conversion (prefer top-level xDataKey, fallback to xAxis.dataKey)
+    const xDataKey = useMemo(() => {
+        const topLevel = getSomeorUndefined(value.xDataKey);
+        if (topLevel) return topLevel;
         const xAxis = getSomeorUndefined(value.xAxis);
         return xAxis ? getSomeorUndefined(xAxis.dataKey) : undefined;
-    }, [value.xAxis]);
+    }, [value.xDataKey, value.xAxis]);
 
-    // Convert East data and series to chart format
+    // Extract yDataKey (prefer top-level yDataKey, then valueKey for multi-series, fallback to yAxis.dataKey)
+    const yDataKey = useMemo(() => {
+        const topLevel = getSomeorUndefined(value.yDataKey);
+        if (topLevel) return topLevel;
+        const valueKey = getSomeorUndefined(value.valueKey);
+        if (valueKey) return valueKey;
+        const yAxis = getSomeorUndefined(value.yAxis);
+        return yAxis ? getSomeorUndefined(yAxis.dataKey) : undefined;
+    }, [value.yDataKey, value.valueKey, value.yAxis]);
+
+    // Convert East data to chart format
+    const isMultiSeries = useMemo(() => {
+        return getSomeorUndefined(value.dataSeries) !== undefined;
+    }, [value.dataSeries]);
+
     const chartData = useMemo(() => {
-        if (dataSeries && xAxisDataKey && valueKey) {
-            return convertMultiSeriesData(dataSeries, xAxisDataKey, valueKey);
+        const dataSeries = getSomeorUndefined(value.dataSeries);
+        const valueKey = getSomeorUndefined(value.valueKey);
+        if (dataSeries && xDataKey && valueKey) {
+            return convertMultiSeriesData(dataSeries, xDataKey, valueKey);
         }
         return convertChartData(value.data);
-    }, [value.data, dataSeries, xAxisDataKey, valueKey]);
+    }, [value.data, value.dataSeries, value.valueKey, xDataKey]);
 
     const series = useMemo(() => value.series.map(toChartSeries), [value.series]);
 
     // Initialize the chart hook
-    const chart = useChart({
-        data: chartData,
-        series,
-    });
+    const chart = useChart({ data: chartData, series });
 
-    // Extract option values for axis, grid, legend, tooltip, margin
-    const xAxisValue = useMemo(() => getSomeorUndefined(value.xAxis), [value.xAxis]);
-    const yAxisValue = useMemo(() => getSomeorUndefined(value.yAxis), [value.yAxis]);
-    const gridValue = useMemo(() => getSomeorUndefined(value.grid), [value.grid]);
-    const legendValue = useMemo(() => getSomeorUndefined(value.legend), [value.legend]);
-    const tooltipValue = useMemo(() => getSomeorUndefined(value.tooltip), [value.tooltip]);
-    const marginValue = useMemo(() => getSomeorUndefined(value.margin), [value.margin]);
+    // X-axis configuration
+    const xAxis = useMemo(() => {
+        const axisValue = getSomeorUndefined(value.xAxis);
+        if (!axisValue) return { props: {}, tickFormatter: undefined };
+        const props = toRechartsXAxis(axisValue, chart);
+        const tickFormat = getAxisTickFormat(axisValue);
+        return { props, tickFormatter: createTickFormatter(tickFormat, chart) };
+    }, [value.xAxis, chart]);
 
-    // Get axis props (only when values exist)
-    const xAxisProps = useMemo(
-        () => xAxisValue ? toRechartsXAxis(xAxisValue, chart) : {},
-        [xAxisValue, chart]
-    );
-    const yAxisProps = useMemo(
-        () => yAxisValue ? toRechartsYAxis(yAxisValue, chart) : {},
-        [yAxisValue, chart]
-    );
+    // Y-axis configuration (primary, left)
+    const yAxis = useMemo(() => {
+        const axisValue = getSomeorUndefined(value.yAxis);
+        if (!axisValue) return { props: {}, tickFormatter: undefined, show: true };
+        const props = toRechartsYAxis(axisValue, chart);
+        const tickFormat = getAxisTickFormat(axisValue);
+        return { props, tickFormatter: createTickFormatter(tickFormat, chart), show: true };
+    }, [value.yAxis, chart]);
 
-    // Get tick formatters
-    const xAxisTickFormat = useMemo(
-        () => xAxisValue ? getAxisTickFormat(xAxisValue) : undefined,
-        [xAxisValue]
-    );
-    const yAxisTickFormat = useMemo(
-        () => yAxisValue ? getAxisTickFormat(yAxisValue) : undefined,
-        [yAxisValue]
-    );
-    const xAxisTickFormatter = useMemo(
-        () => createTickFormatter(xAxisTickFormat, chart),
-        [xAxisTickFormat, chart]
-    );
-    const yAxisTickFormatter = useMemo(
-        () => createTickFormatter(yAxisTickFormat, chart),
-        [yAxisTickFormat, chart]
-    );
-
-    // Get grid props
-    const showGrid = useMemo(
-        () => gridValue ? shouldShowGrid(gridValue) : false,
-        [gridValue]
-    );
-    const gridProps = useMemo(
-        () => gridValue ? toRechartsCartesianGrid(gridValue, chart) : {},
-        [gridValue, chart]
-    );
-
-    // Get legend props
-    const showLegend = useMemo(
-        () => legendValue ? shouldShowLegend(legendValue) : false,
-        [legendValue]
-    );
-    const legendProps = useMemo(
-        () => legendValue ? toRechartsLegend(legendValue) : {},
-        [legendValue]
-    );
-
-    // Get tooltip props
-    const showTooltip = useMemo(
-        () => tooltipValue ? shouldShowTooltip(tooltipValue) : false,
-        [tooltipValue]
-    );
-    const tooltipProps = useMemo(
-        () => tooltipValue ? toRechartsTooltip(tooltipValue) : {},
-        [tooltipValue]
-    );
-
-    // Get margin props
-    const margin = useMemo(
-        () => marginValue
-            ? toRechartsMargin(marginValue)
-            : { top: 20, right: 30, left: 5, bottom: 5 },
-        [marginValue]
-    );
-
-    // Get chart options (convert bigint to number where needed)
-    const options = useMemo(() => {
-        const pointSize = getSomeorUndefined(value.pointSize);
+    // Y-axis2 configuration (secondary, right)
+    const yAxis2 = useMemo(() => {
+        const axisValue = getSomeorUndefined(value.yAxis2);
+        if (!axisValue) return { props: { hide: true }, tickFormatter: undefined, show: false };
+        const props = toRechartsYAxis(axisValue, chart);
+        const tickFormat = getAxisTickFormat(axisValue);
+        // Fix label position for right-side axis
+        if (props.label && typeof props.label === "object") {
+            props.label = { ...props.label, position: "insideRight" };
+        }
         return {
-            xDataKey: getSomeorUndefined(value.xDataKey),
-            yDataKey: getSomeorUndefined(value.yDataKey),
-            pointSize: pointSize !== undefined ? Number(pointSize) : 60,
+            props: { ...props, yAxisId: "right", orientation: "right" as const },
+            tickFormatter: createTickFormatter(tickFormat, chart),
+            show: true,
         };
-    }, [value.xDataKey, value.yDataKey, value.pointSize]);
+    }, [value.yAxis2, chart]);
+
+    // Grid configuration
+    const grid = useMemo(() => {
+        const gridValue = getSomeorUndefined(value.grid);
+        if (!gridValue) return { show: false, props: {} };
+        return { show: shouldShowGrid(gridValue), props: toRechartsCartesianGrid(gridValue, chart) };
+    }, [value.grid, chart]);
+
+    // Legend configuration
+    const legend = useMemo(() => {
+        const legendValue = getSomeorUndefined(value.legend);
+        if (!legendValue) return { show: false, props: {} };
+        return { show: shouldShowLegend(legendValue), props: toRechartsLegend(legendValue) };
+    }, [value.legend]);
+
+    // Tooltip configuration
+    const tooltip = useMemo(() => {
+        const tooltipValue = getSomeorUndefined(value.tooltip);
+        if (!tooltipValue) return { show: false, props: {} };
+        return { show: shouldShowTooltip(tooltipValue), props: toRechartsTooltip(tooltipValue) };
+    }, [value.tooltip]);
+
+    // Layout: margin (note: brush is not supported for ScatterChart in Recharts)
+    const margin = useMemo(() => {
+        const marginValue = getSomeorUndefined(value.margin);
+        return marginValue ? toRechartsMargin(marginValue) : DEFAULT_CHART_MARGIN;
+    }, [value.margin]);
+
+    // Multi-series handling: compute transformed data and axis dataKeys
+    const scatterData = useMemo(() => {
+        const needsTransform = isMultiSeries || chart.series.length > 1;
+        if (!needsTransform || !xDataKey) {
+            return {
+                xAxisDataKey: xDataKey,
+                yAxisDataKey: yDataKey ?? "y",
+                seriesDataMap: null,
+            };
+        }
+        const seriesDataMap = new Map<string, Array<{ x: unknown; y: unknown }>>();
+        for (const item of chart.series) {
+            const seriesName = item.name as string;
+            seriesDataMap.set(
+                seriesName,
+                chart.data
+                    .filter(d => d[seriesName] != null)
+                    .map(d => ({ x: d[xDataKey], y: d[seriesName] }))
+            );
+        }
+        return {
+            xAxisDataKey: "x",
+            yAxisDataKey: "y",
+            seriesDataMap,
+        };
+    }, [isMultiSeries, chart.series, chart.data, xDataKey, yDataKey]);
+
+    // Reference annotations
+    const references = useMemo(() => ({
+        lines: getSomeorUndefined(value.referenceLines)?.map(toRechartsReferenceLine) ?? [],
+        dots: getSomeorUndefined(value.referenceDots)?.map(toRechartsReferenceDot) ?? [],
+        areas: getSomeorUndefined(value.referenceAreas)?.map(toRechartsReferenceArea) ?? [],
+    }), [value.referenceLines, value.referenceDots, value.referenceAreas]);
 
     return (
-        <Chart.Root
-            chart={chart}
-            maxW="full"
-            maxH="full"
-        >
-            <ScatterChart
-                data={chart.data}
-                margin={margin}
-            >
-                {showGrid && <CartesianGrid {...gridProps} />}
-                {!xAxisProps.hide && (
+        <Chart.Root chart={chart} maxW="full" maxH="full">
+            <ScatterChart data={chart.data} margin={margin}>
+                {grid.show && <CartesianGrid {...grid.props} />}
+                {!xAxis.props.hide && scatterData.xAxisDataKey && (
                     <XAxis
-                        {...xAxisProps}
+                        {...xAxis.props}
                         type="number"
-                        {...(options.xDataKey && { dataKey: options.xDataKey })}
-                        {...(xAxisTickFormatter ? { tickFormatter: xAxisTickFormatter } : {})}
+                        dataKey={scatterData.xAxisDataKey}
+                        {...(xAxis.tickFormatter && { tickFormatter: xAxis.tickFormatter })}
                     />
                 )}
-                {!yAxisProps.hide && (
+                {!yAxis.props.hide && scatterData.yAxisDataKey && (
                     <YAxis
-                        {...yAxisProps}
+                        {...yAxis.props}
                         type="number"
-                        {...(options.yDataKey && { dataKey: options.yDataKey })}
-                        {...(yAxisTickFormatter ? { tickFormatter: yAxisTickFormatter } : {})}
+                        dataKey={scatterData.yAxisDataKey}
+                        {...(yAxis2.show && { yAxisId: "left" })}
+                        {...(yAxis.tickFormatter && { tickFormatter: yAxis.tickFormatter })}
                     />
                 )}
-                {showTooltip && (
-                    <Tooltip {...tooltipProps} content={<Chart.Tooltip />} />
-                )}
-                {showLegend && (
-                    <Legend {...legendProps} content={<Chart.Legend />} />
-                )}
-                {chart.series.map((item) => (
-                    <Scatter
-                        key={item.name as string}
-                        name={item.name as string}
-                        data={chart.data}
-                        fill={chart.color(item.color)}
-                        isAnimationActive={false}
+                {yAxis2.show && !yAxis2.props.hide && (
+                    <YAxis
+                        {...yAxis2.props}
+                        type="number"
+                        dataKey={scatterData.yAxisDataKey}
+                        {...(yAxis2.tickFormatter && { tickFormatter: yAxis2.tickFormatter })}
                     />
+                )}
+                {tooltip.show && <Tooltip {...tooltip.props} content={<Chart.Tooltip />} />}
+                {legend.show && <Legend {...legend.props} content={<Chart.Legend />} />}
+
+                {chart.series.map((item) => {
+                    const seriesName = item.name as string;
+                    const seriesConfig = value.series.find(s => s.name === seriesName);
+                    const yAxisId = seriesConfig ? getSomeorUndefined(seriesConfig.yAxisId) : undefined;
+
+                    return (
+                        <Scatter
+                            key={seriesName}
+                            name={seriesName}
+                            data={scatterData.seriesDataMap?.get(seriesName) ?? chart.data}
+                            fill={chart.color(item.color)}
+                            isAnimationActive={false}
+                            {...(yAxis2.show && { yAxisId: yAxisId?.type ?? "left" })}
+                        />
+                    );
+                })}
+                {references.areas.map((props, i) => (
+                    <ReferenceArea key={`area-${i}`} {...props} />
+                ))}
+                {references.lines.map((props, i) => (
+                    <ReferenceLine key={`line-${i}`} {...props} />
+                ))}
+                {references.dots.map((props, i) => (
+                    <ReferenceDot key={`dot-${i}`} {...props} />
                 ))}
             </ScatterChart>
         </Chart.Root>

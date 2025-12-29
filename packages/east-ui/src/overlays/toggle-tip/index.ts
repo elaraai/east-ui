@@ -42,7 +42,11 @@ export type { PlacementLiteral } from "./types.js";
  * @property content - The text content of the tip
  * @property style - Optional style configuration
  */
-export const ToggleTipType = StructType({
+export const ToggleTipType: StructType<{
+    trigger: UIComponentType,
+    content: StringType,
+    style: OptionType<ToggleTipStyleType>,
+}> = StructType({
     trigger: UIComponentType,
     content: StringType,
     style: OptionType(ToggleTipStyleType),

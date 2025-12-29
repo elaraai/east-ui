@@ -47,7 +47,11 @@ export {
  * @property items - Array of menu items (Item or Separator)
  * @property placement - Optional placement position
  */
-export const MenuType = StructType({
+export const MenuType: StructType<{
+    trigger: UIComponentType,
+    items: ArrayType<MenuItemType>,
+    placement: OptionType<PlacementType>,
+}> = StructType({
     trigger: UIComponentType,
     items: ArrayType(MenuItemType),
     placement: OptionType(PlacementType),

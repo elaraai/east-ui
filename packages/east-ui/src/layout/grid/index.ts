@@ -56,7 +56,15 @@ export { GridAutoFlow } from "./types.js";
  * @property rowStart - Starting row line
  * @property rowEnd - Ending row line
  */
-export const GridItemType = StructType({
+export const GridItemType: StructType<{
+    content: UIComponentType,
+    colSpan: OptionType<StringType>,
+    rowSpan: OptionType<StringType>,
+    colStart: OptionType<StringType>,
+    colEnd: OptionType<StringType>,
+    rowStart: OptionType<StringType>,
+    rowEnd: OptionType<StringType>,
+}> = StructType({
     content: UIComponentType,
     colSpan: OptionType(StringType),
     rowSpan: OptionType(StringType),
@@ -208,7 +216,10 @@ function GridRoot(
     }), UIComponentType);
 }
 
-export const GridType = StructType({
+export const GridType: StructType<{
+    items: ArrayType<GridItemType>,
+    style: OptionType<GridStyleType>,
+}> = StructType({
     items: ArrayType(GridItemType),
     style: OptionType(GridStyleType),
 })

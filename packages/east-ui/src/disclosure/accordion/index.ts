@@ -54,7 +54,12 @@ export {
  * @property content - Array of child UI components for the collapsible content
  * @property disabled - Whether this item is disabled
  */
-export const AccordionItemType = StructType({
+export const AccordionItemType: StructType<{
+    value: StringType,
+    trigger: StringType,
+    content: ArrayType<UIComponentType>,
+    disabled: OptionType<BooleanType>,
+}> = StructType({
     value: StringType,
     trigger: StringType,
     content: ArrayType(UIComponentType),

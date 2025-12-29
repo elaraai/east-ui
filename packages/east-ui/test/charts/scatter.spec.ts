@@ -46,8 +46,8 @@ describeEast("Chart.Scatter", (test) => {
             ],
             { temp: { color: "teal.solid" } },
             {
-                xDataKey: "temp",
-                yDataKey: "sales"
+                xAxis: { dataKey: "temp" },
+                yAxis: { dataKey: "sales" }
             }
         ));
 
@@ -86,7 +86,7 @@ describeEast("Chart.Scatter", (test) => {
                 { temp: 10, sales: 30 },
             ],
             { temp: { color: "teal.solid" } },
-            { xAxis: Chart.Axis({ dataKey: "temp", label: "Temperature" }) }
+            { xAxis: { dataKey: "temp", label: "Temperature" } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").xAxis.unwrap("some").dataKey.unwrap("some"), "temp"));
@@ -99,7 +99,7 @@ describeEast("Chart.Scatter", (test) => {
                 { temp: 10, sales: 30 },
             ],
             { temp: { color: "teal.solid" } },
-            { yAxis: Chart.Axis({ dataKey: "sales", label: "Sales" }) }
+            { yAxis: { dataKey: "sales", label: "Sales" } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").yAxis.unwrap("some").dataKey.unwrap("some"), "sales"));
@@ -113,8 +113,8 @@ describeEast("Chart.Scatter", (test) => {
             ],
             { temp: { color: "teal.solid" } },
             {
-                xAxis: Chart.Axis({ domain: [0, 50] }),
-                yAxis: Chart.Axis({ domain: [0, 100] })
+                xAxis: { domain: [0, 50] },
+                yAxis: { domain: [0, 100] }
             }
         ));
 
@@ -132,7 +132,7 @@ describeEast("Chart.Scatter", (test) => {
                 { temp: 10, sales: 30 },
             ],
             { temp: { color: "teal.solid" } },
-            { grid: Chart.Grid({ show: true }) }
+            { grid: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").grid.unwrap("some").show.unwrap("some"), true));
@@ -144,7 +144,7 @@ describeEast("Chart.Scatter", (test) => {
                 { temp: 10, sales: 30 },
             ],
             { temp: { color: "teal.solid" } },
-            { legend: Chart.Legend({ show: true }) }
+            { legend: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").legend.unwrap("some").show.unwrap("some"), true));
@@ -156,7 +156,7 @@ describeEast("Chart.Scatter", (test) => {
                 { temp: 10, sales: 30 },
             ],
             { temp: { color: "teal.solid" } },
-            { tooltip: Chart.Tooltip({ show: true }) }
+            { tooltip: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").tooltip.unwrap("some").show.unwrap("some"), true));
@@ -188,7 +188,7 @@ describeEast("Chart.Scatter", (test) => {
                 { temp: 10, sales: 30 },
             ],
             { temp: { color: "teal.solid" } },
-            { margin: Chart.Margin({ top: 20n, right: 30n, bottom: 20n, left: 30n }) }
+            { margin: { top: 20n, right: 30n, bottom: 20n, left: 30n } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").margin.unwrap("some").top.unwrap("some"), 20n));
@@ -208,9 +208,9 @@ describeEast("Chart.Scatter", (test) => {
             ],
             { temp: { color: "teal.solid" } },
             {
-                xDataKey: "temp",
-                yDataKey: "sales",
-                grid: Chart.Grid({ show: true })
+                xAxis: { dataKey: "temp" },
+                yAxis: { dataKey: "sales" },
+                grid: { show: true }
             }
         ));
 
@@ -230,9 +230,9 @@ describeEast("Chart.Scatter", (test) => {
                 y: { color: "green.solid", label: "Y Value" },
             },
             {
-                xAxis: Chart.Axis({ domain: [0, 50] }),
-                yAxis: Chart.Axis({ domain: [0, 100] }),
-                tooltip: Chart.Tooltip({ show: true })
+                xAxis: { domain: [0, 50] },
+                yAxis: { domain: [0, 100] },
+                tooltip: { show: true }
             }
         ));
 
@@ -255,7 +255,7 @@ describeEast("Chart.ScatterMulti", (test) => {
                 ],
             },
             {
-                xDataKey: "x",
+                xAxis: { dataKey: "x" },
                 valueKey: "value",
                 series: {
                     temperature: { color: "teal.solid" },

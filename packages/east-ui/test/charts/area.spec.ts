@@ -116,7 +116,7 @@ describeEast("Chart.Area", (test) => {
                 { month: "January", revenue: 186n },
             ],
             { revenue: { color: "teal.solid" } },
-            { yAxis: Chart.Axis({ tickFormat: "percent" }) }
+            { yAxis: { tickFormat: "percent" } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("AreaChart").yAxis.hasTag("some"), true));
@@ -161,7 +161,7 @@ describeEast("Chart.Area", (test) => {
                 { month: "January", revenue: 186n },
             ],
             { revenue: { color: "teal.solid" } },
-            { grid: Chart.Grid({ show: true }) }
+            { grid: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("AreaChart").grid.unwrap("some").show.unwrap("some"), true));
@@ -173,7 +173,7 @@ describeEast("Chart.Area", (test) => {
                 { month: "January", revenue: 186n },
             ],
             { revenue: { color: "teal.solid" } },
-            { legend: Chart.Legend({ show: true }) }
+            { legend: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("AreaChart").legend.unwrap("some").show.unwrap("some"), true));
@@ -185,7 +185,7 @@ describeEast("Chart.Area", (test) => {
                 { month: "January", revenue: 186n },
             ],
             { revenue: { color: "teal.solid" } },
-            { tooltip: Chart.Tooltip({ show: true }) }
+            { tooltip: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("AreaChart").tooltip.unwrap("some").show.unwrap("some"), true));
@@ -213,11 +213,43 @@ describeEast("Chart.Area", (test) => {
                 { month: "January", revenue: 186n },
             ],
             { revenue: { color: "teal.solid" } },
-            { margin: Chart.Margin({ top: 20n, right: 30n, bottom: 20n, left: 30n }) }
+            { margin: { top: 20n, right: 30n, bottom: 20n, left: 30n } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("AreaChart").margin.unwrap("some").top.unwrap("some"), 20n));
         $(assertEast.equal(chart.unwrap().unwrap("AreaChart").margin.unwrap("some").left.unwrap("some"), 30n));
+    });
+
+    // =========================================================================
+    // Brush
+    // =========================================================================
+
+    test("creates area chart with brush enabled", $ => {
+        const chart = $.let(Chart.Area(
+            [
+                { month: "January", revenue: 186n },
+                { month: "February", revenue: 305n },
+            ],
+            { revenue: { color: "teal.solid" } },
+            { xAxis: { dataKey: "month" }, brush: {} }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").brush.hasTag("some"), true));
+    });
+
+    test("creates area chart with brush configuration", $ => {
+        const chart = $.let(Chart.Area(
+            [
+                { month: "January", revenue: 186n },
+            ],
+            { revenue: { color: "teal.solid" } },
+            { brush: { dataKey: "month", height: 40n, startIndex: 0n, endIndex: 5n } }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").brush.unwrap("some").dataKey.unwrap("some"), "month"));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").brush.unwrap("some").height.unwrap("some"), 40n));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").brush.unwrap("some").startIndex.unwrap("some"), 0n));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").brush.unwrap("some").endIndex.unwrap("some"), 5n));
     });
 
     // =========================================================================
@@ -240,9 +272,9 @@ describeEast("Chart.Area", (test) => {
                 xAxis: { dataKey: "month" },
                 stacked: true,
                 stackOffset: "expand",
-                grid: Chart.Grid({ show: true }),
-                tooltip: Chart.Tooltip({ show: true }),
-                legend: Chart.Legend({ show: true }),
+                grid: { show: true },
+                tooltip: { show: true },
+                legend: { show: true },
                 fillOpacity: 0.2,
             }
         ));
@@ -281,5 +313,251 @@ describeEast("Chart.AreaMulti", (test) => {
         $(assertEast.equal(chart.unwrap().unwrap("AreaChart").series.size(), 2n));
         $(assertEast.equal(chart.unwrap().unwrap("AreaChart").valueKey.unwrap("some"), "value"));
         $(assertEast.equal(chart.unwrap().unwrap("AreaChart").dataSeries.hasTag("some"), true));
+    });
+});
+
+// ============================================================================
+// Area Range Charts
+// ============================================================================
+
+describeEast("Chart.AreaRange", (test) => {
+    test("creates basic area range chart with single series", $ => {
+        const chart = $.let(Chart.AreaRange(
+            [
+                { "day": "05-01", "low": -1n, "high": 10n },
+                { "day": "05-02", "low": 2n, "high": 15n },
+                { "day": "05-03", "low": 3n, "high": 12n },
+            ],
+            { temperature: { lowKey: "low", highKey: "high", color: "teal.solid" } }
+        ));
+
+        $(assertEast.equal(chart.unwrap().getTag(), "AreaRangeChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.size(), 1n));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).name, "temperature"));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).lowKey, "low"));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).highKey, "high"));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).color.unwrap("some"), "teal.solid"));
+    });
+
+    test("creates area range chart with multiple series", $ => {
+        const chart = $.let(Chart.AreaRange(
+            [
+                { day: "05-01", tempLow: -1n, tempHigh: 10n, humidLow: 30n, humidHigh: 50n },
+                { day: "05-02", tempLow: 2n, tempHigh: 15n, humidLow: 35n, humidHigh: 55n },
+            ],
+            {
+                temperature: { lowKey: "tempLow", highKey: "tempHigh", color: "teal.solid" },
+                humidity: { lowKey: "humidLow", highKey: "humidHigh", color: "blue.solid" },
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().getTag(), "AreaRangeChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.size(), 2n));
+    });
+
+    test("creates area range chart with x-axis configuration", $ => {
+        const chart = $.let(Chart.AreaRange(
+            [
+                { day: "05-01", low: -1n, high: 10n },
+            ],
+            { temperature: { lowKey: "low", highKey: "high" } },
+            { xAxis: { dataKey: "day", label: "Date" } }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").xAxis.hasTag("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").xAxis.unwrap("some").dataKey.unwrap("some"), "day"));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").xAxis.unwrap("some").label.unwrap("some"), "Date"));
+    });
+
+    test("creates area range chart with curve type", $ => {
+        const chart = $.let(Chart.AreaRange(
+            [
+                { day: "05-01", low: -1n, high: 10n },
+            ],
+            { temperature: { lowKey: "low", highKey: "high" } },
+            { curveType: "natural" }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").curveType.unwrap("some").hasTag("natural"), true));
+    });
+
+    test("creates area range chart with grid", $ => {
+        const chart = $.let(Chart.AreaRange(
+            [
+                { day: "05-01", low: -1n, high: 10n },
+            ],
+            { temperature: { lowKey: "low", highKey: "high" } },
+            { grid: { show: true } }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").grid.unwrap("some").show.unwrap("some"), true));
+    });
+
+    test("creates area range chart with legend", $ => {
+        const chart = $.let(Chart.AreaRange(
+            [
+                { day: "05-01", low: -1n, high: 10n },
+            ],
+            { temperature: { lowKey: "low", highKey: "high" } },
+            { legend: { show: true } }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").legend.unwrap("some").show.unwrap("some"), true));
+    });
+
+    test("creates area range chart with tooltip", $ => {
+        const chart = $.let(Chart.AreaRange(
+            [
+                { day: "05-01", low: -1n, high: 10n },
+            ],
+            { temperature: { lowKey: "low", highKey: "high" } },
+            { tooltip: { show: true } }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").tooltip.unwrap("some").show.unwrap("some"), true));
+    });
+
+    test("creates area range chart with custom fill opacity", $ => {
+        const chart = $.let(Chart.AreaRange(
+            [
+                { day: "05-01", low: -1n, high: 10n },
+            ],
+            { temperature: { lowKey: "low", highKey: "high" } },
+            { fillOpacity: 0.5 }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").fillOpacity.unwrap("some"), 0.5));
+    });
+
+    test("creates area range chart with series styling", $ => {
+        const chart = $.let(Chart.AreaRange(
+            [
+                { day: "05-01", low: -1n, high: 10n },
+            ],
+            {
+                temperature: {
+                    lowKey: "low",
+                    highKey: "high",
+                    color: "teal.solid",
+                    label: "Temperature Range",
+                    fillOpacity: 0.6,
+                    stroke: "teal.700",
+                    strokeWidth: 2n,
+                }
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).label.unwrap("some"), "Temperature Range"));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).fillOpacity.unwrap("some"), 0.6));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).stroke.unwrap("some"), "teal.700"));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).strokeWidth.unwrap("some"), 2n));
+    });
+
+    test("creates complete area range chart", $ => {
+        const chart = $.let(Chart.AreaRange(
+            [
+                { day: "05-01", tempLow: -1n, tempHigh: 10n, humidLow: 30n, humidHigh: 50n },
+                { day: "05-02", tempLow: 2n, tempHigh: 15n, humidLow: 35n, humidHigh: 55n },
+                { day: "05-03", tempLow: 3n, tempHigh: 12n, humidLow: 40n, humidHigh: 60n },
+            ],
+            {
+                temperature: { lowKey: "tempLow", highKey: "tempHigh", color: "teal.solid" },
+                humidity: { lowKey: "humidLow", highKey: "humidHigh", color: "blue.solid" },
+            },
+            {
+                xAxis: { dataKey: "day" },
+                curveType: "natural",
+                grid: { show: true },
+                tooltip: { show: true },
+                legend: { show: true },
+                fillOpacity: 0.4,
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().getTag(), "AreaRangeChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.size(), 2n));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").fillOpacity.unwrap("some"), 0.4));
+    });
+});
+
+describeEast("Chart.AreaRangeMulti", (test) => {
+    test("creates area range chart with multi-series data", $ => {
+        const chart = $.let(Chart.AreaRangeMulti(
+            {
+                temperature: [
+                    { day: "05-01", low: -1n, high: 10n },
+                    { day: "05-02", low: 2n, high: 15n },
+                ],
+                humidity: [
+                    { day: "05-01", low: 30n, high: 50n },
+                    { day: "05-03", low: 40n, high: 60n },
+                ],
+            },
+            {
+                xAxis: { dataKey: "day" },
+                lowKey: "low",
+                highKey: "high",
+                series: {
+                    temperature: { color: "teal.solid" },
+                    humidity: { color: "blue.solid" },
+                },
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().getTag(), "AreaRangeChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.size(), 2n));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").lowKey.unwrap("some"), "low"));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").highKey.unwrap("some"), "high"));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").dataSeries.hasTag("some"), true));
+    });
+
+    test("creates area range multi chart with sparse data", $ => {
+        const chart = $.let(Chart.AreaRangeMulti(
+            {
+                temperature: [
+                    { day: "05-01", low: -1n, high: 10n },
+                    { day: "05-02", low: 2n, high: 15n },
+                    { day: "05-03", low: 3n, high: 12n },
+                ],
+                humidity: [
+                    { day: "05-01", low: 30n, high: 50n },
+                    // 05-02 missing - sparse data
+                    { day: "05-03", low: 40n, high: 60n },
+                ],
+            },
+            {
+                xAxis: { dataKey: "day" },
+                lowKey: "low",
+                highKey: "high",
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().getTag(), "AreaRangeChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.size(), 2n));
+    });
+
+    test("creates area range multi chart with styling options", $ => {
+        const chart = $.let(Chart.AreaRangeMulti(
+            {
+                temperature: [
+                    { day: "05-01", low: -1n, high: 10n },
+                ],
+            },
+            {
+                xAxis: { dataKey: "day" },
+                lowKey: "low",
+                highKey: "high",
+                curveType: "monotone",
+                grid: { show: true },
+                legend: { show: true },
+                tooltip: { show: true },
+                fillOpacity: 0.3,
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").curveType.unwrap("some").hasTag("monotone"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").fillOpacity.unwrap("some"), 0.3));
     });
 });

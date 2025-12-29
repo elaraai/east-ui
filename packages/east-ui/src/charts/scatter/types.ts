@@ -22,8 +22,20 @@ import {
     ChartLegendType,
     ChartMarginType,
     MultiSeriesDataType,
+    ReferenceLineType,
+    ReferenceDotType,
+    ReferenceAreaType,
+    YAxisIdType,
     type BaseChartStyle,
+    type ChartAxisStyle,
+    type ReferenceLineStyle,
+    type ReferenceDotStyle,
+    type ReferenceAreaStyle,
+    type YAxisIdLiteral,
 } from "../types.js";
+
+// Re-export reference types for convenience
+export type { ReferenceLineStyle, ReferenceDotStyle, ReferenceAreaStyle };
 
 // ============================================================================
 // Scatter Chart Type
@@ -61,6 +73,7 @@ export const ScatterChartType = StructType({
     series: ArrayType(ChartSeriesType),
     xAxis: OptionType(ChartAxisType),
     yAxis: OptionType(ChartAxisType),
+    yAxis2: OptionType(ChartAxisType),
     xDataKey: OptionType(StringType),
     yDataKey: OptionType(StringType),
     grid: OptionType(ChartGridType),
@@ -68,6 +81,9 @@ export const ScatterChartType = StructType({
     legend: OptionType(ChartLegendType),
     margin: OptionType(ChartMarginType),
     pointSize: OptionType(IntegerType),
+    referenceLines: OptionType(ArrayType(ReferenceLineType)),
+    referenceDots: OptionType(ArrayType(ReferenceDotType)),
+    referenceAreas: OptionType(ArrayType(ReferenceAreaType)),
 });
 
 /**
@@ -80,48 +96,55 @@ export type ScatterChartType = typeof ScatterChartType;
 // ============================================================================
 
 /**
- * Base style options shared by Scatter and ScatterMulti charts.
- */
-export interface ScatterChartStyleBase extends BaseChartStyle {
-    /** X-axis configuration */
-    xAxis?: SubtypeExprOrValue<ChartAxisType>;
-    /** Y-axis configuration */
-    yAxis?: SubtypeExprOrValue<ChartAxisType>;
-    /** Size of scatter points */
-    pointSize?: SubtypeExprOrValue<IntegerType>;
-    /** Chart margin configuration */
-    margin?: SubtypeExprOrValue<ChartMarginType>;
-}
-
-/**
  * Style for Scatter charts (single array form).
  *
  * @typeParam NumericKey - Union of numeric field keys from the data struct
  */
-export interface ScatterChartStyle<NumericKey extends string = string> extends ScatterChartStyleBase {
-    /** Data key for X values (must be numeric) */
-    xDataKey?: NumericKey;
-    /** Data key for Y values (must be numeric) */
-    yDataKey?: NumericKey;
+export interface ScatterChartStyle<NumericKey extends string = string> extends BaseChartStyle {
+    /** X-axis configuration */
+    xAxis?: ChartAxisStyle<NumericKey>;
+    /** Y-axis configuration (primary, left side) */
+    yAxis?: ChartAxisStyle<NumericKey>;
+    /** Secondary Y-axis configuration (right side) */
+    yAxis2?: ChartAxisStyle<NumericKey>;
+    /** Size of scatter points */
+    pointSize?: SubtypeExprOrValue<IntegerType>;
+    /** Reference lines (horizontal/vertical lines at specific values) */
+    referenceLines?: ReferenceLineStyle[];
+    /** Reference dots (markers at specific x,y coordinates) */
+    referenceDots?: ReferenceDotStyle[];
+    /** Reference areas (highlighted rectangular regions) */
+    referenceAreas?: ReferenceAreaStyle[];
 }
 
 /**
  * Style for ScatterMulti charts (multi-series with separate arrays).
  *
- * @typeParam DataKey - Union of field keys from series array structs
- * @typeParam NumericKey - Union of numeric field keys (for valueKey, xDataKey, yDataKey)
+ * @typeParam NumericKey - Union of numeric field keys (for axes and valueKey)
  * @typeParam SeriesKey - Union of series names (record keys)
  */
 export interface ScatterChartMultiStyle<
     NumericKey extends string = string,
     SeriesKey extends string = string
-> extends ScatterChartStyleBase {
-    /** Data key for X values (must be numeric) */
-    xDataKey?: NumericKey;
+> extends BaseChartStyle {
+    /** X-axis configuration */
+    xAxis?: ChartAxisStyle<NumericKey>;
+    /** Y-axis configuration (primary, left side) */
+    yAxis?: ChartAxisStyle<NumericKey>;
+    /** Secondary Y-axis configuration (right side) */
+    yAxis2?: ChartAxisStyle<NumericKey>;
+    /** Size of scatter points */
+    pointSize?: SubtypeExprOrValue<IntegerType>;
     /** Field name containing Y values in each series array (must be numeric) */
     valueKey: NumericKey;
     /** Per-series configuration (keyed by series name) */
     series?: { [K in SeriesKey]?: ScatterChartSeriesConfig };
+    /** Reference lines (horizontal/vertical lines at specific values) */
+    referenceLines?: ReferenceLineStyle[];
+    /** Reference dots (markers at specific x,y coordinates) */
+    referenceDots?: ReferenceDotStyle[];
+    /** Reference areas (highlighted rectangular regions) */
+    referenceAreas?: ReferenceAreaStyle[];
 }
 
 /**
@@ -141,4 +164,6 @@ export interface ScatterChartSeriesConfig {
     label?: SubtypeExprOrValue<StringType>;
     /** Fill color for points */
     fill?: SubtypeExprOrValue<StringType>;
+    /** Y-axis binding (left = primary yAxis, right = secondary yAxis2) */
+    yAxisId?: SubtypeExprOrValue<YAxisIdType> | YAxisIdLiteral;
 }

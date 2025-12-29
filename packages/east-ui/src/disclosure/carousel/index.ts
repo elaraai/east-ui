@@ -52,7 +52,19 @@ export {
  * @property showControls - Whether to show prev/next controls
  * @property style - Optional styling configuration
  */
-export const CarouselRootType = StructType({
+export const CarouselRootType: StructType<{
+    items: ArrayType<UIComponentType>,
+    index: OptionType<IntegerType>,
+    defaultIndex: OptionType<IntegerType>,
+    slidesPerView: OptionType<IntegerType>,
+    slidesPerMove: OptionType<IntegerType>,
+    loop: OptionType<BooleanType>,
+    autoplay: OptionType<BooleanType>,
+    allowMouseDrag: OptionType<BooleanType>,
+    showIndicators: OptionType<BooleanType>,
+    showControls: OptionType<BooleanType>,
+    style: OptionType<CarouselStyleType>,
+}> = StructType({
     items: ArrayType(UIComponentType),
     index: OptionType(IntegerType),
     defaultIndex: OptionType(IntegerType),

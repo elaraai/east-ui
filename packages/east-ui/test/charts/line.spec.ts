@@ -135,7 +135,7 @@ describeEast("Chart.Line", (test) => {
                 { month: "January", sale: 10n },
             ],
             { sale: { color: "teal.solid" } },
-            { grid: Chart.Grid({ show: true }) }
+            { grid: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("LineChart").grid.unwrap("some").show.unwrap("some"), true));
@@ -147,7 +147,7 @@ describeEast("Chart.Line", (test) => {
                 { month: "January", sale: 10n },
             ],
             { sale: { color: "teal.solid" } },
-            { legend: Chart.Legend({ show: true }) }
+            { legend: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("LineChart").legend.unwrap("some").show.unwrap("some"), true));
@@ -159,7 +159,7 @@ describeEast("Chart.Line", (test) => {
                 { month: "January", sale: 10n },
             ],
             { sale: { color: "teal.solid" } },
-            { tooltip: Chart.Tooltip({ show: true }) }
+            { tooltip: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("LineChart").tooltip.unwrap("some").show.unwrap("some"), true));
@@ -234,7 +234,7 @@ describeEast("Chart.Line", (test) => {
             { sales: { color: "teal.solid" } },
             {
                 xAxis: { dataKey: "month" },
-                yAxis: Chart.Axis({ domain: [160, 210] })
+                yAxis: { domain: [160, 210] }
             }
         ));
 
@@ -252,11 +252,201 @@ describeEast("Chart.Line", (test) => {
                 { month: "January", sale: 10n },
             ],
             { sale: { color: "teal.solid" } },
-            { margin: Chart.Margin({ top: 20n, right: 30n, bottom: 20n, left: 30n }) }
+            { margin: { top: 20n, right: 30n, bottom: 20n, left: 30n } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("LineChart").margin.unwrap("some").top.unwrap("some"), 20n));
         $(assertEast.equal(chart.unwrap().unwrap("LineChart").margin.unwrap("some").left.unwrap("some"), 30n));
+    });
+
+    // =========================================================================
+    // Brush
+    // =========================================================================
+
+    test("creates line chart with brush enabled", $ => {
+        const chart = $.let(Chart.Line(
+            [
+                { month: "January", sale: 10n },
+                { month: "February", sale: 95n },
+                { month: "March", sale: 87n },
+            ],
+            { sale: { color: "teal.solid" } },
+            { xAxis: { dataKey: "month" }, brush: {} }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").brush.hasTag("some"), true));
+    });
+
+    test("creates line chart with brush dataKey", $ => {
+        const chart = $.let(Chart.Line(
+            [
+                { month: "January", sale: 10n },
+            ],
+            { sale: { color: "teal.solid" } },
+            { 
+                xAxis: { dataKey: "month" }, 
+                brush: { dataKey: "month" } 
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").dataKey.unwrap("some"), "month"));
+    });
+
+    test("creates line chart with brush height", $ => {
+        const chart = $.let(Chart.Line(
+            [
+                { month: "January", sale: 10n },
+            ],
+            { sale: { color: "teal.solid" } },
+            { brush: { height: 50n } }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").height.unwrap("some"), 50n));
+    });
+
+    test("creates line chart with brush start and end index", $ => {
+        const chart = $.let(Chart.Line(
+            [
+                { month: "January", sale: 10n },
+                { month: "February", sale: 95n },
+                { month: "March", sale: 87n },
+            ],
+            { sale: { color: "teal.solid" } },
+            { brush: { startIndex: 0n, endIndex: 1n } }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").startIndex.unwrap("some"), 0n));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").endIndex.unwrap("some"), 1n));
+    });
+
+    test("creates line chart with brush styling", $ => {
+        const chart = $.let(Chart.Line(
+            [
+                { month: "January", sale: 10n },
+            ],
+            { sale: { color: "teal.solid" } },
+            { brush: { stroke: "#8884d8", fill: "#8884d8", travellerWidth: 10n } }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").stroke.unwrap("some"), "#8884d8"));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").fill.unwrap("some"), "#8884d8"));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").travellerWidth.unwrap("some"), 10n));
+    });
+
+    // =========================================================================
+    // Reference Annotations
+    // =========================================================================
+
+    test("creates line chart with reference line (horizontal)", $ => {
+        const chart = $.let(Chart.Line(
+            [
+                { month: "January", sale: 10n },
+                { month: "February", sale: 95n },
+            ],
+            { sale: { color: "teal.solid" } },
+            {
+                xAxis: { dataKey: "month" },
+                referenceLines: [
+                    { y: 50n, stroke: "red", label: "Target" }
+                ]
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").size(), 1n));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").get(0n).y.unwrap("some").getTag(), "Integer"));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").get(0n).stroke.unwrap("some"), "red"));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").get(0n).label.unwrap("some"), "Target"));
+    });
+
+    test("creates line chart with reference line (vertical)", $ => {
+        const chart = $.let(Chart.Line(
+            [
+                { month: "January", sale: 10n },
+                { month: "February", sale: 95n },
+            ],
+            { sale: { color: "teal.solid" } },
+            {
+                xAxis: { dataKey: "month" },
+                referenceLines: [
+                    { x: "January", stroke: "blue", strokeDasharray: "5 5" }
+                ]
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").size(), 1n));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").get(0n).x.unwrap("some").unwrap("String"), "January"));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").get(0n).strokeDasharray.unwrap("some"), "5 5"));
+    });
+
+    test("creates line chart with reference dot", $ => {
+        const chart = $.let(Chart.Line(
+            [
+                { month: "January", sale: 10n },
+                { month: "February", sale: 95n },
+            ],
+            { sale: { color: "teal.solid" } },
+            {
+                xAxis: { dataKey: "month" },
+                referenceDots: [
+                    { x: "January", y: 10n, fill: "red", r: 8n, label: "Start" }
+                ]
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").size(), 1n));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").get(0n).x.unwrap("String"), "January"));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").get(0n).y.unwrap("Integer"), 10n));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").get(0n).fill.unwrap("some"), "red"));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").get(0n).r.unwrap("some"), 8n));
+    });
+
+    test("creates line chart with reference area", $ => {
+        const chart = $.let(Chart.Line(
+            [
+                { month: "January", sale: 10n },
+                { month: "February", sale: 95n },
+            ],
+            { sale: { color: "teal.solid" } },
+            {
+                xAxis: { dataKey: "month" },
+                referenceAreas: [
+                    { y1: 40n, y2: 60n, fill: "green", fillOpacity: 0.2, label: "Target Zone" }
+                ]
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").size(), 1n));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").get(0n).y1.unwrap("some").unwrap("Integer"), 40n));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").get(0n).y2.unwrap("some").unwrap("Integer"), 60n));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").get(0n).fill.unwrap("some"), "green"));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").get(0n).fillOpacity.unwrap("some"), 0.2));
+    });
+
+    test("creates line chart with multiple reference annotations", $ => {
+        const chart = $.let(Chart.Line(
+            [
+                { month: "January", sale: 10n },
+                { month: "February", sale: 95n },
+            ],
+            { sale: { color: "teal.solid" } },
+            {
+                xAxis: { dataKey: "month" },
+                referenceLines: [
+                    { y: 50n, stroke: "red" },
+                    { y: 80n, stroke: "orange" }
+                ],
+                referenceDots: [
+                    { x: "January", y: 10n, fill: "blue" }
+                ],
+                referenceAreas: [
+                    { y1: 0n, y2: 20n, fill: "gray", fillOpacity: 0.1 }
+                ]
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").size(), 2n));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").size(), 1n));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").size(), 1n));
     });
 
     // =========================================================================
@@ -273,8 +463,8 @@ describeEast("Chart.Line", (test) => {
             { sale: { color: "teal.solid" } },
             {
                 xAxis: { dataKey: "month" },
-                grid: Chart.Grid({ show: true }),
-                tooltip: Chart.Tooltip({ show: true }),
+                grid: { show: true },
+                tooltip: { show: true },
                 showDots: false,
                 strokeWidth: 2n
             }
@@ -297,9 +487,9 @@ describeEast("Chart.Line", (test) => {
             },
             {
                 xAxis: { dataKey: "month" },
-                grid: Chart.Grid({ show: true }),
-                tooltip: Chart.Tooltip({ show: true }),
-                legend: Chart.Legend({ show: true }),
+                grid: { show: true },
+                tooltip: { show: true },
+                legend: { show: true },
                 strokeWidth: 2n
             }
         ));

@@ -17,6 +17,9 @@ import {
     ChartTooltipType,
     ChartLegendType,
     ChartMarginType,
+    type ChartTooltipStyle,
+    type ChartLegendStyle,
+    type ChartMarginStyle,
 } from "../types.js";
 
 // ============================================================================
@@ -118,9 +121,9 @@ export interface PieChartStyle {
     /** Show slice labels */
     showLabels?: SubtypeExprOrValue<BooleanType>;
     /** Tooltip configuration */
-    tooltip?: SubtypeExprOrValue<ChartTooltipType>;
+    tooltip?: ChartTooltipStyle;
     /** Legend configuration */
-    legend?: SubtypeExprOrValue<ChartLegendType>;
+    legend?: ChartLegendStyle;
     /** Chart margin configuration */
-    margin?: SubtypeExprOrValue<ChartMarginType>;
+    margin?: ChartMarginStyle;
 }

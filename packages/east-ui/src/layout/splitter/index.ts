@@ -52,7 +52,14 @@ export {
  * @property collapsible - Whether the panel can be collapsed
  * @property defaultCollapsed - Whether the panel starts collapsed
  */
-export const SplitterPanelType = StructType({
+export const SplitterPanelType: StructType<{
+    id: StringType,
+    content: UIComponentType,
+    minSize: OptionType<FloatType>,
+    maxSize: OptionType<FloatType>,
+    collapsible: OptionType<BooleanType>,
+    defaultCollapsed: OptionType<BooleanType>,
+}> = StructType({
     id: StringType,
     content: UIComponentType,
     minSize: OptionType(FloatType),
@@ -81,7 +88,11 @@ export type SplitterPanelType = typeof SplitterPanelType;
  * @property defaultSize - Initial sizes for each panel as percentages
  * @property style - Optional styling configuration wrapped in OptionType
  */
-export const SplitterType = StructType({
+export const SplitterType: StructType<{
+    panels: ArrayType<SplitterPanelType>,
+    defaultSize: ArrayType<FloatType>,
+    style: OptionType<SplitterStyleType>,
+}> = StructType({
     panels: ArrayType(SplitterPanelType),
     defaultSize: ArrayType(FloatType),
     style: OptionType(SplitterStyleType),

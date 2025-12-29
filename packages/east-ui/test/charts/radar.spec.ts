@@ -89,7 +89,7 @@ describeEast("Chart.Radar", (test) => {
                 { month: "January", windows: 130 },
             ],
             { windows: { color: "teal.solid" } },
-            { grid: Chart.Grid({ show: true }) }
+            { grid: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("RadarChart").grid.unwrap("some").show.unwrap("some"), true));
@@ -101,7 +101,7 @@ describeEast("Chart.Radar", (test) => {
                 { month: "January", windows: 130 },
             ],
             { windows: { color: "teal.solid" } },
-            { legend: Chart.Legend({ show: true }) }
+            { legend: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("RadarChart").legend.unwrap("some").show.unwrap("some"), true));
@@ -113,7 +113,7 @@ describeEast("Chart.Radar", (test) => {
                 { month: "January", windows: 130 },
             ],
             { windows: { color: "teal.solid" } },
-            { tooltip: Chart.Tooltip({ show: true }) }
+            { tooltip: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("RadarChart").tooltip.unwrap("some").show.unwrap("some"), true));
@@ -160,7 +160,7 @@ describeEast("Chart.Radar", (test) => {
                 { month: "January", windows: 130 },
             ],
             { windows: { color: "teal.solid" } },
-            { margin: Chart.Margin({ top: 20n, right: 30n, bottom: 20n, left: 30n }) }
+            { margin: { top: 20n, right: 30n, bottom: 20n, left: 30n } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("RadarChart").margin.unwrap("some").top.unwrap("some"), 20n));
@@ -181,7 +181,7 @@ describeEast("Chart.Radar", (test) => {
             { windows: { color: "teal.solid" } },
             {
                 dataKey: "month",
-                grid: Chart.Grid({ show: true }),
+                grid: { show: true },
                 fillOpacity: 0.5
             }
         ));
@@ -206,8 +206,8 @@ describeEast("Chart.Radar", (test) => {
             },
             {
                 dataKey: "month",
-                grid: Chart.Grid({ show: true }),
-                legend: Chart.Legend({ show: true }),
+                grid: { show: true },
+                legend: { show: true },
                 fillOpacity: 0.2
             }
         ));

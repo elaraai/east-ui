@@ -72,7 +72,7 @@ import { PlannerStyleType, PlannerEventType } from "./collections/planner/types.
 
 // Charts
 import { SparklineType } from "./charts/sparkline/types.js";
-import { AreaChartType } from "./charts/area/types.js";
+import { AreaChartType, AreaRangeChartType } from "./charts/area/types.js";
 import { BarChartType } from "./charts/bar/types.js";
 import { LineChartType } from "./charts/line/types.js";
 import { ScatterChartType } from "./charts/scatter/types.js";
@@ -80,6 +80,7 @@ import { PieChartType } from "./charts/pie/types.js";
 import { RadarChartType } from "./charts/radar/types.js";
 import { BarListType } from "./charts/bar-list/types.js";
 import { BarSegmentType } from "./charts/bar-segment/types.js";
+import { ComposedChartType } from "./charts/composed/types.js";
 
 // Disclosure
 import { AccordionStyleType } from "./disclosure/accordion/types.js";
@@ -238,6 +239,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
     // Charts
     Sparkline: SparklineType,
     AreaChart: AreaChartType,
+    AreaRangeChart: AreaRangeChartType,
     BarChart: BarChartType,
     LineChart: LineChartType,
     ScatterChart: ScatterChartType,
@@ -245,6 +247,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
     RadarChart: RadarChartType,
     BarList: BarListType,
     BarSegment: BarSegmentType,
+    ComposedChart: ComposedChartType,
 
     TreeView: StructType({
         nodes: ArrayType(RecursiveType(inner => VariantType({

@@ -38,7 +38,10 @@ export { FlexStyleType, type FlexStyle } from "./types.js";
  * @property children - Array of child UI components
  * @property style - Optional styling configuration wrapped in OptionType
  */
-export const FlexType = StructType({
+export const FlexType: StructType<{
+    children: ArrayType<UIComponentType>,
+    style: OptionType<FlexStyleType>,
+}> = StructType({
     children: ArrayType(UIComponentType),
     style: OptionType(FlexStyleType),
 });

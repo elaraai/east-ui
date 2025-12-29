@@ -160,7 +160,7 @@ export default East.function(
                             [{ category: "Revenue", value: revenueValue }],
                             { value: { color, label: "Current" } },
                             {
-                                yAxis: Chart.Axis({ domain: [0.0, 300.0] }),
+                                yAxis: { domain: [0.0, 300.0] },
                             }
                         ),
                         Stat.Root("Revenue", East.Float.printCurrency(revenueValue)),
@@ -192,7 +192,7 @@ export default East.function(
                                 [{ category: "Revenue", value: revenueValue }],
                                 { value: { color, label: "Current" } },
                                 {
-                                    yAxis: Chart.Axis({ domain: [0.0, 300.0] }),
+                                    yAxis: { domain: [0.0, 300.0] },
                                 }
                             ),
                             Stat.Root("Revenue", East.Float.printCurrency(revenueValue)),

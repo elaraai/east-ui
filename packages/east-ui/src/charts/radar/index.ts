@@ -8,6 +8,12 @@ import {
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
+import {
+    gridStyleToType,
+    tooltipStyleToType,
+    legendStyleToType,
+    marginStyleToType,
+} from "../types.js";
 import type { RadarChartStyle, RadarChartSeriesConfig } from "./types.js";
 
 // Re-export types
@@ -74,16 +80,23 @@ export function createRadarChart<T extends SubtypeExprOrValue<ArrayType<StructTy
         fill: config?.fill !== undefined ? some(config.fill) : none,
         fillOpacity: config?.fillOpacity !== undefined ? some(config.fillOpacity) : none,
         strokeDasharray: config?.strokeDasharray !== undefined ? some(config.strokeDasharray) : none,
+        yAxisId: none, // Radar charts don't use Y-axis, but ChartSeriesType requires this field
     }));
+
+    // Convert style properties
+    const gridExpr = gridStyleToType(style?.grid);
+    const tooltipExpr = tooltipStyleToType(style?.tooltip);
+    const legendExpr = legendStyleToType(style?.legend);
+    const marginExpr = marginStyleToType(style?.margin);
 
     return East.value(variant("RadarChart", {
         data: data_mapped,
         series: series_mapped,
         dataKey: style?.dataKey !== undefined ? variant("some", style.dataKey) : variant("none", null),
-        grid: style?.grid !== undefined ? variant("some", style.grid) : variant("none", null),
-        tooltip: style?.tooltip !== undefined ? variant("some", style.tooltip) : variant("none", null),
-        legend: style?.legend !== undefined ? variant("some", style.legend) : variant("none", null),
-        margin: style?.margin !== undefined ? variant("some", style.margin) : variant("none", null),
+        grid: gridExpr ? variant("some", gridExpr) : variant("none", null),
+        tooltip: tooltipExpr ? variant("some", tooltipExpr) : variant("none", null),
+        legend: legendExpr ? variant("some", legendExpr) : variant("none", null),
+        margin: marginExpr ? variant("some", marginExpr) : variant("none", null),
         fillOpacity: style?.fillOpacity !== undefined ? variant("some", style.fillOpacity) : variant("none", null),
     }), UIComponentType);
 }

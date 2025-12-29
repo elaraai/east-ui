@@ -11,7 +11,11 @@ import type {
     ChartLegendType,
     ChartTooltipType,
     ChartMarginType,
+    ChartBrushType,
     TickFormatType,
+    ReferenceLineType,
+    ReferenceDotType,
+    ReferenceAreaType,
 } from "@elaraai/east-ui/internal";
 import type { UseChartProps, UseChartReturn } from "@chakra-ui/charts";
 import type {
@@ -20,8 +24,15 @@ import type {
     YAxisProps,
     TooltipProps as RechartsTooltipProps,
     LegendProps as RechartsLegendProps,
+    BrushProps as RechartsBrushProps,
+    ReferenceLineProps,
+    ReferenceDotProps,
+    ReferenceAreaProps,
 } from "recharts";
 import { getSomeorUndefined } from "../utils";
+
+/** Recharts label position type */
+type LabelPosition = "top" | "left" | "right" | "bottom" | "inside" | "outside" | "insideLeft" | "insideRight" | "insideTop" | "insideBottom" | "insideTopLeft" | "insideBottomLeft" | "insideTopRight" | "insideBottomRight" | "end" | "center";
 
 // ============================================================================
 // Value Types
@@ -47,6 +58,9 @@ export type ChartMarginValue = ValueTypeOf<ChartMarginType>;
 
 /** East TickFormat value type */
 export type TickFormatValue = ValueTypeOf<TickFormatType>;
+
+/** East ChartBrush value type */
+export type ChartBrushValue = ValueTypeOf<ChartBrushType>;
 
 /** Recharts margin type */
 export interface RechartsMargin {
@@ -119,7 +133,10 @@ export function toRechartsXAxis(
     if (tickLine !== undefined) props.tickLine = tickLine;
 
     const label = getSomeorUndefined(value.label);
-    if (label !== undefined) props.label = label;
+    if (label !== undefined) {
+        // Use object form for label to add offset for proper spacing from axis line
+        props.label = { value: label, position: "insideBottom", offset: -5 };
+    }
 
     const tickMargin = getSomeorUndefined(value.tickMargin);
     if (tickMargin !== undefined) props.tickMargin = Number(tickMargin);
@@ -161,15 +178,20 @@ export function toRechartsYAxis(
     const tickLine = getSomeorUndefined(value.tickLine);
     if (tickLine !== undefined) props.tickLine = tickLine;
 
-    const label = getSomeorUndefined(value.label);
-    if (label !== undefined) props.label = label;
-
     const tickMargin = getSomeorUndefined(value.tickMargin);
     if (tickMargin !== undefined) props.tickMargin = Number(tickMargin);
 
     const orientation = getSomeorUndefined(value.orientation)?.type;
     if (orientation === "left" || orientation === "right") {
         props.orientation = orientation;
+    }
+
+    const label = getSomeorUndefined(value.label);
+    if (label !== undefined) {
+        // Use object form for label to add offset and rotation for proper spacing from axis line
+        // Position depends on axis orientation: insideLeft for left axis, insideRight for right axis
+        const position = orientation === "right" ? "insideRight" : "insideLeft";
+        props.label = { value: label, position, angle: -90, textAnchor: 'middle',  };
     }
 
     const axisId = getSomeorUndefined(value.axisId);
@@ -339,6 +361,77 @@ export function toRechartsMargin(value: ChartMarginValue): RechartsMargin {
     if (left !== undefined) margin.left = Number(left);
 
     return margin;
+}
+
+/**
+ * Default chart margin.
+ */
+export const DEFAULT_CHART_MARGIN: RechartsMargin = { top: 20, right: 30, left: 5, bottom: 5 };
+
+/**
+ * Calculates the chart margin, adding extra bottom margin when both xAxis label and brush are present.
+ *
+ * @param marginValue - The user-specified margin value (optional)
+ * @param hasXAxisLabel - Whether the xAxis has a label
+ * @param hasBrush - Whether the chart has a brush
+ * @returns The calculated margin
+ */
+export function calculateChartMargin(
+    marginValue: ChartMarginValue | undefined,
+    hasXAxisLabel: boolean,
+    hasBrush: boolean
+): RechartsMargin {
+    const baseMargin = marginValue ? toRechartsMargin(marginValue) : { ...DEFAULT_CHART_MARGIN };
+
+    // Add extra bottom margin when both xAxis label and brush are present
+    // xAxis label needs ~20px, brush height is typically 40px
+    if (hasXAxisLabel && hasBrush) {
+        baseMargin.bottom = (baseMargin.bottom ?? 5) + 20;
+    }
+
+    return baseMargin;
+}
+
+// ============================================================================
+// Brush Conversion
+// ============================================================================
+
+/**
+ * Converts an East ChartBrush value to Brush component props.
+ * Pure function - easy to test independently.
+ *
+ * @param value - The East ChartBrush value
+ * @param fallbackDataKey - Fallback dataKey if not specified (typically xAxis dataKey)
+ * @returns Partial RechartsBrushProps
+ */
+export function toRechartsBrush(
+    value: ChartBrushValue,
+    fallbackDataKey?: string
+): Partial<RechartsBrushProps> {
+    const props: Partial<RechartsBrushProps> = {};
+
+    const dataKey = getSomeorUndefined(value.dataKey) ?? fallbackDataKey;
+    if (dataKey !== undefined) props.dataKey = dataKey;
+
+    const height = getSomeorUndefined(value.height);
+    props.height = height !== undefined ? Number(height) : 40;
+
+    const travellerWidth = getSomeorUndefined(value.travellerWidth);
+    if (travellerWidth !== undefined) props.travellerWidth = Number(travellerWidth);
+
+    const startIndex = getSomeorUndefined(value.startIndex);
+    if (startIndex !== undefined) props.startIndex = Number(startIndex);
+
+    const endIndex = getSomeorUndefined(value.endIndex);
+    if (endIndex !== undefined) props.endIndex = Number(endIndex);
+
+    const stroke = getSomeorUndefined(value.stroke);
+    if (stroke !== undefined) props.stroke = stroke;
+
+    const fill = getSomeorUndefined(value.fill);
+    if (fill !== undefined) props.fill = fill;
+
+    return props;
 }
 
 // ============================================================================
@@ -538,4 +631,249 @@ export function convertMultiSeriesData(
     });
 
     return result;
+}
+
+/**
+ * Range series configuration for area range charts.
+ */
+export interface RangeSeriesConfig {
+    name: string;
+    lowKey: string;
+    highKey: string;
+}
+
+/**
+ * Converts an array of East Dict data points to range chart format.
+ * For each series, creates a combined field with [low, high] array values.
+ *
+ * @param data - Array of East Dict data points
+ * @param series - Array of range series configurations
+ * @returns Array of plain JavaScript objects with range values
+ */
+export function convertRangeChartData(
+    data: Map<string, ValueTypeOf<typeof LiteralValueType>>[],
+    series: RangeSeriesConfig[]
+): Record<string, unknown>[] {
+    return data.map(row => {
+        const converted = convertDataPoint(row);
+        // Create combined range fields for each series
+        for (const s of series) {
+            const low = converted[s.lowKey];
+            const high = converted[s.highKey];
+            if (low !== undefined && high !== undefined) {
+                converted[s.name] = [low, high];
+            }
+        }
+        return converted;
+    });
+}
+
+/**
+ * Converts multi-series range data to a merged array format for Recharts.
+ *
+ * @param dataSeries - Map of series name to array of data points
+ * @param xAxisKey - The key used for the x-axis (to merge on)
+ * @param lowKey - The key containing the low value in each data point
+ * @param highKey - The key containing the high value in each data point
+ * @returns Array of merged data points with [low, high] range values
+ */
+export function convertMultiSeriesRangeData(
+    dataSeries: Map<string, Map<string, ValueTypeOf<typeof LiteralValueType>>[]>,
+    xAxisKey: string,
+    lowKey: string,
+    highKey: string
+): Record<string, unknown>[] {
+    // Collect all unique x-axis values
+    const xAxisValues = new Set<unknown>();
+    const seriesData = new Map<string, Map<unknown, [unknown, unknown]>>();
+
+    dataSeries.forEach((dataPoints, seriesName) => {
+        const seriesMap = new Map<unknown, [unknown, unknown]>();
+        dataPoints.forEach(point => {
+            const xValue = point.get(xAxisKey);
+            const lowValue = point.get(lowKey);
+            const highValue = point.get(highKey);
+            if (xValue !== undefined) {
+                const xConverted = convertLiteralValue(xValue);
+                xAxisValues.add(xConverted);
+                if (lowValue !== undefined && highValue !== undefined) {
+                    seriesMap.set(xConverted, [
+                        convertLiteralValue(lowValue),
+                        convertLiteralValue(highValue)
+                    ]);
+                }
+            }
+        });
+        seriesData.set(seriesName, seriesMap);
+    });
+
+    // Build merged array
+    const result: Record<string, unknown>[] = [];
+    xAxisValues.forEach(xValue => {
+        const row: Record<string, unknown> = { [xAxisKey]: xValue };
+        seriesData.forEach((seriesMap, seriesName) => {
+            row[seriesName] = seriesMap.get(xValue) ?? null;
+        });
+        result.push(row);
+    });
+
+    return result;
+}
+
+// ============================================================================
+// Reference Annotation Conversion
+// ============================================================================
+
+/** East ReferenceLine value type */
+export type ReferenceLineValue = ValueTypeOf<ReferenceLineType>;
+
+/** East ReferenceDot value type */
+export type ReferenceDotValue = ValueTypeOf<ReferenceDotType>;
+
+/** East ReferenceArea value type */
+export type ReferenceAreaValue = ValueTypeOf<ReferenceAreaType>;
+
+/**
+ * Converts an East ReferenceLine value to Recharts ReferenceLine props.
+ *
+ * @param value - The East ReferenceLine value
+ * @returns Partial ReferenceLineProps
+ */
+export function toRechartsReferenceLine(value: ReferenceLineValue): Partial<ReferenceLineProps> {
+    const props: Partial<ReferenceLineProps> = {};
+
+    const x = getSomeorUndefined(value.x);
+    if (x !== undefined) props.x = convertLiteralValue(x) as string | number;
+
+    const y = getSomeorUndefined(value.y);
+    if (y !== undefined) props.y = convertLiteralValue(y) as string | number;
+
+    const stroke = getSomeorUndefined(value.stroke);
+    if (stroke !== undefined) props.stroke = stroke;
+
+    const strokeWidth = getSomeorUndefined(value.strokeWidth);
+    if (strokeWidth !== undefined) props.strokeWidth = Number(strokeWidth);
+
+    const strokeDasharray = getSomeorUndefined(value.strokeDasharray);
+    if (strokeDasharray !== undefined) props.strokeDasharray = strokeDasharray;
+
+    const label = getSomeorUndefined(value.label);
+    const labelPosition = getSomeorUndefined(value.labelPosition)?.type as LabelPosition | undefined;
+    const labelOffset = getSomeorUndefined(value.labelOffset);
+
+    if (label !== undefined) {
+        if (labelPosition !== undefined || labelOffset !== undefined) {
+            // Use object form for label with position/offset
+            const labelObj: { value: string; position?: LabelPosition; offset?: number } = { value: label };
+            if (labelPosition !== undefined) labelObj.position = labelPosition;
+            if (labelOffset !== undefined) labelObj.offset = Number(labelOffset);
+            props.label = labelObj;
+        } else {
+            props.label = label;
+        }
+    }
+
+    const ifOverflow = getSomeorUndefined(value.ifOverflow);
+    if (ifOverflow !== undefined) props.ifOverflow = ifOverflow.type;
+
+    return props;
+}
+
+/**
+ * Converts an East ReferenceDot value to Recharts ReferenceDot props.
+ *
+ * @param value - The East ReferenceDot value
+ * @returns Partial ReferenceDotProps
+ */
+export function toRechartsReferenceDot(value: ReferenceDotValue): Partial<ReferenceDotProps> {
+    const props: Partial<ReferenceDotProps> = {};
+
+    // x and y are required (not OptionType) for ReferenceDot
+    props.x = convertLiteralValue(value.x) as string | number;
+    props.y = convertLiteralValue(value.y) as string | number;
+
+    const r = getSomeorUndefined(value.r);
+    if (r !== undefined) props.r = Number(r);
+
+    const fill = getSomeorUndefined(value.fill);
+    if (fill !== undefined) props.fill = fill;
+
+    const stroke = getSomeorUndefined(value.stroke);
+    if (stroke !== undefined) props.stroke = stroke;
+
+    const strokeWidth = getSomeorUndefined(value.strokeWidth);
+    if (strokeWidth !== undefined) props.strokeWidth = Number(strokeWidth);
+
+    const label = getSomeorUndefined(value.label);
+    const labelPosition = getSomeorUndefined(value.labelPosition)?.type as LabelPosition | undefined;
+    const labelOffset = getSomeorUndefined(value.labelOffset);
+
+    if (label !== undefined) {
+        if (labelPosition !== undefined || labelOffset !== undefined) {
+            // Use object form for label with position/offset
+            const labelObj: { value: string; position?: LabelPosition; offset?: number } = { value: label };
+            if (labelPosition !== undefined) labelObj.position = labelPosition;
+            if (labelOffset !== undefined) labelObj.offset = Number(labelOffset);
+            props.label = labelObj;
+        } else {
+            props.label = label;
+        }
+    }
+
+    const ifOverflow = getSomeorUndefined(value.ifOverflow);
+    if (ifOverflow !== undefined) props.ifOverflow = ifOverflow.type;
+
+    return props;
+}
+
+/**
+ * Converts an East ReferenceArea value to Recharts ReferenceArea props.
+ *
+ * @param value - The East ReferenceArea value
+ * @returns Partial ReferenceAreaProps
+ */
+export function toRechartsReferenceArea(value: ReferenceAreaValue): Partial<ReferenceAreaProps> {
+    const props: Partial<ReferenceAreaProps> = {};
+
+    const x1 = getSomeorUndefined(value.x1);
+    if (x1 !== undefined) props.x1 = convertLiteralValue(x1) as string | number;
+
+    const x2 = getSomeorUndefined(value.x2);
+    if (x2 !== undefined) props.x2 = convertLiteralValue(x2) as string | number;
+
+    const y1 = getSomeorUndefined(value.y1);
+    if (y1 !== undefined) props.y1 = convertLiteralValue(y1) as string | number;
+
+    const y2 = getSomeorUndefined(value.y2);
+    if (y2 !== undefined) props.y2 = convertLiteralValue(y2) as string | number;
+
+    const fill = getSomeorUndefined(value.fill);
+    if (fill !== undefined) props.fill = fill;
+
+    const fillOpacity = getSomeorUndefined(value.fillOpacity);
+    if (fillOpacity !== undefined) props.fillOpacity = fillOpacity;
+
+    const stroke = getSomeorUndefined(value.stroke);
+    if (stroke !== undefined) props.stroke = stroke;
+
+    const label = getSomeorUndefined(value.label);
+    const labelPosition = getSomeorUndefined(value.labelPosition)?.type as LabelPosition | undefined;
+    const labelOffset = getSomeorUndefined(value.labelOffset);
+
+    if (label !== undefined) {
+        if (labelPosition !== undefined || labelOffset !== undefined) {
+            // Use object form for label with position/offset
+            const labelObj: { value: string; position?: LabelPosition; offset?: number } = { value: label };
+            if (labelPosition !== undefined) labelObj.position = labelPosition;
+            if (labelOffset !== undefined) labelObj.offset = Number(labelOffset);
+            props.label = labelObj;
+        } else {
+            props.label = label;
+        }
+    }
+
+    const ifOverflow = getSomeorUndefined(value.ifOverflow);
+    if (ifOverflow !== undefined) props.ifOverflow = ifOverflow.type;
+
+    return props;
 }

@@ -46,7 +46,12 @@ export {
  * @property selectionLabel - Label for selection (e.g., "items selected")
  * @property style - Optional style configuration
  */
-export const ActionBarType = StructType({
+export const ActionBarType: StructType<{
+    items: ArrayType<ActionBarItemType>,
+    selectionCount: OptionType<IntegerType>,
+    selectionLabel: OptionType<StringType>,
+    style: OptionType<ActionBarStyleType>,
+}> = StructType({
     items: ArrayType(ActionBarItemType),
     selectionCount: OptionType(IntegerType),
     selectionLabel: OptionType(StringType),

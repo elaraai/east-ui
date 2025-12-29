@@ -21,10 +21,21 @@ import {
     ChartTooltipType,
     ChartLegendType,
     ChartMarginType,
+    ChartBrushType,
     CurveType,
     MultiSeriesDataType,
+    ReferenceLineType,
+    ReferenceDotType,
+    ReferenceAreaType,
+    YAxisIdType,
     type CurveLiteral,
+    type YAxisIdLiteral,
     type BaseChartStyle,
+    type ChartBrushStyleBase,
+    type ChartAxisStyle,
+    type ReferenceLineStyle,
+    type ReferenceDotStyle,
+    type ReferenceAreaStyle,
 } from "../types.js";
 
 // ============================================================================
@@ -58,6 +69,7 @@ export const LineChartSeriesType = StructType({
     strokeDasharray: OptionType(StringType),
     showDots: OptionType(BooleanType),
     showLine: OptionType(BooleanType),
+    yAxisId: OptionType(YAxisIdType),
 });
 
 /**
@@ -102,14 +114,19 @@ export const LineChartType = StructType({
     series: ArrayType(LineChartSeriesType),
     xAxis: OptionType(ChartAxisType),
     yAxis: OptionType(ChartAxisType),
+    yAxis2: OptionType(ChartAxisType),
     curveType: OptionType(CurveType),
     grid: OptionType(ChartGridType),
     tooltip: OptionType(ChartTooltipType),
     legend: OptionType(ChartLegendType),
     margin: OptionType(ChartMarginType),
+    brush: OptionType(ChartBrushType),
     showDots: OptionType(BooleanType),
     strokeWidth: OptionType(IntegerType),
     connectNulls: OptionType(BooleanType),
+    referenceLines: OptionType(ArrayType(ReferenceLineType)),
+    referenceDots: OptionType(ArrayType(ReferenceDotType)),
+    referenceAreas: OptionType(ArrayType(ReferenceAreaType)),
 });
 
 /**
@@ -138,9 +155,13 @@ export type LineChartType = typeof LineChartType;
 /**
  * Base style options shared by Line and LineMulti charts.
  */
-export interface LineChartStyleBase extends BaseChartStyle {
-    /** Y-axis configuration */
-    yAxis?: SubtypeExprOrValue<ChartAxisType>;
+export interface LineChartStyleBase<DataKey extends string = string> extends BaseChartStyle {
+    /** X-axis configuration */
+    xAxis?: ChartAxisStyle<DataKey>;
+    /** Y-axis configuration (primary, left side) */
+    yAxis?: ChartAxisStyle<DataKey>;
+    /** Secondary Y-axis configuration (right side) */
+    yAxis2?: ChartAxisStyle<DataKey>;
     /** Line curve interpolation type */
     curveType?: SubtypeExprOrValue<CurveType> | CurveLiteral;
     /** Show dots at data points */
@@ -149,8 +170,22 @@ export interface LineChartStyleBase extends BaseChartStyle {
     strokeWidth?: SubtypeExprOrValue<IntegerType>;
     /** Connect line across null data points */
     connectNulls?: SubtypeExprOrValue<BooleanType>;
-    /** Chart margin configuration */
-    margin?: SubtypeExprOrValue<ChartMarginType>;
+    /** Reference lines (horizontal/vertical lines at specific values) */
+    referenceLines?: ReferenceLineStyle[];
+    /** Reference dots (markers at specific x,y coordinates) */
+    referenceDots?: ReferenceDotStyle[];
+    /** Reference areas (highlighted rectangular regions) */
+    referenceAreas?: ReferenceAreaStyle[];
+}
+
+/**
+ * Brush configuration for Line charts with type-safe dataKey.
+ *
+ * @typeParam DataKey - Union of field keys from the data struct
+ */
+export interface LineChartBrushStyle<DataKey extends string = string> extends ChartBrushStyleBase {
+    /** Data key for brush labels (defaults to xAxis dataKey) */
+    dataKey?: DataKey;
 }
 
 /**
@@ -158,9 +193,9 @@ export interface LineChartStyleBase extends BaseChartStyle {
  *
  * @typeParam DataKey - Union of field keys from the data struct
  */
-export interface LineChartStyle<DataKey extends string = string> extends LineChartStyleBase {
-    /** X-axis configuration with type-safe dataKey */
-    xAxis?: { dataKey: DataKey };
+export interface LineChartStyle<DataKey extends string = string> extends LineChartStyleBase<DataKey> {
+    /** Brush configuration for data range selection */
+    brush?: LineChartBrushStyle<DataKey>;
 }
 
 /**
@@ -174,13 +209,13 @@ export interface LineChartMultiStyle<
     DataKey extends string = string,
     NumericKey extends string = string,
     SeriesKey extends string = string
-> extends LineChartStyleBase {
-    /** X-axis configuration with type-safe dataKey */
-    xAxis?: { dataKey: DataKey };
+> extends LineChartStyleBase<DataKey> {
     /** Field name containing Y values in each series array (must be numeric) */
     valueKey: NumericKey;
     /** Per-series configuration (keyed by series name) */
     series?: { [K in SeriesKey]?: LineChartSeriesConfig };
+    /** Brush configuration for data range selection */
+    brush?: LineChartBrushStyle<DataKey>;
 }
 
 /**
@@ -212,4 +247,6 @@ export interface LineChartSeriesConfig {
     showDots?: SubtypeExprOrValue<BooleanType>;
     /** Whether to show the line (per-series override) */
     showLine?: SubtypeExprOrValue<BooleanType>;
+    /** Y-axis binding (left = primary yAxis, right = secondary yAxis2) */
+    yAxisId?: SubtypeExprOrValue<YAxisIdType> | YAxisIdLiteral;
 }

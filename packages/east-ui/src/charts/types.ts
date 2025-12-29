@@ -31,7 +31,34 @@ import {
     some,
     none,
     East,
+    Expr,
 } from "@elaraai/east";
+
+// ============================================================================
+// Y-Axis ID Type (for dual y-axis charts)
+// ============================================================================
+
+/**
+ * Y-axis identifier for dual y-axis charts.
+ *
+ * @remarks
+ * Used to bind series to either the primary (left) or secondary (right) y-axis.
+ *
+ * @property left - Bind to primary y-axis (yAxis, left side)
+ * @property right - Bind to secondary y-axis (yAxis2, right side)
+ */
+export const YAxisIdType = VariantType({
+    left: NullType,
+    right: NullType,
+});
+
+/**
+ * Type representing y-axis identifier.
+ */
+export type YAxisIdType = typeof YAxisIdType;
+
+/** String literal type for y-axis ID */
+export type YAxisIdLiteral = "left" | "right";
 
 // ============================================================================
 // Chart Series Type
@@ -53,6 +80,7 @@ import {
  * @property fill - Fill color (defaults to color)
  * @property fillOpacity - Fill opacity (0-1)
  * @property strokeDasharray - Dash pattern for dashed lines (e.g., "5 5")
+ * @property yAxisId - Y-axis binding (left = primary yAxis, right = secondary yAxis2)
  */
 export const ChartSeriesType = StructType({
     name: StringType,
@@ -64,6 +92,7 @@ export const ChartSeriesType = StructType({
     fill: OptionType(StringType),
     fillOpacity: OptionType(FloatType),
     strokeDasharray: OptionType(StringType),
+    yAxisId: OptionType(YAxisIdType),
 });
 
 /**
@@ -93,9 +122,16 @@ export interface ChartSeries {
     fillOpacity?: SubtypeExprOrValue<FloatType>;
     /** Dash pattern for dashed lines (e.g., "5 5") */
     strokeDasharray?: SubtypeExprOrValue<StringType>;
+    /** Y-axis binding (left = primary yAxis, right = secondary yAxis2) */
+    yAxisId?: SubtypeExprOrValue<YAxisIdType> | YAxisIdLiteral;
 }
 
 export function ChartSeries(series: ChartSeries): ExprType<ChartSeriesType> {
+    const yAxisIdValue = series.yAxisId !== undefined
+        ? (typeof series.yAxisId === "string"
+            ? some(East.value(variant(series.yAxisId, null), YAxisIdType))
+            : some(series.yAxisId))
+        : none;
     return East.value({
         name: series.name as string,
         color: series.color !== undefined ? some(series.color) : none,
@@ -106,6 +142,7 @@ export function ChartSeries(series: ChartSeries): ExprType<ChartSeriesType> {
         fill: series.fill !== undefined ? some(series.fill) : none,
         fillOpacity: series.fillOpacity !== undefined ? some(series.fillOpacity) : none,
         strokeDasharray: series.strokeDasharray !== undefined ? some(series.strokeDasharray) : none,
+        yAxisId: yAxisIdValue,
     }, ChartSeriesType);
 }
 
@@ -1315,7 +1352,7 @@ export function ChartGrid(grid: ChartGrid): ExprType<ChartGridType> {
         strokeColor: grid.strokeColor ? some(grid.strokeColor) : none,
         strokeDasharray: grid.strokeDasharray ? some(grid.strokeDasharray) : none,
     }, ChartGridType);
-}   
+}
 
 // ============================================================================
 // Chart Legend Type
@@ -1638,6 +1675,119 @@ export function ChartAxis(axis: ChartAxis): ExprType<typeof ChartAxisType> {
 }
 
 // ============================================================================
+// Chart Axis Style (Type-Safe Interface for Chart Factories)
+// ============================================================================
+
+/**
+ * Type-safe axis configuration interface for chart factories.
+ *
+ * @remarks
+ * This interface provides full axis configuration with type-safe dataKey validation.
+ * Used by chart style interfaces (BarChartStyle, LineChartStyle, etc.) to allow
+ * plain object configuration instead of requiring Chart.Axis() helper.
+ *
+ * @typeParam DataKey - Union of valid field names from the data struct
+ *
+ * @property dataKey - Data key for axis values (type-safe to data field names)
+ * @property label - Axis label text
+ * @property tickFormat - Format for tick values
+ * @property domain - Value range [min, max]
+ * @property hide - Hide the axis entirely
+ * @property axisLine - Show/hide axis line
+ * @property tickLine - Show/hide tick lines
+ * @property tickMargin - Margin between tick and label
+ * @property orientation - Axis position (top/bottom for X, left/right for Y)
+ * @property axisId - Identifier for biaxial charts
+ *
+ * @example
+ * ```ts
+ * // Type-safe - only valid field names allowed for dataKey
+ * const style: BarChartStyle<"month" | "sales"> = {
+ *     xAxis: { dataKey: "month", label: "Month" },
+ *     yAxis: { label: "Sales ($)", tickFormat: "currency" },
+ * };
+ * ```
+ */
+export interface ChartAxisStyle<DataKey extends string = string> {
+    /** Data key for axis values (type-safe to data field names) */
+    dataKey?: DataKey;
+    /** Axis label text */
+    label?: SubtypeExprOrValue<StringType>;
+    /** Format for tick values - use string literals or TickFormat helpers */
+    tickFormat?: SubtypeExprOrValue<TickFormatType> | SimpleTickFormatLiteral;
+    /** Value range [min, max] */
+    domain?: SubtypeExprOrValue<ArrayType<FloatType>>;
+    /** Hide the axis entirely */
+    hide?: SubtypeExprOrValue<BooleanType>;
+    /** Show/hide axis line */
+    axisLine?: SubtypeExprOrValue<BooleanType>;
+    /** Show/hide tick lines */
+    tickLine?: SubtypeExprOrValue<BooleanType>;
+    /** Margin between tick and label */
+    tickMargin?: SubtypeExprOrValue<IntegerType>;
+    /** Axis position (top/bottom for X, left/right for Y) */
+    orientation?: SubtypeExprOrValue<AxisOrientationType> | AxisOrientationLiteral;
+    /** Identifier for biaxial charts (e.g., "left", "right") */
+    axisId?: SubtypeExprOrValue<StringType>;
+}
+
+/**
+ * Type-safe grid configuration interface for chart factories.
+ */
+export interface ChartGridStyle {
+    /** Enable/disable entire grid */
+    show?: SubtypeExprOrValue<BooleanType>;
+    /** Show vertical grid lines */
+    vertical?: SubtypeExprOrValue<BooleanType>;
+    /** Show horizontal grid lines */
+    horizontal?: SubtypeExprOrValue<BooleanType>;
+    /** Grid line color (Chakra color token, e.g., "border.muted") */
+    strokeColor?: SubtypeExprOrValue<StringType>;
+    /** Dash pattern (e.g., "3 3" for dashed lines) */
+    strokeDasharray?: SubtypeExprOrValue<StringType>;
+}
+
+/**
+ * Type-safe tooltip configuration interface for chart factories.
+ */
+export interface ChartTooltipStyle {
+    /** Enable/disable tooltip */
+    show?: SubtypeExprOrValue<BooleanType>;
+    /** Cursor style configuration */
+    cursor?: SubtypeExprOrValue<TooltipCursorType>;
+    /** Animation duration in milliseconds */
+    animationDuration?: SubtypeExprOrValue<IntegerType>;
+}
+
+/**
+ * Type-safe legend configuration interface for chart factories.
+ */
+export interface ChartLegendStyle {
+    /** Enable/disable legend */
+    show?: SubtypeExprOrValue<BooleanType>;
+    /** Horizontal or vertical arrangement */
+    layout?: SubtypeExprOrValue<LegendLayoutType> | LegendLayoutLiteral;
+    /** Horizontal alignment */
+    align?: SubtypeExprOrValue<LegendAlignType> | LegendAlignLiteral;
+    /** Vertical alignment */
+    verticalAlign?: SubtypeExprOrValue<LegendVerticalAlignType> | LegendVerticalAlignLiteral;
+}
+
+/**
+ * Type-safe margin configuration interface for chart factories.
+ */
+export interface ChartMarginStyle {
+    /** Top margin in pixels */
+    top?: SubtypeExprOrValue<IntegerType>;
+    /** Right margin in pixels */
+    right?: SubtypeExprOrValue<IntegerType>;
+    /** Bottom margin in pixels */
+    bottom?: SubtypeExprOrValue<IntegerType>;
+    /** Left margin in pixels */
+    left?: SubtypeExprOrValue<IntegerType>;
+}
+
+// ============================================================================
 // Common Chart Style Properties
 // ============================================================================
 
@@ -1688,13 +1838,13 @@ export function ChartMargin(margin: ChartMargin): ExprType<ChartMarginType> {
 
 export interface BaseChartStyle {
     /** Grid configuration */
-    grid?: SubtypeExprOrValue<ChartGridType>;
+    grid?: ChartGridStyle;
     /** Tooltip configuration */
-    tooltip?: SubtypeExprOrValue<ChartTooltipType>;
+    tooltip?: ChartTooltipStyle;
     /** Legend configuration */
-    legend?: SubtypeExprOrValue<ChartLegendType>;
+    legend?: ChartLegendStyle;
     /** Chart margin configuration */
-    margin?: SubtypeExprOrValue<ChartMarginType>;
+    margin?: ChartMarginStyle;
     /**
      * Value key for multi-series data (record form).
      * Specifies which field in each series array contains the Y value.
@@ -1714,6 +1864,88 @@ export const BaseChartStyleType = StructType({
 });
 
 // ============================================================================
+// Chart Brush Type
+// ============================================================================
+
+/**
+ * Brush configuration for chart data range selection.
+ *
+ * @remarks
+ * The Brush component allows users to select a range of data to display.
+ * It renders a small preview chart with draggable handles for range selection.
+ * Maps to Recharts Brush component.
+ *
+ * @property dataKey - Data key for brush labels (defaults to xAxis dataKey)
+ * @property height - Brush height in pixels (default: 40)
+ * @property travellerWidth - Width of slider handles in pixels (default: 5)
+ * @property startIndex - Initial start index of selection
+ * @property endIndex - Initial end index of selection
+ * @property stroke - Stroke color for brush area
+ * @property fill - Fill color for brush area
+ */
+export const ChartBrushType = StructType({
+    dataKey: OptionType(StringType),
+    height: OptionType(IntegerType),
+    travellerWidth: OptionType(IntegerType),
+    startIndex: OptionType(IntegerType),
+    endIndex: OptionType(IntegerType),
+    stroke: OptionType(StringType),
+    fill: OptionType(StringType),
+});
+
+/**
+ * Type representing chart brush configuration.
+ */
+export type ChartBrushType = typeof ChartBrushType;
+
+/**
+ * Base TypeScript interface for chart brush configuration.
+ *
+ * @remarks
+ * This base interface contains all brush options except dataKey.
+ * Chart-specific interfaces extend this to add type-safe dataKey.
+ *
+ * @property height - Brush height in pixels (default: 40)
+ * @property travellerWidth - Width of slider handles in pixels (default: 5)
+ * @property startIndex - Initial start index of selection
+ * @property endIndex - Initial end index of selection
+ * @property stroke - Stroke color for brush area
+ * @property fill - Fill color for brush area
+ */
+export interface ChartBrushStyleBase {
+    /** Brush height in pixels (default: 40) */
+    height?: SubtypeExprOrValue<IntegerType>;
+    /** Width of slider handles in pixels (default: 5) */
+    travellerWidth?: SubtypeExprOrValue<IntegerType>;
+    /** Initial start index of selection */
+    startIndex?: SubtypeExprOrValue<IntegerType>;
+    /** Initial end index of selection */
+    endIndex?: SubtypeExprOrValue<IntegerType>;
+    /** Stroke color for brush area */
+    stroke?: SubtypeExprOrValue<StringType>;
+    /** Fill color for brush area */
+    fill?: SubtypeExprOrValue<StringType>;
+}
+
+/**
+ * Creates a chart brush configuration.
+ *
+ * @param brush - Brush configuration options
+ * @returns An East expression representing the brush configuration
+ */
+export function ChartBrush(brush: ChartBrushStyleBase & { dataKey?: SubtypeExprOrValue<StringType> }): ExprType<ChartBrushType> {
+    return East.value({
+        dataKey: brush.dataKey !== undefined ? some(brush.dataKey) : none,
+        height: brush.height !== undefined ? some(brush.height) : none,
+        travellerWidth: brush.travellerWidth !== undefined ? some(brush.travellerWidth) : none,
+        startIndex: brush.startIndex !== undefined ? some(brush.startIndex) : none,
+        endIndex: brush.endIndex !== undefined ? some(brush.endIndex) : none,
+        stroke: brush.stroke !== undefined ? some(brush.stroke) : none,
+        fill: brush.fill !== undefined ? some(brush.fill) : none,
+    }, ChartBrushType);
+}
+
+// ============================================================================
 // Multi-Series Data Type
 // ============================================================================
 
@@ -1727,7 +1959,475 @@ export const BaseChartStyleType = StructType({
  */
 export const MultiSeriesDataType = DictType(StringType, ArrayType(DictType(StringType, LiteralValueType)));
 
+// ============================================================================
+// Reference Annotation Types
+// ============================================================================
+
+/**
+ * Overflow behavior when reference annotation extends beyond chart bounds.
+ *
+ * @property discard - Don't render if outside bounds
+ * @property hidden - Clip at chart boundary
+ * @property visible - Render completely (may overflow)
+ * @property extendDomain - Extend axis domain to include the reference
+ */
+export const ReferenceOverflowType = VariantType({
+    discard: NullType,
+    hidden: NullType,
+    visible: NullType,
+    extendDomain: NullType,
+});
+
+/**
+ * Type representing reference overflow behavior.
+ */
+export type ReferenceOverflowType = typeof ReferenceOverflowType;
+
+/**
+ * String literal type for reference overflow values.
+ */
+export type ReferenceOverflowLiteral = "discard" | "hidden" | "visible" | "extendDomain";
+
+/**
+ * Label position options for reference annotations.
+ *
+ * @property top - Above the reference point
+ * @property bottom - Below the reference point
+ * @property left - To the left of the reference point
+ * @property right - To the right of the reference point
+ * @property center - Centered on the reference point
+ * @property insideTop - Inside, at the top
+ * @property insideBottom - Inside, at the bottom
+ * @property insideLeft - Inside, at the left
+ * @property insideRight - Inside, at the right
+ */
+export const LabelPositionType = VariantType({
+    top: NullType,
+    bottom: NullType,
+    left: NullType,
+    right: NullType,
+    center: NullType,
+    insideTop: NullType,
+    insideBottom: NullType,
+    insideLeft: NullType,
+    insideRight: NullType,
+    insideTopLeft: NullType,
+    insideTopRight: NullType,
+    insideBottomLeft: NullType,
+    insideBottomRight: NullType,
+});
+
+/**
+ * Type representing label position.
+ */
+export type LabelPositionType = typeof LabelPositionType;
+
+/**
+ * String literal type for label position values.
+ */
+export type LabelPositionLiteral = "top" | "bottom" | "left" | "right" | "center" | "insideTop" | "insideBottom" | "insideLeft" | "insideRight" | "insideTopLeft" | "insideTopRight" | "insideBottomLeft" | "insideBottomRight";
+
+/**
+ * Reference line configuration for charts.
+ *
+ * @remarks
+ * Draws horizontal or vertical lines at specific values to mark
+ * thresholds, targets, or other reference points.
+ * Set `x` for a vertical line, `y` for a horizontal line.
+ *
+ * @property x - X value for vertical line (number or category string)
+ * @property y - Y value for horizontal line (number or category string)
+ * @property stroke - Line color (Chakra color token)
+ * @property strokeWidth - Line width in pixels
+ * @property strokeDasharray - Dash pattern (e.g., "5 5" for dashed)
+ * @property label - Label text for the line
+ * @property ifOverflow - Behavior when line extends beyond bounds
+ */
+export const ReferenceLineType = StructType({
+    x: OptionType(LiteralValueType),
+    y: OptionType(LiteralValueType),
+    stroke: OptionType(StringType),
+    strokeWidth: OptionType(IntegerType),
+    strokeDasharray: OptionType(StringType),
+    label: OptionType(StringType),
+    labelPosition: OptionType(LabelPositionType),
+    labelOffset: OptionType(IntegerType),
+    ifOverflow: OptionType(ReferenceOverflowType),
+});
+
+/**
+ * Type representing reference line configuration.
+ */
+export type ReferenceLineType = typeof ReferenceLineType;
+
+/**
+ * TypeScript interface for reference line style.
+ */
+/** Coordinate value type for reference annotations (accepts East expressions or literals) */
+export type CoordinateValue = SubtypeExprOrValue<FloatType> | SubtypeExprOrValue<IntegerType> | SubtypeExprOrValue<StringType>;
+
+export interface ReferenceLineStyle {
+    /** X value for vertical line (number or category string) */
+    x?: CoordinateValue;
+    /** Y value for horizontal line (number or category string) */
+    y?: CoordinateValue;
+    /** Line color (Chakra color token) */
+    stroke?: SubtypeExprOrValue<StringType>;
+    /** Line width in pixels */
+    strokeWidth?: SubtypeExprOrValue<IntegerType>;
+    /** Dash pattern (e.g., "5 5" for dashed) */
+    strokeDasharray?: SubtypeExprOrValue<StringType>;
+    /** Label text for the line */
+    label?: SubtypeExprOrValue<StringType>;
+    /** Label position relative to the line */
+    labelPosition?: SubtypeExprOrValue<LabelPositionType> | LabelPositionLiteral;
+    /** Label offset from the line in pixels */
+    labelOffset?: SubtypeExprOrValue<IntegerType>;
+    /** Behavior when line extends beyond bounds */
+    ifOverflow?: SubtypeExprOrValue<ReferenceOverflowType> | ReferenceOverflowLiteral;
+}
+
+/**
+ * Reference dot configuration for charts.
+ *
+ * @remarks
+ * Marks a specific point on the chart with a dot.
+ * Both x and y are required to position the dot.
+ *
+ * @property x - X coordinate (number or category string)
+ * @property y - Y coordinate (number or category string)
+ * @property r - Radius of the dot in pixels
+ * @property fill - Fill color (Chakra color token)
+ * @property stroke - Stroke color (Chakra color token)
+ * @property strokeWidth - Stroke width in pixels
+ * @property label - Label text for the dot
+ * @property ifOverflow - Behavior when dot extends beyond bounds
+ */
+export const ReferenceDotType = StructType({
+    x: LiteralValueType,
+    y: LiteralValueType,
+    r: OptionType(IntegerType),
+    fill: OptionType(StringType),
+    stroke: OptionType(StringType),
+    strokeWidth: OptionType(IntegerType),
+    label: OptionType(StringType),
+    labelPosition: OptionType(LabelPositionType),
+    labelOffset: OptionType(IntegerType),
+    ifOverflow: OptionType(ReferenceOverflowType),
+});
+
+/**
+ * Type representing reference dot configuration.
+ */
+export type ReferenceDotType = typeof ReferenceDotType;
+
+/**
+ * TypeScript interface for reference dot style.
+ */
+export interface ReferenceDotStyle {
+    /** X coordinate (required) */
+    x: CoordinateValue;
+    /** Y coordinate (required) */
+    y: CoordinateValue;
+    /** Radius of the dot in pixels */
+    r?: SubtypeExprOrValue<IntegerType>;
+    /** Fill color (Chakra color token) */
+    fill?: SubtypeExprOrValue<StringType>;
+    /** Stroke color (Chakra color token) */
+    stroke?: SubtypeExprOrValue<StringType>;
+    /** Stroke width in pixels */
+    strokeWidth?: SubtypeExprOrValue<IntegerType>;
+    /** Label text for the dot */
+    label?: SubtypeExprOrValue<StringType>;
+    /** Label position relative to the dot */
+    labelPosition?: SubtypeExprOrValue<LabelPositionType> | LabelPositionLiteral;
+    /** Label offset from the dot in pixels */
+    labelOffset?: SubtypeExprOrValue<IntegerType>;
+    /** Behavior when dot extends beyond bounds */
+    ifOverflow?: SubtypeExprOrValue<ReferenceOverflowType> | ReferenceOverflowLiteral;
+}
+
+/**
+ * Reference area configuration for charts.
+ *
+ * @remarks
+ * Highlights a rectangular region on the chart to mark zones,
+ * ranges, or bands. Omitting a bound means it extends to the axis edge.
+ *
+ * @property x1 - Left bound (omit = start of x-axis)
+ * @property x2 - Right bound (omit = end of x-axis)
+ * @property y1 - Bottom bound (omit = start of y-axis)
+ * @property y2 - Top bound (omit = end of y-axis)
+ * @property fill - Fill color (Chakra color token)
+ * @property fillOpacity - Fill opacity (0-1)
+ * @property stroke - Stroke color (Chakra color token)
+ * @property label - Label text for the area
+ * @property ifOverflow - Behavior when area extends beyond bounds
+ */
+export const ReferenceAreaType = StructType({
+    x1: OptionType(LiteralValueType),
+    x2: OptionType(LiteralValueType),
+    y1: OptionType(LiteralValueType),
+    y2: OptionType(LiteralValueType),
+    fill: OptionType(StringType),
+    fillOpacity: OptionType(FloatType),
+    stroke: OptionType(StringType),
+    label: OptionType(StringType),
+    labelPosition: OptionType(LabelPositionType),
+    labelOffset: OptionType(IntegerType),
+    ifOverflow: OptionType(ReferenceOverflowType),
+});
+
+/**
+ * Type representing reference area configuration.
+ */
+export type ReferenceAreaType = typeof ReferenceAreaType;
+
+/**
+ * TypeScript interface for reference area style.
+ */
+export interface ReferenceAreaStyle {
+    /** Left bound (omit = start of x-axis) */
+    x1?: CoordinateValue;
+    /** Right bound (omit = end of x-axis) */
+    x2?: CoordinateValue;
+    /** Bottom bound (omit = start of y-axis) */
+    y1?: CoordinateValue;
+    /** Top bound (omit = end of y-axis) */
+    y2?: CoordinateValue;
+    /** Fill color (Chakra color token) */
+    fill?: SubtypeExprOrValue<StringType>;
+    /** Fill opacity (0-1) */
+    fillOpacity?: SubtypeExprOrValue<FloatType>;
+    /** Stroke color (Chakra color token) */
+    stroke?: SubtypeExprOrValue<StringType>;
+    /** Label text for the area */
+    label?: SubtypeExprOrValue<StringType>;
+    /** Label position within the area */
+    labelPosition?: SubtypeExprOrValue<LabelPositionType> | LabelPositionLiteral;
+    /** Label offset in pixels */
+    labelOffset?: SubtypeExprOrValue<IntegerType>;
+    /** Behavior when area extends beyond bounds */
+    ifOverflow?: SubtypeExprOrValue<ReferenceOverflowType> | ReferenceOverflowLiteral;
+}
+
 /**
  * Type representing multi-series data.
  */
 export type MultiSeriesDataType = typeof MultiSeriesDataType;
+
+// ============================================================================
+// Style to Type Conversion Helpers
+// ============================================================================
+
+/**
+ * Converts a ChartAxisStyle plain object to a ChartAxisType expression.
+ *
+ * @param axis - The axis style configuration
+ * @returns An expression representing the axis configuration, or undefined if axis is undefined
+ *
+ * @internal
+ */
+export function axisStyleToType(axis: ChartAxisStyle | undefined): ExprType<ChartAxisType> | undefined {
+    if (axis === undefined) return undefined;
+
+    return East.value({
+        dataKey: axis.dataKey !== undefined ? some(axis.dataKey) : none,
+        label: axis.label !== undefined ? some(axis.label) : none,
+        tickFormat: axis.tickFormat
+            ? (typeof axis.tickFormat === "string"
+                ? some(simpleTickFormatToExpr(axis.tickFormat))
+                : some(axis.tickFormat))
+            : none,
+        domain: axis.domain !== undefined ? some(axis.domain) : none,
+        hide: axis.hide !== undefined ? some(axis.hide) : none,
+        axisLine: axis.axisLine !== undefined ? some(axis.axisLine) : none,
+        tickLine: axis.tickLine !== undefined ? some(axis.tickLine) : none,
+        tickMargin: axis.tickMargin !== undefined ? some(axis.tickMargin) : none,
+        strokeColor: none, // strokeColor not in ChartAxisStyle, only in ChartAxis
+        orientation: axis.orientation
+            ? some(typeof axis.orientation === "string" ? variant(axis.orientation, null) : axis.orientation)
+            : none,
+        axisId: axis.axisId !== undefined ? some(axis.axisId) : none,
+    }, ChartAxisType);
+}
+
+/**
+ * Converts a ChartGridStyle plain object to a ChartGridType expression.
+ *
+ * @param grid - The grid style configuration
+ * @returns An expression representing the grid configuration, or undefined if grid is undefined
+ *
+ * @internal
+ */
+export function gridStyleToType(grid: ChartGridStyle | undefined): ExprType<ChartGridType> | undefined {
+    if (grid === undefined) return undefined;
+
+    return East.value({
+        show: grid.show !== undefined ? some(grid.show) : none,
+        vertical: grid.vertical !== undefined ? some(grid.vertical) : none,
+        horizontal: grid.horizontal !== undefined ? some(grid.horizontal) : none,
+        strokeColor: grid.strokeColor !== undefined ? some(grid.strokeColor) : none,
+        strokeDasharray: grid.strokeDasharray !== undefined ? some(grid.strokeDasharray) : none,
+    }, ChartGridType);
+}
+
+/**
+ * Converts a ChartTooltipStyle plain object to a ChartTooltipType expression.
+ *
+ * @param tooltip - The tooltip style configuration
+ * @returns An expression representing the tooltip configuration, or undefined if tooltip is undefined
+ *
+ * @internal
+ */
+export function tooltipStyleToType(tooltip: ChartTooltipStyle | undefined): ExprType<ChartTooltipType> | undefined {
+    if (tooltip === undefined) return undefined;
+
+    return East.value({
+        show: tooltip.show !== undefined ? some(tooltip.show) : none,
+        cursor: tooltip.cursor !== undefined ? some(tooltip.cursor) : none,
+        animationDuration: tooltip.animationDuration !== undefined ? some(tooltip.animationDuration) : none,
+    }, ChartTooltipType);
+}
+
+/**
+ * Converts a ChartLegendStyle plain object to a ChartLegendType expression.
+ *
+ * @param legend - The legend style configuration
+ * @returns An expression representing the legend configuration, or undefined if legend is undefined
+ *
+ * @internal
+ */
+export function legendStyleToType(legend: ChartLegendStyle | undefined): ExprType<ChartLegendType> | undefined {
+    if (legend === undefined) return undefined;
+
+    return East.value({
+        show: legend.show !== undefined ? some(legend.show) : none,
+        layout: legend.layout
+            ? some(typeof legend.layout === "string" ? variant(legend.layout, null) : legend.layout)
+            : none,
+        align: legend.align
+            ? some(typeof legend.align === "string" ? variant(legend.align, null) : legend.align)
+            : none,
+        verticalAlign: legend.verticalAlign
+            ? some(typeof legend.verticalAlign === "string" ? variant(legend.verticalAlign, null) : legend.verticalAlign)
+            : none,
+    }, ChartLegendType);
+}
+
+/**
+ * Converts a ChartMarginStyle plain object to a ChartMarginType expression.
+ *
+ * @param margin - The margin style configuration
+ * @returns An expression representing the margin configuration, or undefined if margin is undefined
+ *
+ * @internal
+ */
+export function marginStyleToType(margin: ChartMarginStyle | undefined): ExprType<ChartMarginType> | undefined {
+    if (margin === undefined) return undefined;
+
+    return East.value({
+        top: margin.top !== undefined ? some(margin.top) : none,
+        right: margin.right !== undefined ? some(margin.right) : none,
+        bottom: margin.bottom !== undefined ? some(margin.bottom) : none,
+        left: margin.left !== undefined ? some(margin.left) : none,
+    }, ChartMarginType);
+}
+
+
+/**
+ * Converts a ReferenceLineStyle to a ReferenceLineType expression.
+ *
+ * @param line - The reference line style
+ * @returns An expression representing the reference line
+ *
+ * @internal
+ */
+export function referenceLineStyleToType(line: ReferenceLineStyle): ExprType<ReferenceLineType> {
+    const x_expr = line.x ? East.value(line.x) : undefined;
+    const y_expr = line.y ? East.value(line.y) : undefined;
+    const x_type = x_expr ? Expr.type(x_expr as Expr): undefined;
+    const y_type = y_expr ? Expr.type(y_expr as Expr): undefined;
+    return East.value({
+        x: x_expr !== undefined ? variant("some", variant(x_type.type, x_expr)) as any : none,
+        y: y_expr !== undefined ? variant("some", variant(y_type.type, y_expr)) as any : none,
+        stroke: line.stroke !== undefined ? some(line.stroke) : none,
+        strokeWidth: line.strokeWidth !== undefined ? some(line.strokeWidth) : none,
+        strokeDasharray: line.strokeDasharray !== undefined ? some(line.strokeDasharray) : none,
+        label: line.label !== undefined ? some(line.label) : none,
+        labelPosition: line.labelPosition !== undefined
+            ? some(typeof line.labelPosition === "string" ? variant(line.labelPosition, null) : line.labelPosition)
+            : none,
+        labelOffset: line.labelOffset !== undefined ? some(line.labelOffset) : none,
+        ifOverflow: line.ifOverflow !== undefined
+            ? some(typeof line.ifOverflow === "string" ? variant(line.ifOverflow, null) : line.ifOverflow)
+            : none,
+    }, ReferenceLineType);
+}
+
+/**
+ * Converts a ReferenceDotStyle to a ReferenceDotType expression.
+ *
+ * @param dot - The reference dot style
+ * @returns An expression representing the reference dot
+ *
+ * @internal
+ */
+export function referenceDotStyleToType(dot: ReferenceDotStyle): ExprType<ReferenceDotType> {
+    const x_expr = East.value(dot.x);
+    const y_expr = East.value(dot.y);
+    const x_type = Expr.type(x_expr as Expr);
+    const y_type = Expr.type(y_expr as Expr);
+    return East.value({
+        x: East.value(variant(x_type.type, x_expr)),
+        y: East.value(variant(y_type.type, y_expr)),
+        r: dot.r !== undefined ? some(dot.r) : none,
+        fill: dot.fill !== undefined ? some(dot.fill) : none,
+        stroke: dot.stroke !== undefined ? some(dot.stroke) : none,
+        strokeWidth: dot.strokeWidth !== undefined ? some(dot.strokeWidth) : none,
+        label: dot.label !== undefined ? some(dot.label) : none,
+        labelPosition: dot.labelPosition !== undefined
+            ? some(typeof dot.labelPosition === "string" ? variant(dot.labelPosition, null) : dot.labelPosition)
+            : none,
+        labelOffset: dot.labelOffset !== undefined ? some(dot.labelOffset) : none,
+        ifOverflow: dot.ifOverflow !== undefined
+            ? some(typeof dot.ifOverflow === "string" ? variant(dot.ifOverflow, null) : dot.ifOverflow)
+            : none,
+    }, ReferenceDotType);
+}
+
+/**
+ * Converts a ReferenceAreaStyle to a ReferenceAreaType expression.
+ *
+ * @param area - The reference area style
+ * @returns An expression representing the reference area
+ *
+ * @internal
+ */
+export function referenceAreaStyleToType(area: ReferenceAreaStyle): ExprType<ReferenceAreaType> {
+    const x_expr = area.x1 ? East.value(area.x1) : undefined;
+    const x2_expr = area.x2 ? East.value(area.x2) : undefined;
+    const y_expr = area.y1 ? East.value(area.y1) : undefined;
+    const y2_expr = area.y2 ? East.value(area.y2) : undefined;
+    const x_type = x_expr ? Expr.type(x_expr as Expr) : null;
+    const y_type = y_expr ? Expr.type(y_expr as Expr) : null;
+    const x2_type = x2_expr ? Expr.type(x2_expr as Expr) : null;
+    const y2_type = y2_expr ? Expr.type(y2_expr as Expr) : null;
+    return East.value({
+        x1: x_expr !== undefined ? variant("some", variant(x_type.type, x_expr)) as any : none,
+        x2: x2_expr !== undefined ? variant("some", variant(x2_type.type, x2_expr)) as any : none,
+        y1: y_expr !== undefined ? variant("some", variant(y_type.type, y_expr)) as any : none,
+        y2: y2_expr !== undefined ? variant("some", variant(y2_type.type, y2_expr)) as any : none,
+        fill: area.fill !== undefined ? some(area.fill) : none,
+        fillOpacity: area.fillOpacity !== undefined ? some(area.fillOpacity) : none,
+        stroke: area.stroke !== undefined ? some(area.stroke) : none,
+        label: area.label !== undefined ? some(area.label) : none,
+        labelPosition: area.labelPosition !== undefined
+            ? some(typeof area.labelPosition === "string" ? variant(area.labelPosition, null) : area.labelPosition)
+            : none,
+        labelOffset: area.labelOffset !== undefined ? some(area.labelOffset) : none,
+        ifOverflow: area.ifOverflow !== undefined
+            ? some(typeof area.ifOverflow === "string" ? variant(area.ifOverflow, null) : area.ifOverflow)
+            : none,
+    }, ReferenceAreaType);
+}

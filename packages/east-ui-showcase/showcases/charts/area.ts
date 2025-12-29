@@ -28,7 +28,7 @@ export default East.function(
                         },
                         {
                             xAxis: { dataKey: "month" },
-                            grid: Chart.Grid({ show: true }),
+                            grid: { show: true },
                         }
                     ),
                 ], { height: "200px", width: "100%" }),
@@ -47,7 +47,7 @@ export default East.function(
                             },
                             {
                                 xAxis: { dataKey: "month" },
-                                grid: Chart.Grid({ show: true }),
+                                grid: { show: true },
                             }
                         ),
                     ], { height: "200px", width: "100%" })
@@ -75,8 +75,8 @@ export default East.function(
                         },
                         {
                             xAxis: { dataKey: "month" },
-                            legend: Chart.Legend({ show: true }),
-                            tooltip: Chart.Tooltip({ show: true }),
+                            legend: { show: true },
+                            tooltip: { show: true },
                         }
                     ),
                 ], { height: "220px", width: "100%" }),
@@ -96,8 +96,8 @@ export default East.function(
                             },
                             {
                                 xAxis: { dataKey: "month" },
-                                legend: Chart.Legend({ show: true }),
-                                tooltip: Chart.Tooltip({ show: true }),
+                                legend: { show: true },
+                                tooltip: { show: true },
                             }
                         ),
                     ], { height: "220px", width: "100%" })
@@ -125,7 +125,7 @@ export default East.function(
                         {
                             xAxis: { dataKey: "month" },
                             stacked: true,
-                            legend: Chart.Legend({ show: true }),
+                            legend: { show: true },
                         }
                     ),
                 ], { height: "220px", width: "100%" }),
@@ -145,7 +145,7 @@ export default East.function(
                             {
                                 xAxis: { dataKey: "month" },
                                 stacked: true,
-                                legend: Chart.Legend({ show: true }),
+                                legend: { show: true },
                             }
                         ),
                     ], { height: "220px", width: "100%" })
@@ -172,10 +172,10 @@ export default East.function(
                         },
                         {
                             xAxis: { dataKey: "month" },
-                            yAxis: Chart.Axis({ tickFormat: "percent" }),
+                            yAxis: { tickFormat: "percent" },
                             stacked: true,
                             stackOffset: "expand",
-                            legend: Chart.Legend({ show: true }),
+                            legend: { show: true },
                         }
                     ),
                 ], { height: "220px", width: "100%" }),
@@ -194,10 +194,10 @@ export default East.function(
                             },
                             {
                                 xAxis: { dataKey: "month" },
-                                yAxis: Chart.Axis({ tickFormat: "percent" }),
+                                yAxis: { tickFormat: "percent" },
                                 stacked: true,
                                 stackOffset: "expand",
-                                legend: Chart.Legend({ show: true }),
+                                legend: { show: true },
                             }
                         ),
                     ], { height: "220px", width: "100%" })
@@ -226,7 +226,7 @@ export default East.function(
                             xAxis: { dataKey: "month" },
                             curveType: "natural",
                             fillOpacity: 0.3,
-                            grid: Chart.Grid({ show: true }),
+                            grid: { show: true },
                         }
                     ),
                 ], { height: "200px", width: "100%" }),
@@ -247,7 +247,7 @@ export default East.function(
                                 xAxis: { dataKey: "month" },
                                 curveType: "natural",
                                 fillOpacity: 0.3,
-                                grid: Chart.Grid({ show: true }),
+                                grid: { show: true },
                             }
                         ),
                     ], { height: "200px", width: "100%" })
@@ -274,8 +274,8 @@ export default East.function(
                         {
                             xAxis: { dataKey: "month" },
                             fillOpacity: 0.2,
-                            grid: Chart.Grid({ show: true }),
-                            tooltip: Chart.Tooltip({ show: true }),
+                            grid: { show: true },
+                            tooltip: { show: true },
                         }
                     ),
                 ], { height: "200px", width: "100%" }),
@@ -294,11 +294,57 @@ export default East.function(
                             {
                                 xAxis: { dataKey: "month" },
                                 fillOpacity: 0.2,
-                                grid: Chart.Grid({ show: true }),
-                                tooltip: Chart.Tooltip({ show: true }),
+                                grid: { show: true },
+                                tooltip: { show: true },
                             }
                         ),
                     ], { height: "200px", width: "100%" })
+                `)
+            )
+        );
+
+        // With brush for data zooming
+        const withBrush = $.let(
+            ShowcaseCard(
+                "With Brush",
+                "Drag to zoom/pan across data range",
+                Box.Root([
+                    Chart.Area(
+                        [
+                            { month: "Jan", sales: 186 },
+                            { month: "Feb", sales: 305 },
+                            { month: "Mar", sales: 237 },
+                            { month: "Apr", sales: 273 },
+                            { month: "May", sales: 209 },
+                            { month: "Jun", sales: 314 },
+                            { month: "Jul", sales: 256 },
+                            { month: "Aug", sales: 289 },
+                            { month: "Sep", sales: 321 },
+                            { month: "Oct", sales: 278 },
+                            { month: "Nov", sales: 342 },
+                            { month: "Dec", sales: 398 },
+                        ],
+                        { sales: { color: "teal.solid" } },
+                        {
+                            xAxis: { dataKey: "month" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            brush: { dataKey: "month", height: 30n },
+                        }
+                    ),
+                ], { height: "280px", width: "100%" }),
+                some(`
+                    Box.Root([
+                        Chart.Area(
+                            [...data],
+                            { sales: { color: "teal.solid" } },
+                            {
+                                xAxis: { dataKey: "month" },
+                                grid: { show: true },
+                                brush: { dataKey: "month", height: 30n },
+                            }
+                        ),
+                    ], { height: "280px", width: "100%" })
                 `)
             )
         );
@@ -332,9 +378,9 @@ export default East.function(
                                 mac: { color: "purple.solid" },
                             },
                             connectNulls: true,
-                            tooltip: Chart.Tooltip({ show: true }),
-                            legend: Chart.Legend({ show: true }),
-                            grid: Chart.Grid({ show: true }),
+                            tooltip: { show: true },
+                            legend: { show: true },
+                            grid: { show: true },
                         }
                     ),
                 ], { height: "220px", width: "100%" }),
@@ -363,12 +409,291 @@ export default East.function(
                                     mac: { color: "purple.solid" },
                                 },
                                 connectNulls: true,
-                                tooltip: Chart.Tooltip({ show: true }),
-                                legend: Chart.Legend({ show: true }),
-                                grid: Chart.Grid({ show: true }),
+                                tooltip: { show: true },
+                                legend: { show: true },
+                                grid: { show: true },
                             }
                         ),
                     ], { height: "220px", width: "100%" })
+                `)
+            )
+        );
+
+        // With brush and axis labels
+        const withBrushAndLabels = $.let(
+            ShowcaseCard(
+                "Brush with Axis Labels",
+                "Zoomable area chart with labeled axes",
+                Box.Root([
+                    Chart.Area(
+                        [
+                            { month: "Jan", revenue: 186 },
+                            { month: "Feb", revenue: 305 },
+                            { month: "Mar", revenue: 237 },
+                            { month: "Apr", revenue: 273 },
+                            { month: "May", revenue: 209 },
+                            { month: "Jun", revenue: 314 },
+                            { month: "Jul", revenue: 256 },
+                            { month: "Aug", revenue: 289 },
+                            { month: "Sep", revenue: 321 },
+                            { month: "Oct", revenue: 278 },
+                            { month: "Nov", revenue: 342 },
+                            { month: "Dec", revenue: 398 },
+                        ],
+                        { revenue: { color: "teal.solid" } },
+                        {
+                            xAxis: { dataKey: "month" },
+                            yAxis: { label: "Revenue ($K)" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            brush: { dataKey: "month", height: 30n },
+                        }
+                    ),
+                ], { height: "300px", width: "100%" }),
+                some(`
+                    Chart.Area(
+                        [...data],
+                        { revenue: { color: "teal.solid" } },
+                        {
+                            xAxis: { dataKey: "month" },
+                            yAxis: { label: "Revenue ($K)" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            brush: { dataKey: "month", height: 30n },
+                        }
+                    )
+                `)
+            )
+        );
+
+        // Reference line (threshold)
+        const withReferenceLine = $.let(
+            ShowcaseCard(
+                "Reference Line",
+                "Horizontal threshold line at y=250",
+                Box.Root([
+                    Chart.Area(
+                        [
+                            { month: "Jan", revenue: 186 },
+                            { month: "Feb", revenue: 305 },
+                            { month: "Mar", revenue: 237 },
+                            { month: "Apr", revenue: 273 },
+                            { month: "May", revenue: 209 },
+                        ],
+                        { revenue: { color: "teal.solid" } },
+                        {
+                            xAxis: { dataKey: "month" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            referenceLines: [
+                                { y: 250, stroke: "red", strokeDasharray: "5 5", label: "Threshold", labelPosition: "insideBottomRight" }
+                            ],
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Chart.Area(
+                        [...data],
+                        { revenue: { color: "teal.solid" } },
+                        {
+                            xAxis: { dataKey: "month" },
+                            grid: { show: true },
+                            referenceLines: [
+                                { y: 250, stroke: "red", strokeDasharray: "5 5", label: "Threshold", labelPosition: "insideBottomRight" }
+                            ],
+                        }
+                    )
+                `)
+            )
+        );
+
+        // Reference area (acceptable range)
+        const withReferenceArea = $.let(
+            ShowcaseCard(
+                "Reference Area",
+                "Highlight acceptable range between y=200 and y=280",
+                Box.Root([
+                    Chart.Area(
+                        [
+                            { month: "Jan", revenue: 186 },
+                            { month: "Feb", revenue: 305 },
+                            { month: "Mar", revenue: 237 },
+                            { month: "Apr", revenue: 273 },
+                            { month: "May", revenue: 209 },
+                        ],
+                        { revenue: { color: "teal.solid" } },
+                        {
+                            xAxis: { dataKey: "month" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            referenceAreas: [
+                                { y1: 200, y2: 280, fill: "blue", fillOpacity: 0.1, label: "Target Range", labelPosition: "insideTopRight" }
+                            ],
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Chart.Area(
+                        [...data],
+                        { revenue: { color: "teal.solid" } },
+                        {
+                            xAxis: { dataKey: "month" },
+                            grid: { show: true },
+                            referenceAreas: [
+                                { y1: 200, y2: 280, fill: "blue", fillOpacity: 0.1, label: "Target Range", labelPosition: "insideTopRight" }
+                            ],
+                        }
+                    )
+                `)
+            )
+        );
+
+        // Dual Y-Axis (secondary axis on right)
+        const dualYAxis = $.let(
+            ShowcaseCard(
+                "Dual Y-Axis",
+                "Revenue (left axis) vs Conversion Rate % (right axis)",
+                Box.Root([
+                    Chart.Area(
+                        [
+                            { month: "Jan", revenue: 186, conversionRate: 2.5 },
+                            { month: "Feb", revenue: 305, conversionRate: 3.2 },
+                            { month: "Mar", revenue: 237, conversionRate: 2.8 },
+                            { month: "Apr", revenue: 273, conversionRate: 3.5 },
+                            { month: "May", revenue: 350, conversionRate: 4.1 },
+                        ],
+                        {
+                            revenue: { color: "teal.solid", yAxisId: "left" },
+                            conversionRate: { color: "purple.solid", yAxisId: "right" },
+                        },
+                        {
+                            xAxis: { dataKey: "month" },
+                            yAxis: { label: "Revenue ($)" },
+                            yAxis2: { label: "Conversion (%)" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                            fillOpacity: 0.3,
+                        }
+                    ),
+                ], { height: "250px", width: "100%" }),
+                some(`
+                    Chart.Area(
+                        [
+                            { month: "Jan", revenue: 186, conversionRate: 2.5 },
+                            { month: "Feb", revenue: 305, conversionRate: 3.2 },
+                            // ...
+                        ],
+                        {
+                            revenue: { color: "teal.solid", yAxisId: "left" },
+                            conversionRate: { color: "purple.solid", yAxisId: "right" },
+                        },
+                        {
+                            xAxis: { dataKey: "month" },
+                            yAxis: { label: "Revenue ($)" },
+                            yAxis2: { label: "Conversion (%)" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    )
+                `)
+            )
+        );
+
+        // Area Range Chart - shows bands between low/high values
+        const areaRange = $.let(
+            ShowcaseCard(
+                "Area Range Chart",
+                "Temperature range showing low/high values as a band",
+                Box.Root([
+                    Chart.AreaRange(
+                        [
+                            { day: "Mon", low: 5, high: 15 },
+                            { day: "Tue", low: 3, high: 12 },
+                            { day: "Wed", low: 7, high: 18 },
+                            { day: "Thu", low: 8, high: 20 },
+                            { day: "Fri", low: 6, high: 16 },
+                        ],
+                        {
+                            temperature: { lowKey: "low", highKey: "high", color: "teal.solid" },
+                        },
+                        {
+                            xAxis: { dataKey: "day" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            fillOpacity: 0.4,
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Chart.AreaRange(
+                        [
+                            { day: "Mon", low: 5, high: 15 },
+                            { day: "Tue", low: 3, high: 12 },
+                            { day: "Wed", low: 7, high: 18 },
+                            { day: "Thu", low: 8, high: 20 },
+                            { day: "Fri", low: 6, high: 16 },
+                        ],
+                        {
+                            temperature: { lowKey: "low", highKey: "high", color: "teal.solid" },
+                        },
+                        {
+                            xAxis: { dataKey: "day" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            fillOpacity: 0.4,
+                        }
+                    )
+                `)
+            )
+        );
+
+        // Area Range with multiple series
+        const areaRangeMulti = $.let(
+            ShowcaseCard(
+                "Multi-Series Range",
+                "Temperature and humidity ranges overlaid",
+                Box.Root([
+                    Chart.AreaRange(
+                        [
+                            { day: "Mon", tempLow: 5, tempHigh: 15, humidLow: 40, humidHigh: 60 },
+                            { day: "Tue", tempLow: 3, tempHigh: 12, humidLow: 45, humidHigh: 65 },
+                            { day: "Wed", tempLow: 7, tempHigh: 18, humidLow: 35, humidHigh: 55 },
+                            { day: "Thu", tempLow: 8, tempHigh: 20, humidLow: 30, humidHigh: 50 },
+                            { day: "Fri", tempLow: 6, tempHigh: 16, humidLow: 38, humidHigh: 58 },
+                        ],
+                        {
+                            temperature: { lowKey: "tempLow", highKey: "tempHigh", color: "teal.solid", label: "Temperature" },
+                            humidity: { lowKey: "humidLow", highKey: "humidHigh", color: "blue.solid", label: "Humidity" },
+                        },
+                        {
+                            xAxis: { dataKey: "day" },
+                            legend: { show: true },
+                            tooltip: { show: true },
+                            curveType: "natural",
+                            fillOpacity: 0.3,
+                        }
+                    ),
+                ], { height: "240px", width: "100%" }),
+                some(`
+                    Chart.AreaRange(
+                        [
+                            { day: "Mon", tempLow: 5, tempHigh: 15, humidLow: 40, humidHigh: 60 },
+                            { day: "Tue", tempLow: 3, tempHigh: 12, humidLow: 45, humidHigh: 65 },
+                            ...
+                        ],
+                        {
+                            temperature: { lowKey: "tempLow", highKey: "tempHigh", color: "teal.solid" },
+                            humidity: { lowKey: "humidLow", highKey: "humidHigh", color: "blue.solid" },
+                        },
+                        {
+                            xAxis: { dataKey: "day" },
+                            legend: { show: true },
+                            curveType: "natural",
+                            fillOpacity: 0.3,
+                        }
+                    )
                 `)
             )
         );
@@ -381,7 +706,14 @@ export default East.function(
                 Grid.Item(percentStacked),
                 Grid.Item(curved),
                 Grid.Item(opacity),
+                Grid.Item(withBrush),
                 Grid.Item(sparseMultiSeries),
+                Grid.Item(withBrushAndLabels),
+                Grid.Item(withReferenceLine),
+                Grid.Item(withReferenceArea),
+                Grid.Item(dualYAxis),
+                Grid.Item(areaRange),
+                Grid.Item(areaRangeMulti),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

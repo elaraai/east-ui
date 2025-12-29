@@ -88,7 +88,7 @@ describeEast("Chart.Bar", (test) => {
             },
             {
                 stackOffset: "expand",
-                yAxis: Chart.Axis({ tickFormat: "percent" })
+                yAxis: { tickFormat: "percent" }
             }
         ));
 
@@ -112,7 +112,7 @@ describeEast("Chart.Bar", (test) => {
             },
             {
                 layout: "vertical",
-                yAxis: Chart.Axis({ dataKey: "month" })
+                yAxis: { dataKey: "month" }
             }
         ));
 
@@ -182,7 +182,7 @@ describeEast("Chart.Bar", (test) => {
                 { type: "Stock", allocation: 60n },
             ],
             { allocation: { color: "teal.solid" } },
-            { yAxis: Chart.Axis({ tickFormat: "percent", domain: [0, 100] }) }
+            { yAxis: { tickFormat: "percent", domain: [0, 100] } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("BarChart").yAxis.unwrap("some").tickFormat.unwrap("some").hasTag("percent"), true));
@@ -197,7 +197,7 @@ describeEast("Chart.Bar", (test) => {
             { sales: { color: "teal.solid" } },
             {
                 xAxis: { dataKey: "month" },
-                yAxis: Chart.Axis({ tickFormat: Chart.TickFormat.Currency({ currency: "USD" }) })
+                yAxis: { tickFormat: Chart.TickFormat.Currency({ currency: "USD" }) }
             }
         ));
 
@@ -210,7 +210,7 @@ describeEast("Chart.Bar", (test) => {
                 { month: "June", sales: 63000n },
             ],
             { sales: { color: "teal.solid" } },
-            { yAxis: Chart.Axis({ tickFormat: "compact" }) }
+            { yAxis: { tickFormat: "compact" } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("BarChart").yAxis.unwrap("some").tickFormat.unwrap("some").hasTag("compact"), true));
@@ -226,7 +226,7 @@ describeEast("Chart.Bar", (test) => {
                 { type: "Stock", allocation: 60n },
             ],
             { allocation: { color: "teal.solid" } },
-            { grid: Chart.Grid({ show: true }) }
+            { grid: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("BarChart").grid.unwrap("some").show.unwrap("some"), true));
@@ -238,7 +238,7 @@ describeEast("Chart.Bar", (test) => {
                 { type: "Stock", allocation: 60n },
             ],
             { allocation: { color: "teal.solid" } },
-            { legend: Chart.Legend({ show: true }) }
+            { legend: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("BarChart").legend.unwrap("some").show.unwrap("some"), true));
@@ -250,7 +250,7 @@ describeEast("Chart.Bar", (test) => {
                 { type: "Stock", allocation: 60n },
             ],
             { allocation: { color: "teal.solid" } },
-            { tooltip: Chart.Tooltip({ show: true }) }
+            { tooltip: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("BarChart").tooltip.unwrap("some").show.unwrap("some"), true));
@@ -266,11 +266,42 @@ describeEast("Chart.Bar", (test) => {
                 { type: "Stock", allocation: 60n },
             ],
             { allocation: { color: "teal.solid" } },
-            { margin: Chart.Margin({ top: 20n, right: 30n, bottom: 20n, left: 30n }) }
+            { margin: { top: 20n, right: 30n, bottom: 20n, left: 30n } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("BarChart").margin.unwrap("some").top.unwrap("some"), 20n));
         $(assertEast.equal(chart.unwrap().unwrap("BarChart").margin.unwrap("some").left.unwrap("some"), 30n));
+    });
+
+    // =========================================================================
+    // Brush
+    // =========================================================================
+
+    test("creates bar chart with brush enabled", $ => {
+        const chart = $.let(Chart.Bar(
+            [
+                { type: "Stock", allocation: 60n },
+                { type: "Crypto", allocation: 45n },
+            ],
+            { allocation: { color: "teal.solid" } },
+            { xAxis: { dataKey: "type" }, brush: {} }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("BarChart").brush.hasTag("some"), true));
+    });
+
+    test("creates bar chart with brush configuration", $ => {
+        const chart = $.let(Chart.Bar(
+            [
+                { type: "Stock", allocation: 60n },
+            ],
+            { allocation: { color: "teal.solid" } },
+            { brush: { dataKey: "type", height: 30n, travellerWidth: 8n } }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("BarChart").brush.unwrap("some").dataKey.unwrap("some"), "type"));
+        $(assertEast.equal(chart.unwrap().unwrap("BarChart").brush.unwrap("some").height.unwrap("some"), 30n));
+        $(assertEast.equal(chart.unwrap().unwrap("BarChart").brush.unwrap("some").travellerWidth.unwrap("some"), 8n));
     });
 
     // =========================================================================
@@ -288,8 +319,8 @@ describeEast("Chart.Bar", (test) => {
             { allocation: { color: "teal.solid" } },
             {
                 xAxis: { dataKey: "type" },
-                yAxis: Chart.Axis({ domain: [0, 100] }),
-                grid: Chart.Grid({ show: true })
+                yAxis: { domain: [0, 100] },
+                grid: { show: true }
             }
         ));
 
@@ -311,9 +342,9 @@ describeEast("Chart.Bar", (test) => {
             },
             {
                 xAxis: { dataKey: "month" },
-                grid: Chart.Grid({ show: true }),
-                tooltip: Chart.Tooltip({ show: true }),
-                legend: Chart.Legend({ show: true })
+                grid: { show: true },
+                tooltip: { show: true },
+                legend: { show: true }
             }
         ));
 

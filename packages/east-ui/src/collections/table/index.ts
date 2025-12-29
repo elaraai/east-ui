@@ -71,7 +71,10 @@ export {
  * @property value - The cell value as a LiteralValueType (for sorting/filtering)
  * @property content - UI component content for the cell (for rendering)
  */
-export const TableCellType = StructType({
+export const TableCellType: StructType<{
+    value: LiteralValueType,
+    content: UIComponentType,
+}> = StructType({
     value: LiteralValueType,
     content: UIComponentType,
 });

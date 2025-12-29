@@ -26,7 +26,7 @@ export default East.function(
                         { windows: { color: "teal.solid" } },
                         {
                             dataKey: "month",
-                            grid: Chart.Grid({ show: true }),
+                            grid: { show: true },
                             fillOpacity: 0.5,
                         }
                     ),
@@ -44,7 +44,7 @@ export default East.function(
                             { windows: { color: "teal.solid" } },
                             {
                                 dataKey: "month",
-                                grid: Chart.Grid({ show: true }),
+                                grid: { show: true },
                                 fillOpacity: 0.5,
                             }
                         ),
@@ -73,8 +73,8 @@ export default East.function(
                         },
                         {
                             dataKey: "month",
-                            grid: Chart.Grid({ show: true }),
-                            legend: Chart.Legend({ show: true }),
+                            grid: { show: true },
+                            legend: { show: true },
                             fillOpacity: 0.2,
                         }
                     ),
@@ -95,8 +95,8 @@ export default East.function(
                             },
                             {
                                 dataKey: "month",
-                                grid: Chart.Grid({ show: true }),
-                                legend: Chart.Legend({ show: true }),
+                                grid: { show: true },
+                                legend: { show: true },
                                 fillOpacity: 0.2,
                             }
                         ),
@@ -125,9 +125,9 @@ export default East.function(
                         },
                         {
                             dataKey: "subject",
-                            grid: Chart.Grid({ show: true }),
-                            legend: Chart.Legend({ show: true }),
-                            tooltip: Chart.Tooltip({ show: true }),
+                            grid: { show: true },
+                            legend: { show: true },
+                            tooltip: { show: true },
                             fillOpacity: 0.3,
                         }
                     ),
@@ -148,9 +148,9 @@ export default East.function(
                             },
                             {
                                 dataKey: "subject",
-                                grid: Chart.Grid({ show: true }),
-                                legend: Chart.Legend({ show: true }),
-                                tooltip: Chart.Tooltip({ show: true }),
+                                grid: { show: true },
+                                legend: { show: true },
+                                tooltip: { show: true },
                                 fillOpacity: 0.3,
                             }
                         ),
@@ -176,7 +176,7 @@ export default East.function(
                         { value: { color: "purple.solid" } },
                         {
                             dataKey: "skill",
-                            grid: Chart.Grid({ show: true }),
+                            grid: { show: true },
                             fillOpacity: 0.7,
                         }
                     ),
@@ -194,7 +194,7 @@ export default East.function(
                             { value: { color: "purple.solid" } },
                             {
                                 dataKey: "skill",
-                                grid: Chart.Grid({ show: true }),
+                                grid: { show: true },
                                 fillOpacity: 0.7,
                             }
                         ),

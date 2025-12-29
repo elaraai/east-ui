@@ -60,7 +60,12 @@ export {
  * @property content - Array of child UI components for the tab panel
  * @property disabled - Whether this tab is disabled
  */
-export const TabsItemType = StructType({
+export const TabsItemType: StructType<{
+    value: StringType,
+    trigger: StringType,
+    content: ArrayType<UIComponentType>,
+    disabled: OptionType<BooleanType>,
+}> = StructType({
     value: StringType,
     trigger: StringType,
     content: ArrayType(UIComponentType),

@@ -23,12 +23,23 @@ import {
     ChartTooltipType,
     ChartLegendType,
     ChartMarginType,
+    ChartBrushType,
     BarLayoutType,
     StackOffsetType,
     MultiSeriesDataType,
+    ReferenceLineType,
+    ReferenceDotType,
+    ReferenceAreaType,
+    YAxisIdType,
     type BarLayoutLiteral,
     type StackOffsetLiteral,
+    type YAxisIdLiteral,
     type BaseChartStyle,
+    type ChartBrushStyleBase,
+    type ChartAxisStyle,
+    type ReferenceLineStyle,
+    type ReferenceDotStyle,
+    type ReferenceAreaStyle,
 } from "../types.js";
 
 // ============================================================================
@@ -70,6 +81,7 @@ export const BarChartType = StructType({
     series: ArrayType(ChartSeriesType),
     xAxis: OptionType(ChartAxisType),
     yAxis: OptionType(ChartAxisType),
+    yAxis2: OptionType(ChartAxisType),
     layout: OptionType(BarLayoutType),
     stacked: OptionType(BooleanType),
     stackOffset: OptionType(StackOffsetType),
@@ -77,9 +89,13 @@ export const BarChartType = StructType({
     tooltip: OptionType(ChartTooltipType),
     legend: OptionType(ChartLegendType),
     margin: OptionType(ChartMarginType),
+    brush: OptionType(ChartBrushType),
     barSize: OptionType(IntegerType),
     barGap: OptionType(IntegerType),
     radius: OptionType(IntegerType),
+    referenceLines: OptionType(ArrayType(ReferenceLineType)),
+    referenceDots: OptionType(ArrayType(ReferenceDotType)),
+    referenceAreas: OptionType(ArrayType(ReferenceAreaType)),
 });
 
 /**
@@ -94,9 +110,13 @@ export type BarChartType = typeof BarChartType;
 /**
  * Base style options shared by Bar and BarMulti charts.
  */
-export interface BarChartStyleBase extends BaseChartStyle {
-    /** Y-axis configuration */
-    yAxis?: SubtypeExprOrValue<ChartAxisType>;
+export interface BarChartStyleBase<DataKey extends string = string> extends BaseChartStyle {
+    /** X-axis configuration */
+    xAxis?: ChartAxisStyle<DataKey>;
+    /** Y-axis configuration (primary, left side) */
+    yAxis?: ChartAxisStyle<DataKey>;
+    /** Secondary Y-axis configuration (right side) */
+    yAxis2?: ChartAxisStyle<DataKey>;
     /** Bar direction (horizontal = vertical bars, vertical = horizontal bars) */
     layout?: SubtypeExprOrValue<BarLayoutType> | BarLayoutLiteral;
     /** Enable stacking of series */
@@ -109,8 +129,22 @@ export interface BarChartStyleBase extends BaseChartStyle {
     barGap?: SubtypeExprOrValue<IntegerType>;
     /** Rounded corner radius */
     radius?: SubtypeExprOrValue<IntegerType>;
-    /** Chart margin configuration */
-    margin?: SubtypeExprOrValue<ChartMarginType>;
+    /** Reference lines (horizontal/vertical lines at specific values) */
+    referenceLines?: ReferenceLineStyle[];
+    /** Reference dots (markers at specific x,y coordinates) */
+    referenceDots?: ReferenceDotStyle[];
+    /** Reference areas (highlighted rectangular regions) */
+    referenceAreas?: ReferenceAreaStyle[];
+}
+
+/**
+ * Brush configuration for Bar charts with type-safe dataKey.
+ *
+ * @typeParam DataKey - Union of field keys from the data struct
+ */
+export interface BarChartBrushStyle<DataKey extends string = string> extends ChartBrushStyleBase {
+    /** Data key for brush labels (defaults to xAxis dataKey) */
+    dataKey?: DataKey;
 }
 
 /**
@@ -118,9 +152,9 @@ export interface BarChartStyleBase extends BaseChartStyle {
  *
  * @typeParam DataKey - Union of field keys from the data struct
  */
-export interface BarChartStyle<DataKey extends string = string> extends BarChartStyleBase {
-    /** X-axis configuration with type-safe dataKey */
-    xAxis?: { dataKey: DataKey };
+export interface BarChartStyle<DataKey extends string = string> extends BarChartStyleBase<DataKey> {
+    /** Brush configuration for data range selection */
+    brush?: BarChartBrushStyle<DataKey>;
 }
 
 /**
@@ -134,13 +168,13 @@ export interface BarChartMultiStyle<
     DataKey extends string = string,
     NumericKey extends string = string,
     SeriesKey extends string = string
-> extends BarChartStyleBase {
-    /** X-axis configuration with type-safe dataKey */
-    xAxis?: { dataKey: DataKey };
+> extends BarChartStyleBase<DataKey> {
     /** Field name containing Y values in each series array (must be numeric) */
     valueKey: NumericKey;
     /** Per-series configuration (keyed by series name) */
     series?: { [K in SeriesKey]?: BarChartSeriesConfig };
+    /** Brush configuration for data range selection */
+    brush?: BarChartBrushStyle<DataKey>;
 }
 
 /**
@@ -175,4 +209,6 @@ export interface BarChartSeriesConfig {
     fillOpacity?: SubtypeExprOrValue<FloatType>;
     /** Dash pattern for dashed lines (e.g., "5 5") */
     strokeDasharray?: SubtypeExprOrValue<StringType>;
+    /** Y-axis binding (left = primary yAxis, right = secondary yAxis2) */
+    yAxisId?: SubtypeExprOrValue<YAxisIdType> | YAxisIdLiteral;
 }

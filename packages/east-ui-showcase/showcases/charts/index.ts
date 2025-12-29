@@ -10,3 +10,4 @@ export { default as pieShowcase } from "./pie";
 export { default as radarShowcase } from "./radar";
 export { default as barListShowcase } from "./bar-list";
 export { default as barSegmentShowcase } from "./bar-segment";
+export { default as composedShowcase } from "./composed";

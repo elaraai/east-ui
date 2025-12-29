@@ -54,7 +54,13 @@ export type { DialogSizeLiteral, DialogPlacementLiteral, DialogScrollBehaviorLit
  * @property description - Optional dialog description
  * @property style - Optional style configuration
  */
-export const DialogType = StructType({
+export const DialogType: StructType<{
+    trigger: UIComponentType,
+    body: ArrayType<UIComponentType>,
+    title: OptionType<StringType>,
+    description: OptionType<StringType>,
+    style: OptionType<DialogStyleType>,
+}> = StructType({
     trigger: UIComponentType,
     body: ArrayType(UIComponentType),
     title: OptionType(StringType),
@@ -84,7 +90,12 @@ export type DialogType = typeof DialogType;
  * @property description - Optional dialog description
  * @property style - Optional style configuration
  */
-export const DialogOpenInputType = StructType({
+export const DialogOpenInputType: StructType<{
+    body: ArrayType<UIComponentType>,
+    title: OptionType<StringType>,
+    description: OptionType<StringType>,
+    style: OptionType<DialogStyleType>,
+}> = StructType({
     body: ArrayType(UIComponentType),
     title: OptionType(StringType),
     description: OptionType(StringType),

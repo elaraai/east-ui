@@ -37,7 +37,12 @@ export { CardStyleType, CardVariantType, CardVariant, type CardStyle, type CardV
  * @property footer - Optional footer component (use Stack for multiple elements)
  * @property style - Optional styling configuration wrapped in OptionType
  */
-export const CardType = StructType({
+export const CardType: StructType<{
+    header: OptionType<UIComponentType>,
+    body: ArrayType<UIComponentType>,
+    footer: OptionType<UIComponentType>,
+    style: OptionType<CardStyleType>,
+}> = StructType({
     header: OptionType(UIComponentType),
     body: ArrayType(UIComponentType),
     footer: OptionType(UIComponentType),

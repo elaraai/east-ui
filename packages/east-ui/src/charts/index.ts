@@ -40,6 +40,10 @@ export {
     StackOffsetType,
     BarLayoutType,
     MultiSeriesDataType,
+    ReferenceLineType,
+    ReferenceDotType,
+    ReferenceAreaType,
+    ReferenceOverflowType,
     type ChartSeries,
     type ChartSort,
     type ChartAxis,
@@ -48,11 +52,15 @@ export {
     type StackOffsetLiteral,
     type BarLayoutLiteral,
     type BaseChartStyle,
+    type ReferenceLineStyle,
+    type ReferenceDotStyle,
+    type ReferenceAreaStyle,
+    type ReferenceOverflowLiteral,
 } from "./types.js";
 
 // Area chart
-import { createAreaChart, createAreaChartMulti } from "./area/index.js";
-export { AreaChartType, type AreaChartStyle, type AreaChartMultiStyle, type AreaChartSeriesConfig } from "./area/index.js";
+import { createAreaChart, createAreaChartMulti, createAreaRangeChart, createAreaRangeChartMulti } from "./area/index.js";
+export { AreaChartType, AreaRangeChartType, AreaRangeSeriesType, type AreaChartStyle, type AreaChartMultiStyle, type AreaChartSeriesConfig, type AreaRangeChartStyle, type AreaRangeChartMultiStyle, type AreaRangeSeriesConfig } from "./area/index.js";
 
 // Bar chart
 import { createBarChart, createBarChartMulti } from "./bar/index.js";
@@ -99,9 +107,27 @@ export {
     type SparklineStyle,
 } from "./sparkline/index.js";
 
+// Composed chart
+import { createComposedChart, createComposedChartMulti } from "./composed/index.js";
+export {
+    ComposedChartType,
+    ComposedSeriesType,
+    type ComposedChartStyle,
+    type ComposedChartMultiStyle,
+    type ComposedSeriesConfig,
+    type ComposedChartStyleBase,
+    type ComposedChartBrushStyle,
+    type ComposedLineSeries,
+    type ComposedAreaSeries,
+    type ComposedAreaRangeSeries,
+    type ComposedBarSeries,
+    type ComposedScatterSeries,
+    type ComposedSeriesBase,
+} from "./composed/index.js";
+
 // Import types for the namespace
-import { ChartSeriesType, ChartSortType, ChartSortDirectionType, ChartAxisType, TickFormatType, CurveType, StackOffsetType, BarLayoutType, MultiSeriesDataType, ChartSeries, ChartSort, StackOffset, BarLayout, ChartGrid, ChartLegend, ChartTooltip, ChartAxis, ChartMargin, NumberTickFormat, CurrencyTickFormat, PercentTickFormat, CompactTickFormat, UnitTickFormat, ScientificTickFormat, EngineeringTickFormat, DateTickFormat, TimeTickFormat, DateTimeTickFormat } from "./types.js";
-import { AreaChartType } from "./area/index.js";
+import { ChartSeriesType, ChartSortType, ChartSortDirectionType, ChartAxisType, TickFormatType, CurveType, StackOffsetType, BarLayoutType, MultiSeriesDataType, ReferenceLineType, ReferenceDotType, ReferenceAreaType, ReferenceOverflowType, ChartSeries, ChartSort, StackOffset, BarLayout, NumberTickFormat, CurrencyTickFormat, PercentTickFormat, CompactTickFormat, UnitTickFormat, ScientificTickFormat, EngineeringTickFormat, DateTickFormat, TimeTickFormat, DateTimeTickFormat } from "./types.js";
+import { AreaChartType, AreaRangeChartType, AreaRangeSeriesType } from "./area/index.js";
 import { BarChartType } from "./bar/index.js";
 import { LineChartType } from "./line/index.js";
 import { ScatterChartType } from "./scatter/index.js";
@@ -109,6 +135,7 @@ import { PieChartType, PieSliceType } from "./pie/index.js";
 import { RadarChartType } from "./radar/index.js";
 import { BarListType, BarListItemType } from "./bar-list/index.js";
 import { BarSegmentType, BarSegmentItemType } from "./bar-segment/index.js";
+import { ComposedChartType, ComposedSeriesType } from "./composed/index.js";
 
 // ============================================================================
 // Chart Namespace
@@ -206,6 +233,83 @@ export const Chart = {
      * ```
      */
     AreaMulti: createAreaChartMulti,
+    /**
+     * Creates an Area Range chart for displaying bands between low/high values.
+     *
+     * @param data - Array of data points (each point has x-axis value + low/high values per series)
+     * @param series - Series specification with lowKey/highKey for each series
+     * @param style - Optional styling with type-safe xAxis.dataKey
+     * @returns An East expression representing the area range chart component
+     *
+     * @remarks
+     * Area range charts display filled bands between two values (e.g., min/max, high/low).
+     * Each series requires a lowKey and highKey to define the range bounds.
+     * Use this when all series share the same data points.
+     * For sparse data, use `Chart.AreaRangeMulti`.
+     *
+     * @example Single range series
+     * ```ts
+     * Chart.AreaRange(
+     *     [
+     *         { day: "05-01", low: -1, high: 10 },
+     *         { day: "05-02", low: 2, high: 15 },
+     *     ],
+     *     { temperature: { lowKey: "low", highKey: "high", color: "teal.solid" } },
+     *     { xAxis: { dataKey: "day" } }
+     * );
+     * ```
+     *
+     * @example Multiple range series
+     * ```ts
+     * Chart.AreaRange(
+     *     [
+     *         { day: "05-01", tempLow: -1, tempHigh: 10, humidLow: 30, humidHigh: 50 },
+     *         { day: "05-02", tempLow: 2, tempHigh: 15, humidLow: 35, humidHigh: 55 },
+     *     ],
+     *     {
+     *         temperature: { lowKey: "tempLow", highKey: "tempHigh", color: "teal.solid" },
+     *         humidity: { lowKey: "humidLow", highKey: "humidHigh", color: "blue.solid" },
+     *     },
+     *     { xAxis: { dataKey: "day" }, legend: { show: true } }
+     * );
+     * ```
+     */
+    AreaRange: createAreaRangeChart,
+    /**
+     * Creates an Area Range chart from multiple data arrays (one per series).
+     *
+     * @param data - Record mapping series names to their data arrays
+     * @param style - Styling with type-safe xAxis.dataKey and lowKey/highKey
+     * @returns An East expression representing the area range chart component
+     *
+     * @remarks
+     * Each series has its own data array with low/high values, allowing sparse data
+     * where series don't need to have values at every x-axis point.
+     *
+     * @example
+     * ```ts
+     * Chart.AreaRangeMulti(
+     *     {
+     *         temperature: [
+     *             { day: "05-01", low: -1, high: 10 },
+     *             { day: "05-02", low: 2, high: 15 },
+     *         ],
+     *         humidity: [
+     *             { day: "05-01", low: 30, high: 50 },
+     *             // 05-02 missing - sparse data!
+     *             { day: "05-03", low: 40, high: 60 },
+     *         ],
+     *     },
+     *     {
+     *         xAxis: { dataKey: "day" },
+     *         lowKey: "low",
+     *         highKey: "high",
+     *         series: { temperature: { color: "teal.solid" } },
+     *     }
+     * );
+     * ```
+     */
+    AreaRangeMulti: createAreaRangeChartMulti,
     /**
      * Creates a Bar chart component from a single data array.
      *
@@ -527,6 +631,89 @@ export const Chart = {
      * ```
      */
     BarSegment: createBarSegment,
+    /**
+     * Creates a Composed chart component combining multiple chart types.
+     *
+     * @param data - Array of data points (each point has x-axis value + values for each series)
+     * @param style - Style with per-series configuration, each specifying its chart type
+     * @returns An East expression representing the composed chart component
+     *
+     * @remarks
+     * Composed charts combine Line, Area, Bar, Scatter, and AreaRange in a single visualization.
+     * Each series in the style.series object specifies its type (line, area, bar, scatter, area-range).
+     *
+     * @example Mixed bar and line chart
+     * ```ts
+     * Chart.Composed(
+     *     [
+     *         { month: "Jan", revenue: 186, profit: 80, trend: 150 },
+     *         { month: "Feb", revenue: 305, profit: 120, trend: 200 },
+     *     ],
+     *     {
+     *         xAxis: { dataKey: "month" },
+     *         series: {
+     *             revenue: { type: "bar", color: "teal.solid" },
+     *             profit: { type: "line", color: "purple.solid", showDots: true },
+     *             trend: { type: "area", color: "blue.solid", fillOpacity: 0.3 },
+     *         },
+     *     }
+     * );
+     * ```
+     *
+     * @example With confidence bands (area-range)
+     * ```ts
+     * Chart.Composed(
+     *     [
+     *         { day: "Mon", value: 100, low: 80, high: 120 },
+     *         { day: "Tue", value: 150, low: 130, high: 170 },
+     *     ],
+     *     {
+     *         xAxis: { dataKey: "day" },
+     *         series: {
+     *             value: { type: "line", color: "blue.solid" },
+     *             confidence: { type: "area-range", lowKey: "low", highKey: "high", color: "blue.200", fillOpacity: 0.3 },
+     *         },
+     *     }
+     * );
+     * ```
+     */
+    Composed: createComposedChart,
+    /**
+     * Creates a Composed chart from multiple sparse data arrays (one per series).
+     *
+     * @param data - Record mapping series names to their data arrays
+     * @param style - Style with valueKey and per-series configuration
+     * @returns An East expression representing the composed chart component
+     *
+     * @remarks
+     * Use ComposedMulti when series have different data points (sparse data).
+     * Each series specifies its chart type in style.series.
+     *
+     * @example
+     * ```ts
+     * Chart.ComposedMulti(
+     *     {
+     *         revenue: [
+     *             { month: "Jan", value: 100 },
+     *             { month: "Feb", value: 200 },
+     *         ],
+     *         profit: [
+     *             { month: "Jan", value: 50 },
+     *             { month: "Mar", value: 150 }, // Feb missing - sparse
+     *         ],
+     *     },
+     *     {
+     *         xAxis: { dataKey: "month" },
+     *         valueKey: "value",
+     *         series: {
+     *             revenue: { type: "bar", color: "teal.solid" },
+     *             profit: { type: "line", color: "purple.solid" },
+     *         },
+     *     }
+     * );
+     * ```
+     */
+    ComposedMulti: createComposedChartMulti,
 
     /**
      * Helper function to create chart series configuration.
@@ -549,27 +736,6 @@ export const Chart = {
      */
     Sort: ChartSort,
     /**
-     * Helper function to create chart grid configuration.
-     *
-     * @param config - Grid configuration options
-     * @returns A grid configuration object
-     *
-     * @remarks
-     * Controls the display of grid lines on Cartesian charts.
-     */
-    Grid: ChartGrid,
-    /**
-     * Helper function to create chart margin configuration.
-     *
-     * @param config - Margin configuration options
-     * @returns A margin configuration object
-     *
-     * @remarks
-     * Sets the margin around the chart content area.
-     */
-    Margin: ChartMargin,
-
-    /**
      * Helper function to create stack offset configuration.
      *
      * @param offset - Stack offset type
@@ -589,37 +755,6 @@ export const Chart = {
      * Controls bar orientation (horizontal or vertical).
      */
     BarLayout,
-
-    /**
-     * Helper function to create legend configuration.
-     *
-     * @param config - Legend configuration options
-     * @returns A legend configuration object
-     *
-     * @remarks
-     * Controls the display and positioning of the chart legend.
-     */
-    Legend: ChartLegend,
-    /**
-     * Helper function to create tooltip configuration.
-     *
-     * @param config - Tooltip configuration options
-     * @returns A tooltip configuration object
-     *
-     * @remarks
-     * Controls the display and behavior of chart tooltips.
-     */
-    Tooltip: ChartTooltip,
-    /**
-     * Helper function to create axis configuration.
-     *
-     * @param config - Axis configuration options
-     * @returns An axis configuration object
-     *
-     * @remarks
-     * Configures axis labels, tick formats, and visibility.
-     */
-    Axis: ChartAxis,
 
     /**
      * Tick format helpers for axis labels.
@@ -797,6 +932,45 @@ export const Chart = {
          */
         AreaChart: AreaChartType,
         /**
+         * The concrete East type for Area Range chart data.
+         *
+         * @remarks
+         * Area range charts display bands between low/high values (e.g., min/max, high/low).
+         * Each series has a lowKey and highKey defining the range bounds.
+         *
+         * @property data - Array of data points as Dict<String, LiteralValue>
+         * @property dataSeries - Record of arrays per series (for sparse data)
+         * @property lowKey - Field name for lower bound (multi-series form)
+         * @property highKey - Field name for upper bound (multi-series form)
+         * @property series - Array of range series configuration (ArrayType<AreaRangeSeriesType>)
+         * @property xAxis - X-axis configuration (OptionType<ChartAxisType>)
+         * @property yAxis - Y-axis configuration (OptionType<ChartAxisType>)
+         * @property curveType - Line curve interpolation (OptionType<CurveType>)
+         * @property grid - Grid configuration (OptionType<ChartGridType>)
+         * @property tooltip - Tooltip configuration (OptionType<ChartTooltipType>)
+         * @property legend - Legend configuration (OptionType<ChartLegendType>)
+         * @property margin - Chart margin (OptionType<ChartMarginType>)
+         * @property fillOpacity - Fill opacity 0-1 (OptionType<FloatType>)
+         * @property connectNulls - Connect across nulls (OptionType<BooleanType>)
+         */
+        AreaRangeChart: AreaRangeChartType,
+        /**
+         * The concrete East type for Area Range series configuration.
+         *
+         * @remarks
+         * Defines how a range series is rendered in an area range chart.
+         *
+         * @property name - Series identifier (StringType)
+         * @property lowKey - Field name for lower bound values (StringType)
+         * @property highKey - Field name for upper bound values (StringType)
+         * @property color - Chakra color token (OptionType<StringType>)
+         * @property label - Display label (OptionType<StringType>)
+         * @property fillOpacity - Fill opacity 0-1 (OptionType<FloatType>)
+         * @property stroke - Stroke color (OptionType<StringType>)
+         * @property strokeWidth - Stroke width in pixels (OptionType<IntegerType>)
+         */
+        AreaRangeSeries: AreaRangeSeriesType,
+        /**
          * The concrete East type for Bar chart data.
          *
          * @remarks
@@ -948,6 +1122,106 @@ export const Chart = {
          * @property color - Segment color (OptionType<StringType>)
          */
         BarSegmentItem: BarSegmentItemType,
+        /**
+         * The concrete East type for Composed chart data.
+         *
+         * @remarks
+         * Composed charts combine multiple chart types (Line, Area, Bar, Scatter, AreaRange)
+         * in a single visualization. Each series specifies its chart type via the variant.
+         *
+         * @property data - Array of data points as Dict<String, LiteralValue>
+         * @property dataSeries - Record of arrays per series for sparse data
+         * @property valueKey - Field name for Y values in dataSeries form
+         * @property series - Array of composed series (discriminated variant)
+         * @property xAxis - X-axis configuration
+         * @property yAxis - Y-axis configuration
+         * @property layout - Bar direction for bar series
+         * @property curveType - Curve interpolation for line/area series
+         * @property stackOffset - Stack offset mode
+         * @property grid - Grid configuration
+         * @property tooltip - Tooltip configuration
+         * @property legend - Legend configuration
+         * @property margin - Chart margin
+         * @property brush - Brush configuration
+         * @property barSize - Bar width/height in pixels
+         * @property barGap - Gap between bars
+         * @property showDots - Show dots for line series (global default)
+         * @property connectNulls - Connect line across null data points
+         */
+        ComposedChart: ComposedChartType,
+        /**
+         * The concrete East type for Composed series (discriminated variant).
+         *
+         * @remarks
+         * A discriminated variant where each tag determines the chart type
+         * and its associated configuration.
+         *
+         * @property line - Line series with dots, stroke options
+         * @property area - Area series with fill, stacking options
+         * @property areaRange - Area range series with lowKey/highKey for bands
+         * @property bar - Bar series with fill, stacking, radius options
+         * @property scatter - Scatter series with point size
+         */
+        ComposedSeries: ComposedSeriesType,
+        /**
+         * Reference line configuration type.
+         *
+         * @remarks
+         * Draws horizontal or vertical lines at specific values.
+         *
+         * @property x - X value for vertical line
+         * @property y - Y value for horizontal line
+         * @property stroke - Line color
+         * @property strokeWidth - Line width
+         * @property strokeDasharray - Dash pattern
+         * @property label - Label text
+         * @property ifOverflow - Overflow behavior
+         */
+        ReferenceLine: ReferenceLineType,
+        /**
+         * Reference dot configuration type.
+         *
+         * @remarks
+         * Marks specific x,y coordinates on the chart.
+         *
+         * @property x - X coordinate
+         * @property y - Y coordinate
+         * @property r - Radius
+         * @property fill - Fill color
+         * @property stroke - Stroke color
+         * @property label - Label text
+         * @property ifOverflow - Overflow behavior
+         */
+        ReferenceDot: ReferenceDotType,
+        /**
+         * Reference area configuration type.
+         *
+         * @remarks
+         * Highlights rectangular regions on the chart.
+         *
+         * @property x1 - Left bound
+         * @property x2 - Right bound
+         * @property y1 - Bottom bound
+         * @property y2 - Top bound
+         * @property fill - Fill color
+         * @property fillOpacity - Fill opacity
+         * @property stroke - Stroke color
+         * @property label - Label text
+         * @property ifOverflow - Overflow behavior
+         */
+        ReferenceArea: ReferenceAreaType,
+        /**
+         * Reference overflow behavior type.
+         *
+         * @remarks
+         * Controls what happens when reference annotations extend beyond chart bounds.
+         *
+         * @property discard - Don't render if outside bounds
+         * @property hidden - Clip at chart boundary
+         * @property visible - Render completely (may overflow)
+         * @property extendDomain - Extend axis domain to include
+         */
+        ReferenceOverflow: ReferenceOverflowType,
     },
 } as const;
 

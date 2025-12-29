@@ -51,7 +51,7 @@ export default East.function(
                         {
                             innerRadius: 60,
                             outerRadius: 80,
-                            tooltip: Chart.Tooltip({ show: true }),
+                            tooltip: { show: true },
                         }
                     ),
                 ], { height: "220px", width: "100%" }),
@@ -67,7 +67,7 @@ export default East.function(
                             {
                                 innerRadius: 60,
                                 outerRadius: 80,
-                                tooltip: Chart.Tooltip({ show: true }),
+                                tooltip: { show: true },
                             }
                         ),
                     ], { height: "220px", width: "100%" })
@@ -88,7 +88,7 @@ export default East.function(
                             { name: "Tablet", value: 200, color: some("orange.solid") },
                         ],
                         {
-                            legend: Chart.Legend({ show: true }),
+                            legend: { show: true },
                         }
                     ),
                 ], { height: "220px", width: "100%" }),
@@ -101,7 +101,7 @@ export default East.function(
                                 { name: "Tablet", value: 200, color: some("orange.solid") },
                             ],
                             {
-                                legend: Chart.Legend({ show: true }),
+                                legend: { show: true },
                             }
                         ),
                     ], { height: "220px", width: "100%" })

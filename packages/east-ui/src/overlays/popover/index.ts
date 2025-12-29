@@ -46,7 +46,13 @@ export type { PopoverSizeLiteral, PlacementLiteral } from "./types.js";
  * @property description - Optional popover description
  * @property style - Optional style configuration
  */
-export const PopoverType = StructType({
+export const PopoverType: StructType<{
+    trigger: UIComponentType,
+    body: ArrayType<UIComponentType>,
+    title: OptionType<StringType>,
+    description: OptionType<StringType>,
+    style: OptionType<PopoverStyleType>,
+}> = StructType({
     trigger: UIComponentType,
     body: ArrayType(UIComponentType),
     title: OptionType(StringType),

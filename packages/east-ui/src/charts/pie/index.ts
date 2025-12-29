@@ -8,6 +8,11 @@ import {
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
+import {
+    tooltipStyleToType,
+    legendStyleToType,
+    marginStyleToType,
+} from "../types.js";
 import { PieSliceType, type PieChartStyle } from "./types.js";
 
 // Re-export types
@@ -47,6 +52,11 @@ export function createPieChart(
     data: SubtypeExprOrValue<ArrayType<typeof PieSliceType>>,
     style?: PieChartStyle
 ): ExprType<UIComponentType> {
+    // Convert style properties
+    const tooltipExpr = tooltipStyleToType(style?.tooltip);
+    const legendExpr = legendStyleToType(style?.legend);
+    const marginExpr = marginStyleToType(style?.margin);
+
     return East.value(variant("PieChart", {
         data: data,
         innerRadius: style?.innerRadius !== undefined ? variant("some", style.innerRadius) : variant("none", null),
@@ -55,8 +65,8 @@ export function createPieChart(
         endAngle: style?.endAngle !== undefined ? variant("some", style.endAngle) : variant("none", null),
         paddingAngle: style?.paddingAngle !== undefined ? variant("some", style.paddingAngle) : variant("none", null),
         showLabels: style?.showLabels !== undefined ? variant("some", style.showLabels) : variant("none", null),
-        tooltip: style?.tooltip !== undefined ? variant("some", style.tooltip) : variant("none", null),
-        legend: style?.legend !== undefined ? variant("some", style.legend) : variant("none", null),
-        margin: style?.margin !== undefined ? variant("some", style.margin) : variant("none", null),
+        tooltip: tooltipExpr ? variant("some", tooltipExpr) : variant("none", null),
+        legend: legendExpr ? variant("some", legendExpr) : variant("none", null),
+        margin: marginExpr ? variant("some", marginExpr) : variant("none", null),
     }), UIComponentType);
 }

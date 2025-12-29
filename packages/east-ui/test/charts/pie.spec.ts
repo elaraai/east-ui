@@ -167,7 +167,7 @@ describeEast("Chart.Pie", (test) => {
             [
                 { name: "windows", value: 400, color: some("blue.solid") },
             ],
-            { legend: Chart.Legend({ show: true }) }
+            { legend: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("PieChart").legend.unwrap("some").show.unwrap("some"), true));
@@ -178,7 +178,7 @@ describeEast("Chart.Pie", (test) => {
             [
                 { name: "windows", value: 400, color: some("blue.solid") },
             ],
-            { tooltip: Chart.Tooltip({ show: true }) }
+            { tooltip: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("PieChart").tooltip.unwrap("some").show.unwrap("some"), true));
@@ -193,7 +193,7 @@ describeEast("Chart.Pie", (test) => {
             [
                 { name: "windows", value: 400, color: some("blue.solid") },
             ],
-            { margin: Chart.Margin({ top: 20n, right: 30n, bottom: 20n, left: 30n }) }
+            { margin: { top: 20n, right: 30n, bottom: 20n, left: 30n } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("PieChart").margin.unwrap("some").top.unwrap("some"), 20n));
@@ -227,7 +227,7 @@ describeEast("Chart.Pie", (test) => {
                 { name: "mac", value: 300, color: some("orange.solid") },
                 { name: "linux", value: 300, color: some("pink.solid") },
             ],
-            { legend: Chart.Legend({ show: true }) }
+            { legend: { show: true } }
         ));
 
         $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.size(), 3n));
@@ -245,7 +245,7 @@ describeEast("Chart.Pie", (test) => {
             {
                 innerRadius: 60,
                 outerRadius: 80,
-                tooltip: Chart.Tooltip({ show: true }),
+                tooltip: { show: true },
             }
         ));
 

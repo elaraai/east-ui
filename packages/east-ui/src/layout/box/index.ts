@@ -38,7 +38,10 @@ export { BoxStyleType, type BoxStyle } from "./types.js";
  * @property children - Array of child UI components
  * @property style - Optional styling configuration wrapped in OptionType
  */
-export const BoxType = StructType({
+export const BoxType: StructType<{
+    children: ArrayType<UIComponentType>,
+    style: OptionType<BoxStyleType>,
+}> = StructType({
     children: ArrayType(UIComponentType),
     style: OptionType(BoxStyleType),
 });

@@ -1,0 +1,271 @@
+/**
+ * Copyright (c) 2025 Elara AI Pty Ltd
+ * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
+ */
+
+import { describeEast, assertEast } from "../platforms.spec.js";
+import { Chart } from "../../src/index.js";
+
+describeEast("Chart.Composed", (test) => {
+    // =========================================================================
+    // Basic Composed Charts
+    // =========================================================================
+
+    test("creates composed chart with bar and line series", $ => {
+        const chart = $.let(Chart.Composed(
+            [
+                { month: "Jan", revenue: 186n, profit: 80n },
+                { month: "Feb", revenue: 305n, profit: 120n },
+            ],
+            {
+                xAxis: { dataKey: "month" },
+                series: {
+                    revenue: { type: "bar", color: "teal.solid" },
+                    profit: { type: "line", color: "purple.solid" },
+                },
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().getTag(), "ComposedChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 2n));
+    });
+
+    test("creates composed chart with all series types", $ => {
+        const chart = $.let(Chart.Composed(
+            [
+                { month: "Jan", bars: 186n, lines: 80n, areas: 150n, dots: 100n },
+                { month: "Feb", bars: 305n, lines: 120n, areas: 200n, dots: 150n },
+            ],
+            {
+                xAxis: { dataKey: "month" },
+                series: {
+                    bars: { type: "bar", color: "teal.solid" },
+                    lines: { type: "line", color: "purple.solid", showDots: true },
+                    areas: { type: "area", color: "blue.solid", fillOpacity: 0.3 },
+                    dots: { type: "scatter", color: "orange.solid" },
+                },
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().getTag(), "ComposedChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 4n));
+    });
+
+    // =========================================================================
+    // Area Range in Composed Charts
+    // =========================================================================
+
+    test("creates composed chart with area-range for confidence bands", $ => {
+        const chart = $.let(Chart.Composed(
+            [
+                { day: "Mon", value: 100n, low: 80n, high: 120n },
+                { day: "Tue", value: 150n, low: 130n, high: 170n },
+            ],
+            {
+                xAxis: { dataKey: "day" },
+                series: {
+                    value: { type: "line", color: "blue.solid" },
+                    confidence: { type: "area-range", lowKey: "low", highKey: "high", color: "blue.200", fillOpacity: 0.3 },
+                },
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().getTag(), "ComposedChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 2n));
+        // Check the area-range series has correct keys
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(1n).unwrap("areaRange").lowKey, "low"));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(1n).unwrap("areaRange").highKey, "high"));
+    });
+
+    // =========================================================================
+    // Line Series Options
+    // =========================================================================
+
+    test("creates composed chart with line series options", $ => {
+        const chart = $.let(Chart.Composed(
+            [
+                { month: "Jan", trend: 100n },
+            ],
+            {
+                xAxis: { dataKey: "month" },
+                series: {
+                    trend: { type: "line", color: "purple.solid", showDots: true, showLine: true, strokeDasharray: "5 5" },
+                },
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("line").showDots.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("line").showLine.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("line").strokeDasharray.unwrap("some"), "5 5"));
+    });
+
+    // =========================================================================
+    // Area Series Options
+    // =========================================================================
+
+    test("creates composed chart with area series stacking", $ => {
+        const chart = $.let(Chart.Composed(
+            [
+                { month: "Jan", area1: 100n, area2: 80n },
+            ],
+            {
+                xAxis: { dataKey: "month" },
+                series: {
+                    area1: { type: "area", color: "teal.solid", fillOpacity: 0.5, stackId: "stack1" },
+                    area2: { type: "area", color: "blue.solid", fillOpacity: 0.5, stackId: "stack1" },
+                },
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("area").stackId.unwrap("some"), "stack1"));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(1n).unwrap("area").stackId.unwrap("some"), "stack1"));
+    });
+
+    // =========================================================================
+    // Bar Series Options
+    // =========================================================================
+
+    test("creates composed chart with bar series stacking", $ => {
+        const chart = $.let(Chart.Composed(
+            [
+                { month: "Jan", bar1: 100n, bar2: 80n },
+            ],
+            {
+                xAxis: { dataKey: "month" },
+                series: {
+                    bar1: { type: "bar", color: "teal.solid", stackId: "bars" },
+                    bar2: { type: "bar", color: "purple.solid", stackId: "bars" },
+                },
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("bar").stackId.unwrap("some"), "bars"));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(1n).unwrap("bar").stackId.unwrap("some"), "bars"));
+    });
+
+    // =========================================================================
+    // Chart-Level Options
+    // =========================================================================
+
+    test("creates composed chart with grid and tooltip", $ => {
+        const chart = $.let(Chart.Composed(
+            [
+                { month: "Jan", value: 100n },
+            ],
+            {
+                xAxis: { dataKey: "month" },
+                series: {
+                    value: { type: "line", color: "blue.solid" },
+                },
+                grid: { show: true },
+                tooltip: { show: true },
+                legend: { show: true },
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").tooltip.unwrap("some").show.unwrap("some"), true));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").legend.unwrap("some").show.unwrap("some"), true));
+    });
+
+    test("creates composed chart with curve type", $ => {
+        const chart = $.let(Chart.Composed(
+            [
+                { month: "Jan", value: 100n },
+            ],
+            {
+                xAxis: { dataKey: "month" },
+                series: {
+                    value: { type: "line", color: "blue.solid" },
+                },
+                curveType: "natural",
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").curveType.unwrap("some").hasTag("natural"), true));
+    });
+
+    test("creates composed chart with bar size and gap", $ => {
+        const chart = $.let(Chart.Composed(
+            [
+                { month: "Jan", value: 100n },
+            ],
+            {
+                xAxis: { dataKey: "month" },
+                series: {
+                    value: { type: "bar", color: "teal.solid" },
+                },
+                barSize: 20n,
+                barGap: 4n,
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").barSize.unwrap("some"), 20n));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").barGap.unwrap("some"), 4n));
+    });
+});
+
+describeEast("Chart.ComposedMulti", (test) => {
+    // =========================================================================
+    // Multi-Series Composed Charts
+    // =========================================================================
+
+    test("creates composed multi chart with sparse data", $ => {
+        const chart = $.let(Chart.ComposedMulti(
+            {
+                revenue: [
+                    { month: "Jan", value: 100n },
+                    { month: "Feb", value: 200n },
+                ],
+                profit: [
+                    { month: "Jan", value: 50n },
+                    { month: "Mar", value: 150n }, // sparse - Feb missing
+                ],
+            },
+            {
+                xAxis: { dataKey: "month" },
+                valueKey: "value",
+                series: {
+                    revenue: { type: "bar", color: "teal.solid" },
+                    profit: { type: "line", color: "purple.solid" },
+                },
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().getTag(), "ComposedChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 2n));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").valueKey.unwrap("some"), "value"));
+    });
+
+    test("creates composed multi chart with mixed types", $ => {
+        const chart = $.let(Chart.ComposedMulti(
+            {
+                bars: [
+                    { x: "A", value: 100n },
+                    { x: "B", value: 200n },
+                ],
+                lines: [
+                    { x: "A", value: 80n },
+                    { x: "B", value: 150n },
+                ],
+                areas: [
+                    { x: "A", value: 60n },
+                    { x: "B", value: 120n },
+                ],
+            },
+            {
+                xAxis: { dataKey: "x" },
+                valueKey: "value",
+                series: {
+                    bars: { type: "bar", color: "teal.solid" },
+                    lines: { type: "line", color: "purple.solid", showDots: true },
+                    areas: { type: "area", color: "blue.solid", fillOpacity: 0.3 },
+                },
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().getTag(), "ComposedChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 3n));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").dataSeries.hasTag("some"), true));
+    });
+});

@@ -7,7 +7,7 @@
  * Chart components for data visualization.
  */
 export { EastChakraSparkline, type EastChakraSparklineProps } from "./sparkline/index.js";
-export { EastChakraAreaChart, type EastChakraAreaChartProps } from "./area/index.js";
+export { EastChakraAreaChart, type EastChakraAreaChartProps, EastChakraAreaRangeChart, type EastChakraAreaRangeChartProps } from "./area/index.js";
 export { EastChakraBarChart, type EastChakraBarChartProps } from "./bar/index.js";
 export { EastChakraLineChart, type EastChakraLineChartProps } from "./line/index.js";
 export { EastChakraScatterChart, type EastChakraScatterChartProps } from "./scatter/index.js";

@@ -47,7 +47,12 @@ export {
  * @property placement - Optional placement position
  * @property hasArrow - Whether to show an arrow pointing to the trigger
  */
-export const TooltipType = StructType({
+export const TooltipType: StructType<{
+    trigger: UIComponentType,
+    content: StringType,
+    placement: OptionType<PlacementType>,
+    hasArrow: OptionType<BooleanType>,
+}> = StructType({
     trigger: UIComponentType,
     content: StringType,
     placement: OptionType(PlacementType),

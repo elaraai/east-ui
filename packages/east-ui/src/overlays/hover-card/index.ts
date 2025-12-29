@@ -43,7 +43,11 @@ export type { HoverCardSizeLiteral, PlacementLiteral } from "./types.js";
  * @property body - Array of UI components for hover card content
  * @property style - Optional style configuration
  */
-export const HoverCardType = StructType({
+export const HoverCardType: StructType<{
+    trigger: UIComponentType,
+    body: ArrayType<UIComponentType>,
+    style: OptionType<HoverCardStyleType>,
+}> = StructType({
     trigger: UIComponentType,
     body: ArrayType(UIComponentType),
     style: OptionType(HoverCardStyleType),

@@ -170,7 +170,7 @@ export default East.function(
                             {
                                 xAxis: { dataKey: "day" },
                                 fillOpacity: 0.3,
-                                margin: Chart.Margin({ top: 30n, right: 0n, bottom: 0n, left: -20n }),
+                                margin: { top: 30n, right: 0n, bottom: 0n, left: -20n },
                             }
                         ),
                     ],

@@ -38,7 +38,10 @@ export { StackStyleType, type StackStyle } from "./types.js";
  * @property children - Array of child UI components
  * @property style - Optional styling configuration wrapped in OptionType
  */
-export const StackType = StructType({
+export const StackType: StructType<{
+    children: ArrayType<UIComponentType>,
+    style: OptionType<StackStyleType>,
+}> = StructType({
     children: ArrayType(UIComponentType),
     style: OptionType(StackStyleType),
 });
