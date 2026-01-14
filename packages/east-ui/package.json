@@ -82,6 +82,6 @@
     "typescript": "~5.9.2"
   },
   "peerDependencies": {
-    "@elaraai/east": "^0.0.1-beta.26"
+    "@elaraai/east": "^0.0.1-beta.27"
   }
 }
