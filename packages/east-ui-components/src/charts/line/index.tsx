@@ -6,7 +6,7 @@
 import { memo, useMemo } from "react";
 import { Chart, useChart } from "@chakra-ui/charts";
 import { Line, LineChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis, Brush, ReferenceLine, ReferenceDot, ReferenceArea, type LineProps } from "recharts";
-import { equalFor, type ValueTypeOf } from "@elaraai/east";
+import { equalFor, variant, type ValueTypeOf } from "@elaraai/east";
 import { Chart as EastChart } from "@elaraai/east-ui";
 import type { LineChartSeriesType } from "@elaraai/east-ui/internal";
 import { getSomeorUndefined } from "../../utils";
@@ -28,6 +28,7 @@ import {
     toRechartsReferenceDot,
     toRechartsReferenceArea,
     type ChartSeriesItem,
+    type ChartSeriesValue,
 } from "../utils";
 
 // Pre-define the equality function at module level
@@ -40,13 +41,12 @@ export type LineChartValue = ValueTypeOf<typeof EastChart.Types.LineChart>;
 export type LineChartSeriesValue = ValueTypeOf<LineChartSeriesType>;
 
 /** Extended series item with line-specific properties */
-interface LineSeriesItem extends ChartSeriesItem {
-    strokeWidth?: number;
-    strokeDasharray?: string;
-    showDots?: boolean;
-    showLine?: boolean;
-    yAxisId?: "left" | "right";
-}
+type LineSeriesItem = ChartSeriesItem & {
+    strokeWidth?: number | undefined;
+    strokeDasharray?: string | undefined;
+    showDots?: boolean | undefined;
+    showLine?: boolean | undefined;
+};
 
 export interface EastChakraLineChartProps {
     value: LineChartValue;
@@ -62,6 +62,13 @@ export const EastChakraLineChart = memo(function EastChakraLineChart({ value }: 
         return xAxis ? getSomeorUndefined(xAxis.dataKey) : undefined;
     }, [value.xAxis]);
 
+    // Map line series to ChartSeriesValue by adding missing fill/fillOpacity with none values
+    const eastSeries: ChartSeriesValue[] = useMemo(() => value.series.map(s => ({
+        ...s,
+        fill: variant("none", null),
+        fillOpacity: variant("none", null),
+    })), [value.series]);
+
     // Prepare chart data and series (handles pivot, multi-series, and regular modes)
     const { data: chartData, series: baseSeries } = useMemo(() => prepareChartData({
         rawData: value.data,
@@ -69,8 +76,8 @@ export const EastChakraLineChart = memo(function EastChakraLineChart({ value }: 
         xAxisKey: xAxisDataKey,
         valueKey: getSomeorUndefined(value.valueKey),
         pivotKey: getSomeorUndefined(value.pivotKey),
-        eastSeries: value.series,
-    }), [value.data, value.dataSeries, value.valueKey, value.pivotKey, value.series, xAxisDataKey]);
+        eastSeries,
+    }), [value.data, value.dataSeries, value.valueKey, value.pivotKey, eastSeries, xAxisDataKey]);
 
     // Enhance base series with line-specific properties from East config
     const series = useMemo((): LineSeriesItem[] => {

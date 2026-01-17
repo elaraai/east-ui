@@ -21,6 +21,7 @@ import {
     Reactive,
     Text,
     Badge,
+    Accordion,
 } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -848,41 +849,57 @@ export default East.function(
             )
         );
 
-        return Grid.Root(
-            [
-                // Static examples
-                Grid.Item(stringInput),
-                Grid.Item(integerInput),
-                Grid.Item(floatInput),
-                Grid.Item(dateTimeInput),
-                Grid.Item(inputSizes),
-                Grid.Item(inputVariants),
-                Grid.Item(checkbox),
-                Grid.Item(switchShowcase),
-                Grid.Item(checkboxSizes),
-                Grid.Item(switchSizes),
-                Grid.Item(selectShowcase),
-                Grid.Item(slider),
-                Grid.Item(textarea),
-                Grid.Item(tagsInput),
-                Grid.Item(fileUpload, { colSpan: "2" }),
-                Grid.Item(fieldShowcase, { colSpan: "2" }),
-                // Interactive examples with callbacks
-                Grid.Item(interactiveStringInput),
-                Grid.Item(interactiveIntegerInput),
-                Grid.Item(interactiveFloatInput),
-                Grid.Item(interactiveDateTimeInput),
-                Grid.Item(interactiveCheckbox),
-                Grid.Item(interactiveSwitch),
-                Grid.Item(interactiveSlider),
-                Grid.Item(interactiveSelect),
-                Grid.Item(interactiveTextarea),
-                Grid.Item(interactiveTagsInput, { colSpan: "2" }),
-            ],
-            {
-                templateColumns: "repeat(2, 1fr)",
-                gap: "4",
-            }
-        );
+        return Accordion.Root([
+            Accordion.Item("input", "Input", [
+                Grid.Root([
+                    Grid.Item(stringInput),
+                    Grid.Item(integerInput),
+                    Grid.Item(floatInput),
+                    Grid.Item(dateTimeInput),
+                    Grid.Item(inputSizes),
+                    Grid.Item(inputVariants),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("toggles", "Toggles", [
+                Grid.Root([
+                    Grid.Item(checkbox),
+                    Grid.Item(switchShowcase),
+                    Grid.Item(checkboxSizes),
+                    Grid.Item(switchSizes),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("selection", "Selection", [
+                Grid.Root([
+                    Grid.Item(selectShowcase),
+                    Grid.Item(slider),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("text", "Text Input", [
+                Grid.Root([
+                    Grid.Item(textarea),
+                    Grid.Item(tagsInput),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("file-field", "File & Field", [
+                Grid.Root([
+                    Grid.Item(fileUpload, { colSpan: "2" }),
+                    Grid.Item(fieldShowcase, { colSpan: "2" }),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("interactive", "Interactive Examples", [
+                Grid.Root([
+                    Grid.Item(interactiveStringInput),
+                    Grid.Item(interactiveIntegerInput),
+                    Grid.Item(interactiveFloatInput),
+                    Grid.Item(interactiveDateTimeInput),
+                    Grid.Item(interactiveCheckbox),
+                    Grid.Item(interactiveSwitch),
+                    Grid.Item(interactiveSlider),
+                    Grid.Item(interactiveSelect),
+                    Grid.Item(interactiveTextarea),
+                    Grid.Item(interactiveTagsInput, { colSpan: "2" }),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+        ], { multiple: true, collapsible: true });
     }
 );

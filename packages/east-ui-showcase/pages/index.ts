@@ -3,6 +3,7 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
+export { OverviewPage } from "./OverviewPage";
 export { TypographyPage } from "./TypographyPage";
 export { ButtonsPage } from "./ButtonsPage";
 export { FormsPage } from "./FormsPage";

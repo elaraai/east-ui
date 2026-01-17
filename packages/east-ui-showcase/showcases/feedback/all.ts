@@ -10,6 +10,7 @@ import {
     Stack,
     Alert,
     Progress,
+    Accordion,
 } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -244,25 +245,27 @@ export default East.function(
             )
         );
 
-        return Grid.Root(
-            [
-                Grid.Item(alertInfo),
-                Grid.Item(alertSuccess),
-                Grid.Item(alertWarning),
-                Grid.Item(alertError),
-                Grid.Item(alertVariants),
-                Grid.Item(alertTitleOnly),
-                Grid.Item(progressBasic),
-                Grid.Item(progressLabeled),
-                Grid.Item(progressColors),
-                Grid.Item(progressSizes),
-                Grid.Item(progressStriped),
-                Grid.Item(progressRange),
-            ],
-            {
-                templateColumns: "repeat(2, 1fr)",
-                gap: "4",
-            }
-        );
+        return Accordion.Root([
+            Accordion.Item("alert", "Alert", [
+                Grid.Root([
+                    Grid.Item(alertInfo),
+                    Grid.Item(alertSuccess),
+                    Grid.Item(alertWarning),
+                    Grid.Item(alertError),
+                    Grid.Item(alertVariants),
+                    Grid.Item(alertTitleOnly),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("progress", "Progress", [
+                Grid.Root([
+                    Grid.Item(progressBasic),
+                    Grid.Item(progressLabeled),
+                    Grid.Item(progressColors),
+                    Grid.Item(progressSizes),
+                    Grid.Item(progressStriped),
+                    Grid.Item(progressRange),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+        ], { multiple: true, collapsible: true });
     }
 );

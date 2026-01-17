@@ -747,13 +747,13 @@ export interface PrepareChartDataConfig {
     /** Raw East data array */
     rawData: Map<string, ValueTypeOf<typeof LiteralValueType>>[];
     /** Multi-series data (optional) */
-    dataSeries?: Map<string, Map<string, ValueTypeOf<typeof LiteralValueType>>[]>;
+    dataSeries?: Map<string, Map<string, ValueTypeOf<typeof LiteralValueType>>[]> | undefined;
     /** X-axis data key */
-    xAxisKey?: string;
+    xAxisKey?: string | undefined;
     /** Value key for y-values (required for pivot and multi-series modes) */
-    valueKey?: string;
+    valueKey?: string | undefined;
     /** Pivot key for long-format data (enables pivot mode) */
-    pivotKey?: string;
+    pivotKey?: string | undefined;
     /** East series array for extracting colors and config */
     eastSeries: ChartSeriesValue[];
 }

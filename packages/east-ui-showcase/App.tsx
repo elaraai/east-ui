@@ -13,6 +13,7 @@ import {
 import { UIStoreProvider, State, OverlayManagerProvider } from "@elaraai/east-ui-components";
 import { ElaraLogo } from "./components/ElaraLogo";
 import {
+    OverviewPage,
     TypographyPage,
     ButtonsPage,
     FormsPage,
@@ -32,6 +33,7 @@ import {
 const store = State.store;
 
 const tabs = [
+    { key: "overview", label: "Overview" },
     { key: "typography", label: "Typography" },
     { key: "buttons", label: "Buttons" },
     { key: "forms", label: "Forms" },
@@ -72,7 +74,7 @@ export function App() {
 
                 {/* Tabs */}
                 <Container maxW="container.xl" py={6}>
-                    <Tabs.Root defaultValue="typography" variant="enclosed" lazyMount={true}>
+                    <Tabs.Root defaultValue="overview" variant="enclosed" lazyMount={true}>
                         <Tabs.List>
                             {tabs.map((tab) => (
                                 <Tabs.Trigger key={tab.key} value={tab.key}>
@@ -82,6 +84,9 @@ export function App() {
                         </Tabs.List>
 
                         <Box pt={6}>
+                            <Tabs.Content value="overview">
+                                <OverviewPage />
+                            </Tabs.Content>
                             <Tabs.Content value="typography">
                                 <TypographyPage />
                             </Tabs.Content>

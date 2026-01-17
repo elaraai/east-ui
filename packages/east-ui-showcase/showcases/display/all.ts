@@ -13,6 +13,7 @@ import {
     Avatar,
     Stat,
     Icon,
+    Accordion,
 } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -399,29 +400,43 @@ export default East.function(
             )
         );
 
-        return Grid.Root(
-            [
-                Grid.Item(badgeBasic),
-                Grid.Item(badgeVariants),
-                Grid.Item(badgeColors),
-                Grid.Item(badgeCustom),
-                Grid.Item(tagBasic),
-                Grid.Item(tagClosable),
-                Grid.Item(tagVariants),
-                Grid.Item(tagCustom),
-                Grid.Item(avatarBasic),
-                Grid.Item(avatarSizes),
-                Grid.Item(avatarColors, { colSpan: "2" }),
-                Grid.Item(statBasic),
-                Grid.Item(statHelpText),
-                Grid.Item(statIndicators, { colSpan: "2" }),
-                Grid.Item(iconBasic),
-                Grid.Item(iconStyles),
-            ],
-            {
-                templateColumns: "repeat(2, 1fr)",
-                gap: "4",
-            }
-        );
+        return Accordion.Root([
+            Accordion.Item("badge", "Badge", [
+                Grid.Root([
+                    Grid.Item(badgeBasic),
+                    Grid.Item(badgeVariants),
+                    Grid.Item(badgeColors),
+                    Grid.Item(badgeCustom),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("tag", "Tag", [
+                Grid.Root([
+                    Grid.Item(tagBasic),
+                    Grid.Item(tagClosable),
+                    Grid.Item(tagVariants),
+                    Grid.Item(tagCustom),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("avatar", "Avatar", [
+                Grid.Root([
+                    Grid.Item(avatarBasic),
+                    Grid.Item(avatarSizes),
+                    Grid.Item(avatarColors, { colSpan: "2" }),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("stat", "Stat", [
+                Grid.Root([
+                    Grid.Item(statBasic),
+                    Grid.Item(statHelpText),
+                    Grid.Item(statIndicators, { colSpan: "2" }),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("icon", "Icon", [
+                Grid.Root([
+                    Grid.Item(iconBasic),
+                    Grid.Item(iconStyles),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+        ], { multiple: true, collapsible: true });
     }
 );

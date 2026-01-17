@@ -3,6 +3,7 @@
     "displayName": "East UI Preview",
     "description": "Browse e3 repositories and preview task outputs as East UI components",
     "version": "0.0.22",
+    "type": "module",
     "publisher": "ElaraAI",
     "license": "SEE LICENSE IN LICENSE",
     "engines": {

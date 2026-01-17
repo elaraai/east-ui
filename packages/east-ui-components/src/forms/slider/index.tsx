@@ -60,6 +60,7 @@ export const EastChakraSlider = memo(function EastChakraSlider({ value }: EastCh
     return (
         <ChakraSlider.Root
             {...props}
+            width="100%"
             onValueChange={onChangeFn ? handleValueChange : undefined}
             onValueChangeEnd={onChangeEndFn ? handleValueChangeEnd : undefined}
         >

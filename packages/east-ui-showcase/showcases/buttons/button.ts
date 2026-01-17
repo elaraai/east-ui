@@ -1,5 +1,5 @@
 import { East, some } from "@elaraai/east";
-import { Button, IconButton, UIComponentType, Stack, Grid } from "@elaraai/east-ui";
+import { Button, IconButton, UIComponentType, Stack, Grid, Accordion } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
 /**
@@ -249,29 +249,30 @@ export default East.function(
             )
         );
 
-        return Grid.Root(
-            [
-                Grid.Item(basic),
-                Grid.Item(solidPrimary),
-                Grid.Item(outline),
-                Grid.Item(ghost),
-                Grid.Item(subtle),
-                Grid.Item(sizes, { colSpan: "2" }),
-                Grid.Item(loading),
-                Grid.Item(disabled),
-                Grid.Item(colors, { colSpan: "2" }),
-                Grid.Item(variants, { colSpan: "2" }),
-                // Icon Buttons
-                Grid.Item(iconBasic),
-                Grid.Item(iconVariants),
-                Grid.Item(iconSizes, { colSpan: "2" }),
-                Grid.Item(iconUseCases, { colSpan: "2" }),
-                Grid.Item(iconStates),
-            ],
-            {
-                templateColumns: "repeat(2, 1fr)",
-                gap: "4",
-            }
-        );
+        return Accordion.Root([
+            Accordion.Item("button", "Button", [
+                Grid.Root([
+                    Grid.Item(basic),
+                    Grid.Item(solidPrimary),
+                    Grid.Item(outline),
+                    Grid.Item(ghost),
+                    Grid.Item(subtle),
+                    Grid.Item(sizes, { colSpan: "2" }),
+                    Grid.Item(loading),
+                    Grid.Item(disabled),
+                    Grid.Item(colors, { colSpan: "2" }),
+                    Grid.Item(variants, { colSpan: "2" }),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("icon-button", "Icon Button", [
+                Grid.Root([
+                    Grid.Item(iconBasic),
+                    Grid.Item(iconVariants),
+                    Grid.Item(iconSizes, { colSpan: "2" }),
+                    Grid.Item(iconUseCases, { colSpan: "2" }),
+                    Grid.Item(iconStates),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+        ], { multiple: true, collapsible: true });
     }
 );

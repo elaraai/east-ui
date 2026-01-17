@@ -13,6 +13,7 @@ import {
     Button,
     Badge,
     Heading,
+    Accordion,
 } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -310,24 +311,30 @@ export default East.function(
             )
         );
 
-        return Grid.Root(
-            [
-                Grid.Item(cardBasic),
-                Grid.Item(cardHeader),
-                Grid.Item(cardHeaderDesc),
-                Grid.Item(cardFooter),
-                Grid.Item(cardElevated),
-                Grid.Item(cardOutline),
-                Grid.Item(cardSubtle),
-                Grid.Item(cardDimensions),
-                Grid.Item(cardFlexible, { colSpan: "2" }),
-                Grid.Item(cardMultiple, { colSpan: "2" }),
-                Grid.Item(cardSizes, { colSpan: "2" }),
-            ],
-            {
-                templateColumns: "repeat(2, 1fr)",
-                gap: "4",
-            }
-        );
+        return Accordion.Root([
+            Accordion.Item("basic", "Basic Cards", [
+                Grid.Root([
+                    Grid.Item(cardBasic),
+                    Grid.Item(cardHeader),
+                    Grid.Item(cardHeaderDesc),
+                    Grid.Item(cardFooter),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("variants", "Card Variants", [
+                Grid.Root([
+                    Grid.Item(cardElevated),
+                    Grid.Item(cardOutline),
+                    Grid.Item(cardSubtle),
+                    Grid.Item(cardDimensions),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("layout", "Card Layout", [
+                Grid.Root([
+                    Grid.Item(cardFlexible, { colSpan: "2" }),
+                    Grid.Item(cardMultiple, { colSpan: "2" }),
+                    Grid.Item(cardSizes, { colSpan: "2" }),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+        ], { multiple: true, collapsible: true });
     }
 );

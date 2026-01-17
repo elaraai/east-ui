@@ -24,6 +24,7 @@ import {
     Chart,
     State,
     Reactive,
+    Accordion,
 } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -599,40 +600,61 @@ export default East.function(
             )
         );
 
-        return Grid.Root(
-            [
-                // Tooltips
-                Grid.Item(tooltipBasic),
-                Grid.Item(tooltipArrow),
-                // Menus
-                Grid.Item(menuBasic),
-                Grid.Item(menuDisabled),
-                // Popovers
-                Grid.Item(popoverBasic),
-                Grid.Item(popoverChart),
-                // HoverCards
-                Grid.Item(hoverCardProfile),
-                Grid.Item(hoverCardLink),
-                // Dialogs
-                Grid.Item(dialogBasic),
-                Grid.Item(dialogLarge),
-                // Drawers
-                Grid.Item(drawerRight),
-                Grid.Item(drawerLeft),
-                // ToggleTips
-                Grid.Item(toggleTipBasic),
-                Grid.Item(toggleTipInfo),
-                // Interactive examples
-                Grid.Item(interactiveDialog),
-                Grid.Item(interactiveDrawer),
-                // Programmatic overlays
-                Grid.Item(programmaticDialog),
-                Grid.Item(programmaticDrawer),
-            ],
-            {
-                templateColumns: "repeat(2, 1fr)",
-                gap: "4",
-            }
-        );
+        return Accordion.Root([
+            Accordion.Item("tooltip", "Tooltip", [
+                Grid.Root([
+                    Grid.Item(tooltipBasic),
+                    Grid.Item(tooltipArrow),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("menu", "Menu", [
+                Grid.Root([
+                    Grid.Item(menuBasic),
+                    Grid.Item(menuDisabled),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("popover", "Popover", [
+                Grid.Root([
+                    Grid.Item(popoverBasic),
+                    Grid.Item(popoverChart),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("hovercard", "HoverCard", [
+                Grid.Root([
+                    Grid.Item(hoverCardProfile),
+                    Grid.Item(hoverCardLink),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("dialog", "Dialog", [
+                Grid.Root([
+                    Grid.Item(dialogBasic),
+                    Grid.Item(dialogLarge),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("drawer", "Drawer", [
+                Grid.Root([
+                    Grid.Item(drawerRight),
+                    Grid.Item(drawerLeft),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("toggletip", "ToggleTip", [
+                Grid.Root([
+                    Grid.Item(toggleTipBasic),
+                    Grid.Item(toggleTipInfo),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("interactive", "Interactive Examples", [
+                Grid.Root([
+                    Grid.Item(interactiveDialog),
+                    Grid.Item(interactiveDrawer),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("programmatic", "Programmatic Overlays", [
+                Grid.Root([
+                    Grid.Item(programmaticDialog),
+                    Grid.Item(programmaticDrawer),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+        ], { multiple: true, collapsible: true });
     }
 );

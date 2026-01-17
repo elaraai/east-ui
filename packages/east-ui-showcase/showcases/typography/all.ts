@@ -1,5 +1,5 @@
 import { East } from "@elaraai/east";
-import { UIComponentType, Stack, Text } from "@elaraai/east-ui";
+import { UIComponentType, Accordion } from "@elaraai/east-ui";
 import textShowcase from "./text";
 import codeShowcase from "./code";
 import headingShowcase from "./heading";
@@ -10,29 +10,21 @@ import listShowcase from "./list";
 import codeBlockShowcase from "./code-block";
 
 /**
- * Combined typography showcase - all typography components in one East.function.
+ * Combined typography showcase - all typography components organized in an accordion.
  */
 export default East.function(
     [],
     UIComponentType,
     () => {
-        return Stack.VStack([
-            Text.Root("Text", { fontWeight: "bold", fontSize: "lg" }),
-            textShowcase(),
-            Text.Root("Code", { fontWeight: "bold", fontSize: "lg" }),
-            codeShowcase(),
-            Text.Root("Heading", { fontWeight: "bold", fontSize: "lg" }),
-            headingShowcase(),
-            Text.Root("Link", { fontWeight: "bold", fontSize: "lg" }),
-            linkShowcase(),
-            Text.Root("Highlight", { fontWeight: "bold", fontSize: "lg" }),
-            highlightShowcase(),
-            Text.Root("Mark", { fontWeight: "bold", fontSize: "lg" }),
-            markShowcase(),
-            Text.Root("List", { fontWeight: "bold", fontSize: "lg" }),
-            listShowcase(),
-            Text.Root("CodeBlock", { fontWeight: "bold", fontSize: "lg" }),
-            codeBlockShowcase(),
-        ], { gap: "8", align: "stretch" });
+        return Accordion.Root([
+            Accordion.Item("text", "Text", [textShowcase()]),
+            Accordion.Item("code", "Code", [codeShowcase()]),
+            Accordion.Item("heading", "Heading", [headingShowcase()]),
+            Accordion.Item("link", "Link", [linkShowcase()]),
+            Accordion.Item("highlight", "Highlight", [highlightShowcase()]),
+            Accordion.Item("mark", "Mark", [markShowcase()]),
+            Accordion.Item("list", "List", [listShowcase()]),
+            Accordion.Item("code-block", "CodeBlock", [codeBlockShowcase()]),
+        ], { multiple: true, collapsible: true });
     }
 );
