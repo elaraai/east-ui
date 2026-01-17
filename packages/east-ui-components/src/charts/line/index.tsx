@@ -11,8 +11,7 @@ import { Chart as EastChart } from "@elaraai/east-ui";
 import type { LineChartSeriesType } from "@elaraai/east-ui/internal";
 import { getSomeorUndefined } from "../../utils";
 import {
-    convertChartData,
-    convertMultiSeriesData,
+    prepareChartData,
     toRechartsXAxis,
     toRechartsYAxis,
     getAxisTickFormat,
@@ -49,34 +48,6 @@ interface LineSeriesItem extends ChartSeriesItem {
     yAxisId?: "left" | "right";
 }
 
-/**
- * Converts an East LineChartSeries value to props for Chakra useChart series.
- */
-function toLineChartSeries(value: LineChartSeriesValue): LineSeriesItem {
-    const result: LineSeriesItem = {
-        name: value.name,
-        color: getSomeorUndefined(value.color) ?? "teal.solid",
-    };
-
-    const stackId = getSomeorUndefined(value.stackId);
-    const label = getSomeorUndefined(value.label);
-    const strokeWidth = getSomeorUndefined(value.strokeWidth);
-    const strokeDasharray = getSomeorUndefined(value.strokeDasharray);
-    const showDots = getSomeorUndefined(value.showDots);
-    const showLine = getSomeorUndefined(value.showLine);
-    const yAxisId = getSomeorUndefined(value.yAxisId);
-
-    if (stackId !== undefined) result.stackId = stackId;
-    if (label !== undefined) result.label = label;
-    if (strokeWidth !== undefined) result.strokeWidth = Number(strokeWidth);
-    if (strokeDasharray !== undefined) result.strokeDasharray = strokeDasharray;
-    if (showDots !== undefined) result.showDots = showDots;
-    if (showLine !== undefined) result.showLine = showLine;
-    if (yAxisId !== undefined) result.yAxisId = yAxisId.type as "left" | "right";
-
-    return result;
-}
-
 export interface EastChakraLineChartProps {
     value: LineChartValue;
 }
@@ -91,17 +62,38 @@ export const EastChakraLineChart = memo(function EastChakraLineChart({ value }: 
         return xAxis ? getSomeorUndefined(xAxis.dataKey) : undefined;
     }, [value.xAxis]);
 
-    // Convert East data to chart format
-    const chartData = useMemo(() => {
-        const dataSeries = getSomeorUndefined(value.dataSeries);
-        const valueKey = getSomeorUndefined(value.valueKey);
-        if (dataSeries && xAxisDataKey && valueKey) {
-            return convertMultiSeriesData(dataSeries, xAxisDataKey, valueKey);
-        }
-        return convertChartData(value.data);
-    }, [value.data, value.dataSeries, value.valueKey, xAxisDataKey]);
+    // Prepare chart data and series (handles pivot, multi-series, and regular modes)
+    const { data: chartData, series: baseSeries } = useMemo(() => prepareChartData({
+        rawData: value.data,
+        dataSeries: getSomeorUndefined(value.dataSeries),
+        xAxisKey: xAxisDataKey,
+        valueKey: getSomeorUndefined(value.valueKey),
+        pivotKey: getSomeorUndefined(value.pivotKey),
+        eastSeries: value.series,
+    }), [value.data, value.dataSeries, value.valueKey, value.pivotKey, value.series, xAxisDataKey]);
 
-    const series = useMemo(() => value.series.map(toLineChartSeries), [value.series]);
+    // Enhance base series with line-specific properties from East config
+    const series = useMemo((): LineSeriesItem[] => {
+        return baseSeries.map(s => {
+            const eastConfig = value.series.find(es => es.name === s.name);
+            if (!eastConfig) return s as LineSeriesItem;
+
+            const enhanced: LineSeriesItem = { ...s };
+            const strokeWidth = getSomeorUndefined(eastConfig.strokeWidth);
+            const strokeDasharray = getSomeorUndefined(eastConfig.strokeDasharray);
+            const showDots = getSomeorUndefined(eastConfig.showDots);
+            const showLine = getSomeorUndefined(eastConfig.showLine);
+            const yAxisId = getSomeorUndefined(eastConfig.yAxisId);
+
+            if (strokeWidth !== undefined) enhanced.strokeWidth = Number(strokeWidth);
+            if (strokeDasharray !== undefined) enhanced.strokeDasharray = strokeDasharray;
+            if (showDots !== undefined) enhanced.showDots = showDots;
+            if (showLine !== undefined) enhanced.showLine = showLine;
+            if (yAxisId !== undefined) enhanced.yAxisId = yAxisId.type as "left" | "right";
+
+            return enhanced;
+        });
+    }, [baseSeries, value.series]);
 
     // Initialize the chart hook
     const chart = useChart({ data: chartData, series });

@@ -485,6 +485,243 @@ export default East.function(
             )
         );
 
+        // Pivot data format with pivotColors
+        const pivotWithColors = $.let(
+            ShowcaseCard(
+                "Pivot with Colors",
+                "Long-format data with explicit pivotColors mapping",
+                Box.Root([
+                    Chart.Scatter(
+                        [
+                            { x: 10, region: "North", value: 30 },
+                            { x: 10, region: "South", value: 25 },
+                            { x: 20, region: "North", value: 50 },
+                            { x: 20, region: "South", value: 40 },
+                            { x: 30, region: "North", value: 70 },
+                            { x: 30, region: "South", value: 55 },
+                        ],
+                        {
+                            value: {
+                                color: "blue.500",
+                                pivotColors: new Map([
+                                    ["North", "blue.700"],
+                                    ["South", "teal.500"],
+                                ]),
+                            },
+                        },
+                        {
+                            xAxis: { dataKey: "x" },
+                            pivotKey: "region",
+                            valueKey: "value",
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Chart.Scatter(
+                        [
+                            { x: 10, region: "North", value: 30 },
+                            { x: 10, region: "South", value: 25 },
+                            // ... more rows per (x, region)
+                        ],
+                        {
+                            value: {
+                                color: "blue.500",
+                                pivotColors: new Map([
+                                    ["North", "blue.700"],
+                                    ["South", "teal.500"],
+                                ]),
+                            },
+                        },
+                        {
+                            xAxis: { dataKey: "x" },
+                            pivotKey: "region",
+                            valueKey: "value",
+                        }
+                    )
+                `)
+            )
+        );
+
+        // Pivot data format without pivotColors (uses default color)
+        const pivotWithoutColors = $.let(
+            ShowcaseCard(
+                "Pivot Default Color",
+                "Long-format data using default color for all series",
+                Box.Root([
+                    Chart.Scatter(
+                        [
+                            { x: 10, category: "A", value: 30 },
+                            { x: 10, category: "B", value: 25 },
+                            { x: 10, category: "C", value: 20 },
+                            { x: 20, category: "A", value: 50 },
+                            { x: 20, category: "B", value: 40 },
+                            { x: 20, category: "C", value: 35 },
+                        ],
+                        {
+                            value: { color: "purple.solid" },
+                        },
+                        {
+                            xAxis: { dataKey: "x" },
+                            pivotKey: "category",
+                            valueKey: "value",
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Chart.Scatter(
+                        [
+                            { x: 10, category: "A", value: 30 },
+                            { x: 10, category: "B", value: 25 },
+                            // ... all series use same default color
+                        ],
+                        {
+                            value: { color: "purple.solid" },
+                        },
+                        {
+                            xAxis: { dataKey: "x" },
+                            pivotKey: "category",
+                            valueKey: "value",
+                        }
+                    )
+                `)
+            )
+        );
+
+        // ScatterMulti with pivot and pivotColors
+        const multiPivotWithColors = $.let(
+            ShowcaseCard(
+                "Multi Pivot with Colors",
+                "Multi-series with pivot within each record",
+                Box.Root([
+                    Chart.ScatterMulti(
+                        {
+                            q1: [
+                                { x: 10n, region: "North", value: 30n },
+                                { x: 10n, region: "South", value: 25n },
+                                { x: 20n, region: "North", value: 50n },
+                                { x: 20n, region: "South", value: 40n },
+                            ],
+                            q2: [
+                                { x: 10n, region: "North", value: 35n },
+                                { x: 10n, region: "South", value: 30n },
+                                { x: 20n, region: "North", value: 55n },
+                                { x: 20n, region: "South", value: 45n },
+                            ],
+                        },
+                        {
+                            xAxis: { dataKey: "x" },
+                            valueKey: "value",
+                            pivotKey: "region",
+                            series: {
+                                q1: {
+                                    color: "teal.500",
+                                    pivotColors: new Map([
+                                        ["North", "teal.700"],
+                                        ["South", "teal.300"],
+                                    ]),
+                                },
+                                q2: {
+                                    color: "blue.500",
+                                    pivotColors: new Map([
+                                        ["North", "blue.700"],
+                                        ["South", "blue.300"],
+                                    ]),
+                                },
+                            },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Chart.ScatterMulti(
+                        {
+                            q1: [
+                                { x: 10n, region: "North", value: 30n },
+                                { x: 10n, region: "South", value: 25n },
+                                // ...
+                            ],
+                            q2: [...],
+                        },
+                        {
+                            xAxis: { dataKey: "x" },
+                            valueKey: "value",
+                            pivotKey: "region",
+                            series: {
+                                q1: { pivotColors: new Map([...]) },
+                                q2: { pivotColors: new Map([...]) },
+                            },
+                        }
+                    )
+                `)
+            )
+        );
+
+        // ScatterMulti with pivot but no pivotColors
+        const multiPivotWithoutColors = $.let(
+            ShowcaseCard(
+                "Multi Pivot Default",
+                "Multi-series pivot using default colors",
+                Box.Root([
+                    Chart.ScatterMulti(
+                        {
+                            actual: [
+                                { x: 10n, type: "Online", value: 50n },
+                                { x: 10n, type: "Store", value: 30n },
+                                { x: 20n, type: "Online", value: 60n },
+                                { x: 20n, type: "Store", value: 40n },
+                            ],
+                            forecast: [
+                                { x: 10n, type: "Online", value: 55n },
+                                { x: 10n, type: "Store", value: 35n },
+                                { x: 20n, type: "Online", value: 65n },
+                                { x: 20n, type: "Store", value: 45n },
+                            ],
+                        },
+                        {
+                            xAxis: { dataKey: "x" },
+                            valueKey: "value",
+                            pivotKey: "type",
+                            series: {
+                                actual: { color: "green.solid" },
+                                forecast: { color: "orange.solid" },
+                            },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Chart.ScatterMulti(
+                        {
+                            actual: [
+                                { x: 10n, type: "Online", value: 50n },
+                                // ...
+                            ],
+                            forecast: [...],
+                        },
+                        {
+                            xAxis: { dataKey: "x" },
+                            valueKey: "value",
+                            pivotKey: "type",
+                            series: {
+                                actual: { color: "green.solid" },
+                                forecast: { color: "orange.solid" },
+                            },
+                        }
+                    )
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -497,6 +734,10 @@ export default East.function(
                 Grid.Item(withReferenceArea),
                 Grid.Item(withReferenceDot),
                 Grid.Item(dualYAxis),
+                Grid.Item(pivotWithColors),
+                Grid.Item(pivotWithoutColors),
+                Grid.Item(multiPivotWithColors),
+                Grid.Item(multiPivotWithoutColors),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

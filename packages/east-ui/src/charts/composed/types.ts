@@ -5,6 +5,7 @@
 
 import {
     type SubtypeExprOrValue,
+    type DictType as DictTypeType,
     OptionType,
     StructType,
     ArrayType,
@@ -113,6 +114,7 @@ export const ComposedChartType = StructType({
     data: ArrayType(DictType(StringType, LiteralValueType)),
     dataSeries: OptionType(MultiSeriesDataType),
     valueKey: OptionType(StringType),
+    pivotKey: OptionType(StringType),
     series: ArrayType(ComposedSeriesType),
     xAxis: OptionType(ChartAxisType),
     yAxis: OptionType(ChartAxisType),
@@ -173,6 +175,8 @@ export interface ComposedLineSeries extends ComposedSeriesBase {
     showLine?: SubtypeExprOrValue<BooleanType>;
     /** Stack group ID */
     stackId?: SubtypeExprOrValue<StringType>;
+    /** Mapping of pivot key values to colors (used with pivotKey) */
+    pivotColors?: SubtypeExprOrValue<DictTypeType<StringType, StringType>>;
 }
 
 /**
@@ -189,6 +193,8 @@ export interface ComposedAreaSeries extends ComposedSeriesBase {
     stackId?: SubtypeExprOrValue<StringType>;
     /** Dash pattern for dashed stroke */
     strokeDasharray?: SubtypeExprOrValue<StringType>;
+    /** Mapping of pivot key values to colors (used with pivotKey) */
+    pivotColors?: SubtypeExprOrValue<DictTypeType<StringType, StringType>>;
 }
 
 /**
@@ -219,6 +225,8 @@ export interface ComposedBarSeries extends ComposedSeriesBase {
     stackId?: SubtypeExprOrValue<StringType>;
     /** Dash pattern for dashed stroke */
     strokeDasharray?: SubtypeExprOrValue<StringType>;
+    /** Mapping of pivot key values to colors (used with pivotKey) */
+    pivotColors?: SubtypeExprOrValue<DictTypeType<StringType, StringType>>;
 }
 
 /**
@@ -231,6 +239,8 @@ export interface ComposedScatterSeries extends ComposedSeriesBase {
     fill?: SubtypeExprOrValue<StringType>;
     /** Fill opacity (0-1) */
     fillOpacity?: SubtypeExprOrValue<FloatType>;
+    /** Mapping of pivot key values to colors (used with pivotKey) */
+    pivotColors?: SubtypeExprOrValue<DictTypeType<StringType, StringType>>;
 }
 
 /**
@@ -297,6 +307,10 @@ export interface ComposedChartStyle<
     DataKey extends string = string,
     SeriesKey extends string = string
 > extends ComposedChartStyleBase<DataKey> {
+    /** Field name containing series identifiers (enables pivot/long format data) */
+    pivotKey?: DataKey;
+    /** Field name for Y values (required when using pivotKey) */
+    valueKey?: DataKey;
     /** Per-series configuration (keyed by data field name) */
     series: { [K in SeriesKey]?: ComposedSeriesConfig };
     /** Brush configuration for data range selection */
@@ -317,6 +331,8 @@ export interface ComposedChartMultiStyle<
 > extends ComposedChartStyleBase<DataKey> {
     /** Field name containing Y values in each series array (must be numeric) */
     valueKey: NumericKey;
+    /** Field name containing series identifiers (enables pivot/long format data within each record) */
+    pivotKey?: DataKey;
     /** Per-series configuration (keyed by series name) */
     series: { [K in SeriesKey]?: ComposedSeriesConfig };
     /** Brush configuration for data range selection */

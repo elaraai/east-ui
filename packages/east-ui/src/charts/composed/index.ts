@@ -121,6 +121,7 @@ function seriesConfigToVariant(name: string, config: ComposedSeriesConfig) {
                 showDots: config.showDots !== undefined ? some(config.showDots) : none,
                 showLine: config.showLine !== undefined ? some(config.showLine) : none,
                 yAxisId: yAxisIdValue,
+                pivotColors: config.pivotColors !== undefined ? some(config.pivotColors) : none,
             });
 
         case "area":
@@ -135,6 +136,7 @@ function seriesConfigToVariant(name: string, config: ComposedSeriesConfig) {
                 fillOpacity: config.fillOpacity !== undefined ? some(config.fillOpacity) : none,
                 strokeDasharray: config.strokeDasharray !== undefined ? some(config.strokeDasharray) : none,
                 yAxisId: yAxisIdValue,
+                pivotColors: config.pivotColors !== undefined ? some(config.pivotColors) : none,
             });
 
         case "area-range":
@@ -162,6 +164,7 @@ function seriesConfigToVariant(name: string, config: ComposedSeriesConfig) {
                 fillOpacity: config.fillOpacity !== undefined ? some(config.fillOpacity) : none,
                 strokeDasharray: config.strokeDasharray !== undefined ? some(config.strokeDasharray) : none,
                 yAxisId: yAxisIdValue,
+                pivotColors: config.pivotColors !== undefined ? some(config.pivotColors) : none,
             });
 
         case "scatter":
@@ -176,6 +179,7 @@ function seriesConfigToVariant(name: string, config: ComposedSeriesConfig) {
                 fillOpacity: config.fillOpacity !== undefined ? some(config.fillOpacity) : none,
                 strokeDasharray: none, // scatter doesn't use dashes
                 yAxisId: yAxisIdValue,
+                pivotColors: config.pivotColors !== undefined ? some(config.pivotColors) : none,
             });
     }
 }
@@ -340,7 +344,8 @@ export function createComposedChartMulti<
         dataSeries_mapped,
         seriesEntries as [string, ComposedSeriesConfig][],
         style,
-        style.valueKey
+        style.valueKey,
+        style.pivotKey
     );
 }
 
@@ -352,8 +357,9 @@ function buildComposedChart(
     data_mapped: ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>,
     dataSeries_mapped: ExprType<typeof MultiSeriesDataType> | undefined,
     seriesEntries: readonly [string, ComposedSeriesConfig][],
-    style: ComposedChartStyleBase<string> & { brush?: ComposedChartBrushStyle<string> },
-    valueKey?: string
+    style: ComposedChartStyleBase<string> & { brush?: ComposedChartBrushStyle<string>; pivotKey?: string; valueKey?: string },
+    valueKey?: string,
+    pivotKey?: string
 ): ExprType<UIComponentType> {
     // Convert series to variant array
     const series_mapped = seriesEntries.map(([name, config]) =>
@@ -414,10 +420,16 @@ function buildComposedChart(
         ? variant("some", East.value(style.referenceAreas.map(referenceAreaStyleToType), ArrayType(ReferenceAreaType)))
         : variant("none", null);
 
+    // Get pivotKey from parameter or style
+    const effectivePivotKey = pivotKey ?? style.pivotKey;
+    // Get valueKey from parameter or style
+    const effectiveValueKey = valueKey ?? style.valueKey;
+
     return East.value(variant("ComposedChart", {
         data: data_mapped,
         dataSeries: dataSeries_mapped ? variant("some", dataSeries_mapped) : variant("none", null),
-        valueKey: valueKey !== undefined ? variant("some", valueKey) : variant("none", null),
+        valueKey: effectiveValueKey !== undefined ? variant("some", effectiveValueKey) : variant("none", null),
+        pivotKey: effectivePivotKey !== undefined ? variant("some", effectivePivotKey) : variant("none", null),
         series: East.value(series_mapped, ArrayType(ComposedSeriesType)),
         xAxis: xAxisExpr ? variant("some", xAxisExpr) : variant("none", null),
         yAxis: yAxisExpr ? variant("some", yAxisExpr) : variant("none", null),

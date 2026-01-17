@@ -10,9 +10,7 @@ import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Chart as EastChart } from "@elaraai/east-ui";
 import { getSomeorUndefined } from "../../utils";
 import {
-    convertChartData,
-    convertMultiSeriesData,
-    toChartSeries,
+    prepareChartData,
     toRechartsXAxis,
     toRechartsYAxis,
     getAxisTickFormat,
@@ -62,21 +60,20 @@ export const EastChakraScatterChart = memo(function EastChakraScatterChart({ val
         return yAxis ? getSomeorUndefined(yAxis.dataKey) : undefined;
     }, [value.yDataKey, value.valueKey, value.yAxis]);
 
-    // Convert East data to chart format
+    // Check for multi-series mode
     const isMultiSeries = useMemo(() => {
         return getSomeorUndefined(value.dataSeries) !== undefined;
     }, [value.dataSeries]);
 
-    const chartData = useMemo(() => {
-        const dataSeries = getSomeorUndefined(value.dataSeries);
-        const valueKey = getSomeorUndefined(value.valueKey);
-        if (dataSeries && xDataKey && valueKey) {
-            return convertMultiSeriesData(dataSeries, xDataKey, valueKey);
-        }
-        return convertChartData(value.data);
-    }, [value.data, value.dataSeries, value.valueKey, xDataKey]);
-
-    const series = useMemo(() => value.series.map(toChartSeries), [value.series]);
+    // Prepare chart data and series (handles pivot, multi-series, and regular modes)
+    const { data: chartData, series } = useMemo(() => prepareChartData({
+        rawData: value.data,
+        dataSeries: getSomeorUndefined(value.dataSeries),
+        xAxisKey: xDataKey,
+        valueKey: getSomeorUndefined(value.valueKey),
+        pivotKey: getSomeorUndefined(value.pivotKey),
+        eastSeries: value.series,
+    }), [value.data, value.dataSeries, value.valueKey, value.pivotKey, value.series, xDataKey]);
 
     // Initialize the chart hook
     const chart = useChart({ data: chartData, series });

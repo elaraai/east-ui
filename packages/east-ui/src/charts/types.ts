@@ -93,6 +93,7 @@ export const ChartSeriesType = StructType({
     fillOpacity: OptionType(FloatType),
     strokeDasharray: OptionType(StringType),
     yAxisId: OptionType(YAxisIdType),
+    pivotColors: OptionType(DictType(StringType, StringType)),
 });
 
 /**
@@ -124,6 +125,8 @@ export interface ChartSeries {
     strokeDasharray?: SubtypeExprOrValue<StringType>;
     /** Y-axis binding (left = primary yAxis, right = secondary yAxis2) */
     yAxisId?: SubtypeExprOrValue<YAxisIdType> | YAxisIdLiteral;
+    /** Mapping of pivot key values to colors (used with pivotKey) */
+    pivotColors?: SubtypeExprOrValue<DictType<StringType, StringType>>;
 }
 
 export function ChartSeries(series: ChartSeries): ExprType<ChartSeriesType> {
@@ -131,6 +134,9 @@ export function ChartSeries(series: ChartSeries): ExprType<ChartSeriesType> {
         ? (typeof series.yAxisId === "string"
             ? some(East.value(variant(series.yAxisId, null), YAxisIdType))
             : some(series.yAxisId))
+        : none;
+    const pivotColorsValue = series.pivotColors !== undefined
+        ? some(series.pivotColors)
         : none;
     return East.value({
         name: series.name as string,
@@ -143,6 +149,7 @@ export function ChartSeries(series: ChartSeries): ExprType<ChartSeriesType> {
         fillOpacity: series.fillOpacity !== undefined ? some(series.fillOpacity) : none,
         strokeDasharray: series.strokeDasharray !== undefined ? some(series.strokeDasharray) : none,
         yAxisId: yAxisIdValue,
+        pivotColors: pivotColorsValue,
     }, ChartSeriesType);
 }
 

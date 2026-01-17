@@ -27,8 +27,7 @@ import { equalFor, match, type ValueTypeOf } from "@elaraai/east";
 import { Chart as EastChart } from "@elaraai/east-ui";
 import { getSomeorUndefined } from "../../utils";
 import {
-    convertChartData,
-    convertMultiSeriesData,
+    prepareChartData,
     toRechartsXAxis,
     toRechartsYAxis,
     getAxisTickFormat,
@@ -207,29 +206,54 @@ export const EastChakraComposedChart = memo(function EastChakraComposedChart({ v
         return xAxis ? getSomeorUndefined(xAxis.dataKey) : undefined;
     }, [value.xAxis]);
 
-    // Convert East data to chart format
-    const chartData = useMemo(() => {
-        const dataSeries = getSomeorUndefined(value.dataSeries);
-        const valueKey = getSomeorUndefined(value.valueKey);
-        if (dataSeries && xAxisDataKey && valueKey) {
-            return convertMultiSeriesData(dataSeries, xAxisDataKey, valueKey);
-        }
-        return convertChartData(value.data);
-    }, [value.data, value.dataSeries, value.valueKey, xAxisDataKey]);
+    // Convert composed series variants to flat series for prepareChartData
+    // Each variant (line, area, bar, etc.) has name, color, pivotColors
+    // We need to preserve the Option types as prepareChartData expects them
+    const flatSeries = useMemo(() => value.series.map(sv => {
+        // Extract name, color (as Option), and pivotColors from each variant
+        return match(sv, {
+            line: v => ({ name: v.name, color: v.color, pivotColors: v.pivotColors }),
+            area: v => ({ name: v.name, color: v.color, pivotColors: v.pivotColors }),
+            areaRange: v => ({ name: v.name, color: v.color, pivotColors: { type: "none" as const, value: null } }),
+            bar: v => ({ name: v.name, color: v.color, pivotColors: v.pivotColors }),
+            scatter: v => ({ name: v.name, color: v.color, pivotColors: v.pivotColors }),
+        });
+    }), [value.series]);
+
+    // Prepare chart data and series (handles pivot, multi-series, and regular modes)
+    const { data: chartData, series: baseSeries, seriesOriginMap } = useMemo(() => {
+        const config = {
+            rawData: value.data,
+            dataSeries: getSomeorUndefined(value.dataSeries),
+            xAxisKey: xAxisDataKey,
+            valueKey: getSomeorUndefined(value.valueKey),
+            pivotKey: getSomeorUndefined(value.pivotKey),
+            eastSeries: flatSeries as unknown as Parameters<typeof prepareChartData>[0]["eastSeries"],
+        };
+        return prepareChartData(config);
+    }, [value.data, value.dataSeries, value.valueKey, value.pivotKey, flatSeries, xAxisDataKey]);
 
     // Convert series to composed format with chart type info
     const composedSeries = useMemo(() => value.series.map(toComposedSeriesItem), [value.series]);
 
-    // For Chakra useChart, we need basic series info
-    const chartSeries = useMemo(() => composedSeries.map(s => {
-        const item: ChartSeriesItem = {
-            name: s.name as string, // name is always present from the East type
-            color: s.color,
-        };
-        if (s.stackId !== undefined) item.stackId = s.stackId;
-        if (s.label !== undefined) item.label = s.label;
-        return item;
-    }), [composedSeries]);
+    // Merge base series with composed series info for rendering
+    // In pivot mode, baseSeries are generated from pivot values; otherwise they match composedSeries
+    const chartSeries = useMemo((): ChartSeriesItem[] => {
+        // If we have pivot-generated series, use them (they have colors from pivotColors)
+        if (getSomeorUndefined(value.pivotKey)) {
+            return baseSeries;
+        }
+        // Otherwise use composed series for rendering
+        return composedSeries.map(s => {
+            const item: ChartSeriesItem = {
+                name: s.name as string,
+                color: s.color,
+            };
+            if (s.stackId !== undefined) item.stackId = s.stackId;
+            if (s.label !== undefined) item.label = s.label;
+            return item;
+        });
+    }, [baseSeries, composedSeries, value.pivotKey]);
 
     // Initialize the chart hook
     const chart = useChart({ data: chartData, series: chartSeries });
@@ -329,6 +353,92 @@ export const EastChakraComposedChart = memo(function EastChakraComposedChart({ v
     // Each series uses position-based z-index to respect declaration order
     // (Recharts assigns fixed z-index by chart type, so we override with position-based z-index)
     const renderSeries = () => {
+        const isPivotMode = !!getSomeorUndefined(value.pivotKey);
+
+        // In pivot mode, render from chartSeries (which has pivot-generated names like "revenue_North" or just "North")
+        // and look up chart type from the original series name using seriesOriginMap
+        if (isPivotMode) {
+            return chartSeries.map((seriesItem, index) => {
+                const seriesName = seriesItem.name as string;
+                // Use seriesOriginMap to find the original series name
+                const originalName = seriesOriginMap.get(seriesName) ?? seriesName;
+                const originalSeries = composedSeries.find(s => s.name === originalName);
+                if (!originalSeries) return null;
+
+                const dataKey = chart.key(seriesName);
+                const color = chart.color(seriesItem.color);
+                const fillColor = originalSeries.fill ? chart.color(originalSeries.fill) : color;
+                const zIndex = 1000 + index * 10;
+
+                switch (originalSeries.chartType) {
+                    case "line":
+                        return (
+                            <Line
+                                key={`line-${seriesName}`}
+                                type={options.curveType as NonNullable<LineProps["type"]>}
+                                dataKey={dataKey}
+                                stroke={(originalSeries.showLine ?? true) ? color : "transparent"}
+                                strokeWidth={originalSeries.strokeWidth ?? 2}
+                                strokeDasharray={originalSeries.strokeDasharray}
+                                dot={originalSeries.showDots ?? options.showDots}
+                                connectNulls={options.connectNulls}
+                                isAnimationActive={false}
+                                zIndex={zIndex}
+                                {...(yAxis2.show && { yAxisId: originalSeries.yAxisId ?? "left" })}
+                            />
+                        );
+                    case "area":
+                        return (
+                            <Area
+                                key={`area-${seriesName}`}
+                                type={options.curveType as NonNullable<AreaProps["type"]>}
+                                dataKey={dataKey}
+                                fill={fillColor}
+                                fillOpacity={originalSeries.fillOpacity ?? 0.2}
+                                stroke={color}
+                                strokeWidth={originalSeries.strokeWidth ?? 2}
+                                connectNulls={options.connectNulls}
+                                isAnimationActive={false}
+                                zIndex={zIndex}
+                                {...(originalSeries.strokeDasharray !== undefined && { strokeDasharray: originalSeries.strokeDasharray })}
+                                {...(originalSeries.stackId !== undefined && { stackId: originalSeries.stackId })}
+                                {...(yAxis2.show && { yAxisId: originalSeries.yAxisId ?? "left" })}
+                            />
+                        );
+                    case "bar":
+                        return (
+                            <Bar
+                                key={`bar-${seriesName}`}
+                                dataKey={dataKey}
+                                fill={fillColor}
+                                fillOpacity={originalSeries.fillOpacity ?? 1}
+                                stroke={color}
+                                strokeWidth={originalSeries.strokeWidth ?? 0}
+                                isAnimationActive={false}
+                                zIndex={zIndex}
+                                {...(originalSeries.stackId !== undefined && { stackId: originalSeries.stackId })}
+                                {...(options.barSize !== undefined && { barSize: options.barSize })}
+                                {...(yAxis2.show && { yAxisId: originalSeries.yAxisId ?? "left" })}
+                            />
+                        );
+                    case "scatter":
+                        return (
+                            <Scatter
+                                key={`scatter-${seriesName}`}
+                                dataKey={dataKey}
+                                fill={fillColor}
+                                isAnimationActive={false}
+                                zIndex={zIndex}
+                                {...(yAxis2.show && { yAxisId: originalSeries.yAxisId ?? "left" })}
+                            />
+                        );
+                    default:
+                        return null;
+                }
+            });
+        }
+
+        // Non-pivot mode: use composedSeries directly
         return composedSeries.map((item, index) => {
             const dataKey = chart.key(item.name);
             const color = chart.color(item.color);

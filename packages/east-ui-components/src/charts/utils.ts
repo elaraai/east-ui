@@ -90,14 +90,18 @@ export type ChartSeriesItem = NonNullable<UseChartProps<Record<string, unknown>>
 export function toChartSeries(value: ChartSeriesValue): ChartSeriesItem {
     const result: ChartSeriesItem = {
         name: value.name,
-        color: getSomeorUndefined(value.color) ?? "teal.solid",
+        color: value.color ? getSomeorUndefined(value.color) ?? "teal.solid" : "teal.solid",
     };
 
-    const stackId = getSomeorUndefined(value.stackId);
-    const label = getSomeorUndefined(value.label);
-
-    if (stackId !== undefined) result.stackId = stackId;
-    if (label !== undefined) result.label = label;
+    // Handle optional properties that may be undefined (e.g., from composed chart's flatSeries)
+    if (value.stackId) {
+        const stackId = getSomeorUndefined(value.stackId);
+        if (stackId !== undefined) result.stackId = stackId;
+    }
+    if (value.label) {
+        const label = getSomeorUndefined(value.label);
+        if (label !== undefined) result.label = label;
+    }
 
     return result;
 }
@@ -718,6 +722,184 @@ export function convertMultiSeriesRangeData(
     });
 
     return result;
+}
+
+// ============================================================================
+// Chart Data Preparation
+// ============================================================================
+
+/**
+ * Result of preparing chart data - contains everything needed for useChart.
+ */
+export interface PreparedChartData {
+    /** The transformed data ready for Recharts */
+    data: Record<string, unknown>[];
+    /** The series configuration for useChart */
+    series: ChartSeriesItem[];
+    /** Maps generated series name to original series name (for pivot modes) */
+    seriesOriginMap: Map<string, string>;
+}
+
+/**
+ * Configuration for preparing chart data.
+ */
+export interface PrepareChartDataConfig {
+    /** Raw East data array */
+    rawData: Map<string, ValueTypeOf<typeof LiteralValueType>>[];
+    /** Multi-series data (optional) */
+    dataSeries?: Map<string, Map<string, ValueTypeOf<typeof LiteralValueType>>[]>;
+    /** X-axis data key */
+    xAxisKey?: string;
+    /** Value key for y-values (required for pivot and multi-series modes) */
+    valueKey?: string;
+    /** Pivot key for long-format data (enables pivot mode) */
+    pivotKey?: string;
+    /** East series array for extracting colors and config */
+    eastSeries: ChartSeriesValue[];
+}
+
+/**
+ * Prepares chart data and series for Recharts/Chakra useChart.
+ *
+ * Handles four data modes:
+ * 1. **Pivot mode** (pivotKey set, no dataSeries): Transforms long-format data to wide format,
+ *    generates series from unique pivot values with colors from pivotColors.
+ * 2. **Multi-series + Pivot mode** (dataSeries AND pivotKey set): Each series array contains
+ *    pivot data, generates composite series names like "q1_North", "q1_South".
+ * 3. **Multi-series mode** (dataSeries set, no pivotKey): Merges separate series arrays into
+ *    one array, uses East series config for colors.
+ * 4. **Regular mode**: Converts data directly, uses East series config.
+ *
+ * @param config - Configuration for data preparation
+ * @returns Prepared data and series ready for useChart
+ */
+export function prepareChartData(config: PrepareChartDataConfig): PreparedChartData {
+    const { rawData, dataSeries, xAxisKey, valueKey, pivotKey, eastSeries } = config;
+
+    // Mode 1: Pivot (long-format data with pivotKey)
+    if (pivotKey && xAxisKey && valueKey && !dataSeries) {
+        // Find the series config for valueKey to get pivotColors and default color
+        const seriesConfig = eastSeries.find(s => s.name === valueKey);
+        const pivotColors = seriesConfig?.pivotColors?.type === "some"
+            ? seriesConfig.pivotColors.value
+            : undefined;
+        const defaultColor = seriesConfig?.color ? getSomeorUndefined(seriesConfig?.color) ?? "teal.solid" : "teal.solid";
+
+        // Transform pivot data to wide format and generate series
+        const xAxisValues = new Map<unknown, Record<string, unknown>>();
+        const pivotValues = new Set<string>();
+
+        for (const row of rawData) {
+            const xValue = row.get(xAxisKey);
+            const pivotValue = row.get(pivotKey);
+            const yValue = row.get(valueKey);
+
+            if (xValue === undefined || pivotValue === undefined) continue;
+
+            const xConverted = convertLiteralValue(xValue);
+            const pivotConverted = String(convertLiteralValue(pivotValue));
+            const yConverted = yValue !== undefined ? convertLiteralValue(yValue) : null;
+
+            pivotValues.add(pivotConverted);
+
+            let xRow = xAxisValues.get(xConverted);
+            if (!xRow) {
+                xRow = { [xAxisKey]: xConverted };
+                xAxisValues.set(xConverted, xRow);
+            }
+            xRow[pivotConverted] = yConverted;
+        }
+
+        // All pivot series map to the valueKey series
+        const seriesOriginMap = new Map<string, string>();
+        for (const pv of pivotValues) {
+            seriesOriginMap.set(pv, valueKey);
+        }
+
+        return {
+            data: Array.from(xAxisValues.values()),
+            series: Array.from(pivotValues).map(pv => ({
+                name: pv,
+                color: pivotColors?.get(pv) ?? defaultColor,
+            })),
+            seriesOriginMap,
+        };
+    }
+
+    // Mode 2: Multi-series + Pivot (separate arrays per series, each with pivot data)
+    if (dataSeries && pivotKey && xAxisKey && valueKey) {
+        // For multi-series with pivot, we need to transform each series' data and generate
+        // pivot-based series names like "q1_North", "q1_South", "q2_North", "q2_South"
+        const xAxisValues = new Map<unknown, Record<string, unknown>>();
+        const allSeries: ChartSeriesItem[] = [];
+        const seriesOriginMap = new Map<string, string>();
+
+        for (const [seriesName, seriesData] of dataSeries.entries()) {
+            // Find series config for this series to get pivotColors
+            const seriesConfig = eastSeries.find(s => s.name === seriesName);
+            const pivotColors = seriesConfig?.pivotColors?.type === "some"
+                ? seriesConfig.pivotColors.value
+                : undefined;
+            const defaultColor = seriesConfig?.color ? getSomeorUndefined(seriesConfig?.color) ?? "teal.solid" : "teal.solid";
+
+            const pivotValuesForSeries = new Set<string>();
+
+            for (const row of seriesData) {
+                const xValue = row.get(xAxisKey);
+                const pivotValue = row.get(pivotKey);
+                const yValue = row.get(valueKey);
+
+                if (xValue === undefined || pivotValue === undefined) continue;
+
+                const xConverted = convertLiteralValue(xValue);
+                const pivotConverted = String(convertLiteralValue(pivotValue));
+                const yConverted = yValue !== undefined ? convertLiteralValue(yValue) : null;
+
+                // Create composite series name: "seriesName_pivotValue"
+                const compositeName = `${seriesName}_${pivotConverted}`;
+                pivotValuesForSeries.add(pivotConverted);
+
+                let xRow = xAxisValues.get(xConverted);
+                if (!xRow) {
+                    xRow = { [xAxisKey]: xConverted };
+                    xAxisValues.set(xConverted, xRow);
+                }
+                xRow[compositeName] = yConverted;
+            }
+
+            // Add series entries for each pivot value in this series
+            for (const pv of pivotValuesForSeries) {
+                const compositeName = `${seriesName}_${pv}`;
+                allSeries.push({
+                    name: compositeName,
+                    color: pivotColors?.get(pv) ?? defaultColor,
+                });
+                seriesOriginMap.set(compositeName, seriesName);
+            }
+        }
+
+        return {
+            data: Array.from(xAxisValues.values()),
+            series: allSeries,
+            seriesOriginMap,
+        };
+    }
+
+    // Mode 3: Multi-series without pivot (separate arrays per series)
+    if (dataSeries && xAxisKey && valueKey) {
+        return {
+            data: convertMultiSeriesData(dataSeries, xAxisKey, valueKey),
+            series: eastSeries.map(toChartSeries),
+            seriesOriginMap: new Map(),
+        };
+    }
+
+    // Mode 4: Regular (wide-format data)
+    return {
+        data: convertChartData(rawData),
+        series: eastSeries.map(toChartSeries),
+        seriesOriginMap: new Map(),
+    };
 }
 
 // ============================================================================

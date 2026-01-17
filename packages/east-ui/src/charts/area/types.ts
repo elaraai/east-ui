@@ -5,6 +5,7 @@
 
 import {
     type SubtypeExprOrValue,
+    type DictType as DictTypeType,
     OptionType,
     StructType,
     ArrayType,
@@ -77,6 +78,7 @@ export const AreaChartType = StructType({
     data: ArrayType(DictType(StringType, LiteralValueType)),
     dataSeries: OptionType(MultiSeriesDataType),
     valueKey: OptionType(StringType),
+    pivotKey: OptionType(StringType),
     series: ArrayType(ChartSeriesType),
     xAxis: OptionType(ChartAxisType),
     yAxis: OptionType(ChartAxisType),
@@ -149,6 +151,10 @@ export interface AreaChartBrushStyle<DataKey extends string = string> extends Ch
  * @typeParam DataKey - Union of field keys from the data struct
  */
 export interface AreaChartStyle<DataKey extends string = string> extends AreaChartStyleBase<DataKey> {
+    /** Field name containing series identifiers (enables pivot/long format data) */
+    pivotKey?: DataKey;
+    /** Field name for Y values (required when using pivotKey) */
+    valueKey?: DataKey;
     /** Brush configuration for data range selection */
     brush?: AreaChartBrushStyle<DataKey>;
 }
@@ -167,6 +173,8 @@ export interface AreaChartMultiStyle<
 > extends AreaChartStyleBase<DataKey> {
     /** Field name containing Y values in each series array (must be numeric) */
     valueKey: NumericKey;
+    /** Field name containing series identifiers (enables pivot/long format data within each record) */
+    pivotKey?: DataKey;
     /** Per-series configuration (keyed by series name) */
     series?: { [K in SeriesKey]?: AreaChartSeriesConfig };
     /** Brush configuration for data range selection */
@@ -207,6 +215,8 @@ export interface AreaChartSeriesConfig {
     strokeDasharray?: SubtypeExprOrValue<StringType>;
     /** Y-axis binding (left = primary yAxis, right = secondary yAxis2) */
     yAxisId?: SubtypeExprOrValue<YAxisIdType> | YAxisIdLiteral;
+    /** Mapping of pivot key values to colors (used with pivotKey) */
+    pivotColors?: SubtypeExprOrValue<DictTypeType<StringType, StringType>>;
 }
 
 // ============================================================================

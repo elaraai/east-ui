@@ -251,7 +251,7 @@ export function createAreaChartMulti<
         style.series?.[key as K]
     ] as const);
 
-    return buildAreaChart(data_mapped, dataSeries_mapped, seriesEntries, style, style.valueKey);
+    return buildAreaChart(data_mapped, dataSeries_mapped, seriesEntries, style, style.valueKey, style.pivotKey);
 }
 
 // ============================================================================
@@ -262,8 +262,9 @@ function buildAreaChart(
     data_mapped: ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>,
     dataSeries_mapped: ExprType<typeof MultiSeriesDataType> | undefined,
     seriesEntries: readonly (readonly [string, AreaChartSeriesConfig | undefined])[],
-    style?: AreaChartStyleBase<string> & { brush?: AreaChartBrushStyle<string> },
-    valueKey?: string
+    style?: AreaChartStyleBase<string> & { brush?: AreaChartBrushStyle<string>; pivotKey?: string; valueKey?: string },
+    valueKey?: string,
+    pivotKey?: string
 ): ExprType<UIComponentType> {
     const series_mapped = seriesEntries.map(([name, config]) => {
         // Convert yAxisId string literal to variant
@@ -271,6 +272,11 @@ function buildAreaChart(
             ? (typeof config.yAxisId === "string"
                 ? some(East.value(variant(config.yAxisId, null), YAxisIdType))
                 : some(config.yAxisId))
+            : none;
+
+        // Convert pivotColors Map to East Dict
+        const pivotColorsValue = config?.pivotColors !== undefined
+            ? some(config.pivotColors)
             : none;
 
         return {
@@ -284,6 +290,7 @@ function buildAreaChart(
             fillOpacity: config?.fillOpacity !== undefined ? some(config.fillOpacity) : none,
             strokeDasharray: config?.strokeDasharray !== undefined ? some(config.strokeDasharray) : none,
             yAxisId: yAxisIdValue,
+            pivotColors: pivotColorsValue,
         };
     });
 
@@ -334,10 +341,16 @@ function buildAreaChart(
         ? variant("some", East.value(style.referenceAreas.map(referenceAreaStyleToType), ArrayType(ReferenceAreaType)))
         : variant("none", null);
 
+    // Get pivotKey from parameter or style
+    const effectivePivotKey = pivotKey ?? style?.pivotKey;
+    // Get valueKey from parameter or style
+    const effectiveValueKey = valueKey ?? style?.valueKey;
+
     return East.value(variant("AreaChart", {
         data: data_mapped,
         dataSeries: dataSeries_mapped ? variant("some", dataSeries_mapped) : variant("none", null),
-        valueKey: valueKey !== undefined ? variant("some", valueKey) : variant("none", null),
+        valueKey: effectiveValueKey !== undefined ? variant("some", effectiveValueKey) : variant("none", null),
+        pivotKey: effectivePivotKey !== undefined ? variant("some", effectivePivotKey) : variant("none", null),
         series: series_mapped,
         xAxis: xAxisExpr ? variant("some", xAxisExpr) : variant("none", null),
         yAxis: yAxisExpr ? variant("some", yAxisExpr) : variant("none", null),

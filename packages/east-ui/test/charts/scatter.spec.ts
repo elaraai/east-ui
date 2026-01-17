@@ -241,6 +241,70 @@ describeEast("Chart.Scatter", (test) => {
     });
 });
 
+describeEast("Chart.Scatter Pivot", (test) => {
+    // =========================================================================
+    // Pivot Key Support (Long/Pivoted Data Format)
+    // =========================================================================
+
+    test("creates chart with pivotKey", $ => {
+        const chart = $.let(Chart.Scatter(
+            [
+                { x: 10, category: "A", value: 30 },
+                { x: 10, category: "B", value: 25 },
+                { x: 20, category: "A", value: 50 },
+                { x: 20, category: "B", value: 40 },
+            ],
+            { value: { color: "teal.solid" } },
+            {
+                xAxis: { dataKey: "x" },
+                pivotKey: "category",
+                valueKey: "value",
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().getTag(), "ScatterChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").pivotKey.unwrap("some"), "category"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").valueKey.unwrap("some"), "value"));
+    });
+
+    test("creates chart without pivotKey (backward compat)", $ => {
+        const chart = $.let(Chart.Scatter(
+            [
+                { x: 10, y: 30 },
+            ],
+            { x: { color: "teal.solid" }, y: { color: "blue.solid" } }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").pivotKey.hasTag("none"), true));
+    });
+
+    test("creates chart with pivotColors mapping", $ => {
+        const chart = $.let(Chart.Scatter(
+            [
+                { x: 10, region: "North", sales: 30 },
+                { x: 10, region: "South", sales: 25 },
+            ],
+            {
+                sales: {
+                    color: "blue.500",
+                    pivotColors: new Map([
+                        ["North", "blue.700"],
+                        ["South", "blue.300"],
+                    ]),
+                },
+            },
+            {
+                xAxis: { dataKey: "x" },
+                pivotKey: "region",
+                valueKey: "sales",
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").pivotKey.unwrap("some"), "region"));
+        $(assertEast.equal(chart.unwrap().unwrap("ScatterChart").series.get(0n).pivotColors.hasTag("some"), true));
+    });
+});
+
 describeEast("Chart.ScatterMulti", (test) => {
     test("creates scatter chart with multi-series data", $ => {
         const chart = $.let(Chart.ScatterMulti(

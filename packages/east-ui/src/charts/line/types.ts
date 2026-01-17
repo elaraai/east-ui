@@ -58,6 +58,7 @@ import {
  * @property strokeDasharray - Dash pattern for dashed lines (e.g., "5 5")
  * @property showDots - Whether to show dots at data points (per-series override)
  * @property showLine - Whether to show the line (per-series override)
+ * @property pivotColors - Mapping of pivot key values to colors (used with pivotKey)
  */
 export const LineChartSeriesType = StructType({
     name: StringType,
@@ -70,6 +71,7 @@ export const LineChartSeriesType = StructType({
     showDots: OptionType(BooleanType),
     showLine: OptionType(BooleanType),
     yAxisId: OptionType(YAxisIdType),
+    pivotColors: OptionType(DictType(StringType, StringType)),
 });
 
 /**
@@ -94,7 +96,8 @@ export type LineChartSeriesType = typeof LineChartSeriesType;
  *
  * @property data - Array of data points (single array form)
  * @property dataSeries - Record of arrays per series (multi-series form, for sparse data)
- * @property valueKey - Field name for Y values when using dataSeries
+ * @property valueKey - Field name for Y values when using dataSeries or pivotKey
+ * @property pivotKey - Field name containing series identifiers (enables pivot/long format data)
  * @property series - Series configuration for multi-series charts
  * @property xAxis - X-axis configuration
  * @property yAxis - Y-axis configuration
@@ -111,6 +114,7 @@ export const LineChartType = StructType({
     data: ArrayType(DictType(StringType, LiteralValueType)),
     dataSeries: OptionType(MultiSeriesDataType),
     valueKey: OptionType(StringType),
+    pivotKey: OptionType(StringType),
     series: ArrayType(LineChartSeriesType),
     xAxis: OptionType(ChartAxisType),
     yAxis: OptionType(ChartAxisType),
@@ -194,6 +198,10 @@ export interface LineChartBrushStyle<DataKey extends string = string> extends Ch
  * @typeParam DataKey - Union of field keys from the data struct
  */
 export interface LineChartStyle<DataKey extends string = string> extends LineChartStyleBase<DataKey> {
+    /** Field name containing series identifiers (enables pivot/long format data) */
+    pivotKey?: DataKey;
+    /** Field name for Y values (required when using pivotKey) */
+    valueKey?: DataKey;
     /** Brush configuration for data range selection */
     brush?: LineChartBrushStyle<DataKey>;
 }
@@ -212,6 +220,8 @@ export interface LineChartMultiStyle<
 > extends LineChartStyleBase<DataKey> {
     /** Field name containing Y values in each series array (must be numeric) */
     valueKey: NumericKey;
+    /** Field name containing series identifiers (enables pivot/long format data within each record) */
+    pivotKey?: DataKey;
     /** Per-series configuration (keyed by series name) */
     series?: { [K in SeriesKey]?: LineChartSeriesConfig };
     /** Brush configuration for data range selection */
@@ -231,6 +241,7 @@ export interface LineChartMultiStyle<
  * @property strokeDasharray - Dash pattern for dashed lines (e.g., "5 5")
  * @property showDots - Whether to show dots at data points (per-series override)
  * @property showLine - Whether to show the line (per-series override)
+ * @property pivotColors - Mapping of pivot key values to colors (used with pivotKey)
  */
 export interface LineChartSeriesConfig {
     /** Chakra color token (e.g., "teal.solid", "blue.500") */
@@ -249,4 +260,6 @@ export interface LineChartSeriesConfig {
     showLine?: SubtypeExprOrValue<BooleanType>;
     /** Y-axis binding (left = primary yAxis, right = secondary yAxis2) */
     yAxisId?: SubtypeExprOrValue<YAxisIdType> | YAxisIdLiteral;
+    /** Mapping of pivot key values to colors (used with pivotKey) */
+    pivotColors?: SubtypeExprOrValue<DictType<StringType, StringType>>;
 }

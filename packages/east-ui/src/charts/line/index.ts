@@ -241,7 +241,7 @@ export function createLineChartMulti<
         style.series?.[key as K]
     ] as const);
 
-    return buildLineChart(data_mapped, dataSeries_mapped, seriesEntries, style, style.valueKey);
+    return buildLineChart(data_mapped, dataSeries_mapped, seriesEntries, style, style.valueKey, style.pivotKey);
 }
 
 // ============================================================================
@@ -252,8 +252,9 @@ function buildLineChart(
     data_mapped: ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>,
     dataSeries_mapped: ExprType<typeof MultiSeriesDataType> | undefined,
     seriesEntries: readonly (readonly [string, LineChartSeriesConfig | undefined])[],
-    style?: LineChartStyleBase<string> & { brush?: LineChartBrushStyle<string> },
-    valueKey?: string
+    style?: LineChartStyleBase<string> & { brush?: LineChartBrushStyle<string>; pivotKey?: string; valueKey?: string },
+    valueKey?: string,
+    pivotKey?: string
 ): ExprType<UIComponentType> {
     const series_mapped = seriesEntries.map(([name, config]) => {
         // Convert yAxisId string literal to variant
@@ -261,6 +262,11 @@ function buildLineChart(
             ? (typeof config.yAxisId === "string"
                 ? some(East.value(variant(config.yAxisId, null), YAxisIdType))
                 : some(config.yAxisId))
+            : none;
+
+        // Convert pivotColors Map to East Dict
+        const pivotColorsValue = config?.pivotColors !== undefined
+            ? some(config.pivotColors)
             : none;
 
         return {
@@ -274,6 +280,7 @@ function buildLineChart(
             showDots: config?.showDots !== undefined ? some(config.showDots) : none,
             showLine: config?.showLine !== undefined ? some(config.showLine) : none,
             yAxisId: yAxisIdValue,
+            pivotColors: pivotColorsValue,
         };
     });
 
@@ -318,10 +325,16 @@ function buildLineChart(
         ? variant("some", East.value(style.referenceAreas.map(referenceAreaStyleToType), ArrayType(ReferenceAreaType)))
         : variant("none", null);
 
+    // Get pivotKey from parameter or style
+    const effectivePivotKey = pivotKey ?? style?.pivotKey;
+    // Get valueKey from parameter or style
+    const effectiveValueKey = valueKey ?? style?.valueKey;
+
     return East.value(variant("LineChart", {
         data: data_mapped,
         dataSeries: dataSeries_mapped ? variant("some", dataSeries_mapped) : variant("none", null),
-        valueKey: valueKey !== undefined ? variant("some", valueKey) : variant("none", null),
+        valueKey: effectiveValueKey !== undefined ? variant("some", effectiveValueKey) : variant("none", null),
+        pivotKey: effectivePivotKey !== undefined ? variant("some", effectivePivotKey) : variant("none", null),
         series: series_mapped,
         xAxis: xAxisExpr ? variant("some", xAxisExpr) : variant("none", null),
         yAxis: yAxisExpr ? variant("some", yAxisExpr) : variant("none", null),

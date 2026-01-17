@@ -493,6 +493,248 @@ export default East.function(
             )
         );
 
+        // Pivot data format with pivotColors
+        const pivotWithColors = $.let(
+            ShowcaseCard(
+                "Pivot with Colors",
+                "Long-format data with explicit pivotColors mapping",
+                Box.Root([
+                    Chart.Composed(
+                        [
+                            { month: "Jan", region: "North", sales: 100n },
+                            { month: "Jan", region: "South", sales: 80n },
+                            { month: "Feb", region: "North", sales: 120n },
+                            { month: "Feb", region: "South", sales: 90n },
+                            { month: "Mar", region: "North", sales: 140n },
+                            { month: "Mar", region: "South", sales: 110n },
+                        ],
+                        {
+                            xAxis: { dataKey: "month" },
+                            pivotKey: "region",
+                            valueKey: "sales",
+                            series: {
+                                sales: {
+                                    type: "bar",
+                                    color: "blue.500",
+                                    pivotColors: new Map([
+                                        ["North", "blue.700"],
+                                        ["South", "teal.500"],
+                                    ]),
+                                },
+                            },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "250px", width: "100%" }),
+                some(`
+                    Chart.Composed(
+                        [
+                            { month: "Jan", region: "North", sales: 100n },
+                            { month: "Jan", region: "South", sales: 80n },
+                            // ... more rows per (month, region)
+                        ],
+                        {
+                            xAxis: { dataKey: "month" },
+                            pivotKey: "region",
+                            valueKey: "sales",
+                            series: {
+                                sales: {
+                                    type: "bar",
+                                    color: "blue.500",
+                                    pivotColors: new Map([
+                                        ["North", "blue.700"],
+                                        ["South", "teal.500"],
+                                    ]),
+                                },
+                            },
+                        }
+                    )
+                `)
+            )
+        );
+
+        // Pivot data format without pivotColors (uses default color)
+        const pivotWithoutColors = $.let(
+            ShowcaseCard(
+                "Pivot Default Color",
+                "Long-format data using default color for all series",
+                Box.Root([
+                    Chart.Composed(
+                        [
+                            { month: "Jan", category: "A", value: 100n },
+                            { month: "Jan", category: "B", value: 80n },
+                            { month: "Jan", category: "C", value: 60n },
+                            { month: "Feb", category: "A", value: 120n },
+                            { month: "Feb", category: "B", value: 90n },
+                            { month: "Feb", category: "C", value: 70n },
+                        ],
+                        {
+                            xAxis: { dataKey: "month" },
+                            pivotKey: "category",
+                            valueKey: "value",
+                            series: {
+                                value: { type: "line", color: "purple.solid", showDots: true },
+                            },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "250px", width: "100%" }),
+                some(`
+                    Chart.Composed(
+                        [
+                            { month: "Jan", category: "A", value: 100n },
+                            { month: "Jan", category: "B", value: 80n },
+                            // ... all series use same default color
+                        ],
+                        {
+                            xAxis: { dataKey: "month" },
+                            pivotKey: "category",
+                            valueKey: "value",
+                            series: {
+                                value: { type: "line", color: "purple.solid" },
+                            },
+                        }
+                    )
+                `)
+            )
+        );
+
+        // ComposedMulti with pivot and pivotColors
+        const multiPivotWithColors = $.let(
+            ShowcaseCard(
+                "Multi Pivot with Colors",
+                "Multi-series with pivot within each record",
+                Box.Root([
+                    Chart.ComposedMulti(
+                        {
+                            revenue: [
+                                { month: "Jan", region: "North", value: 100n },
+                                { month: "Jan", region: "South", value: 80n },
+                                { month: "Feb", region: "North", value: 120n },
+                                { month: "Feb", region: "South", value: 95n },
+                            ],
+                            profit: [
+                                { month: "Jan", region: "North", value: 40n },
+                                { month: "Jan", region: "South", value: 30n },
+                                { month: "Feb", region: "North", value: 50n },
+                                { month: "Feb", region: "South", value: 40n },
+                            ],
+                        },
+                        {
+                            xAxis: { dataKey: "month" },
+                            valueKey: "value",
+                            pivotKey: "region",
+                            series: {
+                                revenue: {
+                                    type: "bar",
+                                    color: "teal.500",
+                                    pivotColors: new Map([
+                                        ["North", "teal.700"],
+                                        ["South", "teal.300"],
+                                    ]),
+                                },
+                                profit: {
+                                    type: "line",
+                                    color: "blue.500",
+                                    showDots: true,
+                                    pivotColors: new Map([
+                                        ["North", "blue.700"],
+                                        ["South", "blue.300"],
+                                    ]),
+                                },
+                            },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "250px", width: "100%" }),
+                some(`
+                    Chart.ComposedMulti(
+                        {
+                            revenue: [
+                                { month: "Jan", region: "North", value: 100n },
+                                { month: "Jan", region: "South", value: 80n },
+                                // ...
+                            ],
+                            profit: [...],
+                        },
+                        {
+                            xAxis: { dataKey: "month" },
+                            valueKey: "value",
+                            pivotKey: "region",
+                            series: {
+                                revenue: { type: "bar", pivotColors: new Map([...]) },
+                                profit: { type: "line", pivotColors: new Map([...]) },
+                            },
+                        }
+                    )
+                `)
+            )
+        );
+
+        // ComposedMulti with pivot but no pivotColors
+        const multiPivotWithoutColors = $.let(
+            ShowcaseCard(
+                "Multi Pivot Default",
+                "Multi-series pivot using default colors",
+                Box.Root([
+                    Chart.ComposedMulti(
+                        {
+                            actual: [
+                                { month: "Jan", type: "Online", value: 50n },
+                                { month: "Jan", type: "Store", value: 30n },
+                                { month: "Feb", type: "Online", value: 60n },
+                                { month: "Feb", type: "Store", value: 40n },
+                            ],
+                            forecast: [
+                                { month: "Jan", type: "Online", value: 55n },
+                                { month: "Jan", type: "Store", value: 35n },
+                                { month: "Feb", type: "Online", value: 65n },
+                                { month: "Feb", type: "Store", value: 45n },
+                            ],
+                        },
+                        {
+                            xAxis: { dataKey: "month" },
+                            valueKey: "value",
+                            pivotKey: "type",
+                            series: {
+                                actual: { type: "bar", color: "green.solid" },
+                                forecast: { type: "area", color: "orange.solid", fillOpacity: 0.3 },
+                            },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "250px", width: "100%" }),
+                some(`
+                    Chart.ComposedMulti(
+                        {
+                            actual: [
+                                { month: "Jan", type: "Online", value: 50n },
+                                // ...
+                            ],
+                            forecast: [...],
+                        },
+                        {
+                            xAxis: { dataKey: "month" },
+                            valueKey: "value",
+                            pivotKey: "type",
+                            series: {
+                                actual: { type: "bar", color: "green.solid" },
+                                forecast: { type: "area", color: "orange.solid" },
+                            },
+                        }
+                    )
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -505,6 +747,10 @@ export default East.function(
                 Grid.Item(dualYAxis),
                 Grid.Item(withReference),
                 Grid.Item(withBrush),
+                Grid.Item(pivotWithColors),
+                Grid.Item(pivotWithoutColors),
+                Grid.Item(multiPivotWithColors),
+                Grid.Item(multiPivotWithoutColors),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

@@ -499,6 +499,71 @@ describeEast("Chart.Line", (test) => {
     });
 });
 
+describeEast("Chart.Line Pivot", (test) => {
+    // =========================================================================
+    // Pivot Key Support (Long/Pivoted Data Format)
+    // =========================================================================
+
+    test("creates chart with pivotKey", $ => {
+        const chart = $.let(Chart.Line(
+            [
+                { month: "Jan", category: "A", value: 100n },
+                { month: "Jan", category: "B", value: 50n },
+                { month: "Feb", category: "A", value: 120n },
+                { month: "Feb", category: "B", value: 80n },
+            ],
+            { value: { color: "teal.solid" } },
+            {
+                xAxis: { dataKey: "month" },
+                pivotKey: "category",
+                valueKey: "value",
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().getTag(), "LineChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").pivotKey.unwrap("some"), "category"));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").valueKey.unwrap("some"), "value"));
+    });
+
+    test("creates chart without pivotKey (backward compat)", $ => {
+        const chart = $.let(Chart.Line(
+            [
+                { month: "Jan", revenue: 100n, profit: 50n },
+            ],
+            { revenue: { color: "teal.solid" }, profit: { color: "blue.solid" } },
+            { xAxis: { dataKey: "month" } }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").pivotKey.hasTag("none"), true));
+    });
+
+    test("creates chart with pivotColors mapping", $ => {
+        const chart = $.let(Chart.Line(
+            [
+                { month: "Jan", region: "North", sales: 100n },
+                { month: "Jan", region: "South", sales: 80n },
+            ],
+            {
+                sales: {
+                    color: "blue.500",
+                    pivotColors: new Map([
+                        ["North", "blue.700"],
+                        ["South", "blue.300"],
+                    ]),
+                },
+            },
+            {
+                xAxis: { dataKey: "month" },
+                pivotKey: "region",
+                valueKey: "sales",
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").pivotKey.unwrap("some"), "region"));
+        $(assertEast.equal(chart.unwrap().unwrap("LineChart").series.get(0n).pivotColors.hasTag("some"), true));
+    });
+});
+
 describeEast("Chart.LineMulti", (test) => {
     // =========================================================================
     // Multi-Series Data (Record Form) - for sparse data

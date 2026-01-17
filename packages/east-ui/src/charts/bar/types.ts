@@ -5,6 +5,7 @@
 
 import {
     type SubtypeExprOrValue,
+    type DictType as DictTypeType,
     OptionType,
     StructType,
     ArrayType,
@@ -78,6 +79,7 @@ export const BarChartType = StructType({
     data: ArrayType(DictType(StringType, LiteralValueType)),
     dataSeries: OptionType(MultiSeriesDataType),
     valueKey: OptionType(StringType),
+    pivotKey: OptionType(StringType),
     series: ArrayType(ChartSeriesType),
     xAxis: OptionType(ChartAxisType),
     yAxis: OptionType(ChartAxisType),
@@ -153,6 +155,10 @@ export interface BarChartBrushStyle<DataKey extends string = string> extends Cha
  * @typeParam DataKey - Union of field keys from the data struct
  */
 export interface BarChartStyle<DataKey extends string = string> extends BarChartStyleBase<DataKey> {
+    /** Field name containing series identifiers (enables pivot/long format data) */
+    pivotKey?: DataKey;
+    /** Field name for Y values (required when using pivotKey) */
+    valueKey?: DataKey;
     /** Brush configuration for data range selection */
     brush?: BarChartBrushStyle<DataKey>;
 }
@@ -171,6 +177,8 @@ export interface BarChartMultiStyle<
 > extends BarChartStyleBase<DataKey> {
     /** Field name containing Y values in each series array (must be numeric) */
     valueKey: NumericKey;
+    /** Field name containing series identifiers (enables pivot/long format data within each record) */
+    pivotKey?: DataKey;
     /** Per-series configuration (keyed by series name) */
     series?: { [K in SeriesKey]?: BarChartSeriesConfig };
     /** Brush configuration for data range selection */
@@ -211,4 +219,6 @@ export interface BarChartSeriesConfig {
     strokeDasharray?: SubtypeExprOrValue<StringType>;
     /** Y-axis binding (left = primary yAxis, right = secondary yAxis2) */
     yAxisId?: SubtypeExprOrValue<YAxisIdType> | YAxisIdLiteral;
+    /** Mapping of pivot key values to colors (used with pivotKey) */
+    pivotColors?: SubtypeExprOrValue<DictTypeType<StringType, StringType>>;
 }

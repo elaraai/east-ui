@@ -205,6 +205,103 @@ describeEast("Chart.Composed", (test) => {
     });
 });
 
+describeEast("Chart.Composed Pivot", (test) => {
+    // =========================================================================
+    // Pivot Key Support (Long/Pivoted Data Format)
+    // =========================================================================
+
+    test("creates chart with pivotKey", $ => {
+        const chart = $.let(Chart.Composed(
+            [
+                { month: "Jan", category: "A", value: 100n },
+                { month: "Jan", category: "B", value: 50n },
+                { month: "Feb", category: "A", value: 120n },
+                { month: "Feb", category: "B", value: 80n },
+            ],
+            {
+                xAxis: { dataKey: "month" },
+                pivotKey: "category",
+                valueKey: "value",
+                series: {
+                    value: { type: "line", color: "teal.solid" },
+                },
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().getTag(), "ComposedChart"));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").pivotKey.unwrap("some"), "category"));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").valueKey.unwrap("some"), "value"));
+    });
+
+    test("creates chart without pivotKey (backward compat)", $ => {
+        const chart = $.let(Chart.Composed(
+            [
+                { month: "Jan", revenue: 100n, profit: 50n },
+            ],
+            {
+                xAxis: { dataKey: "month" },
+                series: {
+                    revenue: { type: "bar", color: "teal.solid" },
+                    profit: { type: "line", color: "blue.solid" },
+                },
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").pivotKey.hasTag("none"), true));
+    });
+
+    test("creates chart with pivotColors in line series", $ => {
+        const chart = $.let(Chart.Composed(
+            [
+                { month: "Jan", region: "North", sales: 100n },
+                { month: "Jan", region: "South", sales: 80n },
+            ],
+            {
+                xAxis: { dataKey: "month" },
+                pivotKey: "region",
+                valueKey: "sales",
+                series: {
+                    sales: {
+                        type: "line",
+                        color: "blue.500",
+                        pivotColors: new Map([
+                            ["North", "blue.700"],
+                            ["South", "blue.300"],
+                        ]),
+                    },
+                },
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").pivotKey.unwrap("some"), "region"));
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("line").pivotColors.hasTag("some"), true));
+    });
+
+    test("creates chart with pivotColors in bar series", $ => {
+        const chart = $.let(Chart.Composed(
+            [
+                { month: "Jan", region: "North", sales: 100n },
+            ],
+            {
+                xAxis: { dataKey: "month" },
+                pivotKey: "region",
+                valueKey: "sales",
+                series: {
+                    sales: {
+                        type: "bar",
+                        color: "teal.500",
+                        pivotColors: new Map([
+                            ["North", "teal.700"],
+                        ]),
+                    },
+                },
+            }
+        ));
+
+        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("bar").pivotColors.hasTag("some"), true));
+    });
+});
+
 describeEast("Chart.ComposedMulti", (test) => {
     // =========================================================================
     // Multi-Series Composed Charts
