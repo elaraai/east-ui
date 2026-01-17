@@ -7,7 +7,8 @@ import {
     East,
     type ExprType,
     type BlockBuilder,
-    variant, printLocation
+    variant, 
+    printLocations
 } from "@elaraai/east";
 
 import { UIComponentType } from "../component.js";
@@ -70,7 +71,7 @@ function createReactive(
         if (e instanceof OutOfScopeException) {
             throw new Error(
                 `Reactive.Root body must be a free function with no captures from parent scope. ` +
-                `Found capture from variable defined at ${printLocation(e.definedLocation)}. ` +
+                `Found capture from variable defined at ${printLocations(e.definedLocation)}. ` +
                 `Move state reads inside the Reactive body or use State for shared data.`
             );
         } else {

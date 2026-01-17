@@ -29,7 +29,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "peerDependencies": {
-    "@elaraai/east": "^0.0.1-beta.26",
+    "@elaraai/east": "^0.0.1-beta.29",
     "@elaraai/east-ui": "^0.0.1-beta.18",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
