@@ -10,7 +10,7 @@
         "vscode": "^1.85.0"
     },
     "extensionKind": [
-        "ui"
+        "workspace"
     ],
     "categories": [
         "Visualization",
@@ -28,7 +28,7 @@
         "url": "https://github.com/elaraai/east-ui"
     },
     "icon": "Elara_AI_Mark.png",
-    "main": "./dist/extension.js",
+    "main": "./dist/extension.cjs",
     "contributes": {
         "commands": [
             {
@@ -58,7 +58,7 @@
     ],
     "scripts": {
         "build": "npm run build:extension && npm run build:webview",
-        "build:extension": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --target=node22",
+        "build:extension": "esbuild src/extension.ts --bundle --outfile=dist/extension.cjs --external:vscode --format=cjs --platform=node --target=node22",
         "build:webview": "cd webview && npm run build",
         "watch": "npm run build:extension -- --watch",
         "package": "vsce package --no-dependencies",
