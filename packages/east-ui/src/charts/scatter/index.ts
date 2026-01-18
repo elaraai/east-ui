@@ -272,6 +272,7 @@ function buildScatterChart(
             strokeDasharray: none,
             yAxisId: yAxisIdValue,
             pivotColors: pivotColorsValue,
+            layerIndex: config?.layerIndex !== undefined ? some(config.layerIndex) : none,
         };
     });
 

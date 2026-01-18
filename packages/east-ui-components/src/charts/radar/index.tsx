@@ -97,8 +97,8 @@ export const EastChakraRadarChart = memo(function EastChakraRadarChart({ value }
     return (
         <Chart.Root
             chart={chart}
-            maxW="full"
-            maxH="full"
+            w="full"
+            h="full"
         >
             <RadarChart
                 data={chart.data}

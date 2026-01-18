@@ -66,7 +66,7 @@ export const EastChakraScatterChart = memo(function EastChakraScatterChart({ val
     }, [value.dataSeries]);
 
     // Prepare chart data and series (handles pivot, multi-series, and regular modes)
-    const { data: chartData, series } = useMemo(() => prepareChartData({
+    const { data: chartData, series, layerIndexMap } = useMemo(() => prepareChartData({
         rawData: value.data,
         dataSeries: getSomeorUndefined(value.dataSeries),
         xAxisKey: xDataKey,
@@ -127,12 +127,12 @@ export const EastChakraScatterChart = memo(function EastChakraScatterChart({ val
         return { show: shouldShowLegend(legendValue), props: toRechartsLegend(legendValue) };
     }, [value.legend]);
 
-    // Tooltip configuration
+    // Tooltip configuration (depends on axis formatters)
     const tooltip = useMemo(() => {
         const tooltipValue = getSomeorUndefined(value.tooltip);
         if (!tooltipValue) return { show: false, props: {} };
-        return { show: shouldShowTooltip(tooltipValue), props: toRechartsTooltip(tooltipValue) };
-    }, [value.tooltip]);
+        return { show: shouldShowTooltip(tooltipValue), props: toRechartsTooltip(tooltipValue, xAxis.tickFormatter, yAxis.tickFormatter) };
+    }, [value.tooltip, xAxis.tickFormatter, yAxis.tickFormatter]);
 
     // Layout: margin (note: brush is not supported for ScatterChart in Recharts)
     const margin = useMemo(() => {
@@ -175,7 +175,7 @@ export const EastChakraScatterChart = memo(function EastChakraScatterChart({ val
     }), [value.referenceLines, value.referenceDots, value.referenceAreas]);
 
     return (
-        <Chart.Root chart={chart} maxW="full" maxH="full">
+        <Chart.Root chart={chart} w="full" h="full">
             <ScatterChart data={chart.data} margin={margin}>
                 {grid.show && <CartesianGrid {...grid.props} />}
                 {!xAxis.props.hide && scatterData.xAxisDataKey && (
@@ -206,10 +206,13 @@ export const EastChakraScatterChart = memo(function EastChakraScatterChart({ val
                 {tooltip.show && <Tooltip {...tooltip.props} content={<Chart.Tooltip />} />}
                 {legend.show && <Legend {...legend.props} content={<Chart.Legend />} />}
 
-                {chart.series.map((item) => {
+                {[...chart.series]
+                    .sort((a, b) => (layerIndexMap.get(a.name as string) ?? 0) - (layerIndexMap.get(b.name as string) ?? 0))
+                    .map((item, index) => {
                     const seriesName = item.name as string;
                     const seriesConfig = value.series.find(s => s.name === seriesName);
                     const yAxisId = seriesConfig ? getSomeorUndefined(seriesConfig.yAxisId) : undefined;
+                    const zIndex = layerIndexMap.get(seriesName) ?? index;
 
                     return (
                         <Scatter
@@ -218,6 +221,7 @@ export const EastChakraScatterChart = memo(function EastChakraScatterChart({ val
                             data={scatterData.seriesDataMap?.get(seriesName) ?? chart.data}
                             fill={chart.color(item.color)}
                             isAnimationActive={false}
+                            zIndex={zIndex}
                             {...(yAxis2.show && { yAxisId: yAxisId?.type ?? "left" })}
                         />
                     );

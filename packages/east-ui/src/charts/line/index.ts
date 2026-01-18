@@ -281,6 +281,7 @@ function buildLineChart(
             showLine: config?.showLine !== undefined ? some(config.showLine) : none,
             yAxisId: yAxisIdValue,
             pivotColors: pivotColorsValue,
+            layerIndex: config?.layerIndex !== undefined ? some(config.layerIndex) : none,
         };
     });
 

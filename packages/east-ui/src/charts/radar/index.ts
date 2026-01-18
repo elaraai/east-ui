@@ -82,6 +82,7 @@ export function createRadarChart<T extends SubtypeExprOrValue<ArrayType<StructTy
         strokeDasharray: config?.strokeDasharray !== undefined ? some(config.strokeDasharray) : none,
         yAxisId: none, // Radar charts don't use Y-axis, but ChartSeriesType requires this field
         pivotColors: none, // Radar charts don't support pivot mode, but ChartSeriesType requires this field
+        layerIndex: config?.layerIndex !== undefined ? some(config.layerIndex) : none,
     }));
 
     // Convert style properties

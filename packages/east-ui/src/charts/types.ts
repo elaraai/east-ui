@@ -81,6 +81,7 @@ export type YAxisIdLiteral = "left" | "right";
  * @property fillOpacity - Fill opacity (0-1)
  * @property strokeDasharray - Dash pattern for dashed lines (e.g., "5 5")
  * @property yAxisId - Y-axis binding (left = primary yAxis, right = secondary yAxis2)
+ * @property layerIndex - Rendering order (higher = rendered on top)
  */
 export const ChartSeriesType = StructType({
     name: StringType,
@@ -94,6 +95,7 @@ export const ChartSeriesType = StructType({
     strokeDasharray: OptionType(StringType),
     yAxisId: OptionType(YAxisIdType),
     pivotColors: OptionType(DictType(StringType, StringType)),
+    layerIndex: OptionType(IntegerType),
 });
 
 /**
@@ -127,6 +129,8 @@ export interface ChartSeries {
     yAxisId?: SubtypeExprOrValue<YAxisIdType> | YAxisIdLiteral;
     /** Mapping of pivot key values to colors (used with pivotKey) */
     pivotColors?: SubtypeExprOrValue<DictType<StringType, StringType>>;
+    /** Rendering order (higher = rendered on top) */
+    layerIndex?: SubtypeExprOrValue<IntegerType>;
 }
 
 export function ChartSeries(series: ChartSeries): ExprType<ChartSeriesType> {
@@ -150,6 +154,7 @@ export function ChartSeries(series: ChartSeries): ExprType<ChartSeriesType> {
         strokeDasharray: series.strokeDasharray !== undefined ? some(series.strokeDasharray) : none,
         yAxisId: yAxisIdValue,
         pivotColors: pivotColorsValue,
+        layerIndex: series.layerIndex !== undefined ? some(series.layerIndex) : none,
     }, ChartSeriesType);
 }
 
@@ -582,12 +587,14 @@ export type NumberFormatType = typeof NumberFormatType;
  *
  * @property currency - ISO 4217 currency code
  * @property display - How to display the currency
+ * @property compact - Use compact notation (e.g., $1K instead of $1,000)
  * @property minimumFractionDigits - Minimum decimal places
  * @property maximumFractionDigits - Maximum decimal places
  */
 export const CurrencyFormatType = StructType({
     currency: CurrencyCodeType,
     display: OptionType(CurrencyDisplayType),
+    compact: OptionType(CompactDisplayType),
     minimumFractionDigits: OptionType(IntegerType),
     maximumFractionDigits: OptionType(IntegerType),
 });
@@ -630,38 +637,63 @@ export const UnitFormatType = StructType({
 export type UnitFormatType = typeof UnitFormatType;
 
 /**
- * Date format configuration.
+ * Date format configuration using East format strings.
  *
- * @property style - Date style (full, long, medium, short)
+ * @property format - East datetime format string (e.g., "YYYY-MM-DD", "MMM D, YYYY")
+ *
+ * @remarks
+ * Format codes:
+ * - YYYY: 4-digit year
+ * - YY: 2-digit year
+ * - MMMM: Full month name (January)
+ * - MMM: Short month name (Jan)
+ * - MM: 2-digit month (01-12)
+ * - M: Month (1-12)
+ * - DD: 2-digit day (01-31)
+ * - D: Day (1-31)
+ * - dddd: Full weekday (Sunday)
+ * - ddd: Short weekday (Sun)
+ * - dd: Min weekday (Su)
  */
 export const DateFormatType = StructType({
-    style: OptionType(DateTimeStyleType),
+    format: StringType,
 });
 export type DateFormatType = typeof DateFormatType;
 
 /**
- * Time format configuration.
+ * Time format configuration using East format strings.
  *
- * @property style - Time style (full, long, medium, short)
- * @property hour12 - Use 12-hour format (true) or 24-hour format (false)
+ * @property format - East datetime format string (e.g., "HH:mm:ss", "h:mm A")
+ *
+ * @remarks
+ * Format codes:
+ * - HH: 24-hour with zero-pad (00-23)
+ * - H: 24-hour (0-23)
+ * - hh: 12-hour with zero-pad (01-12)
+ * - h: 12-hour (1-12)
+ * - mm: Minutes with zero-pad (00-59)
+ * - m: Minutes (0-59)
+ * - ss: Seconds with zero-pad (00-59)
+ * - s: Seconds (0-59)
+ * - SSS: Milliseconds (000-999)
+ * - A: AM/PM uppercase
+ * - a: am/pm lowercase
  */
 export const TimeFormatType = StructType({
-    style: OptionType(DateTimeStyleType),
-    hour12: OptionType(BooleanType),
+    format: StringType,
 });
 export type TimeFormatType = typeof TimeFormatType;
 
 /**
- * DateTime format configuration.
+ * DateTime format configuration using East format strings.
  *
- * @property dateStyle - Date style
- * @property timeStyle - Time style
- * @property hour12 - Use 12-hour format
+ * @property format - East datetime format string (e.g., "YYYY-MM-DD HH:mm:ss")
+ *
+ * @remarks
+ * Combines date and time format codes. See DateFormatType and TimeFormatType for available codes.
  */
 export const DateTimeFormatType = StructType({
-    dateStyle: OptionType(DateTimeStyleType),
-    timeStyle: OptionType(DateTimeStyleType),
-    hour12: OptionType(BooleanType),
+    format: StringType,
 });
 export type DateTimeFormatType = typeof DateTimeFormatType;
 
@@ -719,6 +751,7 @@ export interface NumberFormat {
 export interface CurrencyFormat {
     currency: SubtypeExprOrValue<CurrencyCodeType> | CurrencyCodeLiteral;
     display?: SubtypeExprOrValue<CurrencyDisplayType> | CurrencyDisplayLiteral;
+    compact?: SubtypeExprOrValue<CompactDisplayType> | CompactDisplayLiteral;
     minimumFractionDigits?: SubtypeExprOrValue<IntegerType>;
     maximumFractionDigits?: SubtypeExprOrValue<IntegerType>;
 }
@@ -738,19 +771,28 @@ export interface UnitFormat {
     display?: SubtypeExprOrValue<UnitDisplayType> | UnitDisplayLiteral;
 }
 
+/**
+ * Date format configuration using East format strings.
+ * @property format - East datetime format string (e.g., "YYYY-MM-DD", "MMM D, YYYY")
+ */
 export interface DateFormat {
-    style?: SubtypeExprOrValue<DateTimeStyleType> | DateTimeStyleLiteral;
+    format: SubtypeExprOrValue<StringType>;
 }
 
+/**
+ * Time format configuration using East format strings.
+ * @property format - East datetime format string (e.g., "HH:mm:ss", "h:mm A")
+ */
 export interface TimeFormat {
-    style?: SubtypeExprOrValue<DateTimeStyleType> | DateTimeStyleLiteral;
-    hour12?: SubtypeExprOrValue<BooleanType>;
+    format: SubtypeExprOrValue<StringType>;
 }
 
+/**
+ * DateTime format configuration using East format strings.
+ * @property format - East datetime format string (e.g., "YYYY-MM-DD HH:mm:ss")
+ */
 export interface DateTimeFormat {
-    dateStyle?: SubtypeExprOrValue<DateTimeStyleType> | DateTimeStyleLiteral;
-    timeStyle?: SubtypeExprOrValue<DateTimeStyleType> | DateTimeStyleLiteral;
-    hour12?: SubtypeExprOrValue<BooleanType>;
+    format: SubtypeExprOrValue<StringType>;
 }
 
 // ============================================================================
@@ -831,9 +873,16 @@ export function CurrencyTickFormat(format: CurrencyFormat): ExprType<TickFormatT
             : format.display)
         : undefined;
 
+    const compactValue = format.compact !== undefined
+        ? (typeof format.compact === "string"
+            ? East.value(variant(format.compact, null), CompactDisplayType)
+            : format.compact)
+        : undefined;
+
     return East.value(variant("currency", {
         currency: currencyValue,
         display: displayValue ? some(displayValue) : none,
+        compact: compactValue ? some(compactValue) : none,
         minimumFractionDigits: format.minimumFractionDigits !== undefined
             ? some(format.minimumFractionDigits) : none,
         maximumFractionDigits: format.maximumFractionDigits !== undefined
@@ -1002,110 +1051,113 @@ export function EngineeringTickFormat(): ExprType<TickFormatType> {
 }
 
 /**
- * Creates a date tick format for axis values.
+ * Creates a date tick format for axis values using East format strings.
  *
- * @param format - Optional configuration for date formatting
- * @param format.style - Date style: "full" (Wednesday, March 15, 2024), "long" (March 15, 2024),
- *   "medium" (Mar 15, 2024), or "short" (3/15/24)
+ * @param format - Configuration for date formatting
+ * @param format.format - East datetime format string
  * @returns An East expression representing the date tick format
  *
  * @remarks
- * Uses Intl.DateTimeFormat. When called without arguments, uses the browser's
- * default date format. The actual output format depends on the user's locale.
+ * Uses East's datetime formatting for consistent behavior across backends.
+ *
+ * Format codes:
+ * - YYYY: 4-digit year (2024)
+ * - YY: 2-digit year (24)
+ * - MMMM: Full month name (January)
+ * - MMM: Short month name (Jan)
+ * - MM: 2-digit month (01-12)
+ * - M: Month (1-12)
+ * - DD: 2-digit day (01-31)
+ * - D: Day (1-31)
+ * - dddd: Full weekday (Sunday)
+ * - ddd: Short weekday (Sun)
+ * - dd: Min weekday (Su)
  *
  * @example
  * ```ts
- * // Default date format
- * Chart.Axis({ tickFormat: TickFormat.Date() })
+ * // ISO date format (2024-01-15)
+ * Chart.Axis({ tickFormat: TickFormat.Date({ format: "YYYY-MM-DD" }) })
  *
- * // Short date (3/15/24)
- * Chart.Axis({ tickFormat: TickFormat.Date({ style: "short" }) })
+ * // US date format (1/15/24)
+ * Chart.Axis({ tickFormat: TickFormat.Date({ format: "M/D/YY" }) })
  *
- * // Long date (March 15, 2024)
- * Chart.Axis({ tickFormat: TickFormat.Date({ style: "long" }) })
+ * // Long date format (Jan 15, 2024)
+ * Chart.Axis({ tickFormat: TickFormat.Date({ format: "MMM D, YYYY" }) })
  * ```
  */
-export function DateTickFormat(format?: DateFormat): ExprType<TickFormatType> {
+export function DateTickFormat(format: DateFormat): ExprType<TickFormatType> {
     return East.value(variant("date", {
-        style: format?.style !== undefined
-            ? some(typeof format.style === "string" ? variant(format.style, null) : format.style)
-            : none,
+        format: format.format,
     }), TickFormatType);
 }
 
 /**
- * Creates a time tick format for axis values.
+ * Creates a time tick format for axis values using East format strings.
  *
- * @param format - Optional configuration for time formatting
- * @param format.style - Time style: "full" (3:30:45 PM Eastern Standard Time),
- *   "long" (3:30:45 PM EST), "medium" (3:30:45 PM), or "short" (3:30 PM)
- * @param format.hour12 - Use 12-hour format (true) or 24-hour format (false)
+ * @param format - Configuration for time formatting
+ * @param format.format - East datetime format string
  * @returns An East expression representing the time tick format
  *
  * @remarks
- * Uses Intl.DateTimeFormat. When called without arguments, uses the browser's
- * default time format. The hour12 option overrides the locale's default.
+ * Uses East's datetime formatting for consistent behavior across backends.
+ *
+ * Format codes:
+ * - HH: 24-hour with zero-pad (00-23)
+ * - H: 24-hour (0-23)
+ * - hh: 12-hour with zero-pad (01-12)
+ * - h: 12-hour (1-12)
+ * - mm: Minutes with zero-pad (00-59)
+ * - m: Minutes (0-59)
+ * - ss: Seconds with zero-pad (00-59)
+ * - s: Seconds (0-59)
+ * - SSS: Milliseconds (000-999)
+ * - A: AM/PM uppercase
+ * - a: am/pm lowercase
  *
  * @example
  * ```ts
- * // Default time format
- * Chart.Axis({ tickFormat: TickFormat.Time() })
+ * // 24-hour time (14:30)
+ * Chart.Axis({ tickFormat: TickFormat.Time({ format: "HH:mm" }) })
  *
- * // Short time in 24-hour format (15:30)
- * Chart.Axis({ tickFormat: TickFormat.Time({ style: "short", hour12: false }) })
+ * // 12-hour time with AM/PM (2:30 PM)
+ * Chart.Axis({ tickFormat: TickFormat.Time({ format: "h:mm A" }) })
  *
- * // Medium time in 12-hour format (3:30:45 PM)
- * Chart.Axis({ tickFormat: TickFormat.Time({ style: "medium", hour12: true }) })
+ * // Full time with seconds (14:30:45)
+ * Chart.Axis({ tickFormat: TickFormat.Time({ format: "HH:mm:ss" }) })
  * ```
  */
-export function TimeTickFormat(format?: TimeFormat): ExprType<TickFormatType> {
+export function TimeTickFormat(format: TimeFormat): ExprType<TickFormatType> {
     return East.value(variant("time", {
-        style: format?.style !== undefined
-            ? some(typeof format.style === "string" ? variant(format.style, null) : format.style)
-            : none,
-        hour12: format?.hour12 !== undefined ? some(format.hour12) : none,
+        format: format.format,
     }), TickFormatType);
 }
 
 /**
- * Creates a combined date and time tick format for axis values.
+ * Creates a combined date and time tick format for axis values using East format strings.
  *
- * @param format - Optional configuration for datetime formatting
- * @param format.dateStyle - Date style: "full", "long", "medium", or "short"
- * @param format.timeStyle - Time style: "full", "long", "medium", or "short"
- * @param format.hour12 - Use 12-hour format (true) or 24-hour format (false)
+ * @param format - Configuration for datetime formatting
+ * @param format.format - East datetime format string
  * @returns An East expression representing the datetime tick format
  *
  * @remarks
- * Uses Intl.DateTimeFormat with both dateStyle and timeStyle. Combines date
- * and time into a single formatted string. When called without arguments,
- * uses the browser's default datetime format.
+ * Uses East's datetime formatting for consistent behavior across backends.
+ * Combines date and time format codes in a single string.
  *
  * @example
  * ```ts
- * // Default datetime format
- * Chart.Axis({ tickFormat: TickFormat.DateTime() })
+ * // ISO datetime (2024-01-15 14:30:00)
+ * Chart.Axis({ tickFormat: TickFormat.DateTime({ format: "YYYY-MM-DD HH:mm:ss" }) })
  *
- * // Short date and time (3/15/24, 3:30 PM)
- * Chart.Axis({ tickFormat: TickFormat.DateTime({ dateStyle: "short", timeStyle: "short" }) })
+ * // US datetime (1/15/24 2:30 PM)
+ * Chart.Axis({ tickFormat: TickFormat.DateTime({ format: "M/D/YY h:mm A" }) })
  *
- * // Medium date, short time in 24-hour format
- * Chart.Axis({ tickFormat: TickFormat.DateTime({
- *   dateStyle: "medium",
- *   timeStyle: "short",
- *   hour12: false
- * }) })
+ * // Long datetime (Jan 15, 2024 at 2:30 PM)
+ * Chart.Axis({ tickFormat: TickFormat.DateTime({ format: "MMM D, YYYY [at] h:mm A" }) })
  * ```
  */
-export function DateTimeTickFormat(format?: DateTimeFormat): ExprType<TickFormatType> {
+export function DateTimeTickFormat(format: DateTimeFormat): ExprType<TickFormatType> {
     return East.value(variant("datetime", {
-        dateStyle: format?.dateStyle !== undefined
-            ? some(typeof format.dateStyle === "string" ? variant(format.dateStyle, null) : format.dateStyle)
-            : none,
-        timeStyle: format?.timeStyle !== undefined
-            ? some(typeof format.timeStyle === "string" ? variant(format.timeStyle, null) : format.timeStyle)
-            : none,
-        hour12: format?.hour12 !== undefined ? some(format.hour12) : none,
+        format: format.format,
     }), TickFormatType);
 }
 
@@ -1151,11 +1203,11 @@ export function simpleTickFormatToExpr(format: SimpleTickFormatLiteral): ExprTyp
         case "engineering":
             return EngineeringTickFormat();
         case "date":
-            return DateTickFormat();
+            return DateTickFormat({ format: "DD/MM/YYYY" });
         case "time":
-            return TimeTickFormat();
+            return TimeTickFormat({ format: "HH:mm:ss" });
         case "datetime":
-            return DateTimeTickFormat();
+            return DateTimeTickFormat({ format: "DD/MM/YYYY HH:mm" });
     }
 }
 

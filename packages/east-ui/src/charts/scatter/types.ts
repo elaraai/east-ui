@@ -177,4 +177,6 @@ export interface ScatterChartSeriesConfig {
     yAxisId?: SubtypeExprOrValue<YAxisIdType> | YAxisIdLiteral;
     /** Mapping of pivot key values to colors (used with pivotKey) */
     pivotColors?: SubtypeExprOrValue<DictTypeType<StringType, StringType>>;
+    /** Rendering order (higher = rendered on top) */
+    layerIndex?: SubtypeExprOrValue<IntegerType>;
 }

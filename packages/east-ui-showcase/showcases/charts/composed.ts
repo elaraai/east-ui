@@ -632,6 +632,7 @@ export default East.function(
                                 revenue: {
                                     type: "bar",
                                     color: "teal.500",
+                                    layerIndex: 0n,
                                     pivotColors: new Map([
                                         ["North", "teal.700"],
                                         ["South", "teal.300"],
@@ -640,6 +641,7 @@ export default East.function(
                                 profit: {
                                     type: "line",
                                     color: "blue.500",
+                                    layerIndex: 1n,
                                     showDots: true,
                                     pivotColors: new Map([
                                         ["North", "blue.700"],
@@ -735,6 +737,72 @@ export default East.function(
             )
         );
 
+        // Axis formatting with date and currency
+        const axisFormatting = $.let(
+            ShowcaseCard(
+                "Axis Formatting",
+                "Custom tick formats for date (x-axis) and currency (y-axis)",
+                Box.Root([
+                    Chart.Composed(
+                        [
+                            { date: new Date("2024-01-15"), revenue: 12500, target: 10000 },
+                            { date: new Date("2024-02-15"), revenue: 15800, target: 13000 },
+                            { date: new Date("2024-03-15"), revenue: 18200, target: 16000 },
+                            { date: new Date("2024-04-15"), revenue: 16500, target: 17000 },
+                            { date: new Date("2024-05-15"), revenue: 21000, target: 18000 },
+                            { date: new Date("2024-06-15"), revenue: 24300, target: 20000 },
+                        ],
+                        {
+                            xAxis: {
+                                dataKey: "date",
+                                tickFormat: Chart.TickFormat.Date({ format: "DD MMM" }),
+                            },
+                            yAxis: {
+                                label: "Amount",
+                                tickFormat: Chart.TickFormat.Currency({ currency: "USD", compact: "short" }),
+                            },
+                            series: {
+                                revenue: { type: "bar", color: "teal.solid" },
+                                target: { type: "line", color: "orange.solid" },
+                            },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "250px", width: "100%" }),
+                some(`
+                    Chart.Composed(
+                        [
+                            { date: new Date("2024-01-15"), revenue: 12500, target: 10000 },
+                            { date: new Date("2024-02-15"), revenue: 15800, target: 13000 },
+                            { date: new Date("2024-03-15"), revenue: 18200, target: 16000 },
+                            { date: new Date("2024-04-15"), revenue: 16500, target: 17000 },
+                            { date: new Date("2024-05-15"), revenue: 21000, target: 18000 },
+                            { date: new Date("2024-06-15"), revenue: 24300, target: 20000 },
+                        ],
+                        {
+                            xAxis: {
+                                dataKey: "date",
+                                tickFormat: Chart.TickFormat.Date({ format: "DD MMM" }),
+                            },
+                            yAxis: {
+                                label: "Amount",
+                                tickFormat: Chart.TickFormat.Currency({ currency: "USD", compact: "short" }),
+                            },
+                            series: {
+                                revenue: { type: "bar", color: "teal.solid" },
+                                target: { type: "line", color: "orange.solid" },
+                            },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    )
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -751,6 +819,7 @@ export default East.function(
                 Grid.Item(pivotWithoutColors),
                 Grid.Item(multiPivotWithColors),
                 Grid.Item(multiPivotWithoutColors),
+                Grid.Item(axisFormatting),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

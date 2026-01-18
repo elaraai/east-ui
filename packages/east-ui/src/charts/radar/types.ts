@@ -109,4 +109,6 @@ export interface RadarChartSeriesConfig {
     fillOpacity?: SubtypeExprOrValue<FloatType>;
     /** Dash pattern for dashed lines (e.g., "5 5") */
     strokeDasharray?: SubtypeExprOrValue<StringType>;
+    /** Rendering order (higher = rendered on top) */
+    layerIndex?: SubtypeExprOrValue<IntegerType>;
 }

@@ -91,8 +91,14 @@ const interactiveDemoShowcase = East.function([], UIComponentType, ($) => {
                 EastBox.Root([
                     Chart.Composed(data, {
                         xAxis: { dataKey: "month" },
-                        yAxis: { label: "Actual ($K)" },
-                        yAxis2: { label: "Forecast ($K)" },
+                        yAxis: {
+                            label: "Actual",
+                            tickFormat: Chart.TickFormat.Currency({ currency: "USD", compact: "short" }),
+                        },
+                        yAxis2: {
+                            label: "Forecast",
+                            tickFormat: Chart.TickFormat.Currency({ currency: "USD", compact: "short" }),
+                        },
                         series: {
                             actual: { type: "line", color: "teal.solid", yAxisId: "left", strokeWidth: 3n, showDots: true },
                             forecast: { type: "area", color: "purple.solid", yAxisId: "right", fillOpacity: 0.3 },

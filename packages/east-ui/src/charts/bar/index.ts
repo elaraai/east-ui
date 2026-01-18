@@ -281,6 +281,7 @@ function buildBarChart(
             strokeDasharray: config?.strokeDasharray !== undefined ? some(config.strokeDasharray) : none,
             yAxisId: yAxisIdValue,
             pivotColors: pivotColorsValue,
+            layerIndex: config?.layerIndex !== undefined ? some(config.layerIndex) : none,
         };
     });
 

@@ -159,6 +159,8 @@ export interface ComposedSeriesBase {
     strokeWidth?: SubtypeExprOrValue<IntegerType>;
     /** Y-axis binding (left = primary yAxis, right = secondary yAxis2) */
     yAxisId?: SubtypeExprOrValue<YAxisIdType> | YAxisIdLiteral;
+    /** Rendering order (higher = rendered on top) */
+    layerIndex?: SubtypeExprOrValue<IntegerType>;
 }
 
 /**

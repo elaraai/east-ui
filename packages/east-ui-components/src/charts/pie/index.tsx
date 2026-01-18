@@ -104,8 +104,8 @@ export const EastChakraPieChart = memo(function EastChakraPieChart({ value }: Ea
     return (
         <Chart.Root
             chart={chart}
-            maxW="full"
-            maxH="full"
+            w="full"
+            h="full"
         >
             <PieChart margin={margin}>
                 {showTooltip && (

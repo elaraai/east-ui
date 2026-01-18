@@ -23,7 +23,7 @@ import {
     type LineProps,
     type AreaProps,
 } from "recharts";
-import { equalFor, match, type ValueTypeOf } from "@elaraai/east";
+import { equalFor, match, none, type ValueTypeOf } from "@elaraai/east";
 import { Chart as EastChart } from "@elaraai/east-ui";
 import { getSomeorUndefined } from "../../utils";
 import {
@@ -207,21 +207,21 @@ export const EastChakraComposedChart = memo(function EastChakraComposedChart({ v
     }, [value.xAxis]);
 
     // Convert composed series variants to flat series for prepareChartData
-    // Each variant (line, area, bar, etc.) has name, color, pivotColors
+    // Each variant (line, area, bar, etc.) has name, color, pivotColors, layerIndex
     // We need to preserve the Option types as prepareChartData expects them
+    // Note: areaRange uses AreaRangeSeriesType which doesn't have pivotColors/layerIndex
     const flatSeries = useMemo(() => value.series.map(sv => {
-        // Extract name, color (as Option), and pivotColors from each variant
         return match(sv, {
-            line: v => ({ name: v.name, color: v.color, pivotColors: v.pivotColors }),
-            area: v => ({ name: v.name, color: v.color, pivotColors: v.pivotColors }),
-            areaRange: v => ({ name: v.name, color: v.color, pivotColors: { type: "none" as const, value: null } }),
-            bar: v => ({ name: v.name, color: v.color, pivotColors: v.pivotColors }),
-            scatter: v => ({ name: v.name, color: v.color, pivotColors: v.pivotColors }),
+            line: v => ({ name: v.name, color: v.color, pivotColors: v.pivotColors, layerIndex: v.layerIndex }),
+            area: v => ({ name: v.name, color: v.color, pivotColors: v.pivotColors, layerIndex: v.layerIndex }),
+            areaRange: v => ({ name: v.name, color: v.color, pivotColors: none, layerIndex: none }),
+            bar: v => ({ name: v.name, color: v.color, pivotColors: v.pivotColors, layerIndex: v.layerIndex }),
+            scatter: v => ({ name: v.name, color: v.color, pivotColors: v.pivotColors, layerIndex: v.layerIndex }),
         });
     }), [value.series]);
 
     // Prepare chart data and series (handles pivot, multi-series, and regular modes)
-    const { data: chartData, series: baseSeries, seriesOriginMap } = useMemo(() => {
+    const { data: chartData, series: baseSeries, seriesOriginMap, layerIndexMap } = useMemo(() => {
         const config = {
             rawData: value.data,
             dataSeries: getSomeorUndefined(value.dataSeries),
@@ -307,12 +307,12 @@ export const EastChakraComposedChart = memo(function EastChakraComposedChart({ v
         return { show: shouldShowLegend(legendValue), props: toRechartsLegend(legendValue) };
     }, [value.legend]);
 
-    // Tooltip configuration
+    // Tooltip configuration (depends on axis formatters)
     const tooltip = useMemo(() => {
         const tooltipValue = getSomeorUndefined(value.tooltip);
         if (!tooltipValue) return { show: false, props: {} };
-        return { show: shouldShowTooltip(tooltipValue), props: toRechartsTooltip(tooltipValue) };
-    }, [value.tooltip]);
+        return { show: shouldShowTooltip(tooltipValue), props: toRechartsTooltip(tooltipValue, xAxis.tickFormatter, yAxis.tickFormatter) };
+    }, [value.tooltip, xAxis.tickFormatter, yAxis.tickFormatter]);
 
     // Layout: margin and brush
     const layout = useMemo(() => {
@@ -358,7 +358,9 @@ export const EastChakraComposedChart = memo(function EastChakraComposedChart({ v
         // In pivot mode, render from chartSeries (which has pivot-generated names like "revenue_North" or just "North")
         // and look up chart type from the original series name using seriesOriginMap
         if (isPivotMode) {
-            return chartSeries.map((seriesItem, index) => {
+            return [...chartSeries]
+                .sort((a, b) => (layerIndexMap.get(a.name as string) ?? 0) - (layerIndexMap.get(b.name as string) ?? 0))
+                .map((seriesItem, index) => {
                 const seriesName = seriesItem.name as string;
                 // Use seriesOriginMap to find the original series name
                 const originalName = seriesOriginMap.get(seriesName) ?? seriesName;
@@ -368,7 +370,7 @@ export const EastChakraComposedChart = memo(function EastChakraComposedChart({ v
                 const dataKey = chart.key(seriesName);
                 const color = chart.color(seriesItem.color);
                 const fillColor = originalSeries.fill ? chart.color(originalSeries.fill) : color;
-                const zIndex = 1000 + index * 10;
+                const zIndex = layerIndexMap.get(seriesName) ?? index;
 
                 switch (originalSeries.chartType) {
                     case "line":
@@ -438,13 +440,14 @@ export const EastChakraComposedChart = memo(function EastChakraComposedChart({ v
             });
         }
 
-        // Non-pivot mode: use composedSeries directly
-        return composedSeries.map((item, index) => {
+        // Non-pivot mode: use composedSeries directly, sorted by layerIndex
+        return [...composedSeries]
+            .sort((a, b) => (layerIndexMap.get(a.name as string) ?? 0) - (layerIndexMap.get(b.name as string) ?? 0))
+            .map((item, index) => {
             const dataKey = chart.key(item.name);
             const color = chart.color(item.color);
             const fillColor = item.fill ? chart.color(item.fill) : color;
-            // Use position-based z-index: later items render on top
-            const zIndex = 1000 + index * 10;
+            const zIndex = layerIndexMap.get(item.name as string) ?? index;
 
             switch (item.chartType) {
                 case "line":
@@ -538,7 +541,7 @@ export const EastChakraComposedChart = memo(function EastChakraComposedChart({ v
     };
 
     return (
-        <Chart.Root chart={chart} maxW="full" maxH="full">
+        <Chart.Root chart={chart} w="full" h="full">
             <ComposedChart
                 data={chart.data}
                 layout={options.layout as "horizontal" | "vertical"}

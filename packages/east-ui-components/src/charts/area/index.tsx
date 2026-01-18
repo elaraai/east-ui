@@ -51,7 +51,7 @@ export const EastChakraAreaChart = memo(function EastChakraAreaChart({ value }: 
     }, [value.xAxis]);
 
     // Prepare chart data and series (handles pivot, multi-series, and regular modes)
-    const { data: chartData, series, seriesOriginMap } = useMemo(() => prepareChartData({
+    const { data: chartData, series, seriesOriginMap, layerIndexMap } = useMemo(() => prepareChartData({
         rawData: value.data,
         dataSeries: getSomeorUndefined(value.dataSeries),
         xAxisKey: xAxisDataKey,
@@ -112,12 +112,12 @@ export const EastChakraAreaChart = memo(function EastChakraAreaChart({ value }: 
         return { show: shouldShowLegend(legendValue), props: toRechartsLegend(legendValue) };
     }, [value.legend]);
 
-    // Tooltip configuration
+    // Tooltip configuration (depends on axis formatters)
     const tooltip = useMemo(() => {
         const tooltipValue = getSomeorUndefined(value.tooltip);
         if (!tooltipValue) return { show: false, props: {} };
-        return { show: shouldShowTooltip(tooltipValue), props: toRechartsTooltip(tooltipValue) };
-    }, [value.tooltip]);
+        return { show: shouldShowTooltip(tooltipValue), props: toRechartsTooltip(tooltipValue, xAxis.tickFormatter, yAxis.tickFormatter) };
+    }, [value.tooltip, xAxis.tickFormatter, yAxis.tickFormatter]);
 
     // Layout: margin and brush
     const layout = useMemo(() => {
@@ -149,7 +149,7 @@ export const EastChakraAreaChart = memo(function EastChakraAreaChart({ value }: 
     }), [value.referenceLines, value.referenceDots, value.referenceAreas]);
 
     return (
-        <Chart.Root chart={chart} maxW="full" maxH="full">
+        <Chart.Root chart={chart} w="full" h="full">
             <AreaChart
                 data={chart.data}
                 {...(options.stackOffset && { stackOffset: options.stackOffset })}
@@ -195,13 +195,17 @@ export const EastChakraAreaChart = memo(function EastChakraAreaChart({ value }: 
                 {references.dots.map((props, i) => (
                     <ReferenceDot key={`dot-${i}`} {...props} />
                 ))}
-                {series.map((item) => {
+                {[...chart.series]
+                    .sort((a, b) => (layerIndexMap.get(a.name as string) ?? 0) - (layerIndexMap.get(b.name as string) ?? 0))
+                    .map((item, index) => {
                     // Look up original East config using seriesOriginMap for pivot series
                     const originalName = seriesOriginMap.get(item.name as string) ?? item.name;
                     const eastConfig = value.series.find(s => s.name === originalName);
+                    const zIndex = layerIndexMap.get(item.name as string) ?? index;
 
                     // Extract Recharts AreaProps from East config
                     const yAxisId = eastConfig ? getSomeorUndefined(eastConfig.yAxisId) : undefined;
+                    const stackId = (item as { stackId?: string }).stackId ?? options.defaultStackId ?? "0";
 
                     return (
                         <Area
@@ -214,7 +218,8 @@ export const EastChakraAreaChart = memo(function EastChakraAreaChart({ value }: 
                             strokeWidth={2}
                             connectNulls={options.connectNulls}
                             isAnimationActive={false}
-                            stackId={item.stackId ?? options.defaultStackId ?? "0"}
+                            stackId={stackId}
+                            zIndex={zIndex}
                             {...(yAxis2.show && { yAxisId: yAxisId?.type ?? "left" })}
                         />
                     );
@@ -329,12 +334,12 @@ export const EastChakraAreaRangeChart = memo(function EastChakraAreaRangeChart({
         return { show: shouldShowLegend(legendValue), props: toRechartsLegend(legendValue) };
     }, [value.legend]);
 
-    // Tooltip configuration
+    // Tooltip configuration (depends on axis formatters)
     const tooltip = useMemo(() => {
         const tooltipValue = getSomeorUndefined(value.tooltip);
         if (!tooltipValue) return { show: false, props: {} };
-        return { show: shouldShowTooltip(tooltipValue), props: toRechartsTooltip(tooltipValue) };
-    }, [value.tooltip]);
+        return { show: shouldShowTooltip(tooltipValue), props: toRechartsTooltip(tooltipValue, xAxis.tickFormatter, yAxis.tickFormatter) };
+    }, [value.tooltip, xAxis.tickFormatter, yAxis.tickFormatter]);
 
     // Layout: margin
     const layout = useMemo(() => {
@@ -361,7 +366,7 @@ export const EastChakraAreaRangeChart = memo(function EastChakraAreaRangeChart({
     }), [value.referenceLines, value.referenceDots, value.referenceAreas]);
 
     return (
-        <Chart.Root chart={chart} maxW="full" maxH="full">
+        <Chart.Root chart={chart} w="full" h="full">
             <AreaChart
                 data={chart.data}
                 margin={layout.margin}

@@ -122,6 +122,7 @@ function seriesConfigToVariant(name: string, config: ComposedSeriesConfig) {
                 showLine: config.showLine !== undefined ? some(config.showLine) : none,
                 yAxisId: yAxisIdValue,
                 pivotColors: config.pivotColors !== undefined ? some(config.pivotColors) : none,
+                layerIndex: config.layerIndex !== undefined ? some(config.layerIndex) : none,
             });
 
         case "area":
@@ -137,6 +138,7 @@ function seriesConfigToVariant(name: string, config: ComposedSeriesConfig) {
                 strokeDasharray: config.strokeDasharray !== undefined ? some(config.strokeDasharray) : none,
                 yAxisId: yAxisIdValue,
                 pivotColors: config.pivotColors !== undefined ? some(config.pivotColors) : none,
+                layerIndex: config.layerIndex !== undefined ? some(config.layerIndex) : none,
             });
 
         case "area-range":
@@ -165,6 +167,7 @@ function seriesConfigToVariant(name: string, config: ComposedSeriesConfig) {
                 strokeDasharray: config.strokeDasharray !== undefined ? some(config.strokeDasharray) : none,
                 yAxisId: yAxisIdValue,
                 pivotColors: config.pivotColors !== undefined ? some(config.pivotColors) : none,
+                layerIndex: config.layerIndex !== undefined ? some(config.layerIndex) : none,
             });
 
         case "scatter":
@@ -180,6 +183,7 @@ function seriesConfigToVariant(name: string, config: ComposedSeriesConfig) {
                 strokeDasharray: none, // scatter doesn't use dashes
                 yAxisId: yAxisIdValue,
                 pivotColors: config.pivotColors !== undefined ? some(config.pivotColors) : none,
+                layerIndex: config.layerIndex !== undefined ? some(config.layerIndex) : none,
             });
     }
 }

@@ -53,7 +53,7 @@ export const EastChakraLineChart = memo(function EastChakraLineChart({ value }: 
     }, [value.xAxis]);
 
     // Prepare chart data and series (handles pivot, multi-series, and regular modes)
-    const { data: chartData, series, seriesOriginMap } = useMemo(() => prepareChartData({
+    const { data: chartData, series, seriesOriginMap, layerIndexMap } = useMemo(() => prepareChartData({
         rawData: value.data,
         dataSeries: getSomeorUndefined(value.dataSeries),
         xAxisKey: xAxisDataKey,
@@ -114,12 +114,12 @@ export const EastChakraLineChart = memo(function EastChakraLineChart({ value }: 
         return { show: shouldShowLegend(legendValue), props: toRechartsLegend(legendValue) };
     }, [value.legend]);
 
-    // Tooltip configuration
+    // Tooltip configuration (depends on axis formatters)
     const tooltip = useMemo(() => {
         const tooltipValue = getSomeorUndefined(value.tooltip);
         if (!tooltipValue) return { show: false, props: {} };
-        return { show: shouldShowTooltip(tooltipValue), props: toRechartsTooltip(tooltipValue) };
-    }, [value.tooltip]);
+        return { show: shouldShowTooltip(tooltipValue), props: toRechartsTooltip(tooltipValue, xAxis.tickFormatter, yAxis.tickFormatter) };
+    }, [value.tooltip, xAxis.tickFormatter, yAxis.tickFormatter]);
 
     // Layout: margin and brush
     const layout = useMemo(() => {
@@ -153,7 +153,7 @@ export const EastChakraLineChart = memo(function EastChakraLineChart({ value }: 
     }), [value.referenceLines, value.referenceDots, value.referenceAreas]);
 
     return (
-        <Chart.Root chart={chart} maxW="full" maxH="full">
+        <Chart.Root chart={chart} w="full" h="full">
             <LineChart data={chart.data} margin={layout.margin}>
                 {grid.show && <CartesianGrid {...grid.props} />}
                 {!xAxis.props.hide && (
@@ -186,10 +186,13 @@ export const EastChakraLineChart = memo(function EastChakraLineChart({ value }: 
                         />}
                     />
                 }
-                {series.map((item) => {
+                {[...chart.series]
+                    .sort((a, b) => (layerIndexMap.get(a.name as string) ?? 0) - (layerIndexMap.get(b.name as string) ?? 0))
+                    .map((item, index) => {
                     // Look up original East config using seriesOriginMap for pivot series
                     const originalName = seriesOriginMap.get(item.name as string) ?? item.name;
                     const eastConfig = value.series.find(s => s.name === originalName);
+                    const zIndex = layerIndexMap.get(item.name as string) ?? index;
 
                     // Extract Recharts LineProps from East config
                     const showLine = eastConfig ? getSomeorUndefined(eastConfig.showLine) : undefined;
@@ -209,6 +212,7 @@ export const EastChakraLineChart = memo(function EastChakraLineChart({ value }: 
                             dot={showDots ?? options.showDots}
                             connectNulls={options.connectNulls}
                             isAnimationActive={false}
+                            zIndex={zIndex}
                             {...(yAxis2.show && { yAxisId: yAxisId?.type ?? "left" })}
                         />
                     );

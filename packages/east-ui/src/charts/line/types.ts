@@ -72,6 +72,7 @@ export const LineChartSeriesType = StructType({
     showLine: OptionType(BooleanType),
     yAxisId: OptionType(YAxisIdType),
     pivotColors: OptionType(DictType(StringType, StringType)),
+    layerIndex: OptionType(IntegerType),
 });
 
 /**
@@ -262,4 +263,6 @@ export interface LineChartSeriesConfig {
     yAxisId?: SubtypeExprOrValue<YAxisIdType> | YAxisIdLiteral;
     /** Mapping of pivot key values to colors (used with pivotKey) */
     pivotColors?: SubtypeExprOrValue<DictType<StringType, StringType>>;
+    /** Rendering order (higher = rendered on top) */
+    layerIndex?: SubtypeExprOrValue<IntegerType>;
 }

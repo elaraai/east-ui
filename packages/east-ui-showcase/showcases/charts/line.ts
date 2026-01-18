@@ -1013,6 +1013,64 @@ export default East.function(
             )
         );
 
+        // Axis formatting with date and currency
+        const axisFormatting = $.let(
+            ShowcaseCard(
+                "Axis Formatting",
+                "Custom tick formats for date (x-axis) and currency (y-axis)",
+                Box.Root([
+                    Chart.Line(
+                        [
+                            { date: new Date("2024-01-15"), revenue: 12500 },
+                            { date: new Date("2024-02-15"), revenue: 15800 },
+                            { date: new Date("2024-03-15"), revenue: 18200 },
+                            { date: new Date("2024-04-15"), revenue: 16500 },
+                            { date: new Date("2024-05-15"), revenue: 21000 },
+                            { date: new Date("2024-06-15"), revenue: 24300 },
+                        ],
+                        { revenue: { color: "teal.solid" } },
+                        {
+                            xAxis: {
+                                dataKey: "date",
+                                tickFormat: Chart.TickFormat.Date({ format: "DD MMM" }),
+                            },
+                            yAxis: {
+                                label: "Revenue",
+                                tickFormat: Chart.TickFormat.Currency({ currency: "USD", compact: "short" }),
+                            },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Chart.Line(
+                        [
+                            { date: new Date("2024-01-15"), revenue: 12500 },
+                            { date: new Date("2024-02-15"), revenue: 15800 },
+                            { date: new Date("2024-03-15"), revenue: 18200 },
+                            { date: new Date("2024-04-15"), revenue: 16500 },
+                            { date: new Date("2024-05-15"), revenue: 21000 },
+                            { date: new Date("2024-06-15"), revenue: 24300 },
+                        ],
+                        { revenue: { color: "teal.solid" } },
+                        {
+                            xAxis: {
+                                dataKey: "date",
+                                tickFormat: Chart.TickFormat.Date({ format: "DD MMM" }),
+                            },
+                            yAxis: {
+                                label: "Revenue",
+                                tickFormat: Chart.TickFormat.Currency({ currency: "USD", compact: "short" }),
+                            },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                        }
+                    )
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -1034,6 +1092,7 @@ export default East.function(
                 Grid.Item(pivotWithoutColors),
                 Grid.Item(multiPivotWithColors),
                 Grid.Item(multiPivotWithoutColors),
+                Grid.Item(axisFormatting),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

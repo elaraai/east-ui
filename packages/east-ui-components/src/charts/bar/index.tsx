@@ -49,7 +49,7 @@ export const EastChakraBarChart = memo(function EastChakraBarChart({ value }: Ea
     }, [value.xAxis]);
 
     // Prepare chart data and series (handles pivot, multi-series, and regular modes)
-    const { data: chartData, series } = useMemo(() => prepareChartData({
+    const { data: chartData, series, layerIndexMap } = useMemo(() => prepareChartData({
         rawData: value.data,
         dataSeries: getSomeorUndefined(value.dataSeries),
         xAxisKey: xAxisDataKey,
@@ -110,12 +110,12 @@ export const EastChakraBarChart = memo(function EastChakraBarChart({ value }: Ea
         return { show: shouldShowLegend(legendValue), props: toRechartsLegend(legendValue) };
     }, [value.legend]);
 
-    // Tooltip configuration
+    // Tooltip configuration (depends on axis formatters)
     const tooltip = useMemo(() => {
         const tooltipValue = getSomeorUndefined(value.tooltip);
         if (!tooltipValue) return { show: false, props: {} };
-        return { show: shouldShowTooltip(tooltipValue), props: toRechartsTooltip(tooltipValue) };
-    }, [value.tooltip]);
+        return { show: shouldShowTooltip(tooltipValue), props: toRechartsTooltip(tooltipValue, xAxis.tickFormatter, yAxis.tickFormatter) };
+    }, [value.tooltip, xAxis.tickFormatter, yAxis.tickFormatter]);
 
     // Layout: margin and brush
     const layout = useMemo(() => {
@@ -155,7 +155,7 @@ export const EastChakraBarChart = memo(function EastChakraBarChart({ value }: Ea
     const defaultStackId = options.stacked ? "stack" : undefined;
 
     return (
-        <Chart.Root chart={chart} maxW="full" maxH="full">
+        <Chart.Root chart={chart} w="full" h="full">
             <BarChart
                 data={chart.data}
                 layout={options.layout}
@@ -204,10 +204,13 @@ export const EastChakraBarChart = memo(function EastChakraBarChart({ value }: Ea
                         />}
                     />
                 }
-                {chart.series.map((item) => {
-                    const stackId = item.stackId ?? defaultStackId;
+                {[...chart.series]
+                    .sort((a, b) => (layerIndexMap.get(a.name as string) ?? 0) - (layerIndexMap.get(b.name as string) ?? 0))
+                    .map((item, index) => {
+                    const stackId = (item as { stackId?: string }).stackId ?? defaultStackId;
                     const seriesConfig = value.series.find(s => s.name === item.name);
                     const yAxisId = seriesConfig ? getSomeorUndefined(seriesConfig.yAxisId) : undefined;
+                    const zIndex = layerIndexMap.get(item.name as string) ?? index;
 
                     return (
                         <Bar
@@ -218,6 +221,7 @@ export const EastChakraBarChart = memo(function EastChakraBarChart({ value }: Ea
                             isAnimationActive={false}
                             {...(stackId && { stackId })}
                             radius={options.radius}
+                            zIndex={zIndex}
                             {...(yAxis2.show && { yAxisId: yAxisId?.type ?? "left" })}
                         />
                     );

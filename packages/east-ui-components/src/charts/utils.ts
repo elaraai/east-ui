@@ -4,6 +4,7 @@
  */
 
 import { match, type ValueTypeOf, type LiteralValueType } from "@elaraai/east";
+import { tokenizeDateTimeFormat, formatDateTime } from "@elaraai/east/internal";
 import type {
     ChartAxisType,
     ChartSeriesType,
@@ -394,15 +395,22 @@ export function shouldShowLegend(value: ChartLegendValue): boolean {
 // Tooltip Conversion
 // ============================================================================
 
+/** Tick formatter function type */
+type TickFormatterFn = (value: number | string | Date) => string;
+
 /**
  * Converts an East ChartTooltip value to Tooltip component props.
  * Pure function - easy to test independently.
  *
  * @param value - The East ChartTooltip value
+ * @param labelFormatter - Optional formatter for the tooltip label (typically from xAxis)
+ * @param valueFormatter - Optional formatter for tooltip values (typically from yAxis)
  * @returns Partial RechartsTooltipProps
  */
 export function toRechartsTooltip<TValue extends number | string | Array<number | string>, TName extends string>(
-    value: ChartTooltipValue
+    value: ChartTooltipValue,
+    labelFormatter?: TickFormatterFn,
+    valueFormatter?: TickFormatterFn
 ): Partial<RechartsTooltipProps<TValue, TName>> {
     const props: Partial<RechartsTooltipProps<TValue, TName>> = {};
 
@@ -418,6 +426,16 @@ export function toRechartsTooltip<TValue extends number | string | Array<number 
     const animationDuration = getSomeorUndefined(value.animationDuration);
     if (animationDuration !== undefined) {
         props.animationDuration = Number(animationDuration);
+    }
+
+    if (labelFormatter) {
+        props.labelFormatter = labelFormatter;
+    }
+
+    if (valueFormatter) {
+        // Cast needed because Recharts Formatter type is broader (can receive arrays)
+        // but our tick formatters only handle scalar values
+        props.formatter = valueFormatter as unknown as NonNullable<typeof props.formatter>;
     }
 
     return props;
@@ -547,8 +565,10 @@ export function toRechartsBrush(
 export function createTickFormatter(
     value: TickFormatValue | undefined,
     chart: UseChartReturn<Record<string, unknown>>
-): ((value: number) => string) | undefined {
+): ((value: number | string | Date) => string) | undefined {
     if (!value) return undefined;
+
+    type TickFormatter = (value: number | string | Date) => string;
 
     return match(value, {
         number: (opts) => {
@@ -561,7 +581,7 @@ export function createTickFormatter(
             if (maxFrac !== undefined) options.maximumFractionDigits = Number(maxFrac);
             if (signDisplay !== undefined) options.signDisplay = signDisplay.type;
 
-            return chart.formatNumber(options);
+            return chart.formatNumber(options) as TickFormatter;
         },
         currency: (opts) => {
             const options: Intl.NumberFormatOptions = {
@@ -569,14 +589,19 @@ export function createTickFormatter(
                 currency: opts.currency.type,
             };
             const display = getSomeorUndefined(opts.display);
+            const compact = getSomeorUndefined(opts.compact);
             const minFrac = getSomeorUndefined(opts.minimumFractionDigits);
             const maxFrac = getSomeorUndefined(opts.maximumFractionDigits);
 
             if (display !== undefined) options.currencyDisplay = display.type;
+            if (compact !== undefined) {
+                options.notation = "compact";
+                options.compactDisplay = compact.type;
+            }
             if (minFrac !== undefined) options.minimumFractionDigits = Number(minFrac);
             if (maxFrac !== undefined) options.maximumFractionDigits = Number(maxFrac);
 
-            return chart.formatNumber(options);
+            return chart.formatNumber(options) as TickFormatter;
         },
         percent: (opts) => {
             const options: Intl.NumberFormatOptions = { style: "percent" };
@@ -588,7 +613,7 @@ export function createTickFormatter(
             if (maxFrac !== undefined) options.maximumFractionDigits = Number(maxFrac);
             if (signDisplay !== undefined) options.signDisplay = signDisplay.type;
 
-            return chart.formatNumber(options);
+            return chart.formatNumber(options) as TickFormatter;
         },
         compact: (opts) => {
             const options: Intl.NumberFormatOptions = { notation: "compact" };
@@ -596,7 +621,7 @@ export function createTickFormatter(
 
             if (display !== undefined) options.compactDisplay = display.type;
 
-            return chart.formatNumber(options);
+            return chart.formatNumber(options) as TickFormatter;
         },
         unit: (opts) => {
             const options: Intl.NumberFormatOptions = {
@@ -607,13 +632,34 @@ export function createTickFormatter(
 
             if (display !== undefined) options.unitDisplay = display.type;
 
-            return chart.formatNumber(options);
+            return chart.formatNumber(options) as TickFormatter;
         },
-        scientific: () => chart.formatNumber({ notation: "scientific" }),
-        engineering: () => chart.formatNumber({ notation: "engineering" }),
-        date: () => undefined,
-        time: () => undefined,
-        datetime: () => undefined,
+        scientific: () => chart.formatNumber({ notation: "scientific" }) as TickFormatter,
+        engineering: () => chart.formatNumber({ notation: "engineering" }) as TickFormatter,
+        date: (opts) => {
+            const formatStr = opts.format;
+            const tokens = tokenizeDateTimeFormat(formatStr);
+            return (value: number | string | Date) => {
+                const date = value instanceof Date ? value : new Date(value);
+                return formatDateTime(date, tokens);
+            };
+        },
+        time: (opts) => {
+            const formatStr = opts.format;
+            const tokens = tokenizeDateTimeFormat(formatStr);
+            return (value: number | string | Date) => {
+                const date = value instanceof Date ? value : new Date(value);
+                return formatDateTime(date, tokens);
+            };
+        },
+        datetime: (opts) => {
+            const formatStr = opts.format;
+            const tokens = tokenizeDateTimeFormat(formatStr);
+            return (value: number | string | Date) => {
+                const date = value instanceof Date ? value : new Date(value);
+                return formatDateTime(date, tokens);
+            };
+        },
     });
 }
 
@@ -833,13 +879,15 @@ export interface PreparedChartData {
     series: ChartSeriesItem[];
     /** Maps generated series name to original series name (for pivot modes) */
     seriesOriginMap: Map<string, string>;
+    /** Maps series name to layerIndex for rendering order control */
+    layerIndexMap: Map<string, number>;
 }
 
 /**
  * Base series fields used by prepareChartData.
  * Any East series type (LineChartSeries, AreaChartSeries, etc.) satisfies this.
  */
-type BaseSeriesFields = Pick<ChartSeriesValue, "name" | "color" | "pivotColors" | "stackId" | "label">;
+type BaseSeriesFields = Pick<ChartSeriesValue, "name" | "color" | "pivotColors" | "stackId" | "label" | "layerIndex">;
 
 /**
  * Configuration for preparing chart data.
@@ -887,6 +935,7 @@ export function prepareChartData(config: PrepareChartDataConfig): PreparedChartD
     let data: Record<string, unknown>[];
     let series: ChartSeriesItem[];
     const seriesOriginMap = new Map<string, string>();
+    const layerIndexMap = new Map<string, number>();
 
     // ========================================================================
     // Mode 1: Pivot (long-format data with pivotKey, no dataSeries)
@@ -922,10 +971,17 @@ export function prepareChartData(config: PrepareChartDataConfig): PreparedChartD
         data = Array.from(xAxisValues.values());
         const pivotValuesArray = Array.from(pivotValues);
 
-        series = pivotValuesArray.map((pv, pivotIndex) => ({
-            name: pv,
-            color: resolvePivotColor(pv, pivotIndex, seriesIndex, pivotColors, explicitColor),
-        }));
+        // Get base layerIndex from series config (or default to 0)
+        const baseLayerIndex = seriesConfig ? getSomeorUndefined(seriesConfig.layerIndex) : undefined;
+
+        series = pivotValuesArray.map((pv, pivotIndex) => {
+            // For pivot series, use baseLayerIndex + pivotIndex if specified, else just pivotIndex
+            layerIndexMap.set(pv, baseLayerIndex !== undefined ? Number(baseLayerIndex) + pivotIndex : pivotIndex);
+            return {
+                name: pv,
+                color: resolvePivotColor(pv, pivotIndex, seriesIndex, pivotColors, explicitColor),
+            };
+        });
 
         for (const pv of pivotValues) {
             seriesOriginMap.set(pv, valueKey);
@@ -966,6 +1022,9 @@ export function prepareChartData(config: PrepareChartDataConfig): PreparedChartD
                 xRow[compositeName] = yValue !== undefined ? convertLiteralValue(yValue) : null;
             }
 
+            // Get base layerIndex from series config
+            const baseLayerIndex = seriesConfig ? getSomeorUndefined(seriesConfig.layerIndex) : undefined;
+
             const pivotValuesArray = Array.from(pivotValuesForSeries);
             for (let pivotIndex = 0; pivotIndex < pivotValuesArray.length; pivotIndex++) {
                 const pv = pivotValuesArray[pivotIndex]!;
@@ -975,6 +1034,10 @@ export function prepareChartData(config: PrepareChartDataConfig): PreparedChartD
                     color: resolvePivotColor(pv, pivotIndex, seriesIdx, pivotColors, explicitColor),
                 });
                 seriesOriginMap.set(compositeName, seriesName);
+                // For multi-pivot series, use baseLayerIndex * 100 + pivotIndex if specified
+                layerIndexMap.set(compositeName, baseLayerIndex !== undefined
+                    ? Number(baseLayerIndex) * 100 + pivotIndex
+                    : seriesIdx * 100 + pivotIndex);
             }
             seriesIdx++;
         }
@@ -1000,6 +1063,9 @@ export function prepareChartData(config: PrepareChartDataConfig): PreparedChartD
                 const label = getSomeorUndefined(s.label);
                 if (label !== undefined) item.label = label;
             }
+            // Set layerIndex (default to idx if not specified)
+            const layerIdx = getSomeorUndefined(s.layerIndex);
+            layerIndexMap.set(s.name, layerIdx !== undefined ? Number(layerIdx) : idx);
             return item;
         });
     }
@@ -1022,11 +1088,14 @@ export function prepareChartData(config: PrepareChartDataConfig): PreparedChartD
                 const label = getSomeorUndefined(s.label);
                 if (label !== undefined) item.label = label;
             }
+            // Set layerIndex (default to idx if not specified)
+            const layerIdx = getSomeorUndefined(s.layerIndex);
+            layerIndexMap.set(s.name, layerIdx !== undefined ? Number(layerIdx) : idx);
             return item;
         });
     }
 
-    return { data, series, seriesOriginMap };
+    return { data, series, seriesOriginMap, layerIndexMap };
 }
 
 // ============================================================================
