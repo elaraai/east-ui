@@ -55,7 +55,7 @@ export const EastChakraBarChart = memo(function EastChakraBarChart({ value }: Ea
         xAxisKey: xAxisDataKey,
         valueKey: getSomeorUndefined(value.valueKey),
         pivotKey: getSomeorUndefined(value.pivotKey),
-        eastSeries: value.series,
+        mappedSeries: value.series,
     }), [value.data, value.dataSeries, value.valueKey, value.pivotKey, value.series, xAxisDataKey]);
 
     // Initialize the chart hook

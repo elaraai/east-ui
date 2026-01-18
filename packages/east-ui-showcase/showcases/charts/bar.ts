@@ -653,7 +653,7 @@ export default East.function(
                             { month: "Feb", category: "C", value: 70 },
                         ],
                         {
-                            value: { color: "purple.solid" },
+                            value: { },
                         },
                         {
                             xAxis: { dataKey: "month" },
@@ -673,7 +673,7 @@ export default East.function(
                             // ... all series use same default color
                         ],
                         {
-                            value: { color: "purple.solid" },
+                            value: { },
                         },
                         {
                             xAxis: { dataKey: "month" },
@@ -782,8 +782,8 @@ export default East.function(
                             valueKey: "value",
                             pivotKey: "type",
                             series: {
-                                actual: { color: "green.solid" },
-                                forecast: { color: "orange.solid" },
+                                actual: {  },
+                                forecast: {  },
                             },
                             grid: { show: true },
                             tooltip: { show: true },
@@ -805,8 +805,8 @@ export default East.function(
                             valueKey: "value",
                             pivotKey: "type",
                             series: {
-                                actual: { color: "green.solid" },
-                                forecast: { color: "orange.solid" },
+                                actual: {  },
+                                forecast: {  },
                             },
                         }
                     )

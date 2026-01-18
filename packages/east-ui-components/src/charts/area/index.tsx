@@ -51,13 +51,13 @@ export const EastChakraAreaChart = memo(function EastChakraAreaChart({ value }: 
     }, [value.xAxis]);
 
     // Prepare chart data and series (handles pivot, multi-series, and regular modes)
-    const { data: chartData, series } = useMemo(() => prepareChartData({
+    const { data: chartData, series, seriesOriginMap } = useMemo(() => prepareChartData({
         rawData: value.data,
         dataSeries: getSomeorUndefined(value.dataSeries),
         xAxisKey: xAxisDataKey,
         valueKey: getSomeorUndefined(value.valueKey),
         pivotKey: getSomeorUndefined(value.pivotKey),
-        eastSeries: value.series,
+        mappedSeries: value.series,
     }), [value.data, value.dataSeries, value.valueKey, value.pivotKey, value.series, xAxisDataKey]);
 
     // Initialize the chart hook
@@ -195,9 +195,13 @@ export const EastChakraAreaChart = memo(function EastChakraAreaChart({ value }: 
                 {references.dots.map((props, i) => (
                     <ReferenceDot key={`dot-${i}`} {...props} />
                 ))}
-                {chart.series.map((item) => {
-                    const seriesConfig = value.series.find(s => s.name === item.name);
-                    const yAxisId = seriesConfig ? getSomeorUndefined(seriesConfig.yAxisId) : undefined;
+                {series.map((item) => {
+                    // Look up original East config using seriesOriginMap for pivot series
+                    const originalName = seriesOriginMap.get(item.name as string) ?? item.name;
+                    const eastConfig = value.series.find(s => s.name === originalName);
+
+                    // Extract Recharts AreaProps from East config
+                    const yAxisId = eastConfig ? getSomeorUndefined(eastConfig.yAxisId) : undefined;
 
                     return (
                         <Area

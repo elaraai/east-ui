@@ -72,7 +72,7 @@ export const EastChakraScatterChart = memo(function EastChakraScatterChart({ val
         xAxisKey: xDataKey,
         valueKey: getSomeorUndefined(value.valueKey),
         pivotKey: getSomeorUndefined(value.pivotKey),
-        eastSeries: value.series,
+        mappedSeries: value.series,
     }), [value.data, value.dataSeries, value.valueKey, value.pivotKey, value.series, xDataKey]);
 
     // Initialize the chart hook

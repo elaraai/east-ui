@@ -906,7 +906,7 @@ export default East.function(
                             valueKey: "value",
                             pivotKey: "type",
                             series: {
-                                actual: { color: "green.solid" },
+                                actual: {  },
                                 forecast: { color: "orange.solid" },
                             },
                             grid: { show: true },
@@ -930,7 +930,7 @@ export default East.function(
                             valueKey: "value",
                             pivotKey: "type",
                             series: {
-                                actual: { color: "green.solid" },
+                                actual: {  },
                                 forecast: { color: "orange.solid" },
                             },
                         }

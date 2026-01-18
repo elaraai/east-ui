@@ -575,7 +575,7 @@ export default East.function(
                             pivotKey: "category",
                             valueKey: "value",
                             series: {
-                                value: { type: "line", color: "purple.solid", showDots: true },
+                                value: { type: "line", showDots: true },
                             },
                             grid: { show: true },
                             tooltip: { show: true },
@@ -595,7 +595,7 @@ export default East.function(
                             pivotKey: "category",
                             valueKey: "value",
                             series: {
-                                value: { type: "line", color: "purple.solid" },
+                                value: { type: "line", showDots: true },
                             },
                         }
                     )
@@ -703,7 +703,7 @@ export default East.function(
                             valueKey: "value",
                             pivotKey: "type",
                             series: {
-                                actual: { type: "bar", color: "green.solid" },
+                                actual: { type: "bar"  },
                                 forecast: { type: "area", color: "orange.solid", fillOpacity: 0.3 },
                             },
                             grid: { show: true },
@@ -726,8 +726,8 @@ export default East.function(
                             valueKey: "value",
                             pivotKey: "type",
                             series: {
-                                actual: { type: "bar", color: "green.solid" },
-                                forecast: { type: "area", color: "orange.solid" },
+                                actual: { type: "bar" },
+                                forecast: { type: "area", color: "orange.solid", fillOpacity: 0.3 },
                             },
                         }
                     )

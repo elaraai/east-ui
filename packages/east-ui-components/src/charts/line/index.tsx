@@ -6,7 +6,7 @@
 import { memo, useMemo } from "react";
 import { Chart, useChart } from "@chakra-ui/charts";
 import { Line, LineChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis, Brush, ReferenceLine, ReferenceDot, ReferenceArea, type LineProps } from "recharts";
-import { equalFor, variant, type ValueTypeOf } from "@elaraai/east";
+import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Chart as EastChart } from "@elaraai/east-ui";
 import type { LineChartSeriesType } from "@elaraai/east-ui/internal";
 import { getSomeorUndefined } from "../../utils";
@@ -27,8 +27,6 @@ import {
     toRechartsReferenceLine,
     toRechartsReferenceDot,
     toRechartsReferenceArea,
-    type ChartSeriesItem,
-    type ChartSeriesValue,
 } from "../utils";
 
 // Pre-define the equality function at module level
@@ -39,14 +37,6 @@ export type LineChartValue = ValueTypeOf<typeof EastChart.Types.LineChart>;
 
 /** East LineChartSeries value type */
 export type LineChartSeriesValue = ValueTypeOf<LineChartSeriesType>;
-
-/** Extended series item with line-specific properties */
-type LineSeriesItem = ChartSeriesItem & {
-    strokeWidth?: number | undefined;
-    strokeDasharray?: string | undefined;
-    showDots?: boolean | undefined;
-    showLine?: boolean | undefined;
-};
 
 export interface EastChakraLineChartProps {
     value: LineChartValue;
@@ -62,45 +52,15 @@ export const EastChakraLineChart = memo(function EastChakraLineChart({ value }: 
         return xAxis ? getSomeorUndefined(xAxis.dataKey) : undefined;
     }, [value.xAxis]);
 
-    // Map line series to ChartSeriesValue by adding missing fill/fillOpacity with none values
-    const eastSeries: ChartSeriesValue[] = useMemo(() => value.series.map(s => ({
-        ...s,
-        fill: variant("none", null),
-        fillOpacity: variant("none", null),
-    })), [value.series]);
-
     // Prepare chart data and series (handles pivot, multi-series, and regular modes)
-    const { data: chartData, series: baseSeries } = useMemo(() => prepareChartData({
+    const { data: chartData, series, seriesOriginMap } = useMemo(() => prepareChartData({
         rawData: value.data,
         dataSeries: getSomeorUndefined(value.dataSeries),
         xAxisKey: xAxisDataKey,
         valueKey: getSomeorUndefined(value.valueKey),
         pivotKey: getSomeorUndefined(value.pivotKey),
-        eastSeries,
-    }), [value.data, value.dataSeries, value.valueKey, value.pivotKey, eastSeries, xAxisDataKey]);
-
-    // Enhance base series with line-specific properties from East config
-    const series = useMemo((): LineSeriesItem[] => {
-        return baseSeries.map(s => {
-            const eastConfig = value.series.find(es => es.name === s.name);
-            if (!eastConfig) return s as LineSeriesItem;
-
-            const enhanced: LineSeriesItem = { ...s };
-            const strokeWidth = getSomeorUndefined(eastConfig.strokeWidth);
-            const strokeDasharray = getSomeorUndefined(eastConfig.strokeDasharray);
-            const showDots = getSomeorUndefined(eastConfig.showDots);
-            const showLine = getSomeorUndefined(eastConfig.showLine);
-            const yAxisId = getSomeorUndefined(eastConfig.yAxisId);
-
-            if (strokeWidth !== undefined) enhanced.strokeWidth = Number(strokeWidth);
-            if (strokeDasharray !== undefined) enhanced.strokeDasharray = strokeDasharray;
-            if (showDots !== undefined) enhanced.showDots = showDots;
-            if (showLine !== undefined) enhanced.showLine = showLine;
-            if (yAxisId !== undefined) enhanced.yAxisId = yAxisId.type as "left" | "right";
-
-            return enhanced;
-        });
-    }, [baseSeries, value.series]);
+        mappedSeries: value.series,
+    }), [value.data, value.dataSeries, value.valueKey, value.pivotKey, value.series, xAxisDataKey]);
 
     // Initialize the chart hook
     const chart = useChart({ data: chartData, series });
@@ -226,20 +186,33 @@ export const EastChakraLineChart = memo(function EastChakraLineChart({ value }: 
                         />}
                     />
                 }
-                {series.map((item) => (
-                    <Line
-                        key={item.name as string}
-                        type={options.curveType as NonNullable<LineProps["type"]>}
-                        dataKey={chart.key(item.name)}
-                        stroke={(item.showLine ?? true) ? chart.color(item.color) : "transparent"}
-                        strokeWidth={item.strokeWidth ?? options.strokeWidth}
-                        strokeDasharray={item.strokeDasharray}
-                        dot={item.showDots ?? options.showDots}
-                        connectNulls={options.connectNulls}
-                        isAnimationActive={false}
-                        {...(yAxis2.show && { yAxisId: item.yAxisId ?? "left" })}
-                    />
-                ))}
+                {series.map((item) => {
+                    // Look up original East config using seriesOriginMap for pivot series
+                    const originalName = seriesOriginMap.get(item.name as string) ?? item.name;
+                    const eastConfig = value.series.find(s => s.name === originalName);
+
+                    // Extract Recharts LineProps from East config
+                    const showLine = eastConfig ? getSomeorUndefined(eastConfig.showLine) : undefined;
+                    const strokeWidth = eastConfig ? getSomeorUndefined(eastConfig.strokeWidth) : undefined;
+                    const strokeDasharray = eastConfig ? getSomeorUndefined(eastConfig.strokeDasharray) : undefined;
+                    const showDots = eastConfig ? getSomeorUndefined(eastConfig.showDots) : undefined;
+                    const yAxisId = eastConfig ? getSomeorUndefined(eastConfig.yAxisId) : undefined;
+
+                    return (
+                        <Line
+                            key={item.name as string}
+                            type={options.curveType as NonNullable<LineProps["type"]>}
+                            dataKey={chart.key(item.name)}
+                            stroke={(showLine ?? true) ? chart.color(item.color) : "transparent"}
+                            strokeWidth={strokeWidth !== undefined ? Number(strokeWidth) : options.strokeWidth}
+                            strokeDasharray={strokeDasharray}
+                            dot={showDots ?? options.showDots}
+                            connectNulls={options.connectNulls}
+                            isAnimationActive={false}
+                            {...(yAxis2.show && { yAxisId: yAxisId?.type ?? "left" })}
+                        />
+                    );
+                })}
                 {references.areas.map((props, i) => (
                     <ReferenceArea key={`area-${i}`} {...props} />
                 ))}

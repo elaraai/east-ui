@@ -228,7 +228,7 @@ export const EastChakraComposedChart = memo(function EastChakraComposedChart({ v
             xAxisKey: xAxisDataKey,
             valueKey: getSomeorUndefined(value.valueKey),
             pivotKey: getSomeorUndefined(value.pivotKey),
-            eastSeries: flatSeries as unknown as Parameters<typeof prepareChartData>[0]["eastSeries"],
+            mappedSeries: flatSeries as unknown as Parameters<typeof prepareChartData>[0]["mappedSeries"],
         };
         return prepareChartData(config);
     }, [value.data, value.dataSeries, value.valueKey, value.pivotKey, flatSeries, xAxisDataKey]);
