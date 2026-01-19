@@ -9,7 +9,7 @@ import { workspaceList, workspaceStatus } from '@elaraai/e3-api-client';
 export function useWorkspaces(apiUrl: string) {
     return useQuery({
         queryKey: ['workspaces', apiUrl],
-        queryFn: () => workspaceList(apiUrl),
+        queryFn: () => workspaceList(apiUrl, 'default', {}),
         enabled: !!apiUrl,
         refetchInterval: 5000,
     });
@@ -18,7 +18,7 @@ export function useWorkspaces(apiUrl: string) {
 export function useWorkspaceStatus(apiUrl: string, workspace: string | null) {
     return useQuery({
         queryKey: ['workspaceStatus', apiUrl, workspace],
-        queryFn: async () =>  await workspaceStatus(apiUrl, workspace!),
+        queryFn: async () =>  await workspaceStatus(apiUrl, 'default', workspace!, {}),
         enabled: !!apiUrl && !!workspace,
         refetchInterval: 1000,
         staleTime: 0, // Always consider data stale

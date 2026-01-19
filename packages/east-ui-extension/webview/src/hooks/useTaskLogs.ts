@@ -16,11 +16,11 @@ export function useTaskLogs(
     return useQuery({
         queryKey: ['taskLogs', apiUrl, workspace, task?.name, stream],
         queryFn: () => {
-            return taskLogs(apiUrl, workspace!, task!.name, {
+            return taskLogs(apiUrl, 'default', workspace!, task!.name, {
                 stream,
                 offset: 0,
                 limit: 100000,
-            });
+            }, {});
         },
         enabled: !!apiUrl && !!workspace && !!task,
         refetchInterval: 1000,

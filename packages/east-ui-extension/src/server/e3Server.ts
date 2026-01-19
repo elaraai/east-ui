@@ -10,7 +10,7 @@ let serverInstance: Server | null = null;
 let currentRepoPath: string | null = null;
 
 export interface E3ServerConfig {
-    repo: string;
+    repoPath: string;
     port: number;
 }
 
@@ -21,7 +21,7 @@ export interface E3ServerConfig {
  */
 export async function startE3Server(config: E3ServerConfig): Promise<string> {
     // If server is running with same repo, just return the URL
-    if (serverInstance && currentRepoPath === config.repo) {
+    if (serverInstance && currentRepoPath === config.repoPath) {
         return `http://localhost:${serverInstance.port}`;
     }
 
@@ -33,15 +33,15 @@ export async function startE3Server(config: E3ServerConfig): Promise<string> {
     // Get an available port (prefers configured port if available)
     const port = await getPort({ port: config.port });
 
-    serverInstance = createServer({
-        repo: config.repo,
+    serverInstance = await createServer({
+        singleRepoPath: config.repoPath,
         port,
         host: 'localhost',
         cors: true,
     });
 
     await serverInstance.start();
-    currentRepoPath = config.repo;
+    currentRepoPath = config.repoPath;
 
     return `http://localhost:${serverInstance.port}`;
 }

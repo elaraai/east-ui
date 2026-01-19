@@ -57,8 +57,9 @@
         "onCommand:east-ui.openPreview"
     ],
     "scripts": {
-        "build": "npm run build:extension && npm run build:webview",
+        "build": "npm run typecheck && npm run build:extension && npm run build:webview",
         "build:extension": "esbuild src/extension.ts --bundle --outfile=dist/extension.cjs --external:vscode --format=cjs --platform=node --target=node22",
+        "typecheck": "tsc --noEmit",
         "build:webview": "cd webview && npm run build",
         "watch": "npm run build:extension -- --watch",
         "package": "vsce package --no-dependencies",

@@ -20,7 +20,7 @@ export function useTaskOutput(
         queryKey: ['taskOutput', apiUrl, workspace, task?.name],
         queryFn: () => {
             const pathParts = task?.output?.split('.')?.map((value) => variant('field', value)) ?? [];
-            return datasetGet(apiUrl, workspace!, pathParts);
+            return datasetGet(apiUrl, 'default', workspace!, pathParts, {});
         },
         enabled: !!apiUrl && !!workspace && !!task && isUpToDate,
     });

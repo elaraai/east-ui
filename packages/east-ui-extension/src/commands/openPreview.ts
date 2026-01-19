@@ -4,18 +4,8 @@
  */
 
 import * as vscode from 'vscode';
-import * as fs from 'fs';
-import * as path from 'path';
 import { startE3Server } from '../server/e3Server.js';
 import { createPreviewPanel } from '../webview/panel.js';
-
-/**
- * Validate that a path is an e3 repository.
- */
-function isE3Repository(repoPath: string): boolean {
-    const e3Dir = path.join(repoPath, '.e3');
-    return fs.existsSync(e3Dir) && fs.statSync(e3Dir).isDirectory();
-}
 
 export async function openPreviewCommand(context: vscode.ExtensionContext) {
     const config = vscode.workspace.getConfiguration('east-ui.e3');
@@ -39,21 +29,12 @@ export async function openPreviewCommand(context: vscode.ExtensionContext) {
 
     const repoPath = folderUri[0].fsPath;
 
-    // Validate it's an e3 repository
-    if (!isE3Repository(repoPath)) {
-        vscode.window.showErrorMessage(
-            `"${repoPath}" is not a valid e3 repository (missing .e3 directory)`
-        );
-        return;
-    }
-
     // Save the path for next time
     await config.update('lastRepositoryPath', repoPath, vscode.ConfigurationTarget.Global);
 
     try {
-        // Start the e3 server (server expects the .e3 directory path)
-        const e3Path = path.join(repoPath, '.e3');
-        const serverUrl = await startE3Server({ repo: e3Path, port });
+        // Start the e3 server
+        const serverUrl = await startE3Server({ repoPath, port });
 
         // Convert localhost URL to externally accessible URL for remote scenarios.
         // In VS Code Remote, this enables port forwarding so the webview can reach the server.
