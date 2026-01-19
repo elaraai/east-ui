@@ -28,7 +28,7 @@
     "test:watch": "node --import tsx --test --watch test/**/*.spec.ts"
   },
   "peerDependencies": {
-    "@elaraai/east": "^0.0.1-beta.29",
+    "@elaraai/east": "^0.0.1-beta.30",
     "@elaraai/east-ui": "^0.0.1-beta.23",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -53,7 +53,7 @@
     "sorted-btree": "^2.0.0-alpha.0"
   },
   "devDependencies": {
-    "@elaraai/east-node-std": "^0.0.1-beta.19",
+    "@elaraai/east-node-std": "^0.0.1-beta.20",
     "@types/node": "^22.18.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
