@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Chart } from "../../src/index.js";
 import { none, some } from "@elaraai/east";
 
@@ -20,11 +20,11 @@ describeEast("Chart.Pie", (test) => {
             { name: "other", value: 200, color: some("green.solid") },
         ]));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "PieChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.size(), 4n));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.get(0n).name, "windows"));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.get(0n).value, 400));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.get(0n).color.unwrap("some"), "blue.solid"));
+        $(Assert.equal(chart.unwrap().getTag(), "PieChart"));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.size(), 4n));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.get(0n).name, "windows"));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.get(0n).value, 400));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.get(0n).color.unwrap("some"), "blue.solid"));
     });
 
     test("creates pie chart with three slices", $ => {
@@ -34,10 +34,10 @@ describeEast("Chart.Pie", (test) => {
             { name: "linux", value: 300, color: some("pink.solid") },
         ]));
 
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.size(), 3n));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.get(0n).name, "windows"));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.get(1n).name, "mac"));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.get(2n).name, "linux"));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.size(), 3n));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.get(0n).name, "windows"));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.get(1n).name, "mac"));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.get(2n).name, "linux"));
     });
 
     test("creates pie chart without colors (optional)", $ => {
@@ -46,9 +46,9 @@ describeEast("Chart.Pie", (test) => {
             { name: "mac", value: 300, color: none },
         ]));
 
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.size(), 2n));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.get(0n).color.hasTag("none"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.get(1n).color.hasTag("none"), true));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.size(), 2n));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.get(0n).color.hasTag("none"), true));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.get(1n).color.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -67,8 +67,8 @@ describeEast("Chart.Pie", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").innerRadius.unwrap("some"), 60));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").outerRadius.unwrap("some"), 80));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").innerRadius.unwrap("some"), 60));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").outerRadius.unwrap("some"), 80));
     });
 
     test("creates large donut chart for centered text", $ => {
@@ -85,8 +85,8 @@ describeEast("Chart.Pie", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").innerRadius.unwrap("some"), 80));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").outerRadius.unwrap("some"), 100));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").innerRadius.unwrap("some"), 80));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").outerRadius.unwrap("some"), 100));
     });
 
     // =========================================================================
@@ -101,7 +101,7 @@ describeEast("Chart.Pie", (test) => {
             { startAngle: 90 }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").startAngle.unwrap("some"), 90));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").startAngle.unwrap("some"), 90));
     });
 
     test("creates pie chart with custom end angle", $ => {
@@ -112,7 +112,7 @@ describeEast("Chart.Pie", (test) => {
             { endAngle: 270 }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").endAngle.unwrap("some"), 270));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").endAngle.unwrap("some"), 270));
     });
 
     test("creates semi-circle pie chart", $ => {
@@ -127,8 +127,8 @@ describeEast("Chart.Pie", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").startAngle.unwrap("some"), 180));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").endAngle.unwrap("some"), 0));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").startAngle.unwrap("some"), 180));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").endAngle.unwrap("some"), 0));
     });
 
     // =========================================================================
@@ -144,7 +144,7 @@ describeEast("Chart.Pie", (test) => {
             { paddingAngle: 5 }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").paddingAngle.unwrap("some"), 5));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").paddingAngle.unwrap("some"), 5));
     });
 
     // =========================================================================
@@ -159,7 +159,7 @@ describeEast("Chart.Pie", (test) => {
             { showLabels: true }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").showLabels.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").showLabels.unwrap("some"), true));
     });
 
     test("creates pie chart with legend", $ => {
@@ -170,7 +170,7 @@ describeEast("Chart.Pie", (test) => {
             { legend: { show: true } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").legend.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates pie chart with tooltip", $ => {
@@ -181,7 +181,7 @@ describeEast("Chart.Pie", (test) => {
             { tooltip: { show: true } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").tooltip.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -196,8 +196,8 @@ describeEast("Chart.Pie", (test) => {
             { margin: { top: 20n, right: 30n, bottom: 20n, left: 30n } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").margin.unwrap("some").top.unwrap("some"), 20n));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").margin.unwrap("some").left.unwrap("some"), 30n));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").margin.unwrap("some").top.unwrap("some"), 20n));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").margin.unwrap("some").left.unwrap("some"), 30n));
     });
 
     // =========================================================================
@@ -212,12 +212,12 @@ describeEast("Chart.Pie", (test) => {
             { name: "other", value: 200, color: some("green.solid") },
         ]));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "PieChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.size(), 4n));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.get(0n).color.unwrap("some"), "blue.solid"));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.get(1n).color.unwrap("some"), "orange.solid"));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.get(2n).color.unwrap("some"), "pink.solid"));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.get(3n).color.unwrap("some"), "green.solid"));
+        $(Assert.equal(chart.unwrap().getTag(), "PieChart"));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.size(), 4n));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.get(0n).color.unwrap("some"), "blue.solid"));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.get(1n).color.unwrap("some"), "orange.solid"));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.get(2n).color.unwrap("some"), "pink.solid"));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.get(3n).color.unwrap("some"), "green.solid"));
     });
 
     test("creates complete pie chart with legend matching Chakra PieChartWithLegend example", $ => {
@@ -230,8 +230,8 @@ describeEast("Chart.Pie", (test) => {
             { legend: { show: true } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").data.size(), 3n));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").legend.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").data.size(), 3n));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates complete donut chart matching Chakra DonutChartBasic example", $ => {
@@ -249,8 +249,8 @@ describeEast("Chart.Pie", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").innerRadius.unwrap("some"), 60));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").outerRadius.unwrap("some"), 80));
-        $(assertEast.equal(chart.unwrap().unwrap("PieChart").tooltip.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").innerRadius.unwrap("some"), 60));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").outerRadius.unwrap("some"), 80));
+        $(Assert.equal(chart.unwrap().unwrap("PieChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
 });

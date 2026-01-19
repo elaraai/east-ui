@@ -24,9 +24,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test": "node --import tsx --test test/**/*.spec.ts",
+    "test:watch": "node --import tsx --test --watch test/**/*.spec.ts"
   },
   "peerDependencies": {
     "@elaraai/east": "^0.0.1-beta.29",
@@ -54,6 +53,7 @@
     "sorted-btree": "^2.0.0-alpha.0"
   },
   "devDependencies": {
+    "@elaraai/east-node-std": "^0.0.1-beta.19",
     "@types/node": "^22.18.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

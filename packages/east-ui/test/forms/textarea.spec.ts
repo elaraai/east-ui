@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Textarea, Style } from "../../src/index.js";
 
 describeEast("Textarea", (test) => {
@@ -14,18 +14,18 @@ describeEast("Textarea", (test) => {
     test("creates textarea with value only", $ => {
         const textarea = $.let(Textarea.Root("Hello"));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").value, "Hello"));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").placeholder.hasTag("none"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").variant.hasTag("none"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").size.hasTag("none"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").resize.hasTag("none"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").rows.hasTag("none"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").value, "Hello"));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").placeholder.hasTag("none"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").variant.hasTag("none"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").size.hasTag("none"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").resize.hasTag("none"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").rows.hasTag("none"), true));
     });
 
     test("creates textarea with empty value", $ => {
         const textarea = $.let(Textarea.Root(""));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").value, ""));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").value, ""));
     });
 
     // =========================================================================
@@ -37,8 +37,8 @@ describeEast("Textarea", (test) => {
             placeholder: "Enter description...",
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").placeholder.hasTag("some"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").placeholder.unwrap("some"), "Enter description..."));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").placeholder.hasTag("some"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").placeholder.unwrap("some"), "Enter description..."));
     });
 
     // =========================================================================
@@ -50,8 +50,8 @@ describeEast("Textarea", (test) => {
             variant: "outline",
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").variant.hasTag("some"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").variant.unwrap("some").hasTag("outline"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").variant.hasTag("some"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").variant.unwrap("some").hasTag("outline"), true));
     });
 
     test("creates textarea with subtle variant", $ => {
@@ -59,7 +59,7 @@ describeEast("Textarea", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates textarea with flushed variant", $ => {
@@ -67,7 +67,7 @@ describeEast("Textarea", (test) => {
             variant: "flushed",
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").variant.unwrap("some").hasTag("flushed"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").variant.unwrap("some").hasTag("flushed"), true));
     });
 
     // =========================================================================
@@ -79,8 +79,8 @@ describeEast("Textarea", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").size.hasTag("some"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").size.hasTag("some"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").size.unwrap("some").hasTag("md"), true));
     });
 
     test("supports all sizes", $ => {
@@ -89,10 +89,10 @@ describeEast("Textarea", (test) => {
         const md = $.let(Textarea.Root("", { size: "md" }));
         const lg = $.let(Textarea.Root("", { size: "lg" }));
 
-        $(assertEast.equal(xs.unwrap().unwrap("Textarea").size.unwrap("some").hasTag("xs"), true));
-        $(assertEast.equal(sm.unwrap().unwrap("Textarea").size.unwrap("some").hasTag("sm"), true));
-        $(assertEast.equal(md.unwrap().unwrap("Textarea").size.unwrap("some").hasTag("md"), true));
-        $(assertEast.equal(lg.unwrap().unwrap("Textarea").size.unwrap("some").hasTag("lg"), true));
+        $(Assert.equal(xs.unwrap().unwrap("Textarea").size.unwrap("some").hasTag("xs"), true));
+        $(Assert.equal(sm.unwrap().unwrap("Textarea").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(md.unwrap().unwrap("Textarea").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(lg.unwrap().unwrap("Textarea").size.unwrap("some").hasTag("lg"), true));
     });
 
     test("supports Style.Size helper", $ => {
@@ -100,7 +100,7 @@ describeEast("Textarea", (test) => {
             size: Style.Size("lg"),
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").size.unwrap("some").hasTag("lg"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").size.unwrap("some").hasTag("lg"), true));
     });
 
     // =========================================================================
@@ -112,8 +112,8 @@ describeEast("Textarea", (test) => {
             resize: "none",
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").resize.hasTag("some"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").resize.unwrap("some").hasTag("none"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").resize.hasTag("some"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").resize.unwrap("some").hasTag("none"), true));
     });
 
     test("creates textarea with resize vertical", $ => {
@@ -121,7 +121,7 @@ describeEast("Textarea", (test) => {
             resize: "vertical",
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").resize.unwrap("some").hasTag("vertical"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").resize.unwrap("some").hasTag("vertical"), true));
     });
 
     test("creates textarea with resize horizontal", $ => {
@@ -129,7 +129,7 @@ describeEast("Textarea", (test) => {
             resize: "horizontal",
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").resize.unwrap("some").hasTag("horizontal"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").resize.unwrap("some").hasTag("horizontal"), true));
     });
 
     test("creates textarea with resize both", $ => {
@@ -137,7 +137,7 @@ describeEast("Textarea", (test) => {
             resize: "both",
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").resize.unwrap("some").hasTag("both"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").resize.unwrap("some").hasTag("both"), true));
     });
 
     // =========================================================================
@@ -149,8 +149,8 @@ describeEast("Textarea", (test) => {
             rows: 5,
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").rows.hasTag("some"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").rows.unwrap("some"), 5n));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").rows.hasTag("some"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").rows.unwrap("some"), 5n));
     });
 
     test("creates textarea with rows as bigint", $ => {
@@ -158,7 +158,7 @@ describeEast("Textarea", (test) => {
             rows: 10n,
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").rows.unwrap("some"), 10n));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").rows.unwrap("some"), 10n));
     });
 
     // =========================================================================
@@ -170,8 +170,8 @@ describeEast("Textarea", (test) => {
             maxLength: 500,
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").maxLength.hasTag("some"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").maxLength.unwrap("some"), 500n));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").maxLength.hasTag("some"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").maxLength.unwrap("some"), 500n));
     });
 
     test("creates textarea with maxLength as bigint", $ => {
@@ -179,7 +179,7 @@ describeEast("Textarea", (test) => {
             maxLength: 1000n,
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").maxLength.unwrap("some"), 1000n));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").maxLength.unwrap("some"), 1000n));
     });
 
     // =========================================================================
@@ -191,8 +191,8 @@ describeEast("Textarea", (test) => {
             disabled: true,
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").disabled.hasTag("some"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").disabled.unwrap("some"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").disabled.hasTag("some"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").disabled.unwrap("some"), true));
     });
 
     test("creates read-only textarea", $ => {
@@ -200,8 +200,8 @@ describeEast("Textarea", (test) => {
             readOnly: true,
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").readOnly.hasTag("some"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").readOnly.unwrap("some"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").readOnly.hasTag("some"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").readOnly.unwrap("some"), true));
     });
 
     test("creates required textarea", $ => {
@@ -209,8 +209,8 @@ describeEast("Textarea", (test) => {
             required: true,
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").required.hasTag("some"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").required.unwrap("some"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").required.hasTag("some"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").required.unwrap("some"), true));
     });
 
     test("creates auto-resizing textarea", $ => {
@@ -218,8 +218,8 @@ describeEast("Textarea", (test) => {
             autoresize: true,
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").autoresize.hasTag("some"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").autoresize.unwrap("some"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").autoresize.hasTag("some"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").autoresize.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -240,17 +240,17 @@ describeEast("Textarea", (test) => {
             autoresize: false,
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").value, "Initial content"));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").placeholder.unwrap("some"), "Enter text..."));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").variant.unwrap("some").hasTag("outline"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").size.unwrap("some").hasTag("md"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").resize.unwrap("some").hasTag("vertical"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").rows.unwrap("some"), 6n));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").maxLength.unwrap("some"), 1000n));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").disabled.unwrap("some"), false));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").readOnly.unwrap("some"), false));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").required.unwrap("some"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").autoresize.unwrap("some"), false));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").value, "Initial content"));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").placeholder.unwrap("some"), "Enter text..."));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").variant.unwrap("some").hasTag("outline"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").resize.unwrap("some").hasTag("vertical"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").rows.unwrap("some"), 6n));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").maxLength.unwrap("some"), 1000n));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").disabled.unwrap("some"), false));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").readOnly.unwrap("some"), false));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").required.unwrap("some"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").autoresize.unwrap("some"), false));
     });
 
     test("creates auto-resize textarea without fixed rows", $ => {
@@ -260,9 +260,9 @@ describeEast("Textarea", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").autoresize.unwrap("some"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").rows.hasTag("none"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").autoresize.unwrap("some"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").rows.hasTag("none"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates fixed-size textarea", $ => {
@@ -272,8 +272,8 @@ describeEast("Textarea", (test) => {
             maxLength: 2000,
         }));
 
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").rows.unwrap("some"), 8n));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").resize.unwrap("some").hasTag("none"), true));
-        $(assertEast.equal(textarea.unwrap().unwrap("Textarea").maxLength.unwrap("some"), 2000n));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").rows.unwrap("some"), 8n));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").resize.unwrap("some").hasTag("none"), true));
+        $(Assert.equal(textarea.unwrap().unwrap("Textarea").maxLength.unwrap("some"), 2000n));
     });
 });

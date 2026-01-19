@@ -340,7 +340,9 @@ export default East.function(
         // =====================================================================
 
         // Initialize state for interactive examples
-        $(State.initTyped("tabs_selected", "tab1", StringType)());
+        $.if(State.has("tabs_selected").not(), $ => {
+            $(State.write([StringType], "tabs_selected", "tab1"));
+        });
 
         // Interactive Tabs with onValueChange
         const interactiveTabs = $.let(
@@ -348,13 +350,13 @@ export default East.function(
                 "Interactive Tabs",
                 "Click tabs to see onValueChange callback",
                 Reactive.Root($ => {
-                    const selected = $.let(State.readTyped("tabs_selected", StringType)());
+                    const selected = $.let(State.read([StringType], "tabs_selected"));
 
                     const onValueChange = East.function(
                         [StringType],
                         NullType,
                         ($, newValue) => {
-                            $(State.writeTyped("tabs_selected", some(newValue), StringType)());
+                            $(State.write([StringType], "tabs_selected", newValue));
                         }
                     );
 
@@ -377,7 +379,7 @@ export default East.function(
                             }),
                         ], { width: "100%" }),
                         Badge.Root(
-                            East.str`Selected tab: ${selected.unwrap('some')}`,
+                            East.str`Selected tab: ${selected}`,
                             { colorPalette: "blue", variant: "solid" }
                         ),
                     ], { gap: "3", align: "stretch" });

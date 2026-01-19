@@ -55,8 +55,13 @@ export async function openPreviewCommand(context: vscode.ExtensionContext) {
         const e3Path = path.join(repoPath, '.e3');
         const serverUrl = await startE3Server({ repo: e3Path, port });
 
+        // Convert localhost URL to externally accessible URL for remote scenarios.
+        // In VS Code Remote, this enables port forwarding so the webview can reach the server.
+        const externalUri = await vscode.env.asExternalUri(vscode.Uri.parse(serverUrl));
+        const externalUrl = externalUri.toString().replace(/\/$/, ''); // Remove trailing slash
+
         // Open the preview panel (show user the repo root, not .e3)
-        createPreviewPanel(context, serverUrl, repoPath);
+        createPreviewPanel(context, externalUrl, repoPath);
 
     } catch (error) {
         vscode.window.showErrorMessage(

@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Chart } from "../../src/index.js";
 
 describeEast("Chart.Line", (test) => {
@@ -21,10 +21,10 @@ describeEast("Chart.Line", (test) => {
             { sale: { color: "teal.solid" } }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "LineChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").series.size(), 1n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").series.get(0n).name, "sale"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").series.get(0n).color.unwrap("some"), "teal.solid"));
+        $(Assert.equal(chart.unwrap().getTag(), "LineChart"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").series.size(), 1n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").series.get(0n).name, "sale"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").series.get(0n).color.unwrap("some"), "teal.solid"));
     });
 
     test("creates line chart with x-axis dataKey", $ => {
@@ -36,7 +36,7 @@ describeEast("Chart.Line", (test) => {
             { xAxis: { dataKey: "month" } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").xAxis.unwrap("some").dataKey.unwrap("some"), "month"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").xAxis.unwrap("some").dataKey.unwrap("some"), "month"));
     });
 
     test("creates line chart with array series spec", $ => {
@@ -47,8 +47,8 @@ describeEast("Chart.Line", (test) => {
             ["sale"]
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").series.size(), 1n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").series.get(0n).name, "sale"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").series.size(), 1n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").series.get(0n).name, "sale"));
     });
 
     // =========================================================================
@@ -68,9 +68,9 @@ describeEast("Chart.Line", (test) => {
             { xAxis: { dataKey: "month" } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").series.get(0n).name, "mac"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").series.get(1n).name, "linux"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").series.size(), 2n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").series.get(0n).name, "mac"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").series.get(1n).name, "linux"));
     });
 
     // =========================================================================
@@ -86,7 +86,7 @@ describeEast("Chart.Line", (test) => {
             { curveType: "natural" }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").curveType.unwrap("some").hasTag("natural"), true));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").curveType.unwrap("some").hasTag("natural"), true));
     });
 
     test("creates line chart with monotone curve", $ => {
@@ -98,7 +98,7 @@ describeEast("Chart.Line", (test) => {
             { curveType: "monotone" }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").curveType.unwrap("some").hasTag("monotone"), true));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").curveType.unwrap("some").hasTag("monotone"), true));
     });
 
     test("creates line chart with linear curve", $ => {
@@ -110,7 +110,7 @@ describeEast("Chart.Line", (test) => {
             { curveType: "linear" }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").curveType.unwrap("some").hasTag("linear"), true));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").curveType.unwrap("some").hasTag("linear"), true));
     });
 
     test("creates line chart with step curve", $ => {
@@ -122,7 +122,7 @@ describeEast("Chart.Line", (test) => {
             { curveType: "step" }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").curveType.unwrap("some").hasTag("step"), true));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").curveType.unwrap("some").hasTag("step"), true));
     });
 
     // =========================================================================
@@ -138,7 +138,7 @@ describeEast("Chart.Line", (test) => {
             { grid: { show: true } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates line chart with legend", $ => {
@@ -150,7 +150,7 @@ describeEast("Chart.Line", (test) => {
             { legend: { show: true } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").legend.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates line chart with tooltip", $ => {
@@ -162,7 +162,7 @@ describeEast("Chart.Line", (test) => {
             { tooltip: { show: true } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").tooltip.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates line chart with dots", $ => {
@@ -174,7 +174,7 @@ describeEast("Chart.Line", (test) => {
             { showDots: true }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").showDots.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").showDots.unwrap("some"), true));
     });
 
     test("creates line chart without dots", $ => {
@@ -186,7 +186,7 @@ describeEast("Chart.Line", (test) => {
             { showDots: false }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").showDots.unwrap("some"), false));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").showDots.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -202,7 +202,7 @@ describeEast("Chart.Line", (test) => {
             { strokeWidth: 4n }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").strokeWidth.unwrap("some"), 4n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").strokeWidth.unwrap("some"), 4n));
     });
 
     // =========================================================================
@@ -218,7 +218,7 @@ describeEast("Chart.Line", (test) => {
             { connectNulls: true }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").connectNulls.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").connectNulls.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -238,8 +238,8 @@ describeEast("Chart.Line", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").xAxis.unwrap("some").dataKey.unwrap("some"), "month"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").yAxis.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").xAxis.unwrap("some").dataKey.unwrap("some"), "month"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").yAxis.hasTag("some"), true));
     });
 
     // =========================================================================
@@ -255,8 +255,8 @@ describeEast("Chart.Line", (test) => {
             { margin: { top: 20n, right: 30n, bottom: 20n, left: 30n } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").margin.unwrap("some").top.unwrap("some"), 20n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").margin.unwrap("some").left.unwrap("some"), 30n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").margin.unwrap("some").top.unwrap("some"), 20n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").margin.unwrap("some").left.unwrap("some"), 30n));
     });
 
     // =========================================================================
@@ -274,7 +274,7 @@ describeEast("Chart.Line", (test) => {
             { xAxis: { dataKey: "month" }, brush: {} }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").brush.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").brush.hasTag("some"), true));
     });
 
     test("creates line chart with brush dataKey", $ => {
@@ -289,7 +289,7 @@ describeEast("Chart.Line", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").dataKey.unwrap("some"), "month"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").dataKey.unwrap("some"), "month"));
     });
 
     test("creates line chart with brush height", $ => {
@@ -301,7 +301,7 @@ describeEast("Chart.Line", (test) => {
             { brush: { height: 50n } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").height.unwrap("some"), 50n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").height.unwrap("some"), 50n));
     });
 
     test("creates line chart with brush start and end index", $ => {
@@ -315,8 +315,8 @@ describeEast("Chart.Line", (test) => {
             { brush: { startIndex: 0n, endIndex: 1n } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").startIndex.unwrap("some"), 0n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").endIndex.unwrap("some"), 1n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").startIndex.unwrap("some"), 0n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").endIndex.unwrap("some"), 1n));
     });
 
     test("creates line chart with brush styling", $ => {
@@ -328,9 +328,9 @@ describeEast("Chart.Line", (test) => {
             { brush: { stroke: "#8884d8", fill: "#8884d8", travellerWidth: 10n } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").stroke.unwrap("some"), "#8884d8"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").fill.unwrap("some"), "#8884d8"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").travellerWidth.unwrap("some"), 10n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").stroke.unwrap("some"), "#8884d8"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").fill.unwrap("some"), "#8884d8"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").brush.unwrap("some").travellerWidth.unwrap("some"), 10n));
     });
 
     // =========================================================================
@@ -352,10 +352,10 @@ describeEast("Chart.Line", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").size(), 1n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").get(0n).y.unwrap("some").getTag(), "Integer"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").get(0n).stroke.unwrap("some"), "red"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").get(0n).label.unwrap("some"), "Target"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").size(), 1n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").get(0n).y.unwrap("some").getTag(), "Integer"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").get(0n).stroke.unwrap("some"), "red"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").get(0n).label.unwrap("some"), "Target"));
     });
 
     test("creates line chart with reference line (vertical)", $ => {
@@ -373,9 +373,9 @@ describeEast("Chart.Line", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").size(), 1n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").get(0n).x.unwrap("some").unwrap("String"), "January"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").get(0n).strokeDasharray.unwrap("some"), "5 5"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").size(), 1n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").get(0n).x.unwrap("some").unwrap("String"), "January"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").get(0n).strokeDasharray.unwrap("some"), "5 5"));
     });
 
     test("creates line chart with reference dot", $ => {
@@ -393,11 +393,11 @@ describeEast("Chart.Line", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").size(), 1n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").get(0n).x.unwrap("String"), "January"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").get(0n).y.unwrap("Integer"), 10n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").get(0n).fill.unwrap("some"), "red"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").get(0n).r.unwrap("some"), 8n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").size(), 1n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").get(0n).x.unwrap("String"), "January"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").get(0n).y.unwrap("Integer"), 10n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").get(0n).fill.unwrap("some"), "red"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").get(0n).r.unwrap("some"), 8n));
     });
 
     test("creates line chart with reference area", $ => {
@@ -415,11 +415,11 @@ describeEast("Chart.Line", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").size(), 1n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").get(0n).y1.unwrap("some").unwrap("Integer"), 40n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").get(0n).y2.unwrap("some").unwrap("Integer"), 60n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").get(0n).fill.unwrap("some"), "green"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").get(0n).fillOpacity.unwrap("some"), 0.2));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").size(), 1n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").get(0n).y1.unwrap("some").unwrap("Integer"), 40n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").get(0n).y2.unwrap("some").unwrap("Integer"), 60n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").get(0n).fill.unwrap("some"), "green"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").get(0n).fillOpacity.unwrap("some"), 0.2));
     });
 
     test("creates line chart with multiple reference annotations", $ => {
@@ -444,9 +444,9 @@ describeEast("Chart.Line", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").size(), 2n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").size(), 1n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").size(), 1n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceLines.unwrap("some").size(), 2n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceDots.unwrap("some").size(), 1n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").referenceAreas.unwrap("some").size(), 1n));
     });
 
     // =========================================================================
@@ -470,9 +470,9 @@ describeEast("Chart.Line", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "LineChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").series.get(0n).name, "sale"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().getTag(), "LineChart"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").series.get(0n).name, "sale"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates complete multi-series line chart", $ => {
@@ -494,8 +494,8 @@ describeEast("Chart.Line", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").legend.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").series.size(), 2n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 });
 
@@ -520,9 +520,9 @@ describeEast("Chart.Line Pivot", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "LineChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").pivotKey.unwrap("some"), "category"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").valueKey.unwrap("some"), "value"));
+        $(Assert.equal(chart.unwrap().getTag(), "LineChart"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").pivotKey.unwrap("some"), "category"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").valueKey.unwrap("some"), "value"));
     });
 
     test("creates chart without pivotKey (backward compat)", $ => {
@@ -534,7 +534,7 @@ describeEast("Chart.Line Pivot", (test) => {
             { xAxis: { dataKey: "month" } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").pivotKey.hasTag("none"), true));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").pivotKey.hasTag("none"), true));
     });
 
     test("creates chart with pivotColors mapping", $ => {
@@ -559,8 +559,8 @@ describeEast("Chart.Line Pivot", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").pivotKey.unwrap("some"), "region"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").series.get(0n).pivotColors.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").pivotKey.unwrap("some"), "region"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").series.get(0n).pivotColors.hasTag("some"), true));
     });
 });
 
@@ -591,10 +591,10 @@ describeEast("Chart.LineMulti", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "LineChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").valueKey.unwrap("some"), "value"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").dataSeries.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().getTag(), "LineChart"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").series.size(), 2n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").valueKey.unwrap("some"), "value"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").dataSeries.hasTag("some"), true));
     });
 
     test("creates line chart with multi-series expression data", $ => {
@@ -621,10 +621,10 @@ describeEast("Chart.LineMulti", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "LineChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").valueKey.unwrap("some"), "value"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").dataSeries.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().getTag(), "LineChart"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").series.size(), 2n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").valueKey.unwrap("some"), "value"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").dataSeries.hasTag("some"), true));
     });
 
     test("creates line chart with multi-series and styling options", $ => {
@@ -649,8 +649,8 @@ describeEast("Chart.LineMulti", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").valueKey.unwrap("some"), "amount"));
-        $(assertEast.equal(chart.unwrap().unwrap("LineChart").showDots.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").series.size(), 2n));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").valueKey.unwrap("some"), "amount"));
+        $(Assert.equal(chart.unwrap().unwrap("LineChart").showDots.unwrap("some"), true));
     });
 });

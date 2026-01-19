@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Tooltip, Button, Text } from "../../src/index.js";
 
 describeEast("Tooltip", (test) => {
@@ -17,9 +17,9 @@ describeEast("Tooltip", (test) => {
             "This is a tooltip"
         ));
 
-        $(assertEast.equal(tooltip.unwrap().getTag(), "Tooltip"));
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").content, "This is a tooltip"));
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").trigger.unwrap().getTag(), "Button"));
+        $(Assert.equal(tooltip.unwrap().getTag(), "Tooltip"));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").content, "This is a tooltip"));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").trigger.unwrap().getTag(), "Button"));
     });
 
     test("creates tooltip with text trigger", $ => {
@@ -28,8 +28,8 @@ describeEast("Tooltip", (test) => {
             "Additional information"
         ));
 
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").content, "Additional information"));
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").trigger.unwrap().getTag(), "Text"));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").content, "Additional information"));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").trigger.unwrap().getTag(), "Text"));
     });
 
     test("creates tooltip with default options", $ => {
@@ -38,8 +38,8 @@ describeEast("Tooltip", (test) => {
             "Help text"
         ));
 
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").placement.hasTag("none"), true));
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").hasArrow.hasTag("none"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").placement.hasTag("none"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").hasArrow.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -53,8 +53,8 @@ describeEast("Tooltip", (test) => {
             { placement: "top" }
         ));
 
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").placement.hasTag("some"), true));
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("top"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").placement.hasTag("some"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("top"), true));
     });
 
     test("creates tooltip with bottom placement", $ => {
@@ -64,7 +64,7 @@ describeEast("Tooltip", (test) => {
             { placement: "bottom" }
         ));
 
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("bottom"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("bottom"), true));
     });
 
     test("creates tooltip with left placement", $ => {
@@ -74,7 +74,7 @@ describeEast("Tooltip", (test) => {
             { placement: "left" }
         ));
 
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("left"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("left"), true));
     });
 
     test("creates tooltip with right placement", $ => {
@@ -84,7 +84,7 @@ describeEast("Tooltip", (test) => {
             { placement: "right" }
         ));
 
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("right"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("right"), true));
     });
 
     test("creates tooltip with top-start placement", $ => {
@@ -94,7 +94,7 @@ describeEast("Tooltip", (test) => {
             { placement: "top-start" }
         ));
 
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("top-start"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("top-start"), true));
     });
 
     test("creates tooltip with bottom-end placement", $ => {
@@ -104,7 +104,7 @@ describeEast("Tooltip", (test) => {
             { placement: "bottom-end" }
         ));
 
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("bottom-end"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("bottom-end"), true));
     });
 
     // =========================================================================
@@ -118,8 +118,8 @@ describeEast("Tooltip", (test) => {
             { hasArrow: true }
         ));
 
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").hasArrow.hasTag("some"), true));
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").hasArrow.unwrap("some"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").hasArrow.hasTag("some"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").hasArrow.unwrap("some"), true));
     });
 
     test("creates tooltip without arrow", $ => {
@@ -129,7 +129,7 @@ describeEast("Tooltip", (test) => {
             { hasArrow: false }
         ));
 
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").hasArrow.unwrap("some"), false));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").hasArrow.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -143,8 +143,8 @@ describeEast("Tooltip", (test) => {
             { placement: "bottom", hasArrow: true }
         ));
 
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("bottom"), true));
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").hasArrow.unwrap("some"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("bottom"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").hasArrow.unwrap("some"), true));
     });
 
     test("creates tooltip with all options", $ => {
@@ -154,9 +154,9 @@ describeEast("Tooltip", (test) => {
             { placement: "top", hasArrow: true }
         ));
 
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").content, "This action cannot be undone"));
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("top"), true));
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").hasArrow.unwrap("some"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").content, "This action cannot be undone"));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("top"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").hasArrow.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -170,8 +170,8 @@ describeEast("Tooltip", (test) => {
             { placement: "right", hasArrow: true }
         ));
 
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").trigger.unwrap().unwrap("Text").value, "?"));
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("right"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").trigger.unwrap().unwrap("Text").value, "?"));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("right"), true));
     });
 
     test("creates action button tooltip", $ => {
@@ -181,7 +181,7 @@ describeEast("Tooltip", (test) => {
             { placement: "top" }
         ));
 
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").trigger.unwrap().unwrap("Button").label, "Submit"));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").trigger.unwrap().unwrap("Button").label, "Submit"));
     });
 
     test("creates info tooltip", $ => {
@@ -191,6 +191,6 @@ describeEast("Tooltip", (test) => {
             { placement: "bottom-start" }
         ));
 
-        $(assertEast.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("bottom-start"), true));
+        $(Assert.equal(tooltip.unwrap().unwrap("Tooltip").placement.unwrap("some").hasTag("bottom-start"), true));
     });
 });

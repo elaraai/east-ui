@@ -238,7 +238,9 @@ export default East.function(
         // =====================================================================
 
         // Initialize state for interactive examples
-        $(State.initTyped("accordion_expanded", [] as string[], ArrayType(StringType))());
+        $.if(State.has("accordion_expanded").not(), $ => {
+            $(State.write([ArrayType(StringType)], "accordion_expanded", [] as string[]));
+        });
 
         // Interactive Accordion with onValueChange
         const interactiveAccordion = $.let(
@@ -246,13 +248,13 @@ export default East.function(
                 "Interactive Accordion",
                 "Expand/collapse to see onValueChange callback",
                 Reactive.Root($ => {
-                    const expanded = $.let(State.readTyped("accordion_expanded", ArrayType(StringType))());
+                    const expanded = $.let(State.read([ArrayType(StringType)], "accordion_expanded"));
 
                     const onValueChange = East.function(
                         [ArrayType(StringType)],
                         NullType,
                         ($, newValue) => {
-                            $(State.writeTyped("accordion_expanded", some(newValue), ArrayType(StringType))());
+                            $(State.write([ArrayType(StringType)], "accordion_expanded", newValue));
                         }
                     );
 
@@ -276,10 +278,10 @@ export default East.function(
                             }),
                         ], { width: "100%" }),
                         Badge.Root(
-                            East.str`Expanded: ${expanded.unwrap('some').size()}`,
+                            East.str`Expanded: ${expanded.size()}`,
                             { colorPalette: "green", variant: "solid" }
                         ),
-                        Text.Root(East.str`Sections expanded: ${expanded.unwrap('some').size()}`),
+                        Text.Root(East.str`Sections expanded: ${expanded.size()}`),
                     ], { gap: "3", align: "stretch" });
                 }),
                 some(`

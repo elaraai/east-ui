@@ -4,10 +4,10 @@
  */
 
 import { useRef, useMemo, useSyncExternalStore, useCallback } from "react";
-import { State, enableTracking, disableTracking } from "@elaraai/east-ui";
 import type { ValueTypeOf } from "@elaraai/east";
 import type { UIComponentType } from "@elaraai/east-ui";
 import { EastChakraComponent } from "../component.js";
+import { enableTracking, disableTracking, getStore } from "../platform/state-runtime.js";
 
 /**
  * Value type for ReactiveComponent variant.
@@ -43,7 +43,7 @@ export interface ReactiveValue {
  * ```
  */
 export function EastReactiveComponent({ value }: { value: ReactiveValue }) {
-    const store = State.store;
+    const store = getStore();
 
     // Track dependencies across renders
     const depsRef = useRef<string[]>([]);

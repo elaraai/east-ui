@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Carousel, Text } from "../../src/index.js";
 
 describeEast("Carousel", (test) => {
@@ -16,7 +16,7 @@ describeEast("Carousel", (test) => {
             Text.Root("Slide 1"),
         ]));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").items.size(), 1n));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").items.size(), 1n));
     });
 
     test("creates carousel with multiple items", $ => {
@@ -26,7 +26,7 @@ describeEast("Carousel", (test) => {
             Text.Root("Slide 3"),
         ]));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").items.size(), 3n));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").items.size(), 3n));
     });
 
     test("creates carousel with no options - all options are none", $ => {
@@ -34,12 +34,12 @@ describeEast("Carousel", (test) => {
             Text.Root("Slide 1"),
         ]));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").index.hasTag("none"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").defaultIndex.hasTag("none"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").slidesPerView.hasTag("none"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").loop.hasTag("none"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").autoplay.hasTag("none"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").style.hasTag("none"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").index.hasTag("none"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").defaultIndex.hasTag("none"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").slidesPerView.hasTag("none"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").loop.hasTag("none"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").autoplay.hasTag("none"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").style.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -54,8 +54,8 @@ describeEast("Carousel", (test) => {
             index: 1n,
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").index.hasTag("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").index.unwrap("some"), 1n));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").index.hasTag("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").index.unwrap("some"), 1n));
     });
 
     test("creates carousel with defaultIndex", $ => {
@@ -66,8 +66,8 @@ describeEast("Carousel", (test) => {
             defaultIndex: 0n,
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").defaultIndex.hasTag("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").defaultIndex.unwrap("some"), 0n));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").defaultIndex.hasTag("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").defaultIndex.unwrap("some"), 0n));
     });
 
     // =========================================================================
@@ -83,8 +83,8 @@ describeEast("Carousel", (test) => {
             slidesPerView: 2n,
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").slidesPerView.hasTag("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").slidesPerView.unwrap("some"), 2n));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").slidesPerView.hasTag("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").slidesPerView.unwrap("some"), 2n));
     });
 
     test("creates carousel with slidesPerMove", $ => {
@@ -95,8 +95,8 @@ describeEast("Carousel", (test) => {
             slidesPerMove: 1n,
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").slidesPerMove.hasTag("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").slidesPerMove.unwrap("some"), 1n));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").slidesPerMove.hasTag("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").slidesPerMove.unwrap("some"), 1n));
     });
 
     // =========================================================================
@@ -110,8 +110,8 @@ describeEast("Carousel", (test) => {
             loop: true,
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").loop.hasTag("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").loop.unwrap("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").loop.hasTag("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").loop.unwrap("some"), true));
     });
 
     test("creates carousel with autoplay", $ => {
@@ -121,8 +121,8 @@ describeEast("Carousel", (test) => {
             autoplay: true,
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").autoplay.hasTag("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").autoplay.unwrap("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").autoplay.hasTag("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").autoplay.unwrap("some"), true));
     });
 
     test("creates carousel with allowMouseDrag", $ => {
@@ -132,8 +132,8 @@ describeEast("Carousel", (test) => {
             allowMouseDrag: true,
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").allowMouseDrag.hasTag("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").allowMouseDrag.unwrap("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").allowMouseDrag.hasTag("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").allowMouseDrag.unwrap("some"), true));
     });
 
     test("creates carousel with showIndicators", $ => {
@@ -143,8 +143,8 @@ describeEast("Carousel", (test) => {
             showIndicators: true,
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").showIndicators.hasTag("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").showIndicators.unwrap("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").showIndicators.hasTag("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").showIndicators.unwrap("some"), true));
     });
 
     test("creates carousel with showControls", $ => {
@@ -154,8 +154,8 @@ describeEast("Carousel", (test) => {
             showControls: true,
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").showControls.hasTag("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").showControls.unwrap("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").showControls.hasTag("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").showControls.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -169,9 +169,9 @@ describeEast("Carousel", (test) => {
             orientation: "horizontal",
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").style.hasTag("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").orientation.hasTag("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").style.hasTag("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").orientation.hasTag("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
     });
 
     test("creates carousel with vertical orientation", $ => {
@@ -181,7 +181,7 @@ describeEast("Carousel", (test) => {
             orientation: "vertical",
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").orientation.unwrap("some").hasTag("vertical"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").orientation.unwrap("some").hasTag("vertical"), true));
     });
 
     test("creates carousel with spacing", $ => {
@@ -191,9 +191,9 @@ describeEast("Carousel", (test) => {
             spacing: "4",
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").style.hasTag("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").spacing.hasTag("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").spacing.unwrap("some"), "4"));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").style.hasTag("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").spacing.hasTag("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").spacing.unwrap("some"), "4"));
     });
 
     test("creates carousel with padding", $ => {
@@ -203,8 +203,8 @@ describeEast("Carousel", (test) => {
             padding: "2",
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").padding.hasTag("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").padding.unwrap("some"), "2"));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").padding.hasTag("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").padding.unwrap("some"), "2"));
     });
 
     // =========================================================================
@@ -230,18 +230,18 @@ describeEast("Carousel", (test) => {
             padding: "2",
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").items.size(), 3n));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").defaultIndex.unwrap("some"), 0n));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").slidesPerView.unwrap("some"), 2n));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").slidesPerMove.unwrap("some"), 1n));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").loop.unwrap("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").autoplay.unwrap("some"), false));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").allowMouseDrag.unwrap("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").showIndicators.unwrap("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").showControls.unwrap("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").spacing.unwrap("some"), "4"));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").padding.unwrap("some"), "2"));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").items.size(), 3n));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").defaultIndex.unwrap("some"), 0n));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").slidesPerView.unwrap("some"), 2n));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").slidesPerMove.unwrap("some"), 1n));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").loop.unwrap("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").autoplay.unwrap("some"), false));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").allowMouseDrag.unwrap("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").showIndicators.unwrap("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").showControls.unwrap("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").spacing.unwrap("some"), "4"));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").padding.unwrap("some"), "2"));
     });
 
     test("creates image carousel with indicators and controls", $ => {
@@ -255,9 +255,9 @@ describeEast("Carousel", (test) => {
             showControls: true,
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").loop.unwrap("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").showIndicators.unwrap("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").showControls.unwrap("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").loop.unwrap("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").showIndicators.unwrap("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").showControls.unwrap("some"), true));
     });
 
     test("creates multi-slide carousel", $ => {
@@ -272,8 +272,8 @@ describeEast("Carousel", (test) => {
             spacing: "4",
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").slidesPerView.unwrap("some"), 3n));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").slidesPerMove.unwrap("some"), 1n));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").slidesPerView.unwrap("some"), 3n));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").slidesPerMove.unwrap("some"), 1n));
     });
 
     test("creates autoplay carousel", $ => {
@@ -286,9 +286,9 @@ describeEast("Carousel", (test) => {
             allowMouseDrag: true,
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").autoplay.unwrap("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").loop.unwrap("some"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").allowMouseDrag.unwrap("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").autoplay.unwrap("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").loop.unwrap("some"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").allowMouseDrag.unwrap("some"), true));
     });
 
     test("creates vertical carousel", $ => {
@@ -300,7 +300,7 @@ describeEast("Carousel", (test) => {
             slidesPerView: 1n,
         }));
 
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").orientation.unwrap("some").hasTag("vertical"), true));
-        $(assertEast.equal(carousel.unwrap().unwrap("Carousel").slidesPerView.unwrap("some"), 1n));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").style.unwrap("some").orientation.unwrap("some").hasTag("vertical"), true));
+        $(Assert.equal(carousel.unwrap().unwrap("Carousel").slidesPerView.unwrap("some"), 1n));
     });
 });

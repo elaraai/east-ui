@@ -4,7 +4,7 @@
  */
 
 import { TreeView } from "../../src/collections/tree-view/index.js";
-import { describeEast as describe, assertEast } from "../platforms.spec.js";
+import { describeEast as describe, Assert } from "@elaraai/east-node-std";
 
 describe("TreeView", (test) => {
     // =========================================================================
@@ -14,25 +14,25 @@ describe("TreeView", (test) => {
     test("creates item without indicator", $ => {
         const item = $.let(TreeView.Item("file1", "index.ts"));
 
-        $(assertEast.equal(item.unwrap().unwrap("Item").value, "file1"));
-        $(assertEast.equal(item.unwrap().unwrap("Item").label, "index.ts"));
-        $(assertEast.equal(item.unwrap().unwrap("Item").indicator.hasTag("none"), true));
+        $(Assert.equal(item.unwrap().unwrap("Item").value, "file1"));
+        $(Assert.equal(item.unwrap().unwrap("Item").label, "index.ts"));
+        $(Assert.equal(item.unwrap().unwrap("Item").indicator.hasTag("none"), true));
     });
 
     test("creates item with indicator", $ => {
         const item = $.let(TreeView.Item("readme", "README.md", { prefix: "far", name: "file" }));
 
-        $(assertEast.equal(item.unwrap().unwrap("Item").value, "readme"));
-        $(assertEast.equal(item.unwrap().unwrap("Item").indicator.hasTag("some"), true));
-        $(assertEast.equal(item.unwrap().unwrap("Item").indicator.unwrap("some").name, "file"));
-        $(assertEast.equal(item.unwrap().unwrap("Item").indicator.unwrap("some").prefix, "far"));
+        $(Assert.equal(item.unwrap().unwrap("Item").value, "readme"));
+        $(Assert.equal(item.unwrap().unwrap("Item").indicator.hasTag("some"), true));
+        $(Assert.equal(item.unwrap().unwrap("Item").indicator.unwrap("some").name, "file"));
+        $(Assert.equal(item.unwrap().unwrap("Item").indicator.unwrap("some").prefix, "far"));
     });
 
     test("creates item with colored indicator", $ => {
         const item = $.let(TreeView.Item("index", "index.ts", { prefix: "fas", name: "file-code", color: "blue.500" }));
 
-        $(assertEast.equal(item.unwrap().unwrap("Item").indicator.unwrap("some").name, "file-code"));
-        $(assertEast.equal(item.unwrap().unwrap("Item").indicator.unwrap("some").style.unwrap("some").color.unwrap("some"), "blue.500"));
+        $(Assert.equal(item.unwrap().unwrap("Item").indicator.unwrap("some").name, "file-code"));
+        $(Assert.equal(item.unwrap().unwrap("Item").indicator.unwrap("some").style.unwrap("some").color.unwrap("some"), "blue.500"));
     });
 
     // =========================================================================
@@ -45,9 +45,9 @@ describe("TreeView", (test) => {
             TreeView.Item("file2", "utils.ts"),
         ]));
 
-        $(assertEast.equal(branch.unwrap().unwrap("Branch").value, "src"));
-        $(assertEast.equal(branch.unwrap().unwrap("Branch").label, "src"));
-        $(assertEast.equal(branch.unwrap().unwrap("Branch").indicator.hasTag("none"), true));
+        $(Assert.equal(branch.unwrap().unwrap("Branch").value, "src"));
+        $(Assert.equal(branch.unwrap().unwrap("Branch").label, "src"));
+        $(Assert.equal(branch.unwrap().unwrap("Branch").indicator.hasTag("none"), true));
     });
 
     test("creates branch with indicator", $ => {
@@ -55,9 +55,9 @@ describe("TreeView", (test) => {
             TreeView.Item("file1", "index.ts"),
         ], { prefix: "fas", name: "folder" }));
 
-        $(assertEast.equal(branch.unwrap().unwrap("Branch").indicator.hasTag("some"), true));
-        $(assertEast.equal(branch.unwrap().unwrap("Branch").indicator.unwrap("some").name, "folder"));
-        $(assertEast.equal(branch.unwrap().unwrap("Branch").indicator.unwrap("some").prefix, "fas"));
+        $(Assert.equal(branch.unwrap().unwrap("Branch").indicator.hasTag("some"), true));
+        $(Assert.equal(branch.unwrap().unwrap("Branch").indicator.unwrap("some").name, "folder"));
+        $(Assert.equal(branch.unwrap().unwrap("Branch").indicator.unwrap("some").prefix, "fas"));
     });
 
     test("creates branch with colored indicator", $ => {
@@ -65,7 +65,7 @@ describe("TreeView", (test) => {
             TreeView.Item("file1", "index.ts"),
         ], { prefix: "fas", name: "folder", color: "yellow.500" }));
 
-        $(assertEast.equal(branch.unwrap().unwrap("Branch").indicator.unwrap("some").style.unwrap("some").color.unwrap("some"), "yellow.500"));
+        $(Assert.equal(branch.unwrap().unwrap("Branch").indicator.unwrap("some").style.unwrap("some").color.unwrap("some"), "yellow.500"));
     });
 
     test("creates disabled branch", $ => {
@@ -73,7 +73,7 @@ describe("TreeView", (test) => {
             TreeView.Item("file1", "index.ts"),
         ], undefined, true));
 
-        $(assertEast.equal(branch.unwrap().unwrap("Branch").disabled.unwrap("some"), true));
+        $(Assert.equal(branch.unwrap().unwrap("Branch").disabled.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -88,7 +88,7 @@ describe("TreeView", (test) => {
             TreeView.Item("index", "index.ts"),
         ]));
 
-        $(assertEast.equal(tree.unwrap().unwrap("Branch").value, "src"));
+        $(Assert.equal(tree.unwrap().unwrap("Branch").value, "src"));
     });
 
     // =========================================================================
@@ -101,7 +101,7 @@ describe("TreeView", (test) => {
             TreeView.Item("file2", "utils.ts"),
         ]));
 
-        $(assertEast.equal(tree.unwrap().unwrap("TreeView").label.hasTag("none"), true));
+        $(Assert.equal(tree.unwrap().unwrap("TreeView").label.hasTag("none"), true));
     });
 
     test("creates tree view with branches and items", $ => {
@@ -112,7 +112,7 @@ describe("TreeView", (test) => {
             TreeView.Item("package", "package.json"),
         ]));
 
-        $(assertEast.equal(tree.unwrap().unwrap("TreeView").label.hasTag("none"), true));
+        $(Assert.equal(tree.unwrap().unwrap("TreeView").label.hasTag("none"), true));
     });
 
     test("creates tree view with label", $ => {
@@ -122,7 +122,7 @@ describe("TreeView", (test) => {
             label: "Project Files",
         }));
 
-        $(assertEast.equal(tree.unwrap().unwrap("TreeView").label.unwrap("some"), "Project Files"));
+        $(Assert.equal(tree.unwrap().unwrap("TreeView").label.unwrap("some"), "Project Files"));
     });
 
     // =========================================================================
@@ -136,7 +136,7 @@ describe("TreeView", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(tree.unwrap().unwrap("TreeView").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(tree.unwrap().unwrap("TreeView").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates tree view with solid variant", $ => {
@@ -146,7 +146,7 @@ describe("TreeView", (test) => {
             variant: "solid",
         }));
 
-        $(assertEast.equal(tree.unwrap().unwrap("TreeView").style.unwrap("some").variant.unwrap("some").hasTag("solid"), true));
+        $(Assert.equal(tree.unwrap().unwrap("TreeView").style.unwrap("some").variant.unwrap("some").hasTag("solid"), true));
     });
 
     test("creates tree view with sm size", $ => {
@@ -156,7 +156,7 @@ describe("TreeView", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(tree.unwrap().unwrap("TreeView").style.unwrap("some").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(tree.unwrap().unwrap("TreeView").style.unwrap("some").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates tree view with single selection mode", $ => {
@@ -166,7 +166,7 @@ describe("TreeView", (test) => {
             selectionMode: "single",
         }));
 
-        $(assertEast.equal(tree.unwrap().unwrap("TreeView").style.unwrap("some").selectionMode.unwrap("some").hasTag("single"), true));
+        $(Assert.equal(tree.unwrap().unwrap("TreeView").style.unwrap("some").selectionMode.unwrap("some").hasTag("single"), true));
     });
 
     test("creates tree view with multiple selection mode", $ => {
@@ -176,7 +176,7 @@ describe("TreeView", (test) => {
             selectionMode: "multiple",
         }));
 
-        $(assertEast.equal(tree.unwrap().unwrap("TreeView").style.unwrap("some").selectionMode.unwrap("some").hasTag("multiple"), true));
+        $(Assert.equal(tree.unwrap().unwrap("TreeView").style.unwrap("some").selectionMode.unwrap("some").hasTag("multiple"), true));
     });
 
     // =========================================================================
@@ -192,7 +192,7 @@ describe("TreeView", (test) => {
             defaultExpandedValue: ["src"],
         }));
 
-        $(assertEast.equal(tree.unwrap().unwrap("TreeView").defaultExpandedValue.hasTag("some"), true));
+        $(Assert.equal(tree.unwrap().unwrap("TreeView").defaultExpandedValue.hasTag("some"), true));
     });
 
     test("creates tree view with default selected values", $ => {
@@ -203,7 +203,7 @@ describe("TreeView", (test) => {
             defaultSelectedValue: ["file1"],
         }));
 
-        $(assertEast.equal(tree.unwrap().unwrap("TreeView").defaultSelectedValue.hasTag("some"), true));
+        $(Assert.equal(tree.unwrap().unwrap("TreeView").defaultSelectedValue.hasTag("some"), true));
     });
 
     // =========================================================================
@@ -228,8 +228,8 @@ describe("TreeView", (test) => {
             defaultExpandedValue: ["src", "components"],
         }));
 
-        $(assertEast.equal(tree.unwrap().unwrap("TreeView").label.unwrap("some"), "Project"));
-        $(assertEast.equal(tree.unwrap().unwrap("TreeView").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
-        $(assertEast.equal(tree.unwrap().unwrap("TreeView").style.unwrap("some").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(tree.unwrap().unwrap("TreeView").label.unwrap("some"), "Project"));
+        $(Assert.equal(tree.unwrap().unwrap("TreeView").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(tree.unwrap().unwrap("TreeView").style.unwrap("some").size.unwrap("some").hasTag("sm"), true));
     });
 });

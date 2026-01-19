@@ -12,15 +12,13 @@ import {
     useSyncExternalStore,
     type ReactNode,
 } from "react";
-import { State, type UIStoreInterface, UIComponentType } from "@elaraai/east-ui";
+import { State, UIComponentType } from "@elaraai/east-ui";
+import { type UIStoreInterface } from "./store.js";
+import { StateImpl, getStore } from "./state-runtime.js";
 import { EastChakraComponent } from "../component.js";
 import type { EastIR, ValueTypeOf } from "@elaraai/east";
 import { OverlayImpl } from "../overlays/overlay-manager.js";
 import { Alert, Box, Code, Text, Stack } from "@chakra-ui/react";
-
-// Configure the singleton store to use queueMicrotask for deferred notifications.
-// This avoids "setState during render" errors in React.
-State.store.setScheduler((notify) => queueMicrotask(notify));
 
 /**
  * React context for the UI store.
@@ -32,7 +30,7 @@ const UIStoreContext = createContext<UIStoreInterface | null>(null);
  */
 export interface UIStoreProviderProps {
     /**
-     * Custom store instance. If not provided, uses State.store singleton.
+     * Custom store instance. If not provided, uses the singleton from getStore().
      * Use PersistentUIStore for IndexedDB persistence.
      */
     store?: UIStoreInterface;
@@ -44,8 +42,11 @@ export interface UIStoreProviderProps {
  * Provides a UI store to the component tree.
  *
  * @remarks
- * By default uses the singleton `State.store` from east-ui.
+ * By default uses the singleton store from `getStore()`.
  * For persistence, pass a `PersistentUIStore` instance.
+ *
+ * Also configures the store's scheduler to use `queueMicrotask` for deferred
+ * notifications, avoiding "setState during render" errors in React.
  *
  * @example
  * ```tsx
@@ -76,7 +77,17 @@ export interface UIStoreProviderProps {
  * ```
  */
 export function UIStoreProvider({ store, children }: UIStoreProviderProps) {
-    const storeInstance = store ?? State.store;
+    const storeInstance = store ?? getStore();
+
+    // Configure the store to use queueMicrotask for deferred notifications.
+    // This avoids "setState during render" errors in React.
+    useEffect(() => {
+        storeInstance.setScheduler((notify) => queueMicrotask(notify));
+        return () => {
+            // Reset scheduler on unmount (if using a custom store that might be reused)
+            storeInstance.setScheduler(undefined);
+        };
+    }, [storeInstance]);
 
     // Expose store for debugging
     useEffect(() => {
@@ -144,7 +155,7 @@ export interface EastComponentProps {
  * ```tsx
  * import { East, IntegerType, NullType, some } from "@elaraai/east";
  * import { State, Button, Reactive, UIComponentType } from "@elaraai/east-ui";
- * import { EastComponent, UIStoreProvider } from "@elaraai/east-ui-components";
+ * import { EastComponent, UIStoreProvider, StateImpl } from "@elaraai/east-ui-components";
  *
  * // Define an East function with reactive parts
  * const counter = East.function([], UIComponentType, $ => {
@@ -160,8 +171,8 @@ export interface EastComponentProps {
  *     });
  * });
  *
- * // Compile with State.Implementation
- * const compiled = counter.toIR().compile(State.Implementation);
+ * // Compile with StateImpl
+ * const compiled = counter.toIR().compile(StateImpl);
  *
  * function App() {
  *     return (
@@ -200,7 +211,7 @@ export interface EastFunctionProps {
  *
  * @remarks
  * This component takes an IR (intermediate representation) from an East function,
- * compiles it with the State.Implementation platform, and renders the result.
+ * compiles it with the StateImpl platform, and renders the result.
  * The compilation happens once on mount.
  *
  * This component renders once and does NOT re-render on state changes.
@@ -228,10 +239,10 @@ export interface EastFunctionProps {
  * ```
  */
 export function EastFunction({ ir }: EastFunctionProps) {
-    // Compile IR with State.Implementation and OverlayImpl once on mount, with error handling
+    // Compile IR with StateImpl and OverlayImpl once on mount, with error handling
     const result = useMemo(() => {
         try {
-            return { compiled: ir.compile([...State.Implementation, ...OverlayImpl]), error: null };
+            return { compiled: ir.compile([...StateImpl, ...OverlayImpl]), error: null };
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : String(err);
             const errorStack = err instanceof Error ? err.stack : undefined;

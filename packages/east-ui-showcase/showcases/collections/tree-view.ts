@@ -235,8 +235,12 @@ export default East.function(
         // =====================================================================
 
         // Initialize state for interactive examples
-        $(State.initTyped("tree_selected", [] as string[], ArrayType(StringType))());
-        $(State.initTyped("tree_expanded", [] as string[], ArrayType(StringType))());
+        $.if(State.has("tree_selected").not(), $ => {
+            $(State.write([ArrayType(StringType)], "tree_selected", [] as string[]));
+        });
+        $.if(State.has("tree_expanded").not(), $ => {
+            $(State.write([ArrayType(StringType)], "tree_expanded", [] as string[]));
+        });
 
         // Interactive TreeView with selection
         const interactiveSelection = $.let(
@@ -244,13 +248,13 @@ export default East.function(
                 "Interactive Selection",
                 "Click items to see onSelectionChange callback",
                 Reactive.Root($ => {
-                    const selected = $.let(State.readTyped("tree_selected", ArrayType(StringType))());
+                    const selected = $.let(State.read([ArrayType(StringType)], "tree_selected"));
 
                     const onSelectionChange = East.function(
                         [ArrayType(StringType)],
                         NullType,
                         ($, newSelection) => {
-                            $(State.writeTyped("tree_selected", some(newSelection), ArrayType(StringType))());
+                            $(State.write([ArrayType(StringType)], "tree_selected", newSelection));
                         }
                     );
 
@@ -271,10 +275,10 @@ export default East.function(
                             onSelectionChange
                         }),
                         Badge.Root(
-                            East.str`Selected: ${selected.unwrap('some').size()}`,
+                            East.str`Selected: ${selected.size()}`,
                             { colorPalette: "blue", variant: "solid" }
                         ),
-                        Text.Root(East.str`Items selected: ${selected.unwrap('some').size()}`),
+                        Text.Root(East.str`Items selected: ${selected.size()}`),
                     ], { gap: "3", align: "stretch" });
                 }),
                 some(`Reactive.Root($ => {
@@ -293,13 +297,13 @@ export default East.function(
                 "Interactive Expand",
                 "Expand/collapse to see onExpandedChange callback",
                 Reactive.Root($ => {
-                    const expanded = $.let(State.readTyped("tree_expanded", ArrayType(StringType))());
+                    const expanded = $.let(State.read([ArrayType(StringType)], "tree_expanded"));
 
                     const onExpandedChange = East.function(
                         [ArrayType(StringType)],
                         NullType,
                         ($, newExpanded) => {
-                            $(State.writeTyped("tree_expanded", some(newExpanded), ArrayType(StringType))());
+                            $(State.write([ArrayType(StringType)], "tree_expanded", newExpanded));
                         }
                     );
 
@@ -319,10 +323,10 @@ export default East.function(
                             ]),
                         ], { onExpandedChange }),
                         Badge.Root(
-                            East.str`Expanded: ${expanded.unwrap('some').size()}`,
+                            East.str`Expanded: ${expanded.size()}`,
                             { colorPalette: "green", variant: "solid" }
                         ),
-                        Text.Root(East.str`Nodes expanded: ${expanded.unwrap('some').size()}`),
+                        Text.Root(East.str`Nodes expanded: ${expanded.size()}`),
                     ], { gap: "3", align: "stretch" });
                 }),
                 some(`Reactive.Root($ => {

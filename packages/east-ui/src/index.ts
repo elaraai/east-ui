@@ -64,10 +64,5 @@ export { Reactive } from "./reactive/index.js";
 // Component Types
 export { UIComponentType } from "./component.js";
 
-// Platform (state management)
-export { State } from "./platform/index.js";
-export { UIStore, createUIStore } from "./platform/index.js";
-export type { UIStoreInterface, UIStoreOptions } from "./platform/index.js";
-
-// Tracking functions for reactive components (used by east-ui-components)
-export { enableTracking, disableTracking, isTracking, trackKey } from "./platform/index.js";
+// Platform (state management - signatures only)
+export { State, state_read, state_write, state_has } from "./platform/index.js";

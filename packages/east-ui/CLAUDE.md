@@ -506,7 +506,7 @@ Tests follow the East testing pattern using Node.js `test` with East values:
 ```typescript
 import { East, StructType, StringType, IntegerType } from "@elaraai/east";
 import { Table, FontWeight, TextAlign, variant } from "../src/index.js";
-import { describeEast as describe, assertEast as assert } from "./platforms.spec.js";
+import { describeEast as describe, Assert as assert } from "@elaraai/east-node-std";
 
 describe("Table", (test) => {
     test("Table.Cell creation", $ => {
@@ -694,7 +694,7 @@ Tests should use plain values for clarity:
 // Good - clear and readable
 test("creates button with label", $ => {
     const button = $.let(Button.Root("Click me"));
-    $(assertEast.equal(button.unwrap("Button").label, "Click me"));
+    $(Assert.equal(button.unwrap("Button").label, "Click me"));
 });
 
 // Avoid - unnecessarily verbose

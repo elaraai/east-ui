@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Chart } from "../../src/index.js";
 
 describeEast("Chart.Area", (test) => {
@@ -21,10 +21,10 @@ describeEast("Chart.Area", (test) => {
             { revenue: { color: "teal.solid" } }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "AreaChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").series.size(), 1n));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").series.get(0n).name, "revenue"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").series.get(0n).color.unwrap("some"), "teal.solid"));
+        $(Assert.equal(chart.unwrap().getTag(), "AreaChart"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").series.size(), 1n));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").series.get(0n).name, "revenue"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").series.get(0n).color.unwrap("some"), "teal.solid"));
     });
 
     test("creates area chart with array series spec", $ => {
@@ -35,8 +35,8 @@ describeEast("Chart.Area", (test) => {
             ["revenue"]
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").series.size(), 1n));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").series.get(0n).name, "revenue"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").series.size(), 1n));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").series.get(0n).name, "revenue"));
     });
 
     test("creates area chart with multiple series", $ => {
@@ -52,8 +52,8 @@ describeEast("Chart.Area", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "AreaChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").series.size(), 3n));
+        $(Assert.equal(chart.unwrap().getTag(), "AreaChart"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").series.size(), 3n));
     });
 
     // =========================================================================
@@ -73,8 +73,8 @@ describeEast("Chart.Area", (test) => {
             { stacked: true }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").stacked.unwrap("some"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").series.get(0n).stackId.unwrap("some"), "a"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").stacked.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").series.get(0n).stackId.unwrap("some"), "a"));
     });
 
     test("creates 100% stacked area chart with stackOffset expand", $ => {
@@ -89,8 +89,8 @@ describeEast("Chart.Area", (test) => {
             { stacked: true, stackOffset: "expand" }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").stacked.unwrap("some"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").stackOffset.unwrap("some").hasTag("expand"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").stacked.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").stackOffset.unwrap("some").hasTag("expand"), true));
     });
 
     // =========================================================================
@@ -106,8 +106,8 @@ describeEast("Chart.Area", (test) => {
             { xAxis: { dataKey: "month" } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").xAxis.hasTag("some"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").xAxis.unwrap("some").dataKey.unwrap("some"), "month"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").xAxis.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").xAxis.unwrap("some").dataKey.unwrap("some"), "month"));
     });
 
     test("creates area chart with y-axis percent tick format", $ => {
@@ -119,8 +119,8 @@ describeEast("Chart.Area", (test) => {
             { yAxis: { tickFormat: "percent" } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").yAxis.hasTag("some"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").yAxis.unwrap("some").tickFormat.unwrap("some").hasTag("percent"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").yAxis.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").yAxis.unwrap("some").tickFormat.unwrap("some").hasTag("percent"), true));
     });
 
     // =========================================================================
@@ -136,7 +136,7 @@ describeEast("Chart.Area", (test) => {
             { curveType: "natural" }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").curveType.unwrap("some").hasTag("natural"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").curveType.unwrap("some").hasTag("natural"), true));
     });
 
     test("creates area chart with monotone curve", $ => {
@@ -148,7 +148,7 @@ describeEast("Chart.Area", (test) => {
             { curveType: "monotone" }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").curveType.unwrap("some").hasTag("monotone"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").curveType.unwrap("some").hasTag("monotone"), true));
     });
 
     // =========================================================================
@@ -164,7 +164,7 @@ describeEast("Chart.Area", (test) => {
             { grid: { show: true } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates area chart with legend", $ => {
@@ -176,7 +176,7 @@ describeEast("Chart.Area", (test) => {
             { legend: { show: true } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").legend.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates area chart with tooltip", $ => {
@@ -188,7 +188,7 @@ describeEast("Chart.Area", (test) => {
             { tooltip: { show: true } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").tooltip.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates area chart with custom fill opacity", $ => {
@@ -200,7 +200,7 @@ describeEast("Chart.Area", (test) => {
             { fillOpacity: 0.3 }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").fillOpacity.unwrap("some"), 0.3));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").fillOpacity.unwrap("some"), 0.3));
     });
 
     // =========================================================================
@@ -216,8 +216,8 @@ describeEast("Chart.Area", (test) => {
             { margin: { top: 20n, right: 30n, bottom: 20n, left: 30n } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").margin.unwrap("some").top.unwrap("some"), 20n));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").margin.unwrap("some").left.unwrap("some"), 30n));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").margin.unwrap("some").top.unwrap("some"), 20n));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").margin.unwrap("some").left.unwrap("some"), 30n));
     });
 
     // =========================================================================
@@ -234,7 +234,7 @@ describeEast("Chart.Area", (test) => {
             { xAxis: { dataKey: "month" }, brush: {} }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").brush.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").brush.hasTag("some"), true));
     });
 
     test("creates area chart with brush configuration", $ => {
@@ -246,10 +246,10 @@ describeEast("Chart.Area", (test) => {
             { brush: { dataKey: "month", height: 40n, startIndex: 0n, endIndex: 5n } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").brush.unwrap("some").dataKey.unwrap("some"), "month"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").brush.unwrap("some").height.unwrap("some"), 40n));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").brush.unwrap("some").startIndex.unwrap("some"), 0n));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").brush.unwrap("some").endIndex.unwrap("some"), 5n));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").brush.unwrap("some").dataKey.unwrap("some"), "month"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").brush.unwrap("some").height.unwrap("some"), 40n));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").brush.unwrap("some").startIndex.unwrap("some"), 0n));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").brush.unwrap("some").endIndex.unwrap("some"), 5n));
     });
 
     // =========================================================================
@@ -279,10 +279,10 @@ describeEast("Chart.Area", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "AreaChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").series.size(), 3n));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").grid.unwrap("some").show.unwrap("some"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").fillOpacity.unwrap("some"), 0.2));
+        $(Assert.equal(chart.unwrap().getTag(), "AreaChart"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").series.size(), 3n));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").fillOpacity.unwrap("some"), 0.2));
     });
 });
 
@@ -307,9 +307,9 @@ describeEast("Chart.Area Pivot", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "AreaChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").pivotKey.unwrap("some"), "category"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").valueKey.unwrap("some"), "value"));
+        $(Assert.equal(chart.unwrap().getTag(), "AreaChart"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").pivotKey.unwrap("some"), "category"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").valueKey.unwrap("some"), "value"));
     });
 
     test("creates chart without pivotKey (backward compat)", $ => {
@@ -321,7 +321,7 @@ describeEast("Chart.Area Pivot", (test) => {
             { xAxis: { dataKey: "month" } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").pivotKey.hasTag("none"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").pivotKey.hasTag("none"), true));
     });
 
     test("creates chart with pivotColors mapping", $ => {
@@ -346,8 +346,8 @@ describeEast("Chart.Area Pivot", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").pivotKey.unwrap("some"), "region"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").series.get(0n).pivotColors.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").pivotKey.unwrap("some"), "region"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").series.get(0n).pivotColors.hasTag("some"), true));
     });
 });
 
@@ -374,10 +374,10 @@ describeEast("Chart.AreaMulti", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "AreaChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").valueKey.unwrap("some"), "value"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaChart").dataSeries.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().getTag(), "AreaChart"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").series.size(), 2n));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").valueKey.unwrap("some"), "value"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaChart").dataSeries.hasTag("some"), true));
     });
 });
 
@@ -396,12 +396,12 @@ describeEast("Chart.AreaRange", (test) => {
             { temperature: { lowKey: "low", highKey: "high", color: "teal.solid" } }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "AreaRangeChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.size(), 1n));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).name, "temperature"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).lowKey, "low"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).highKey, "high"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).color.unwrap("some"), "teal.solid"));
+        $(Assert.equal(chart.unwrap().getTag(), "AreaRangeChart"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").series.size(), 1n));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).name, "temperature"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).lowKey, "low"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).highKey, "high"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).color.unwrap("some"), "teal.solid"));
     });
 
     test("creates area range chart with multiple series", $ => {
@@ -416,8 +416,8 @@ describeEast("Chart.AreaRange", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "AreaRangeChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.size(), 2n));
+        $(Assert.equal(chart.unwrap().getTag(), "AreaRangeChart"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").series.size(), 2n));
     });
 
     test("creates area range chart with x-axis configuration", $ => {
@@ -429,9 +429,9 @@ describeEast("Chart.AreaRange", (test) => {
             { xAxis: { dataKey: "day", label: "Date" } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").xAxis.hasTag("some"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").xAxis.unwrap("some").dataKey.unwrap("some"), "day"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").xAxis.unwrap("some").label.unwrap("some"), "Date"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").xAxis.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").xAxis.unwrap("some").dataKey.unwrap("some"), "day"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").xAxis.unwrap("some").label.unwrap("some"), "Date"));
     });
 
     test("creates area range chart with curve type", $ => {
@@ -443,7 +443,7 @@ describeEast("Chart.AreaRange", (test) => {
             { curveType: "natural" }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").curveType.unwrap("some").hasTag("natural"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").curveType.unwrap("some").hasTag("natural"), true));
     });
 
     test("creates area range chart with grid", $ => {
@@ -455,7 +455,7 @@ describeEast("Chart.AreaRange", (test) => {
             { grid: { show: true } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates area range chart with legend", $ => {
@@ -467,7 +467,7 @@ describeEast("Chart.AreaRange", (test) => {
             { legend: { show: true } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").legend.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates area range chart with tooltip", $ => {
@@ -479,7 +479,7 @@ describeEast("Chart.AreaRange", (test) => {
             { tooltip: { show: true } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").tooltip.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates area range chart with custom fill opacity", $ => {
@@ -491,7 +491,7 @@ describeEast("Chart.AreaRange", (test) => {
             { fillOpacity: 0.5 }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").fillOpacity.unwrap("some"), 0.5));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").fillOpacity.unwrap("some"), 0.5));
     });
 
     test("creates area range chart with series styling", $ => {
@@ -512,10 +512,10 @@ describeEast("Chart.AreaRange", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).label.unwrap("some"), "Temperature Range"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).fillOpacity.unwrap("some"), 0.6));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).stroke.unwrap("some"), "teal.700"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).strokeWidth.unwrap("some"), 2n));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).label.unwrap("some"), "Temperature Range"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).fillOpacity.unwrap("some"), 0.6));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).stroke.unwrap("some"), "teal.700"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").series.get(0n).strokeWidth.unwrap("some"), 2n));
     });
 
     test("creates complete area range chart", $ => {
@@ -539,10 +539,10 @@ describeEast("Chart.AreaRange", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "AreaRangeChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").grid.unwrap("some").show.unwrap("some"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").fillOpacity.unwrap("some"), 0.4));
+        $(Assert.equal(chart.unwrap().getTag(), "AreaRangeChart"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").series.size(), 2n));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").fillOpacity.unwrap("some"), 0.4));
     });
 });
 
@@ -570,11 +570,11 @@ describeEast("Chart.AreaRangeMulti", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "AreaRangeChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").lowKey.unwrap("some"), "low"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").highKey.unwrap("some"), "high"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").dataSeries.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().getTag(), "AreaRangeChart"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").series.size(), 2n));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").lowKey.unwrap("some"), "low"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").highKey.unwrap("some"), "high"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").dataSeries.hasTag("some"), true));
     });
 
     test("creates area range multi chart with sparse data", $ => {
@@ -598,8 +598,8 @@ describeEast("Chart.AreaRangeMulti", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "AreaRangeChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").series.size(), 2n));
+        $(Assert.equal(chart.unwrap().getTag(), "AreaRangeChart"));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").series.size(), 2n));
     });
 
     test("creates area range multi chart with styling options", $ => {
@@ -621,8 +621,8 @@ describeEast("Chart.AreaRangeMulti", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").curveType.unwrap("some").hasTag("monotone"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").grid.unwrap("some").show.unwrap("some"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("AreaRangeChart").fillOpacity.unwrap("some"), 0.3));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").curveType.unwrap("some").hasTag("monotone"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").fillOpacity.unwrap("some"), 0.3));
     });
 });

@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Slider, Style } from "../../src/index.js";
 
 describeEast("Slider", (test) => {
@@ -14,16 +14,16 @@ describeEast("Slider", (test) => {
     test("creates slider with value only", $ => {
         const slider = $.let(Slider.Root(50.0));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").value, 50.0));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").min.hasTag("none"), true));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").max.hasTag("none"), true));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").step.hasTag("none"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").value, 50.0));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").min.hasTag("none"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").max.hasTag("none"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").step.hasTag("none"), true));
     });
 
     test("creates slider with different value", $ => {
         const slider = $.let(Slider.Root(75.5));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").value, 75.5));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").value, 75.5));
     });
 
     // =========================================================================
@@ -35,8 +35,8 @@ describeEast("Slider", (test) => {
             min: 0,
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").min.hasTag("some"), true));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").min.unwrap("some"), 0.0));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").min.hasTag("some"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").min.unwrap("some"), 0.0));
     });
 
     test("creates slider with max", $ => {
@@ -44,8 +44,8 @@ describeEast("Slider", (test) => {
             max: 100,
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").max.hasTag("some"), true));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").max.unwrap("some"), 100.0));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").max.hasTag("some"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").max.unwrap("some"), 100.0));
     });
 
     test("creates slider with min and max", $ => {
@@ -54,8 +54,8 @@ describeEast("Slider", (test) => {
             max: 100,
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").min.unwrap("some"), 0.0));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").max.unwrap("some"), 100.0));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").min.unwrap("some"), 0.0));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").max.unwrap("some"), 100.0));
     });
 
     test("creates slider with custom range", $ => {
@@ -64,9 +64,9 @@ describeEast("Slider", (test) => {
             max: 1000,
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").value, 500.0));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").min.unwrap("some"), 100.0));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").max.unwrap("some"), 1000.0));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").value, 500.0));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").min.unwrap("some"), 100.0));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").max.unwrap("some"), 1000.0));
     });
 
     // =========================================================================
@@ -78,8 +78,8 @@ describeEast("Slider", (test) => {
             step: 5,
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").step.hasTag("some"), true));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").step.unwrap("some"), 5.0));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").step.hasTag("some"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").step.unwrap("some"), 5.0));
     });
 
     test("creates slider with decimal step", $ => {
@@ -89,7 +89,7 @@ describeEast("Slider", (test) => {
             step: 0.1,
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").step.unwrap("some"), 0.1));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").step.unwrap("some"), 0.1));
     });
 
     // =========================================================================
@@ -101,8 +101,8 @@ describeEast("Slider", (test) => {
             orientation: "horizontal",
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").orientation.hasTag("some"), true));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").orientation.unwrap("some").hasTag("horizontal"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").orientation.hasTag("some"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").orientation.unwrap("some").hasTag("horizontal"), true));
     });
 
     test("creates vertical slider", $ => {
@@ -110,7 +110,7 @@ describeEast("Slider", (test) => {
             orientation: "vertical",
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").orientation.unwrap("some").hasTag("vertical"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").orientation.unwrap("some").hasTag("vertical"), true));
     });
 
     test("creates slider with Style.Orientation helper", $ => {
@@ -118,7 +118,7 @@ describeEast("Slider", (test) => {
             orientation: Style.Orientation("vertical"),
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").orientation.unwrap("some").hasTag("vertical"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").orientation.unwrap("some").hasTag("vertical"), true));
     });
 
     // =========================================================================
@@ -130,8 +130,8 @@ describeEast("Slider", (test) => {
             colorPalette: "blue",
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").colorPalette.hasTag("some"), true));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").colorPalette.unwrap("some").hasTag("blue"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").colorPalette.hasTag("some"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").colorPalette.unwrap("some").hasTag("blue"), true));
     });
 
     test("creates slider with green color palette", $ => {
@@ -139,7 +139,7 @@ describeEast("Slider", (test) => {
             colorPalette: "green",
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").colorPalette.unwrap("some").hasTag("green"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").colorPalette.unwrap("some").hasTag("green"), true));
     });
 
     test("creates slider with Style.ColorScheme helper", $ => {
@@ -147,7 +147,7 @@ describeEast("Slider", (test) => {
             colorPalette: Style.ColorScheme("purple"),
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").colorPalette.unwrap("some").hasTag("purple"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").colorPalette.unwrap("some").hasTag("purple"), true));
     });
 
     // =========================================================================
@@ -159,8 +159,8 @@ describeEast("Slider", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").size.hasTag("some"), true));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").size.hasTag("some"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates medium slider", $ => {
@@ -168,7 +168,7 @@ describeEast("Slider", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates large slider", $ => {
@@ -176,7 +176,7 @@ describeEast("Slider", (test) => {
             size: "lg",
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").size.unwrap("some").hasTag("lg"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").size.unwrap("some").hasTag("lg"), true));
     });
 
     test("creates slider with Style.Size helper", $ => {
@@ -184,7 +184,7 @@ describeEast("Slider", (test) => {
             size: Style.Size("md"),
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").size.unwrap("some").hasTag("md"), true));
     });
 
     // =========================================================================
@@ -196,8 +196,8 @@ describeEast("Slider", (test) => {
             variant: "outline",
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").variant.hasTag("some"), true));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").variant.unwrap("some").hasTag("outline"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").variant.hasTag("some"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").variant.unwrap("some").hasTag("outline"), true));
     });
 
     test("creates subtle variant slider", $ => {
@@ -205,7 +205,7 @@ describeEast("Slider", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates slider with SliderVariant helper", $ => {
@@ -213,7 +213,7 @@ describeEast("Slider", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     // =========================================================================
@@ -225,8 +225,8 @@ describeEast("Slider", (test) => {
             disabled: true,
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").disabled.hasTag("some"), true));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").disabled.unwrap("some"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").disabled.hasTag("some"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").disabled.unwrap("some"), true));
     });
 
     test("creates enabled slider explicitly", $ => {
@@ -234,7 +234,7 @@ describeEast("Slider", (test) => {
             disabled: false,
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").disabled.unwrap("some"), false));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").disabled.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -253,15 +253,15 @@ describeEast("Slider", (test) => {
             disabled: false,
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").value, 50.0));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").min.unwrap("some"), 0.0));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").max.unwrap("some"), 100.0));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").step.unwrap("some"), 5.0));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").orientation.unwrap("some").hasTag("horizontal"), true));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").colorPalette.unwrap("some").hasTag("blue"), true));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").size.unwrap("some").hasTag("md"), true));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").variant.unwrap("some").hasTag("subtle"), true));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").disabled.unwrap("some"), false));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").value, 50.0));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").min.unwrap("some"), 0.0));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").max.unwrap("some"), 100.0));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").step.unwrap("some"), 5.0));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").orientation.unwrap("some").hasTag("horizontal"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").colorPalette.unwrap("some").hasTag("blue"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").disabled.unwrap("some"), false));
     });
 
     test("creates volume slider", $ => {
@@ -272,9 +272,9 @@ describeEast("Slider", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").value, 75.0));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").min.unwrap("some"), 0.0));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").max.unwrap("some"), 100.0));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").value, 75.0));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").min.unwrap("some"), 0.0));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").max.unwrap("some"), 100.0));
     });
 
     test("creates percentage slider", $ => {
@@ -284,8 +284,8 @@ describeEast("Slider", (test) => {
             step: 0.01,
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").value, 0.5));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").step.unwrap("some"), 0.01));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").value, 0.5));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").step.unwrap("some"), 0.01));
     });
 
     test("creates vertical progress slider", $ => {
@@ -296,8 +296,8 @@ describeEast("Slider", (test) => {
             colorPalette: "green",
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").orientation.unwrap("some").hasTag("vertical"), true));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").colorPalette.unwrap("some").hasTag("green"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").orientation.unwrap("some").hasTag("vertical"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").colorPalette.unwrap("some").hasTag("green"), true));
     });
 
     test("creates disabled readonly slider", $ => {
@@ -306,7 +306,7 @@ describeEast("Slider", (test) => {
             colorPalette: "gray",
         }));
 
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").disabled.unwrap("some"), true));
-        $(assertEast.equal(slider.unwrap().unwrap("Slider").colorPalette.unwrap("some").hasTag("gray"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").disabled.unwrap("some"), true));
+        $(Assert.equal(slider.unwrap().unwrap("Slider").colorPalette.unwrap("some").hasTag("gray"), true));
     });
 });

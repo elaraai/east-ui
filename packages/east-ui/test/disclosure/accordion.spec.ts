@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Accordion, Text } from "../../src/index.js";
 
 describeEast("Accordion", (test) => {
@@ -16,9 +16,9 @@ describeEast("Accordion", (test) => {
             Text.Root("Content for section 1"),
         ]));
 
-        $(assertEast.equal(item.value, "item-1"));
-        $(assertEast.equal(item.trigger, "Section 1"));
-        $(assertEast.equal(item.disabled.hasTag("none"), true));
+        $(Assert.equal(item.value, "item-1"));
+        $(Assert.equal(item.trigger, "Section 1"));
+        $(Assert.equal(item.disabled.hasTag("none"), true));
     });
 
     test("creates item with multiple children", $ => {
@@ -31,8 +31,8 @@ describeEast("Accordion", (test) => {
             ]
         ));
 
-        $(assertEast.equal(item.value, "item-2"));
-        $(assertEast.equal(item.trigger, "Section 2"));
+        $(Assert.equal(item.value, "item-2"));
+        $(Assert.equal(item.trigger, "Section 2"));
     });
 
     test("creates disabled item", $ => {
@@ -42,8 +42,8 @@ describeEast("Accordion", (test) => {
             disabled: true,
         }));
 
-        $(assertEast.equal(item.disabled.hasTag("some"), true));
-        $(assertEast.equal(item.disabled.unwrap("some"), true));
+        $(Assert.equal(item.disabled.hasTag("some"), true));
+        $(Assert.equal(item.disabled.unwrap("some"), true));
     });
 
     test("creates enabled item explicitly", $ => {
@@ -53,7 +53,7 @@ describeEast("Accordion", (test) => {
             disabled: false,
         }));
 
-        $(assertEast.equal(item.disabled.unwrap("some"), false));
+        $(Assert.equal(item.disabled.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -66,7 +66,7 @@ describeEast("Accordion", (test) => {
             Accordion.Item("b", "Section B", [Text.Root("Content B")]),
         ]));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.hasTag("none"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.hasTag("none"), true));
     });
 
     test("creates accordion with single item", $ => {
@@ -74,13 +74,13 @@ describeEast("Accordion", (test) => {
             Accordion.Item("single", "Only Section", [Text.Root("Content")]),
         ]));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.hasTag("none"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.hasTag("none"), true));
     });
 
     test("creates empty accordion", $ => {
         const accordion = $.let(Accordion.Root([]));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.hasTag("none"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -95,9 +95,9 @@ describeEast("Accordion", (test) => {
             multiple: true,
         }));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.hasTag("some"), true));
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").multiple.hasTag("some"), true));
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").multiple.unwrap("some"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.hasTag("some"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").multiple.hasTag("some"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").multiple.unwrap("some"), true));
     });
 
     test("creates accordion with multiple disabled", $ => {
@@ -107,7 +107,7 @@ describeEast("Accordion", (test) => {
             multiple: false,
         }));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").multiple.unwrap("some"), false));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").multiple.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -121,9 +121,9 @@ describeEast("Accordion", (test) => {
             collapsible: true,
         }));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.hasTag("some"), true));
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").collapsible.hasTag("some"), true));
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").collapsible.unwrap("some"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.hasTag("some"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").collapsible.hasTag("some"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").collapsible.unwrap("some"), true));
     });
 
     test("creates non-collapsible accordion", $ => {
@@ -133,7 +133,7 @@ describeEast("Accordion", (test) => {
             collapsible: false,
         }));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").collapsible.unwrap("some"), false));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").collapsible.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -147,9 +147,9 @@ describeEast("Accordion", (test) => {
             variant: "enclosed",
         }));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.hasTag("some"), true));
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.hasTag("some"), true));
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.unwrap("some").hasTag("enclosed"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.hasTag("some"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.hasTag("some"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.unwrap("some").hasTag("enclosed"), true));
     });
 
     test("creates plain variant accordion", $ => {
@@ -159,7 +159,7 @@ describeEast("Accordion", (test) => {
             variant: "plain",
         }));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.unwrap("some").hasTag("plain"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.unwrap("some").hasTag("plain"), true));
     });
 
     test("creates subtle variant accordion", $ => {
@@ -169,7 +169,7 @@ describeEast("Accordion", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates accordion with AccordionVariant helper", $ => {
@@ -179,7 +179,7 @@ describeEast("Accordion", (test) => {
             variant: Accordion.Variant("enclosed"),
         }));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.unwrap("some").hasTag("enclosed"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.unwrap("some").hasTag("enclosed"), true));
     });
 
     // =========================================================================
@@ -196,9 +196,9 @@ describeEast("Accordion", (test) => {
             variant: "enclosed",
         }));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").multiple.unwrap("some"), true));
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").collapsible.unwrap("some"), true));
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.unwrap("some").hasTag("enclosed"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").multiple.unwrap("some"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").collapsible.unwrap("some"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.unwrap("some").hasTag("enclosed"), true));
     });
 
     test("creates FAQ accordion", $ => {
@@ -211,8 +211,8 @@ describeEast("Accordion", (test) => {
             collapsible: true,
         }));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").collapsible.unwrap("some"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").collapsible.unwrap("some"), true));
     });
 
     test("creates settings panel accordion", $ => {
@@ -225,8 +225,8 @@ describeEast("Accordion", (test) => {
             multiple: true,
         }));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.unwrap("some").hasTag("enclosed"), true));
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").multiple.unwrap("some"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.unwrap("some").hasTag("enclosed"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").multiple.unwrap("some"), true));
     });
 
     test("creates navigation accordion", $ => {
@@ -238,7 +238,7 @@ describeEast("Accordion", (test) => {
             variant: "plain",
         }));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.unwrap("some").hasTag("plain"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").variant.unwrap("some").hasTag("plain"), true));
     });
 
     test("creates accordion with disabled item", $ => {
@@ -249,7 +249,7 @@ describeEast("Accordion", (test) => {
             collapsible: true,
         }));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").collapsible.unwrap("some"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.unwrap("some").collapsible.unwrap("some"), true));
     });
 
     test("creates simple accordion without options", $ => {
@@ -259,7 +259,7 @@ describeEast("Accordion", (test) => {
             Accordion.Item("three", "Third", [Text.Root("Third content")]),
         ]));
 
-        $(assertEast.equal(accordion.unwrap().unwrap("Accordion").style.hasTag("none"), true));
+        $(Assert.equal(accordion.unwrap().unwrap("Accordion").style.hasTag("none"), true));
     });
 
     test("creates accordion item with nested components", $ => {
@@ -269,7 +269,7 @@ describeEast("Accordion", (test) => {
             Text.Root("Line 3"),
         ]));
 
-        $(assertEast.equal(item.value, "nested"));
-        $(assertEast.equal(item.trigger, "Nested Content"));
+        $(Assert.equal(item.value, "nested"));
+        $(Assert.equal(item.trigger, "Nested Content"));
     });
 });

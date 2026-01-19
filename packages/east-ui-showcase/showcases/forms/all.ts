@@ -345,20 +345,48 @@ export default East.function(
         // =====================================================================
 
         // Initialize state for interactive examples
-        $(State.initTyped("form_string_input", "hello", StringType)());
-        $(State.initTyped("form_integer", 0n, IntegerType)());
-        $(State.initTyped("form_float", 50.0, FloatType)());
-        $(State.initTyped("form_checkbox", false, BooleanType)());
-        $(State.initTyped("form_switch", false, BooleanType)());
-        $(State.initTyped("form_select", "", StringType)());
-        $(State.initTyped("form_slider", 50.0, FloatType)());
-        $(State.initTyped("form_textarea", "", StringType)());
-        $(State.initTyped("form_tags", ["initial"], ArrayType(StringType))());
-        $(State.initTyped("form_focus_count", 0n, IntegerType)());
-        $(State.initTyped("form_blur_count", 0n, IntegerType)());
-        $(State.initTyped("form_integer_input", 0n, IntegerType)());
-        $(State.initTyped("form_float_input", 0.0, FloatType)());
-        $(State.initTyped("form_datetime_input", new Date(), DateTimeType)());
+        $.if(State.has("form_string_input").not(), $ => {
+            $(State.write([StringType], "form_string_input", "hello"));
+        });
+        $.if(State.has("form_integer").not(), $ => {
+            $(State.write([IntegerType], "form_integer", 0n));
+        });
+        $.if(State.has("form_float").not(), $ => {
+            $(State.write([FloatType], "form_float", 50.0));
+        });
+        $.if(State.has("form_checkbox").not(), $ => {
+            $(State.write([BooleanType], "form_checkbox", false));
+        });
+        $.if(State.has("form_switch").not(), $ => {
+            $(State.write([BooleanType], "form_switch", false));
+        });
+        $.if(State.has("form_select").not(), $ => {
+            $(State.write([StringType], "form_select", ""));
+        });
+        $.if(State.has("form_slider").not(), $ => {
+            $(State.write([FloatType], "form_slider", 50.0));
+        });
+        $.if(State.has("form_textarea").not(), $ => {
+            $(State.write([StringType], "form_textarea", ""));
+        });
+        $.if(State.has("form_tags").not(), $ => {
+            $(State.write([ArrayType(StringType)], "form_tags", ["initial"]));
+        });
+        $.if(State.has("form_focus_count").not(), $ => {
+            $(State.write([IntegerType], "form_focus_count", 0n));
+        });
+        $.if(State.has("form_blur_count").not(), $ => {
+            $(State.write([IntegerType], "form_blur_count", 0n));
+        });
+        $.if(State.has("form_integer_input").not(), $ => {
+            $(State.write([IntegerType], "form_integer_input", 0n));
+        });
+        $.if(State.has("form_float_input").not(), $ => {
+            $(State.write([FloatType], "form_float_input", 0.0));
+        });
+        $.if(State.has("form_datetime_input").not(), $ => {
+            $(State.write([DateTimeType], "form_datetime_input", new Date()));
+        });
 
         // Interactive String Input
         const interactiveStringInput = $.let(
@@ -366,70 +394,70 @@ export default East.function(
                 "Interactive Input",
                 "Type to see live updates via onChange callback",
                 Reactive.Root($ => {
-                    const text = $.let(State.readTyped("form_string_input", StringType)());
-                    const focusCount = $.let(State.readTyped("form_focus_count", IntegerType)());
-                    const blurCount = $.let(State.readTyped("form_blur_count", IntegerType)());
+                    const text = $.let(State.read([StringType], "form_string_input"));
+                    const focusCount = $.let(State.read([IntegerType], "form_focus_count"));
+                    const blurCount = $.let(State.read([IntegerType], "form_blur_count"));
 
                     const onChange = East.function([StringType], NullType, ($, newValue) => {
-                        $(State.writeTyped("form_string_input", some(newValue), StringType)());
+                        $(State.write([StringType], "form_string_input", newValue));
                     });
                     const onFocus = East.function([], NullType, $ => {
-                        const current = $.let(State.readTyped("form_focus_count", IntegerType)());
-                        $(State.writeTyped("form_focus_count", some(current.unwrap('some').add(1n)), IntegerType)());
+                        const current = $.let(State.read([IntegerType], "form_focus_count"));
+                        $(State.write([IntegerType], "form_focus_count", current.add(1n)));
                     });
                     const onBlur = East.function([], NullType, $ => {
-                        const current = $.let(State.readTyped("form_blur_count", IntegerType)());
-                        $(State.writeTyped("form_blur_count", some(current.unwrap('some').add(1n)), IntegerType)());
+                        const current = $.let(State.read([IntegerType], "form_blur_count"));
+                        $(State.write([IntegerType], "form_blur_count", current.add(1n)));
                     });
 
                     return Stack.VStack([
-                        Input.String(text.unwrap('some'), {
+                        Input.String(text, {
                             placeholder: "Type something...",
                             onChange,
                             onFocus,
                             onBlur
                         }),
-                        Text.Root(East.str`You typed: ${text.unwrap('some')}`),
-                        Text.Root(East.str`Length: ${text.unwrap('some').length()}`),
+                        Text.Root(East.str`You typed: ${text}`),
+                        Text.Root(East.str`Length: ${text.length()}`),
                         Stack.HStack([
-                            Badge.Root(East.str`Focus: ${focusCount.unwrap('some')}`, { colorPalette: "blue" }),
-                            Badge.Root(East.str`Blur: ${blurCount.unwrap('some')}`, { colorPalette: "orange" }),
+                            Badge.Root(East.str`Focus: ${focusCount}`, { colorPalette: "blue" }),
+                            Badge.Root(East.str`Blur: ${blurCount}`, { colorPalette: "orange" }),
                         ], { gap: "2" }),
                     ], { gap: "3", align: "stretch" });
                 }),
                 some(`
                 Reactive.Root($ => {
-                    const text = $.let(State.readTyped("form_string_input", StringType)());
-                    const focusCount = $.let(State.readTyped("form_focus_count", IntegerType)());
-                    const blurCount = $.let(State.readTyped("form_blur_count", IntegerType)());
+                    const text = $.let(State.read([StringType], "form_string_input"));
+                    const focusCount = $.let(State.read([IntegerType], "form_focus_count"));
+                    const blurCount = $.let(State.read([IntegerType], "form_blur_count"));
 
                     const onChange = East.function([StringType], NullType, ($, newValue) => {
-                        $(State.writeTyped("form_string_input", some(newValue), StringType)());
+                        $(State.write([StringType], "form_string_input", newValue));
                     });
                     const onFocus = East.function([], NullType, $ => {
-                        const current = $.let(State.readTyped("form_focus_count", IntegerType)());
-                        $(State.writeTyped("form_focus_count", some(current.unwrap('some').add(1n)), IntegerType)());
+                        const current = $.let(State.read([IntegerType], "form_focus_count"));
+                        $(State.write([IntegerType], "form_focus_count", current.add(1n)));
                     });
                     const onBlur = East.function([], NullType, $ => {
-                        const current = $.let(State.readTyped("form_blur_count", IntegerType)());
-                        $(State.writeTyped("form_blur_count", some(current.unwrap('some').add(1n)), IntegerType)());
+                        const current = $.let(State.read([IntegerType], "form_blur_count"));
+                        $(State.write([IntegerType], "form_blur_count", current.add(1n)));
                     });
 
                     return Stack.VStack([
-                        Input.String(text.unwrap('some'), {
+                        Input.String(text, {
                             placeholder: "Type something...",
                             onChange,
                             onFocus,
                             onBlur
                         }),
-                        Text.Root(East.str\`You typed: \${text.unwrap('some')}\`),
-                        Text.Root(East.str\`Length: \${text.unwrap('some').length()}\`),
+                        Text.Root(East.str\`You typed: \${text}\`),
+                        Text.Root(East.str\`Length: \${text.length()}\`),
                         Stack.HStack([
-                            Badge.Root(East.str\`Focus: \${focusCount.unwrap('some')}\`, { colorPalette: "blue" }),
-                            Badge.Root(East.str\`Blur: \${blurCount.unwrap('some')}\`, { colorPalette: "orange" }),
+                            Badge.Root(East.str\`Focus: \${focusCount}\`, { colorPalette: "blue" }),
+                            Badge.Root(East.str\`Blur: \${blurCount}\`, { colorPalette: "orange" }),
                         ], { gap: "2" }),
                     ], { gap: "3", align: "stretch" });
-                })    
+                })
                 `)
             )
         );
@@ -440,39 +468,39 @@ export default East.function(
                 "Interactive Checkbox",
                 "Toggle to see state changes via onChange",
                 Reactive.Root($ => {
-                    const checked = $.let(State.readTyped("form_checkbox", BooleanType)());
+                    const checked = $.let(State.read([BooleanType], "form_checkbox"));
                     const onChange = East.function([BooleanType], NullType, ($, newValue) => {
-                        $(State.writeTyped("form_checkbox", some(newValue), BooleanType)());
+                        $(State.write([BooleanType], "form_checkbox", newValue));
                     });
 
                     return Stack.VStack([
-                        Checkbox.Root(checked.unwrap('some'), {
+                        Checkbox.Root(checked, {
                             label: "Click me!",
                             colorPalette: "blue",
                             onChange
                         }),
                         Badge.Root(
-                            checked.unwrap('some').ifElse(_$ => "Checked!", _$ => "Unchecked"),
-                            { colorPalette: checked.unwrap('some').ifElse(_$ => variant("green", null), _$ => variant("gray", null)) }
+                            checked.ifElse(_$ => "Checked!", _$ => "Unchecked"),
+                            { colorPalette: checked.ifElse(_$ => variant("green", null), _$ => variant("gray", null)) }
                         ),
                     ], { gap: "3", align: "flex-start" });
                 }),
                 some(`
                     Reactive.Root($ => {
-                        const checked = $.let(State.readTyped("form_checkbox", BooleanType)());
+                        const checked = $.let(State.read([BooleanType], "form_checkbox"));
                         const onChange = East.function([BooleanType], NullType, ($, newValue) => {
-                            $(State.writeTyped("form_checkbox", some(newValue), BooleanType)());
+                            $(State.write([BooleanType], "form_checkbox", newValue));
                         });
 
                         return Stack.VStack([
-                            Checkbox.Root(checked.unwrap('some'), {
+                            Checkbox.Root(checked, {
                                 label: "Click me!",
                                 colorPalette: "blue",
                                 onChange
                             }),
                             Badge.Root(
-                                checked.unwrap('some').ifElse(_$ => "Checked!", _$ => "Unchecked"),
-                                { colorPalette: checked.unwrap('some').ifElse(_$ => variant("green", null), _$ => variant("gray", null)) }
+                                checked.ifElse(_$ => "Checked!", _$ => "Unchecked"),
+                                { colorPalette: checked.ifElse(_$ => variant("green", null), _$ => variant("gray", null)) }
                             ),
                         ], { gap: "3", align: "flex-start" });
                     })
@@ -486,21 +514,21 @@ export default East.function(
                 "Interactive Switch",
                 "Toggle switch with live state feedback",
                 Reactive.Root($ => {
-                    const enabled = $.let(State.readTyped("form_switch", BooleanType)());
+                    const enabled = $.let(State.read([BooleanType], "form_switch"));
                     const onChange = East.function([BooleanType], NullType, ($, newValue) => {
-                        $(State.writeTyped("form_switch", some(newValue), BooleanType)());
+                        $(State.write([BooleanType], "form_switch", newValue));
                     });
 
                     return Stack.VStack([
-                        Switch.Root(enabled.unwrap('some'), {
+                        Switch.Root(enabled, {
                             label: "Enable feature",
                             colorPalette: "green",
                             onChange
                         }),
                         Badge.Root(
-                            enabled.unwrap('some').ifElse(_$ => "Feature ON", _$ => "Feature OFF"),
+                            enabled.ifElse(_$ => "Feature ON", _$ => "Feature OFF"),
                             {
-                                colorPalette: enabled.unwrap('some').ifElse(_$ => variant("green", null), _$ => variant("red", null)),
+                                colorPalette: enabled.ifElse(_$ => variant("green", null), _$ => variant("red", null)),
                                 variant: "solid"
                             }
                         ),
@@ -508,21 +536,21 @@ export default East.function(
                 }),
                 some(`
                     Reactive.Root($ => {
-                        const enabled = $.let(State.readTyped("form_switch", BooleanType)());
+                        const enabled = $.let(State.read([BooleanType], "form_switch"));
                         const onChange = East.function([BooleanType], NullType, ($, newValue) => {
-                            $(State.writeTyped("form_switch", some(newValue), BooleanType)());
+                            $(State.write([BooleanType], "form_switch", newValue));
                         });
 
                         return Stack.VStack([
-                            Switch.Root(enabled.unwrap('some'), {
+                            Switch.Root(enabled, {
                                 label: "Enable feature",
                                 colorPalette: "green",
                                 onChange
                             }),
                             Badge.Root(
-                                enabled.unwrap('some').ifElse(_$ => "Feature ON", _$ => "Feature OFF"),
+                                enabled.ifElse(_$ => "Feature ON", _$ => "Feature OFF"),
                                 {
-                                    colorPalette: enabled.unwrap('some').ifElse(_$ => variant("green", null), _$ => variant("red", null)),
+                                    colorPalette: enabled.ifElse(_$ => variant("green", null), _$ => variant("red", null)),
                                     variant: "solid"
                                 }
                             ),
@@ -538,42 +566,42 @@ export default East.function(
                 "Interactive Slider",
                 "Drag to see live value updates",
                 Reactive.Root($ => {
-                    const value = $.let(State.readTyped("form_slider", FloatType)());
+                    const value = $.let(State.read([FloatType], "form_slider"));
                     const onChange = East.function([FloatType], NullType, ($, newValue) => {
-                        $(State.writeTyped("form_slider", some(newValue), FloatType)());
+                        $(State.write([FloatType], "form_slider", newValue));
                     });
 
                     return Stack.VStack([
-                        Slider.Root(value.unwrap('some'), {
+                        Slider.Root(value, {
                             min: 0,
                             max: 100,
                             colorPalette: "blue",
                             onChange
                         }),
-                        Text.Root(East.str`Value: ${East.print(value.unwrap('some'))}`),
+                        Text.Root(East.str`Value: ${East.print(value)}`),
                         Badge.Root(
-                            East.str`${East.print(value.unwrap('some'))}%`,
+                            East.str`${East.print(value)}%`,
                             { colorPalette: "blue", variant: "solid" }
                         ),
                     ], { gap: "3", align: "stretch" });
                 }),
                 some(`
                     Reactive.Root($ => {
-                        const value = $.let(State.readTyped("form_slider", FloatType)());
+                        const value = $.let(State.read([FloatType], "form_slider"));
                         const onChange = East.function([FloatType], NullType, ($, newValue) => {
-                            $(State.writeTyped("form_slider", some(newValue), FloatType)());
+                            $(State.write([FloatType], "form_slider", newValue));
                         });
 
                         return Stack.VStack([
-                            Slider.Root(value.unwrap('some'), {
+                            Slider.Root(value, {
                                 min: 0,
                                 max: 100,
                                 colorPalette: "blue",
                                 onChange
                             }),
-                            Text.Root(East.str\`Value: \${East.print(value.unwrap('some'))}\`),
+                            Text.Root(East.str\`Value: \${East.print(value)}\`),
                             Badge.Root(
-                                East.str\`\${East.print(value.unwrap('some'))}%\`,
+                                East.str\`\${East.print(value)}%\`,
                                 { colorPalette: "blue", variant: "solid" }
                             ),
                         ], { gap: "3", align: "stretch" });
@@ -588,40 +616,40 @@ export default East.function(
                 "Interactive Select",
                 "Select an option to see onChange callback",
                 Reactive.Root($ => {
-                    const selected = $.let(State.readTyped("form_select", StringType)());
+                    const selected = $.let(State.read([StringType], "form_select"));
                     const onChange = East.function([StringType], NullType, ($, newValue) => {
-                        $(State.writeTyped("form_select", some(newValue), StringType)());
+                        $(State.write([StringType], "form_select", newValue));
                     });
 
                     return Stack.VStack([
-                        Select.Root(selected.unwrap('some'), [
+                        Select.Root(selected, [
                             Select.Item("apple", "Apple"),
                             Select.Item("banana", "Banana"),
                             Select.Item("cherry", "Cherry"),
                             Select.Item("date", "Date"),
                         ], { placeholder: "Pick a fruit", onChange }),
-                        Text.Root(East.str`Selected: ${East.greater(selected.unwrap('some').length(), 0n).ifElse(
-                            _$ => selected.unwrap('some'),
+                        Text.Root(East.str`Selected: ${East.greater(selected.length(), 0n).ifElse(
+                            _$ => selected,
                             _$ => "(none)"
                         )}`),
                     ], { gap: "3", align: "stretch" });
                 }),
                 some(`
                     Reactive.Root($ => {
-                        const selected = $.let(State.readTyped("form_select", StringType)());
+                        const selected = $.let(State.read([StringType], "form_select"));
                         const onChange = East.function([StringType], NullType, ($, newValue) => {
-                            $(State.writeTyped("form_select", some(newValue), StringType)());
+                            $(State.write([StringType], "form_select", newValue));
                         });
 
                         return Stack.VStack([
-                            Select.Root(selected.unwrap('some'), [
+                            Select.Root(selected, [
                                 Select.Item("apple", "Apple"),
                                 Select.Item("banana", "Banana"),
                                 Select.Item("cherry", "Cherry"),
                                 Select.Item("date", "Date"),
                             ], { placeholder: "Pick a fruit", onChange }),
-                            Text.Root(East.str\`Selected: \${East.greater(selected.unwrap('some').length(), 0n).ifElse(
-                                _$ => selected.unwrap('some'),
+                            Text.Root(East.str\`Selected: \${East.greater(selected.length(), 0n).ifElse(
+                                _$ => selected,
                                 _$ => "(none)"
                             )}\`),
                         ], { gap: "3", align: "stretch" });
@@ -636,37 +664,37 @@ export default East.function(
                 "Interactive Textarea",
                 "Type to see character count update",
                 Reactive.Root($ => {
-                    const text = $.let(State.readTyped("form_textarea", StringType)());
+                    const text = $.let(State.read([StringType], "form_textarea"));
                     const onChange = East.function([StringType], NullType, ($, newValue) => {
-                        $(State.writeTyped("form_textarea", some(newValue), StringType)());
+                        $(State.write([StringType], "form_textarea", newValue));
                     });
 
                     return Stack.VStack([
-                        Textarea.Root(text.unwrap('some'), {
+                        Textarea.Root(text, {
                             placeholder: "Write something...",
                             rows: 3,
                             onChange
                         }),
                         Stack.HStack([
-                            Badge.Root(East.str`${text.unwrap('some').length()} chars`, { colorPalette: "blue" }),
+                            Badge.Root(East.str`${text.length()} chars`, { colorPalette: "blue" }),
                         ], { gap: "2" }),
                     ], { gap: "3", align: "stretch" });
                 }),
                 some(`
                     Reactive.Root($ => {
-                        const text = $.let(State.readTyped("form_textarea", StringType)());
+                        const text = $.let(State.read([StringType], "form_textarea"));
                         const onChange = East.function([StringType], NullType, ($, newValue) => {
-                            $(State.writeTyped("form_textarea", some(newValue), StringType)());
+                            $(State.write([StringType], "form_textarea", newValue));
                         });
 
                         return Stack.VStack([
-                            Textarea.Root(text.unwrap('some'), {
+                            Textarea.Root(text, {
                                 placeholder: "Write something...",
                                 rows: 3,
                                 onChange
                             }),
                             Stack.HStack([
-                                Badge.Root(East.str\`\${text.unwrap('some').length()} chars\`, { colorPalette: "blue" }),
+                                Badge.Root(East.str\`\${text.length()} chars\`, { colorPalette: "blue" }),
                             ], { gap: "2" }),
                         ], { gap: "3", align: "stretch" });
                     })
@@ -680,34 +708,34 @@ export default East.function(
                 "Interactive Tags Input",
                 "Add/remove tags to see onChange callback",
                 Reactive.Root($ => {
-                    const tags = $.let(State.readTyped("form_tags", ArrayType(StringType))());
+                    const tags = $.let(State.read([ArrayType(StringType)], "form_tags"));
                     const onChange = East.function([ArrayType(StringType)], NullType, ($, newValue) => {
-                        $(State.writeTyped("form_tags", some(newValue), ArrayType(StringType))());
+                        $(State.write([ArrayType(StringType)], "form_tags", newValue));
                     });
 
                     return Stack.VStack([
-                        TagsInput.Root(tags.unwrap('some'), {
+                        TagsInput.Root(tags, {
                             placeholder: "Add tag...",
                             colorPalette: "purple",
                             onChange
                         }),
-                        Badge.Root(East.str`${tags.unwrap('some').size()} tags`, { colorPalette: "purple" }),
+                        Badge.Root(East.str`${tags.size()} tags`, { colorPalette: "purple" }),
                     ], { gap: "3", align: "stretch" });
                 }),
                 some(`
                     Reactive.Root($ => {
-                        const tags = $.let(State.readTyped("form_tags", ArrayType(StringType))());
+                        const tags = $.let(State.read([ArrayType(StringType)], "form_tags"));
                         const onChange = East.function([ArrayType(StringType)], NullType, ($, newValue) => {
-                            $(State.writeTyped("form_tags", some(newValue), ArrayType(StringType))());
+                            $(State.write([ArrayType(StringType)], "form_tags", newValue));
                         });
 
                         return Stack.VStack([
-                            TagsInput.Root(tags.unwrap('some'), {
+                            TagsInput.Root(tags, {
                                 placeholder: "Add tag...",
                                 colorPalette: "purple",
                                 onChange
                             }),
-                            Badge.Root(East.str\`\${tags.unwrap('some').size()} tags\`, { colorPalette: "purple" }),
+                            Badge.Root(East.str\`\${tags.size()} tags\`, { colorPalette: "purple" }),
                         ], { gap: "3", align: "stretch" });
                     })
                 `)
@@ -720,42 +748,42 @@ export default East.function(
                 "Interactive Integer Input",
                 "Numeric input with live value display",
                 Reactive.Root($ => {
-                    const value = $.let(State.readTyped("form_integer_input", IntegerType)());
+                    const value = $.let(State.read([IntegerType], "form_integer_input"));
                     const onChange = East.function([IntegerType], NullType, ($, newValue) => {
-                        $(State.writeTyped("form_integer_input", some(newValue), IntegerType)());
+                        $(State.write([IntegerType], "form_integer_input", newValue));
                     });
 
                     return Stack.VStack([
-                        Input.Integer(value.unwrap('some'), {
+                        Input.Integer(value, {
                             min: 0n,
                             max: 1000n,
                             step: 1n,
                             onChange
                         }),
-                        Text.Root(East.str`Value: ${value.unwrap('some')}`),
+                        Text.Root(East.str`Value: ${value}`),
                         Badge.Root(
-                            East.equal(value.unwrap('some').remainder(2n), 0n).ifElse(_$ => "Even", _$ => "Odd"),
+                            East.equal(value.remainder(2n), 0n).ifElse(_$ => "Even", _$ => "Odd"),
                             { colorPalette: "teal", variant: "solid" }
                         ),
                     ], { gap: "3", align: "stretch" });
                 }),
                 some(`
                 Reactive.Root($ => {
-                    const value = $.let(State.readTyped("form_integer_input", IntegerType)());
+                    const value = $.let(State.read([IntegerType], "form_integer_input"));
                     const onChange = East.function([IntegerType], NullType, ($, newValue) => {
-                        $(State.writeTyped("form_integer_input", some(newValue), IntegerType)());
+                        $(State.write([IntegerType], "form_integer_input", newValue));
                     });
 
                     return Stack.VStack([
-                        Input.Integer(value.unwrap('some'), {
+                        Input.Integer(value, {
                             min: 0n,
                             max: 1000n,
                             step: 1n,
                             onChange
                         }),
-                        Text.Root(East.str\`Value: \${value.unwrap('some')}\`),
+                        Text.Root(East.str\`Value: \${value}\`),
                         Badge.Root(
-                            East.equal(value.unwrap('some').remainder(2n), 0n).ifElse(_$ => "Even", _$ => "Odd"),
+                            East.equal(value.remainder(2n), 0n).ifElse(_$ => "Even", _$ => "Odd"),
                             { colorPalette: "teal", variant: "solid" }
                         ),
                     ], { gap: "3", align: "stretch" });
@@ -770,38 +798,38 @@ export default East.function(
                 "Interactive Float Input",
                 "Decimal input with precision display",
                 Reactive.Root($ => {
-                    const value = $.let(State.readTyped("form_float_input", FloatType)());
+                    const value = $.let(State.read([FloatType], "form_float_input"));
                     const onChange = East.function([FloatType], NullType, ($, newValue) => {
-                        $(State.writeTyped("form_float_input", some(newValue), FloatType)());
+                        $(State.write([FloatType], "form_float_input", newValue));
                     });
 
                     return Stack.VStack([
-                        Input.Float(value.unwrap('some'), {
+                        Input.Float(value, {
                             min: 0,
                             max: 100,
                             step: 0.1,
                             precision: 2n,
                             onChange
                         }),
-                        Text.Root(East.str`Value: ${East.print(value.unwrap('some'))}`),
+                        Text.Root(East.str`Value: ${East.print(value)}`),
                     ], { gap: "3", align: "stretch" });
                 }),
                 some(`
                     Reactive.Root($ => {
-                        const value = $.let(State.readTyped("form_float_input", FloatType)());
+                        const value = $.let(State.read([FloatType], "form_float_input"));
                         const onChange = East.function([FloatType], NullType, ($, newValue) => {
-                            $(State.writeTyped("form_float_input", some(newValue), FloatType)());
+                            $(State.write([FloatType], "form_float_input", newValue));
                         });
 
                         return Stack.VStack([
-                            Input.Float(value.unwrap('some'), {
+                            Input.Float(value, {
                                 min: 0,
                                 max: 100,
                                 step: 0.1,
                                 precision: 2n,
                                 onChange
                             }),
-                            Text.Root(East.str\`Value: \${East.print(value.unwrap('some'))}\`),
+                            Text.Root(East.str\`Value: \${East.print(value)}\`),
                         ], { gap: "3", align: "stretch" });
                     })
                 `)
@@ -814,35 +842,35 @@ export default East.function(
                 "Interactive DateTime Input",
                 "Date picker with live value display",
                 Reactive.Root($ => {
-                    const value = $.let(State.readTyped("form_datetime_input", DateTimeType)());
+                    const value = $.let(State.read([DateTimeType], "form_datetime_input"));
                     const onChange = East.function([DateTimeType], NullType, ($, newValue) => {
-                        $(State.writeTyped("form_datetime_input", some(newValue), DateTimeType)());
+                        $(State.write([DateTimeType], "form_datetime_input", newValue));
                     });
 
                     return Stack.VStack([
-                        Input.DateTime(value.unwrap('some'), {
+                        Input.DateTime(value, {
                             onChange
                         }),
-                        Text.Root(East.str`Year: ${value.unwrap('some').getYear()}`),
-                        Text.Root(East.str`Month: ${value.unwrap('some').getMonth()}`),
-                        Text.Root(East.str`Day: ${value.unwrap('some').getDayOfMonth()}`),
+                        Text.Root(East.str`Year: ${value.getYear()}`),
+                        Text.Root(East.str`Month: ${value.getMonth()}`),
+                        Text.Root(East.str`Day: ${value.getDayOfMonth()}`),
                     ], { gap: "3", align: "stretch" });
                 }),
                 some(`
                     Reactive.Root($ => {
-                        const value = $.let(State.readTyped("form_datetime_input", DateTimeType)());
+                        const value = $.let(State.read([DateTimeType], "form_datetime_input"));
                         const onChange = East.function([DateTimeType], NullType, ($, newValue) => {
-                            $(State.writeTyped("form_datetime_input", some(newValue), DateTimeType)());
+                            $(State.write([DateTimeType], "form_datetime_input", newValue));
                         });
 
                         return Stack.VStack([
-                            Input.DateTime(value.unwrap('some'), {
+                            Input.DateTime(value, {
                                 showTime: true,
                                 onChange
                             }),
-                            Text.Root(East.str\`Year: \${value.unwrap('some').getYear()}\`),
-                            Text.Root(East.str\`Month: \${value.unwrap('some').getMonth()}\`),
-                            Text.Root(East.str\`Day: \${value.unwrap('some').getDayOfMonth()}\`),
+                            Text.Root(East.str\`Year: \${value.getYear()}\`),
+                            Text.Root(East.str\`Month: \${value.getMonth()}\`),
+                            Text.Root(East.str\`Day: \${value.getDayOfMonth()}\`),
                         ], { gap: "3", align: "stretch" });
                     })
                 `)

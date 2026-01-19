@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { CodeBlock } from "../../src/index.js";
 
 describeEast("CodeBlock", (test) => {
@@ -14,17 +14,17 @@ describeEast("CodeBlock", (test) => {
     test("creates code block with code string", $ => {
         const block = $.let(CodeBlock.Root("const x = 1;"));
 
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").code, "const x = 1;"));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").code, "const x = 1;"));
     });
 
     test("creates code block with no style - all options are none", $ => {
         const block = $.let(CodeBlock.Root("console.log('hello')"));
 
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").code, "console.log('hello')"));
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").language.hasTag("none"), true));
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").showLineNumbers.hasTag("none"), true));
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").highlightLines.hasTag("none"), true));
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").maxHeight.hasTag("none"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").code, "console.log('hello')"));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").language.hasTag("none"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").showLineNumbers.hasTag("none"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").highlightLines.hasTag("none"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").maxHeight.hasTag("none"), true));
     });
 
     test("creates code block with multiline code", $ => {
@@ -33,7 +33,7 @@ describeEast("CodeBlock", (test) => {
 }`;
         const block = $.let(CodeBlock.Root(code));
 
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").code, code));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").code, code));
     });
 
     // =========================================================================
@@ -45,8 +45,8 @@ describeEast("CodeBlock", (test) => {
             language: "typescript",
         }));
 
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").language.hasTag("some"), true));
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").language.unwrap("some").hasTag("typescript"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").language.hasTag("some"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").language.unwrap("some").hasTag("typescript"), true));
     });
 
     test("creates code block with javascript language", $ => {
@@ -54,7 +54,7 @@ describeEast("CodeBlock", (test) => {
             language: "javascript",
         }));
 
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").language.unwrap("some").hasTag("javascript"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").language.unwrap("some").hasTag("javascript"), true));
     });
 
     test("creates code block with python language", $ => {
@@ -62,7 +62,7 @@ describeEast("CodeBlock", (test) => {
             language: "python",
         }));
 
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").language.unwrap("some").hasTag("python"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").language.unwrap("some").hasTag("python"), true));
     });
 
     test("creates code block with json language", $ => {
@@ -70,7 +70,7 @@ describeEast("CodeBlock", (test) => {
             language: "json",
         }));
 
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").language.unwrap("some").hasTag("json"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").language.unwrap("some").hasTag("json"), true));
     });
 
     // =========================================================================
@@ -82,8 +82,8 @@ describeEast("CodeBlock", (test) => {
             showLineNumbers: true,
         }));
 
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").showLineNumbers.hasTag("some"), true));
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").showLineNumbers.unwrap("some"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").showLineNumbers.hasTag("some"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").showLineNumbers.unwrap("some"), true));
     });
 
     test("creates code block with line numbers disabled", $ => {
@@ -91,7 +91,7 @@ describeEast("CodeBlock", (test) => {
             showLineNumbers: false,
         }));
 
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").showLineNumbers.unwrap("some"), false));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").showLineNumbers.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -103,7 +103,7 @@ describeEast("CodeBlock", (test) => {
             highlightLines: [2n],
         }));
 
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").highlightLines.hasTag("some"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").highlightLines.hasTag("some"), true));
     });
 
     test("creates code block with multiple highlighted lines", $ => {
@@ -111,7 +111,7 @@ describeEast("CodeBlock", (test) => {
             highlightLines: [1n, 3n],
         }));
 
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").highlightLines.hasTag("some"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").highlightLines.hasTag("some"), true));
     });
 
     // =========================================================================
@@ -123,8 +123,8 @@ describeEast("CodeBlock", (test) => {
             maxHeight: "400px",
         }));
 
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").maxHeight.hasTag("some"), true));
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").maxHeight.unwrap("some"), "400px"));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").maxHeight.hasTag("some"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").maxHeight.unwrap("some"), "400px"));
     });
 
     test("creates code block with percentage maxHeight", $ => {
@@ -132,7 +132,7 @@ describeEast("CodeBlock", (test) => {
             maxHeight: "50vh",
         }));
 
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").maxHeight.unwrap("some"), "50vh"));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").maxHeight.unwrap("some"), "50vh"));
     });
 
     // =========================================================================
@@ -150,11 +150,11 @@ describeEast("CodeBlock", (test) => {
             maxHeight: "300px",
         }));
 
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").code, code));
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").language.unwrap("some").hasTag("typescript"), true));
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").showLineNumbers.unwrap("some"), true));
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").highlightLines.hasTag("some"), true));
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").maxHeight.unwrap("some"), "300px"));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").code, code));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").language.unwrap("some").hasTag("typescript"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").showLineNumbers.unwrap("some"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").highlightLines.hasTag("some"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").maxHeight.unwrap("some"), "300px"));
     });
 
     test("creates documentation code example", $ => {
@@ -166,8 +166,8 @@ const value = East.value(42);`;
             showLineNumbers: true,
         }));
 
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").language.unwrap("some").hasTag("typescript"), true));
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").showLineNumbers.unwrap("some"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").language.unwrap("some").hasTag("typescript"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").showLineNumbers.unwrap("some"), true));
     });
 
     test("creates terminal output block", $ => {
@@ -177,6 +177,6 @@ added 100 packages`;
             language: "bash",
         }));
 
-        $(assertEast.equal(block.unwrap().unwrap("CodeBlock").language.unwrap("some").hasTag("bash"), true));
+        $(Assert.equal(block.unwrap().unwrap("CodeBlock").language.unwrap("some").hasTag("bash"), true));
     });
 });

@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Input, Style } from "../../src/index.js";
 import { tokenizeDateTimeFormat } from "@elaraai/east/internal";
 
@@ -15,10 +15,10 @@ describeEast("Input", (test) => {
     test("creates string input with value only", $ => {
         const input = $.let(Input.String("Hello"));
 
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").value, "Hello"));
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").placeholder.hasTag("none"), true));
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").variant.hasTag("none"), true));
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").size.hasTag("none"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").value, "Hello"));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").placeholder.hasTag("none"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").variant.hasTag("none"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").size.hasTag("none"), true));
     });
 
     test("creates string input with placeholder", $ => {
@@ -26,8 +26,8 @@ describeEast("Input", (test) => {
             placeholder: "Enter text",
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").placeholder.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").placeholder.unwrap("some"), "Enter text"));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").placeholder.hasTag("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").placeholder.unwrap("some"), "Enter text"));
     });
 
     test("creates string input with variant", $ => {
@@ -35,8 +35,8 @@ describeEast("Input", (test) => {
             variant: "outline",
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").variant.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").variant.unwrap("some").hasTag("outline"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").variant.hasTag("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").variant.unwrap("some").hasTag("outline"), true));
     });
 
     test("creates string input with subtle variant", $ => {
@@ -44,7 +44,7 @@ describeEast("Input", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates string input with flushed variant", $ => {
@@ -52,7 +52,7 @@ describeEast("Input", (test) => {
             variant: "flushed",
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").variant.unwrap("some").hasTag("flushed"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").variant.unwrap("some").hasTag("flushed"), true));
     });
 
     test("creates string input with size", $ => {
@@ -60,8 +60,8 @@ describeEast("Input", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").size.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").size.hasTag("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates string input with maxLength", $ => {
@@ -69,8 +69,8 @@ describeEast("Input", (test) => {
             maxLength: 100n,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").maxLength.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").maxLength.unwrap("some"), 100n));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").maxLength.hasTag("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").maxLength.unwrap("some"), 100n));
     });
 
     test("creates string input with pattern", $ => {
@@ -78,8 +78,8 @@ describeEast("Input", (test) => {
             pattern: "^[a-zA-Z]+$",
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").pattern.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").pattern.unwrap("some"), "^[a-zA-Z]+$"));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").pattern.hasTag("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").pattern.unwrap("some"), "^[a-zA-Z]+$"));
     });
 
     test("creates disabled string input", $ => {
@@ -87,8 +87,8 @@ describeEast("Input", (test) => {
             disabled: true,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").disabled.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").disabled.unwrap("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").disabled.hasTag("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").disabled.unwrap("some"), true));
     });
 
     test("creates string input with InputVariant helper", $ => {
@@ -96,7 +96,7 @@ describeEast("Input", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     // =========================================================================
@@ -106,9 +106,9 @@ describeEast("Input", (test) => {
     test("creates integer input with value only", $ => {
         const input = $.let(Input.Integer(42n));
 
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").value, 42n));
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").min.hasTag("none"), true));
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").max.hasTag("none"), true));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").value, 42n));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").min.hasTag("none"), true));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").max.hasTag("none"), true));
     });
 
     test("creates integer input with min", $ => {
@@ -116,8 +116,8 @@ describeEast("Input", (test) => {
             min: 0n,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").min.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").min.unwrap("some"), 0n));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").min.hasTag("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").min.unwrap("some"), 0n));
     });
 
     test("creates integer input with max", $ => {
@@ -125,8 +125,8 @@ describeEast("Input", (test) => {
             max: 100n,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").max.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").max.unwrap("some"), 100n));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").max.hasTag("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").max.unwrap("some"), 100n));
     });
 
     test("creates integer input with step", $ => {
@@ -134,8 +134,8 @@ describeEast("Input", (test) => {
             step: 5n,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").step.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").step.unwrap("some"), 5n));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").step.hasTag("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").step.unwrap("some"), 5n));
     });
 
     test("creates integer input with min and max", $ => {
@@ -144,8 +144,8 @@ describeEast("Input", (test) => {
             max: 100n,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").min.unwrap("some"), 0n));
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").max.unwrap("some"), 100n));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").min.unwrap("some"), 0n));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").max.unwrap("some"), 100n));
     });
 
     test("creates disabled integer input", $ => {
@@ -153,7 +153,7 @@ describeEast("Input", (test) => {
             disabled: true,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").disabled.unwrap("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").disabled.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -163,10 +163,10 @@ describeEast("Input", (test) => {
     test("creates float input with value only", $ => {
         const input = $.let(Input.Float(3.14));
 
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").value, 3.14));
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").min.hasTag("none"), true));
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").max.hasTag("none"), true));
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").precision.hasTag("none"), true));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").value, 3.14));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").min.hasTag("none"), true));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").max.hasTag("none"), true));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").precision.hasTag("none"), true));
     });
 
     test("creates float input with min", $ => {
@@ -174,8 +174,8 @@ describeEast("Input", (test) => {
             min: 0.0,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").min.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").min.unwrap("some"), 0.0));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").min.hasTag("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").min.unwrap("some"), 0.0));
     });
 
     test("creates float input with max", $ => {
@@ -183,8 +183,8 @@ describeEast("Input", (test) => {
             max: 100.0,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").max.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").max.unwrap("some"), 100.0));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").max.hasTag("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").max.unwrap("some"), 100.0));
     });
 
     test("creates float input with step", $ => {
@@ -192,8 +192,8 @@ describeEast("Input", (test) => {
             step: 0.1,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").step.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").step.unwrap("some"), 0.1));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").step.hasTag("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").step.unwrap("some"), 0.1));
     });
 
     test("creates float input with precision", $ => {
@@ -201,8 +201,8 @@ describeEast("Input", (test) => {
             precision: 2n,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").precision.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").precision.unwrap("some"), 2n));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").precision.hasTag("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").precision.unwrap("some"), 2n));
     });
 
     test("creates disabled float input", $ => {
@@ -210,7 +210,7 @@ describeEast("Input", (test) => {
             disabled: true,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").disabled.unwrap("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").disabled.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -221,8 +221,8 @@ describeEast("Input", (test) => {
         const now = new Date("2025-01-15T10:00:00Z");
         const input = $.let(Input.DateTime(now));
 
-        $(assertEast.equal(input.unwrap().unwrap("DateTimeInput").precision.hasTag("none"), true));
-        $(assertEast.equal(input.unwrap().unwrap("DateTimeInput").format.hasTag("none"), true));
+        $(Assert.equal(input.unwrap().unwrap("DateTimeInput").precision.hasTag("none"), true));
+        $(Assert.equal(input.unwrap().unwrap("DateTimeInput").format.hasTag("none"), true));
     });
 
     test("creates datetime input with precision date", $ => {
@@ -231,8 +231,8 @@ describeEast("Input", (test) => {
             precision: 'date',
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("DateTimeInput").precision.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap().unwrap("DateTimeInput").precision.unwrap("some").getTag(), 'date'));
+        $(Assert.equal(input.unwrap().unwrap("DateTimeInput").precision.hasTag("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("DateTimeInput").precision.unwrap("some").getTag(), 'date'));
     });
 
     test("creates datetime input with precision time", $ => {
@@ -241,8 +241,8 @@ describeEast("Input", (test) => {
             precision: 'time',
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("DateTimeInput").precision.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap().unwrap("DateTimeInput").precision.unwrap("some").getTag(), 'time'));
+        $(Assert.equal(input.unwrap().unwrap("DateTimeInput").precision.hasTag("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("DateTimeInput").precision.unwrap("some").getTag(), 'time'));
     });
 
     test("creates datetime input with format", $ => {
@@ -251,8 +251,8 @@ describeEast("Input", (test) => {
             format: "yyyy-MM-dd HH:mm",
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("DateTimeInput").format.hasTag("some"), true));
-        $(assertEast.equal(input.unwrap().unwrap("DateTimeInput").format.unwrap("some"), tokenizeDateTimeFormat("yyyy-MM-dd HH:mm")));
+        $(Assert.equal(input.unwrap().unwrap("DateTimeInput").format.hasTag("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("DateTimeInput").format.unwrap("some"), tokenizeDateTimeFormat("yyyy-MM-dd HH:mm")));
     });
 
     test("creates disabled datetime input", $ => {
@@ -261,7 +261,7 @@ describeEast("Input", (test) => {
             disabled: true,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("DateTimeInput").disabled.unwrap("some"), true));
+        $(Assert.equal(input.unwrap().unwrap("DateTimeInput").disabled.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -278,13 +278,13 @@ describeEast("Input", (test) => {
             disabled: false,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").value, "test"));
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").placeholder.unwrap("some"), "Enter text"));
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").variant.unwrap("some").hasTag("outline"), true));
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").size.unwrap("some").hasTag("md"), true));
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").maxLength.unwrap("some"), 50n));
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").pattern.unwrap("some"), "^[a-z]+$"));
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").disabled.unwrap("some"), false));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").value, "test"));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").placeholder.unwrap("some"), "Enter text"));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").variant.unwrap("some").hasTag("outline"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").maxLength.unwrap("some"), 50n));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").pattern.unwrap("some"), "^[a-z]+$"));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").disabled.unwrap("some"), false));
     });
 
     test("creates integer input with all options", $ => {
@@ -297,12 +297,12 @@ describeEast("Input", (test) => {
             disabled: false,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").value, 50n));
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").min.unwrap("some"), 0n));
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").max.unwrap("some"), 100n));
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").step.unwrap("some"), 5n));
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").variant.unwrap("some").hasTag("subtle"), true));
-        $(assertEast.equal(input.unwrap().unwrap("IntegerInput").size.unwrap("some").hasTag("lg"), true));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").value, 50n));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").min.unwrap("some"), 0n));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").max.unwrap("some"), 100n));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").step.unwrap("some"), 5n));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(input.unwrap().unwrap("IntegerInput").size.unwrap("some").hasTag("lg"), true));
     });
 
     test("creates float input with all options", $ => {
@@ -316,12 +316,12 @@ describeEast("Input", (test) => {
             disabled: false,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").value, 9.99));
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").min.unwrap("some"), 0.0));
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").max.unwrap("some"), 100.0));
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").precision.unwrap("some"), 2n));
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").variant.unwrap("some").hasTag("flushed"), true));
-        $(assertEast.equal(input.unwrap().unwrap("FloatInput").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").value, 9.99));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").min.unwrap("some"), 0.0));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").max.unwrap("some"), 100.0));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").precision.unwrap("some"), 2n));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").variant.unwrap("some").hasTag("flushed"), true));
+        $(Assert.equal(input.unwrap().unwrap("FloatInput").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates datetime input with all options", $ => {
@@ -333,9 +333,9 @@ describeEast("Input", (test) => {
             disabled: false,
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("DateTimeInput").format.unwrap("some"), tokenizeDateTimeFormat("yyyy-MM-dd HH:mm:ss")));
-        $(assertEast.equal(input.unwrap().unwrap("DateTimeInput").variant.unwrap("some").hasTag("outline"), true));
-        $(assertEast.equal(input.unwrap().unwrap("DateTimeInput").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(input.unwrap().unwrap("DateTimeInput").format.unwrap("some"), tokenizeDateTimeFormat("yyyy-MM-dd HH:mm:ss")));
+        $(Assert.equal(input.unwrap().unwrap("DateTimeInput").variant.unwrap("some").hasTag("outline"), true));
+        $(Assert.equal(input.unwrap().unwrap("DateTimeInput").size.unwrap("some").hasTag("md"), true));
     });
 
     // =========================================================================
@@ -348,10 +348,10 @@ describeEast("Input", (test) => {
         const md = $.let(Input.String("", { size: "md" }));
         const lg = $.let(Input.String("", { size: "lg" }));
 
-        $(assertEast.equal(xs.unwrap().unwrap("StringInput").size.unwrap("some").hasTag("xs"), true));
-        $(assertEast.equal(sm.unwrap().unwrap("StringInput").size.unwrap("some").hasTag("sm"), true));
-        $(assertEast.equal(md.unwrap().unwrap("StringInput").size.unwrap("some").hasTag("md"), true));
-        $(assertEast.equal(lg.unwrap().unwrap("StringInput").size.unwrap("some").hasTag("lg"), true));
+        $(Assert.equal(xs.unwrap().unwrap("StringInput").size.unwrap("some").hasTag("xs"), true));
+        $(Assert.equal(sm.unwrap().unwrap("StringInput").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(md.unwrap().unwrap("StringInput").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(lg.unwrap().unwrap("StringInput").size.unwrap("some").hasTag("lg"), true));
     });
 
     test("supports Style.Size helper for input", $ => {
@@ -359,6 +359,6 @@ describeEast("Input", (test) => {
             size: Style.Size("md"),
         }));
 
-        $(assertEast.equal(input.unwrap().unwrap("StringInput").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(input.unwrap().unwrap("StringInput").size.unwrap("some").hasTag("md"), true));
     });
 });

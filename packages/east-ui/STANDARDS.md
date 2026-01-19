@@ -434,21 +434,21 @@ All East UI functionality MUST be thoroughly tested using East code.
 
 **Requirements:**
 - One test file per component: `test/[category]/[component].spec.ts`
-- Import `describeEast` and `assertEast` from `./platforms.spec.js`
+- Import `describeEast` and `Assert` from `@elaraai/east-node-std`
 - Test bodies MUST be written in East code using the `$` block builder
-- Use `assertEast.equal()`, `assertEast.is()`, etc. for assertions
+- Use `Assert.equal()`, `Assert.is()`, etc. for assertions
 
 **Example:**
 
 ```typescript
 import { East, variant } from "@elaraai/east";
 import { Button } from "../../src/index.js";
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 
 describeEast("Button", (test) => {
     test("creates button with label", $ => {
         const button = $.let(Button.Root("Click me"));
-        $(assertEast.equal(button.unwrap("Button").label, "Click me"));
+        $(Assert.equal(button.unwrap("Button").label, "Click me"));
     });
 
     test("creates button with style", $ => {
@@ -456,8 +456,8 @@ describeEast("Button", (test) => {
             variant: "solid",
             colorPalette: "blue",
         }));
-        $(assertEast.equal(button.unwrap("Button").label, "Save"));
-        $(assertEast.equal(
+        $(Assert.equal(button.unwrap("Button").label, "Save"));
+        $(Assert.equal(
             button.unwrap("Button").style.unwrap("some").variant.unwrap("some").getTag(),
             "solid"
         ));

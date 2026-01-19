@@ -261,6 +261,9 @@ export {
     // State namespace (main API)
     State,
 
+    // State implementation (for compilation)
+    StateImpl,
+
     // Store
     UIStore,
     createUIStore,

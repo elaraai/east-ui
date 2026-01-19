@@ -28,23 +28,25 @@ export default East.function(
         // Example 1: Simple Counter
         // =====================================================================
 
-        // Initialize counter state to 0
-        $(State.initTyped("showcase_counter", 0n, IntegerType)());
+        // Initialize counter state to 0 (only if not already set)
+        $.if(State.has("showcase_counter").not(), $ => {
+            $(State.write([IntegerType], "showcase_counter", 0n));
+        });
 
         // Create increment callback
         const incrementFn = East.function([], NullType, $ => {
-            const current = $.let(State.readTyped("showcase_counter", IntegerType)());
-            $(State.writeTyped("showcase_counter", some(current.unwrap('some').add(1n)), IntegerType)());
+            const current = $.let(State.read([IntegerType], "showcase_counter"));
+            $(State.write([IntegerType], "showcase_counter", current.add(1n)));
         });
 
         // Create decrement callback
         const decrementFn = East.function([], NullType, $ => {
-            const current = $.let(State.readTyped("showcase_counter", IntegerType)());
-            $(State.writeTyped("showcase_counter", some(current.unwrap('some').subtract(1n)), IntegerType)());
+            const current = $.let(State.read([IntegerType], "showcase_counter"));
+            $(State.write([IntegerType], "showcase_counter", current.subtract(1n)));
         });
 
         // Read current counter value for display
-        const counterValue = $.let(State.readTyped("showcase_counter", IntegerType)());
+        const counterValue = $.let(State.read([IntegerType], "showcase_counter"));
 
         const simpleCounter = $.let(
             ShowcaseCard(
@@ -52,7 +54,7 @@ export default East.function(
                 "Click buttons to increment/decrement. Tests basic state read/write.",
                 Stack.VStack([
                     Stack.HStack([
-                          Stat.Root("Counter Value", East.str`${counterValue.unwrap('some')}`),
+                          Stat.Root("Counter Value", East.str`${counterValue}`),
                     ], { width: "100%" }),
                     Stack.HStack([
                         Button.Root("- Decrement", {

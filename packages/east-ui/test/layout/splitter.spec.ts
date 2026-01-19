@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Splitter, Style, Text } from "../../src/index.js";
 
 describeEast("Splitter", (test) => {
@@ -17,52 +17,52 @@ describeEast("Splitter", (test) => {
         const content = Text.Root("Hello");
         const panel = $.let(Splitter.Panel(content, { id: "panel1" }));
 
-        $(assertEast.equal(panel.id, "panel1"));
-        $(assertEast.equal(panel.content.unwrap().hasTag("Text"), true));
-        $(assertEast.equal(panel.minSize.hasTag("none"), true));
-        $(assertEast.equal(panel.maxSize.hasTag("none"), true));
-        $(assertEast.equal(panel.collapsible.hasTag("none"), true));
-        $(assertEast.equal(panel.defaultCollapsed.hasTag("none"), true));
+        $(Assert.equal(panel.id, "panel1"));
+        $(Assert.equal(panel.content.unwrap().hasTag("Text"), true));
+        $(Assert.equal(panel.minSize.hasTag("none"), true));
+        $(Assert.equal(panel.maxSize.hasTag("none"), true));
+        $(Assert.equal(panel.collapsible.hasTag("none"), true));
+        $(Assert.equal(panel.defaultCollapsed.hasTag("none"), true));
     });
 
     test("creates panel with minSize", $ => {
         const content = Text.Root("Content");
         const panel = $.let(Splitter.Panel(content, { id: "panel1", minSize: 20 }));
 
-        $(assertEast.equal(panel.minSize.hasTag("some"), true));
-        $(assertEast.equal(panel.minSize.unwrap("some"), 20.0));
+        $(Assert.equal(panel.minSize.hasTag("some"), true));
+        $(Assert.equal(panel.minSize.unwrap("some"), 20.0));
     });
 
     test("creates panel with maxSize", $ => {
         const content = Text.Root("Content");
         const panel = $.let(Splitter.Panel(content, { id: "panel1", maxSize: 80 }));
 
-        $(assertEast.equal(panel.maxSize.hasTag("some"), true));
-        $(assertEast.equal(panel.maxSize.unwrap("some"), 80.0));
+        $(Assert.equal(panel.maxSize.hasTag("some"), true));
+        $(Assert.equal(panel.maxSize.unwrap("some"), 80.0));
     });
 
     test("creates panel with collapsible true", $ => {
         const content = Text.Root("Content");
         const panel = $.let(Splitter.Panel(content, { id: "panel1", collapsible: true }));
 
-        $(assertEast.equal(panel.collapsible.hasTag("some"), true));
-        $(assertEast.equal(panel.collapsible.unwrap("some"), true));
+        $(Assert.equal(panel.collapsible.hasTag("some"), true));
+        $(Assert.equal(panel.collapsible.unwrap("some"), true));
     });
 
     test("creates panel with collapsible false", $ => {
         const content = Text.Root("Content");
         const panel = $.let(Splitter.Panel(content, { id: "panel1", collapsible: false }));
 
-        $(assertEast.equal(panel.collapsible.hasTag("some"), true));
-        $(assertEast.equal(panel.collapsible.unwrap("some"), false));
+        $(Assert.equal(panel.collapsible.hasTag("some"), true));
+        $(Assert.equal(panel.collapsible.unwrap("some"), false));
     });
 
     test("creates panel with defaultCollapsed true", $ => {
         const content = Text.Root("Content");
         const panel = $.let(Splitter.Panel(content, { id: "panel1", defaultCollapsed: true }));
 
-        $(assertEast.equal(panel.defaultCollapsed.hasTag("some"), true));
-        $(assertEast.equal(panel.defaultCollapsed.unwrap("some"), true));
+        $(Assert.equal(panel.defaultCollapsed.hasTag("some"), true));
+        $(Assert.equal(panel.defaultCollapsed.unwrap("some"), true));
     });
 
     test("creates panel with all options", $ => {
@@ -75,11 +75,11 @@ describeEast("Splitter", (test) => {
             defaultCollapsed: false,
         }));
 
-        $(assertEast.equal(panel.id, "fullPanel"));
-        $(assertEast.equal(panel.minSize.unwrap("some"), 15.0));
-        $(assertEast.equal(panel.maxSize.unwrap("some"), 85.0));
-        $(assertEast.equal(panel.collapsible.unwrap("some"), true));
-        $(assertEast.equal(panel.defaultCollapsed.unwrap("some"), false));
+        $(Assert.equal(panel.id, "fullPanel"));
+        $(Assert.equal(panel.minSize.unwrap("some"), 15.0));
+        $(Assert.equal(panel.maxSize.unwrap("some"), 85.0));
+        $(Assert.equal(panel.collapsible.unwrap("some"), true));
+        $(Assert.equal(panel.defaultCollapsed.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -91,9 +91,9 @@ describeEast("Splitter", (test) => {
         const panel2 = Splitter.Panel(Text.Root("Right"), { id: "right" });
         const splitter = $.let(Splitter.Root([panel1, panel2], [50, 50]));
 
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").panels.size(), 2n));
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").defaultSize.size(), 2n));
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").style.hasTag("none"), true));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").panels.size(), 2n));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").defaultSize.size(), 2n));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").style.hasTag("none"), true));
     });
 
     test("creates splitter with unequal default sizes", $ => {
@@ -101,8 +101,8 @@ describeEast("Splitter", (test) => {
         const panel2 = Splitter.Panel(Text.Root("Main"), { id: "main" });
         const splitter = $.let(Splitter.Root([panel1, panel2], [30, 70]));
 
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").panels.size(), 2n));
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").defaultSize.size(), 2n));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").panels.size(), 2n));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").defaultSize.size(), 2n));
     });
 
     test("creates splitter with three panels", $ => {
@@ -111,8 +111,8 @@ describeEast("Splitter", (test) => {
         const panel3 = Splitter.Panel(Text.Root("Right"), { id: "right" });
         const splitter = $.let(Splitter.Root([panel1, panel2, panel3], [25, 50, 25]));
 
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").panels.size(), 3n));
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").defaultSize.size(), 3n));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").panels.size(), 3n));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").defaultSize.size(), 3n));
     });
 
     // =========================================================================
@@ -124,9 +124,9 @@ describeEast("Splitter", (test) => {
         const panel2 = Splitter.Panel(Text.Root("Right"), { id: "right" });
         const splitter = $.let(Splitter.Root([panel1, panel2], [50, 50], { orientation: Style.Orientation("horizontal") }));
 
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").style.hasTag("some"), true));
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").style.unwrap("some").orientation.hasTag("some"), true));
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").style.hasTag("some"), true));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").style.unwrap("some").orientation.hasTag("some"), true));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
     });
 
     test("creates vertical splitter", $ => {
@@ -134,7 +134,7 @@ describeEast("Splitter", (test) => {
         const panel2 = Splitter.Panel(Text.Root("Bottom"), { id: "bottom" });
         const splitter = $.let(Splitter.Root([panel1, panel2], [60, 40], { orientation: Style.Orientation("vertical") }));
 
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").style.unwrap("some").orientation.unwrap("some").hasTag("vertical"), true));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").style.unwrap("some").orientation.unwrap("some").hasTag("vertical"), true));
     });
 
     test("creates splitter with string orientation", $ => {
@@ -142,7 +142,7 @@ describeEast("Splitter", (test) => {
         const panel2 = Splitter.Panel(Text.Root("Right"), { id: "right" });
         const splitter = $.let(Splitter.Root([panel1, panel2], [50, 50], { orientation: "horizontal" }));
 
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
     });
 
     // =========================================================================
@@ -163,8 +163,8 @@ describeEast("Splitter", (test) => {
 
         const splitter = $.let(Splitter.Root([sidebar, main], [25, 75], { orientation: "horizontal" }));
 
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").panels.size(), 2n));
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").panels.size(), 2n));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
     });
 
     test("creates editor with terminal layout", $ => {
@@ -180,8 +180,8 @@ describeEast("Splitter", (test) => {
 
         const splitter = $.let(Splitter.Root([editor, terminal], [70, 30], { orientation: "vertical" }));
 
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").panels.size(), 2n));
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").style.unwrap("some").orientation.unwrap("some").hasTag("vertical"), true));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").panels.size(), 2n));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").style.unwrap("some").orientation.unwrap("some").hasTag("vertical"), true));
     });
 
     test("creates three-column layout", $ => {
@@ -191,7 +191,7 @@ describeEast("Splitter", (test) => {
 
         const splitter = $.let(Splitter.Root([left, center, right], [20, 60, 20], { orientation: "horizontal" }));
 
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").panels.size(), 3n));
-        $(assertEast.equal(splitter.unwrap().unwrap("Splitter").defaultSize.size(), 3n));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").panels.size(), 3n));
+        $(Assert.equal(splitter.unwrap().unwrap("Splitter").defaultSize.size(), 3n));
     });
 });

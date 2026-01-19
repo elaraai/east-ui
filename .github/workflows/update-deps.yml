@@ -110,12 +110,37 @@ jobs:
             echo "@elaraai/e3-api-client: $CURRENT_VERSION -> $LATEST_VERSION"
           fi
 
+      - name: Check for @elaraai/east-node-std updates
+        id: check_east_node_std
+        run: |
+          CURRENT_VERSION=$(node -p "require('./packages/east-ui-components/package.json').devDependencies['@elaraai/east-node-std']" | sed 's/\^//')
+          echo "current_version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
+
+          LATEST_STABLE=$(npm view @elaraai/east-node-std version 2>/dev/null || echo "")
+          LATEST_BETA=$(npm view @elaraai/east-node-std dist-tags.beta 2>/dev/null || echo "")
+
+          if [[ "$CURRENT_VERSION" == *"beta"* ]]; then
+            LATEST_VERSION="${LATEST_BETA}"
+          else
+            LATEST_VERSION="${LATEST_STABLE}"
+          fi
+
+          echo "latest_version=${LATEST_VERSION}" >> $GITHUB_OUTPUT
+
+          if [[ -z "$LATEST_VERSION" ]] || [[ "$CURRENT_VERSION" == "$LATEST_VERSION" ]]; then
+            echo "has_updates=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_updates=true" >> $GITHUB_OUTPUT
+            echo "@elaraai/east-node-std: $CURRENT_VERSION -> $LATEST_VERSION"
+          fi
+
       - name: Check if any updates available
         id: check_updates
         run: |
           if [[ "${{ steps.check_east.outputs.has_updates }}" == "true" ]] || \
              [[ "${{ steps.check_e3_server.outputs.has_updates }}" == "true" ]] || \
-             [[ "${{ steps.check_e3_client.outputs.has_updates }}" == "true" ]]; then
+             [[ "${{ steps.check_e3_client.outputs.has_updates }}" == "true" ]] || \
+             [[ "${{ steps.check_east_node_std.outputs.has_updates }}" == "true" ]]; then
             echo "has_updates=true" >> $GITHUB_OUTPUT
           else
             echo "has_updates=false" >> $GITHUB_OUTPUT
@@ -140,6 +165,10 @@ jobs:
       - name: Update @elaraai/e3-api-client version
         if: steps.check_e3_client.outputs.has_updates == 'true'
         run: make set-e3-api-client-version VERSION=${{ steps.check_e3_client.outputs.latest_version }}
+
+      - name: Update @elaraai/east-node-std version
+        if: steps.check_east_node_std.outputs.has_updates == 'true'
+        run: make set-east-node-std-version VERSION=${{ steps.check_east_node_std.outputs.latest_version }}
 
       - name: Install dependencies
         if: steps.check_updates.outputs.has_updates == 'true'
@@ -195,6 +224,11 @@ jobs:
           if [[ "${{ steps.check_e3_client.outputs.has_updates }}" == "true" ]]; then
             UPDATES="${UPDATES}- \`@elaraai/e3-api-client\`: \`${{ steps.check_e3_client.outputs.current_version }}\` → \`${{ steps.check_e3_client.outputs.latest_version }}\`\n"
             COMMIT_MSG="${COMMIT_MSG} @elaraai/e3-api-client@${{ steps.check_e3_client.outputs.latest_version }}"
+          fi
+
+          if [[ "${{ steps.check_east_node_std.outputs.has_updates }}" == "true" ]]; then
+            UPDATES="${UPDATES}- \`@elaraai/east-node-std\`: \`${{ steps.check_east_node_std.outputs.current_version }}\` → \`${{ steps.check_east_node_std.outputs.latest_version }}\`\n"
+            COMMIT_MSG="${COMMIT_MSG} @elaraai/east-node-std@${{ steps.check_east_node_std.outputs.latest_version }}"
           fi
 
           echo "updates<<EOF" >> $GITHUB_OUTPUT

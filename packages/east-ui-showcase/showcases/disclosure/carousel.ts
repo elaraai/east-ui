@@ -208,7 +208,9 @@ export default East.function(
         // =====================================================================
 
         // Initialize state for interactive examples
-        $(State.initTyped("carousel_index", 0n, IntegerType)());
+        $.if(State.has("carousel_index").not(), $ => {
+            $(State.write([IntegerType], "carousel_index", 0n));
+        });
 
         // Interactive Carousel with onIndexChange
         const interactiveCarousel = $.let(
@@ -216,13 +218,13 @@ export default East.function(
                 "Interactive Carousel",
                 "Navigate to see onIndexChange callback",
                 Reactive.Root($ => {
-                    const currentIndex = $.let(State.readTyped("carousel_index", IntegerType)());
+                    const currentIndex = $.let(State.read([IntegerType], "carousel_index"));
 
                     const onIndexChange = East.function(
                         [IntegerType],
                         NullType,
                         ($, newIndex) => {
-                            $(State.writeTyped("carousel_index", some(newIndex), IntegerType)());
+                            $(State.write([IntegerType], "carousel_index", newIndex));
                         }
                     );
 
@@ -240,7 +242,7 @@ export default East.function(
                             }),
                         ], { width: "100%" }),
                         Badge.Root(
-                            East.str`Current slide: ${currentIndex.unwrap('some').add(1n)} of 4`,
+                            East.str`Current slide: ${currentIndex.add(1n)} of 4`,
                             { colorPalette: "blue", variant: "solid" }
                         ),
                     ], { gap: "3", align: "stretch" });

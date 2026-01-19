@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Chart } from "../../src/index.js";
 
 describeEast("Chart.Composed", (test) => {
@@ -26,8 +26,8 @@ describeEast("Chart.Composed", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "ComposedChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 2n));
+        $(Assert.equal(chart.unwrap().getTag(), "ComposedChart"));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 2n));
     });
 
     test("creates composed chart with all series types", $ => {
@@ -47,8 +47,8 @@ describeEast("Chart.Composed", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "ComposedChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 4n));
+        $(Assert.equal(chart.unwrap().getTag(), "ComposedChart"));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 4n));
     });
 
     // =========================================================================
@@ -70,11 +70,11 @@ describeEast("Chart.Composed", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "ComposedChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 2n));
+        $(Assert.equal(chart.unwrap().getTag(), "ComposedChart"));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 2n));
         // Check the area-range series has correct keys
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(1n).unwrap("areaRange").lowKey, "low"));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(1n).unwrap("areaRange").highKey, "high"));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.get(1n).unwrap("areaRange").lowKey, "low"));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.get(1n).unwrap("areaRange").highKey, "high"));
     });
 
     // =========================================================================
@@ -94,9 +94,9 @@ describeEast("Chart.Composed", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("line").showDots.unwrap("some"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("line").showLine.unwrap("some"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("line").strokeDasharray.unwrap("some"), "5 5"));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("line").showDots.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("line").showLine.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("line").strokeDasharray.unwrap("some"), "5 5"));
     });
 
     // =========================================================================
@@ -117,8 +117,8 @@ describeEast("Chart.Composed", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("area").stackId.unwrap("some"), "stack1"));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(1n).unwrap("area").stackId.unwrap("some"), "stack1"));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("area").stackId.unwrap("some"), "stack1"));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.get(1n).unwrap("area").stackId.unwrap("some"), "stack1"));
     });
 
     // =========================================================================
@@ -139,8 +139,8 @@ describeEast("Chart.Composed", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("bar").stackId.unwrap("some"), "bars"));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(1n).unwrap("bar").stackId.unwrap("some"), "bars"));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("bar").stackId.unwrap("some"), "bars"));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.get(1n).unwrap("bar").stackId.unwrap("some"), "bars"));
     });
 
     // =========================================================================
@@ -163,9 +163,9 @@ describeEast("Chart.Composed", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").grid.unwrap("some").show.unwrap("some"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").tooltip.unwrap("some").show.unwrap("some"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").legend.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").tooltip.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates composed chart with curve type", $ => {
@@ -182,7 +182,7 @@ describeEast("Chart.Composed", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").curveType.unwrap("some").hasTag("natural"), true));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").curveType.unwrap("some").hasTag("natural"), true));
     });
 
     test("creates composed chart with bar size and gap", $ => {
@@ -200,8 +200,8 @@ describeEast("Chart.Composed", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").barSize.unwrap("some"), 20n));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").barGap.unwrap("some"), 4n));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").barSize.unwrap("some"), 20n));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").barGap.unwrap("some"), 4n));
     });
 });
 
@@ -228,9 +228,9 @@ describeEast("Chart.Composed Pivot", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "ComposedChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").pivotKey.unwrap("some"), "category"));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").valueKey.unwrap("some"), "value"));
+        $(Assert.equal(chart.unwrap().getTag(), "ComposedChart"));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").pivotKey.unwrap("some"), "category"));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").valueKey.unwrap("some"), "value"));
     });
 
     test("creates chart without pivotKey (backward compat)", $ => {
@@ -247,7 +247,7 @@ describeEast("Chart.Composed Pivot", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").pivotKey.hasTag("none"), true));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").pivotKey.hasTag("none"), true));
     });
 
     test("creates chart with pivotColors in line series", $ => {
@@ -273,8 +273,8 @@ describeEast("Chart.Composed Pivot", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").pivotKey.unwrap("some"), "region"));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("line").pivotColors.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").pivotKey.unwrap("some"), "region"));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("line").pivotColors.hasTag("some"), true));
     });
 
     test("creates chart with pivotColors in bar series", $ => {
@@ -298,7 +298,7 @@ describeEast("Chart.Composed Pivot", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("bar").pivotColors.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("bar").pivotColors.hasTag("some"), true));
     });
 });
 
@@ -329,9 +329,9 @@ describeEast("Chart.ComposedMulti", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "ComposedChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").valueKey.unwrap("some"), "value"));
+        $(Assert.equal(chart.unwrap().getTag(), "ComposedChart"));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 2n));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").valueKey.unwrap("some"), "value"));
     });
 
     test("creates composed multi chart with mixed types", $ => {
@@ -361,8 +361,8 @@ describeEast("Chart.ComposedMulti", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "ComposedChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 3n));
-        $(assertEast.equal(chart.unwrap().unwrap("ComposedChart").dataSeries.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().getTag(), "ComposedChart"));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 3n));
+        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").dataSeries.hasTag("some"), true));
     });
 });

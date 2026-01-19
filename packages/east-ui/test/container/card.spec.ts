@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Card, Text, Heading, Button, Stack, Style } from "../../src/index.js";
 
 describeEast("Card", (test) => {
@@ -14,9 +14,9 @@ describeEast("Card", (test) => {
     test("creates empty card", $ => {
         const card = $.let(Card.Root([]));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").header.hasTag("none"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").footer.hasTag("none"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.hasTag("none"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").header.hasTag("none"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").footer.hasTag("none"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.hasTag("none"), true));
     });
 
     test("creates card with text child", $ => {
@@ -25,7 +25,7 @@ describeEast("Card", (test) => {
         ]));
 
         // body is an array of components
-        $(assertEast.equal(card.unwrap().unwrap("Card").header.hasTag("none"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").header.hasTag("none"), true));
     });
 
     test("creates card with header", $ => {
@@ -33,8 +33,8 @@ describeEast("Card", (test) => {
             header: Heading.Root("Card Title"),
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").header.hasTag("some"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").header.unwrap("some").unwrap().unwrap("Heading").value, "Card Title"));
+        $(Assert.equal(card.unwrap().unwrap("Card").header.hasTag("some"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").header.unwrap("some").unwrap().unwrap("Heading").value, "Card Title"));
     });
 
     test("creates card with header and footer", $ => {
@@ -43,9 +43,9 @@ describeEast("Card", (test) => {
             footer: Button.Root("Buy Now"),
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").header.unwrap("some").unwrap().unwrap("Heading").value, "Product Name"));
-        $(assertEast.equal(card.unwrap().unwrap("Card").footer.hasTag("some"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").footer.unwrap("some").unwrap().unwrap("Button").label, "Buy Now"));
+        $(Assert.equal(card.unwrap().unwrap("Card").header.unwrap("some").unwrap().unwrap("Heading").value, "Product Name"));
+        $(Assert.equal(card.unwrap().unwrap("Card").footer.hasTag("some"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").footer.unwrap("some").unwrap().unwrap("Button").label, "Buy Now"));
     });
 
     // =========================================================================
@@ -62,8 +62,8 @@ describeEast("Card", (test) => {
             ]),
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").header.hasTag("some"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").header.unwrap("some").unwrap().hasTag("Stack"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").header.hasTag("some"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").header.unwrap("some").unwrap().hasTag("Stack"), true));
     });
 
     test("creates card with HStack footer", $ => {
@@ -76,8 +76,8 @@ describeEast("Card", (test) => {
             ]),
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").footer.hasTag("some"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").footer.unwrap("some").unwrap().hasTag("Stack"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").footer.hasTag("some"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").footer.unwrap("some").unwrap().hasTag("Stack"), true));
     });
 
     // =========================================================================
@@ -89,9 +89,9 @@ describeEast("Card", (test) => {
             variant: "elevated",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.hasTag("some"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.hasTag("some"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("elevated"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.hasTag("some"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.hasTag("some"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("elevated"), true));
     });
 
     test("creates outline card", $ => {
@@ -99,7 +99,7 @@ describeEast("Card", (test) => {
             variant: "outline",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
     });
 
     test("creates subtle card", $ => {
@@ -107,7 +107,7 @@ describeEast("Card", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates card with CardVariant helper", $ => {
@@ -115,7 +115,7 @@ describeEast("Card", (test) => {
             variant: Card.Variant("elevated"),
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("elevated"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("elevated"), true));
     });
 
     // =========================================================================
@@ -127,9 +127,9 @@ describeEast("Card", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.hasTag("some"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").size.hasTag("some"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.hasTag("some"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").size.hasTag("some"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates medium card", $ => {
@@ -137,7 +137,7 @@ describeEast("Card", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates large card", $ => {
@@ -145,7 +145,7 @@ describeEast("Card", (test) => {
             size: "lg",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").size.unwrap("some").hasTag("lg"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").size.unwrap("some").hasTag("lg"), true));
     });
 
     test("creates card with Style.Size helper", $ => {
@@ -153,7 +153,7 @@ describeEast("Card", (test) => {
             size: Style.Size("md"),
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").size.unwrap("some").hasTag("md"), true));
     });
 
     // =========================================================================
@@ -165,9 +165,9 @@ describeEast("Card", (test) => {
             height: "400px",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.hasTag("some"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").height.hasTag("some"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").height.unwrap("some"), "400px"));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.hasTag("some"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").height.hasTag("some"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").height.unwrap("some"), "400px"));
     });
 
     test("creates card with minHeight", $ => {
@@ -175,7 +175,7 @@ describeEast("Card", (test) => {
             minHeight: "200px",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").minHeight.unwrap("some"), "200px"));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").minHeight.unwrap("some"), "200px"));
     });
 
     test("creates card with maxHeight", $ => {
@@ -183,7 +183,7 @@ describeEast("Card", (test) => {
             maxHeight: "600px",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").maxHeight.unwrap("some"), "600px"));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").maxHeight.unwrap("some"), "600px"));
     });
 
     test("creates card with width", $ => {
@@ -191,7 +191,7 @@ describeEast("Card", (test) => {
             width: "300px",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").width.unwrap("some"), "300px"));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").width.unwrap("some"), "300px"));
     });
 
     test("creates card with flex", $ => {
@@ -199,7 +199,7 @@ describeEast("Card", (test) => {
             flex: "1",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").flex.unwrap("some"), "1"));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").flex.unwrap("some"), "1"));
     });
 
     test("creates card with full height", $ => {
@@ -207,7 +207,7 @@ describeEast("Card", (test) => {
             height: "100%",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").height.unwrap("some"), "100%"));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").height.unwrap("some"), "100%"));
     });
 
     test("creates card with overflow", $ => {
@@ -215,8 +215,8 @@ describeEast("Card", (test) => {
             overflow: "auto",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").overflow.hasTag("some"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").overflow.unwrap("some").hasTag("auto"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").overflow.hasTag("some"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").overflow.unwrap("some").hasTag("auto"), true));
     });
 
     // =========================================================================
@@ -235,12 +235,12 @@ describeEast("Card", (test) => {
             minHeight: "200px",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").header.unwrap("some").unwrap().unwrap("Heading").value, "Full Card"));
-        $(assertEast.equal(card.unwrap().unwrap("Card").footer.unwrap("some").unwrap().unwrap("Button").label, "Action"));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("elevated"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").size.unwrap("some").hasTag("md"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").height.unwrap("some"), "400px"));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").minHeight.unwrap("some"), "200px"));
+        $(Assert.equal(card.unwrap().unwrap("Card").header.unwrap("some").unwrap().unwrap("Heading").value, "Full Card"));
+        $(Assert.equal(card.unwrap().unwrap("Card").footer.unwrap("some").unwrap().unwrap("Button").label, "Action"));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("elevated"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").height.unwrap("some"), "400px"));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").minHeight.unwrap("some"), "200px"));
     });
 
     test("creates product card", $ => {
@@ -255,9 +255,9 @@ describeEast("Card", (test) => {
             variant: "outline",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").header.hasTag("some"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").footer.hasTag("some"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").header.hasTag("some"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").footer.hasTag("some"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
     });
 
     test("creates user profile card", $ => {
@@ -272,8 +272,8 @@ describeEast("Card", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").header.hasTag("some"), true));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("elevated"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").header.hasTag("some"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("elevated"), true));
     });
 
     test("creates info card", $ => {
@@ -284,8 +284,8 @@ describeEast("Card", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").header.unwrap("some").unwrap().unwrap("Heading").value, "Information"));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").header.unwrap("some").unwrap().unwrap("Heading").value, "Information"));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates card with nested components", $ => {
@@ -296,7 +296,7 @@ describeEast("Card", (test) => {
             header: Heading.Root("Multi-content Card"),
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").header.unwrap("some").unwrap().unwrap("Heading").value, "Multi-content Card"));
+        $(Assert.equal(card.unwrap().unwrap("Card").header.unwrap("some").unwrap().unwrap("Heading").value, "Multi-content Card"));
     });
 
     test("creates flexible card that fills container", $ => {
@@ -309,8 +309,8 @@ describeEast("Card", (test) => {
             overflow: "auto",
         }));
 
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").height.unwrap("some"), "100%"));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").flex.unwrap("some"), "1"));
-        $(assertEast.equal(card.unwrap().unwrap("Card").style.unwrap("some").overflow.unwrap("some").hasTag("auto"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").height.unwrap("some"), "100%"));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").flex.unwrap("some"), "1"));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").overflow.unwrap("some").hasTag("auto"), true));
     });
 });

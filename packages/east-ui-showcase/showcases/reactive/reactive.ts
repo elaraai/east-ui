@@ -34,35 +34,39 @@ export default East.function(
         // =====================================================================
         // Initialize shared state
         // =====================================================================
-        $(State.initTyped("reactive_counter", 0n, IntegerType)());
-        $(State.initTyped("reactive_revenue", 100.0, FloatType)());
+        $.if(State.has("reactive_counter").not(), $ => {
+            $(State.write([IntegerType], "reactive_counter", 0n));
+        });
+        $.if(State.has("reactive_revenue").not(), $ => {
+            $(State.write([FloatType], "reactive_revenue", 100.0));
+        });
 
         // =====================================================================
         // Callbacks for modifying state
         // =====================================================================
 
         const incrementCounter = East.function([], NullType, $ => {
-            const current = $.let(State.readTyped("reactive_counter", IntegerType)());
-            $(State.writeTyped("reactive_counter", some(current.unwrap('some').add(1n)), IntegerType)());
+            const current = $.let(State.read([IntegerType], "reactive_counter"));
+            $(State.write([IntegerType], "reactive_counter", current.add(1n)));
         });
 
         const decrementCounter = East.function([], NullType, $ => {
-            const current = $.let(State.readTyped("reactive_counter", IntegerType)());
-            $(State.writeTyped("reactive_counter", some(current.unwrap('some').subtract(1n)), IntegerType)());
+            const current = $.let(State.read([IntegerType], "reactive_counter"));
+            $(State.write([IntegerType], "reactive_counter", current.subtract(1n)));
         });
 
         const boostRevenue = East.function([], NullType, $ => {
-            const current = $.let(State.readTyped("reactive_revenue", FloatType)());
-            $(State.writeTyped("reactive_revenue", some(current.unwrap('some').multiply(1.2)), FloatType)());
+            const current = $.let(State.read([FloatType], "reactive_revenue"));
+            $(State.write([FloatType], "reactive_revenue", current.multiply(1.2)));
         });
 
         const crashRevenue = East.function([], NullType, $ => {
-            const current = $.let(State.readTyped("reactive_revenue", FloatType)());
-            $(State.writeTyped("reactive_revenue", some(current.unwrap('some').multiply(0.7)), FloatType)());
+            const current = $.let(State.read([FloatType], "reactive_revenue"));
+            $(State.write([FloatType], "reactive_revenue", current.multiply(0.7)));
         });
 
         const resetRevenue = East.function([], NullType, $ => {
-            $(State.writeTyped("reactive_revenue", some(100.0), FloatType)());
+            $(State.write([FloatType], "reactive_revenue", 100.0));
         });
 
         // =====================================================================
@@ -70,7 +74,7 @@ export default East.function(
         // =====================================================================
 
         // Read counter value once at render time - this won't update!
-        const staticValue = $.let(State.readTyped("reactive_counter", IntegerType)());
+        const staticValue = $.let(State.read([IntegerType], "reactive_counter"));
 
         const nonReactiveCard = $.let(
             ShowcaseCard(
@@ -78,7 +82,7 @@ export default East.function(
                 "Reads state once at render. Click buttons - value stays frozen at initial value.",
                 Stack.VStack([
                     Badge.Root("Does NOT use Reactive.Root", { colorPalette: "red", variant: "solid" }),
-                    Stat.Root("Frozen Value", East.print(staticValue.unwrap('some'))),
+                    Stat.Root("Frozen Value", East.print(staticValue)),
                     Stack.HStack([
                         Button.Root("-", { variant: "outline", colorPalette: "gray", onClick: decrementCounter }),
                         Button.Root("+", { variant: "outline", colorPalette: "gray", onClick: incrementCounter }),
@@ -87,7 +91,7 @@ export default East.function(
                 some(`
                     Stack.VStack([
                         Badge.Root("Does NOT use Reactive.Root", { colorPalette: "red", variant: "solid" }),
-                        Stat.Root("Frozen Value", East.print(staticValue.unwrap('some'))),
+                        Stat.Root("Frozen Value", East.print(staticValue)),
                         Stack.HStack([
                             Button.Root("-", { variant: "outline", colorPalette: "gray", onClick: decrementCounter }),
                             Button.Root("+", { variant: "outline", colorPalette: "gray", onClick: incrementCounter }),
@@ -106,10 +110,10 @@ export default East.function(
                 "Reactive (Live)",
                 "Uses Reactive.Root - automatically updates when state changes!",
                 Reactive.Root($ => {
-                    const liveValue = $.let(State.readTyped("reactive_counter", IntegerType)());
+                    const liveValue = $.let(State.read([IntegerType], "reactive_counter"));
                     return Stack.VStack([
                         Badge.Root("Uses Reactive.Root", { colorPalette: "green", variant: "solid" }),
-                        Stat.Root("Live Value", East.print(liveValue.unwrap('some'))),
+                        Stat.Root("Live Value", East.print(liveValue)),
                         Stack.HStack([
                             Button.Root("-", { variant: "solid", colorPalette: "red", onClick: decrementCounter }),
                             Button.Root("+", { variant: "solid", colorPalette: "blue", onClick: incrementCounter }),
@@ -118,10 +122,10 @@ export default East.function(
                 }),
                 some(`
                     Reactive.Root($ => {
-                        const liveValue = $.let(State.readTyped("reactive_counter", IntegerType)());
+                        const liveValue = $.let(State.read([IntegerType], "reactive_counter"));
                         return Stack.VStack([
                             Badge.Root("Uses Reactive.Root", { colorPalette: "green", variant: "solid" }),
-                            Stat.Root("Live Value", East.print(liveValue.unwrap('some'))),
+                            Stat.Root("Live Value", East.print(liveValue)),
                             Stack.HStack([
                                 Button.Root("-", { variant: "solid", colorPalette: "red", onClick: decrementCounter }),
                                 Button.Root("+", { variant: "solid", colorPalette: "blue", onClick: incrementCounter }),
@@ -141,8 +145,7 @@ export default East.function(
                 "Reactive Chart",
                 "A live-updating chart! Click Boost or Crash to see the revenue bar change in real-time.",
                 Reactive.Root($ => {
-                    const revenue = $.let(State.readTyped("reactive_revenue", FloatType)());
-                    const revenueValue = revenue.unwrap('some');
+                    const revenueValue = $.let(State.read([FloatType], "reactive_revenue"));
 
                     // Determine color based on revenue level
                     const color = East.greaterEqual(revenueValue, 150.0).ifElse(
@@ -173,8 +176,7 @@ export default East.function(
                 }),
                 some(`
                     Reactive.Root($ => {
-                        const revenue = $.let(State.readTyped("reactive_revenue", FloatType)());
-                        const revenueValue = revenue.unwrap('some');
+                        const revenueValue = $.let(State.read([FloatType], "reactive_revenue"));
 
                         // Determine color based on revenue level
                         const color = East.greaterEqual(revenueValue, 150.0).ifElse(
@@ -208,7 +210,7 @@ export default East.function(
         );
 
         // =====================================================================
-        // Example 2: REACTIVE Counter (updates when state changes)
+        // Example 4: Nested REACTIVE (updates when state changes)
         // =====================================================================
 
         const nestedReactiveCard = $.let(
@@ -219,21 +221,23 @@ export default East.function(
                     return Stack.VStack([
                         Badge.Root("Uses Reactive.Root", { colorPalette: "green", variant: "solid" }),
                         Reactive.Root($ => {
-                            $(State.initTyped("reactive_factor", true, BooleanType)());
-                            const counter = $.let(State.readTyped("reactive_counter", IntegerType)());
-                            const factor = $.let(State.readTyped("reactive_factor", BooleanType)());
+                            $.if(State.has("reactive_factor").not(), $ => {
+                                $(State.write([BooleanType], "reactive_factor", true));
+                            });
+                            const counter = $.let(State.read([IntegerType], "reactive_counter"));
+                            const factor = $.let(State.read([BooleanType], "reactive_factor"));
                             const onChange = East.function([BooleanType], NullType, ($, newValue) => {
-                                $(State.writeTyped("reactive_factor", some(newValue), BooleanType)());
+                                $(State.write([BooleanType], "reactive_factor", newValue));
                             })
-                            const adjusted = $.let(counter.unwrap('some'))
-                            $.if(factor.unwrap('some'),
+                            const adjusted = $.let(counter)
+                            $.if(factor,
                                 $ => {
                                     $.assign(adjusted, adjusted.multiply(2n));
                                 },
                             );
                             return Stack.HStack([
                                 Stat.Root("Live Value", East.print(adjusted)),
-                                Switch.Root(factor.unwrap('some'), { onChange })
+                                Switch.Root(factor, { onChange })
                             ], { gap: "4", align: "center" });
                         }),
                         Stack.HStack([
@@ -247,21 +251,23 @@ export default East.function(
                         return Stack.VStack([
                             Badge.Root("Uses Reactive.Root", { colorPalette: "green", variant: "solid" }),
                             Reactive.Root($ => {
-                                $(State.initTyped("reactive_factor", true, BooleanType)());
-                                const counter = $.let(State.readTyped("reactive_counter", IntegerType)());
-                                const factor = $.let(State.readTyped("reactive_factor", BooleanType)());
+                                $.if(State.has("reactive_factor").not(), $ => {
+                                    $(State.write([BooleanType], "reactive_factor", true));
+                                });
+                                const counter = $.let(State.read([IntegerType], "reactive_counter"));
+                                const factor = $.let(State.read([BooleanType], "reactive_factor"));
                                 const onChange = East.function([BooleanType], NullType, ($, newValue) => {
-                                    $(State.writeTyped("reactive_factor", some(newValue), BooleanType)());
+                                    $(State.write([BooleanType], "reactive_factor", newValue));
                                 })
-                                const adjusted = $.let(counter.unwrap('some'))
-                                $.if(factor.unwrap('some'),
+                                const adjusted = $.let(counter)
+                                $.if(factor,
                                     $ => {
                                         $.assign(adjusted, adjusted.multiply(2n));
                                     },
                                 );
                                 return Stack.HStack([
                                     Stat.Root("Live Value", East.print(adjusted)),
-                                    Switch.Root(factor.unwrap('some'), { onChange })
+                                    Switch.Root(factor, { onChange })
                                 ], { gap: "4", align: "center" });
                             }),
                             Stack.HStack([

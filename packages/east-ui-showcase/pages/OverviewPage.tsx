@@ -38,11 +38,13 @@ const DataPointType = StructType({
 // Interactive demo: Dual-axis chart with slider-controlled projection
 const interactiveDemoShowcase = East.function([], UIComponentType, ($) => {
     // Initialize state for the growth multiplier
-    $(State.initTyped("demo_multiplier", 1.5, FloatType)());
+    $.if(State.has("demo_multiplier").not(), $ => {
+        $(State.write([FloatType], "demo_multiplier", 1.5));
+    });
 
     // Callback to update multiplier from slider
     const onSliderChange = East.function([FloatType], NullType, ($, value) => {
-        $(State.writeTyped("demo_multiplier", some(value), FloatType)());
+        $(State.write([FloatType], "demo_multiplier", value));
     });
 
     const content = $.let(EastBox.Root([
@@ -50,7 +52,7 @@ const interactiveDemoShowcase = East.function([], UIComponentType, ($) => {
             // Month names as East array
             const monthNames = $.const(["Jan", "Feb", "Mar", "Apr", "May", "Jun"]);
 
-            const multiplier = $.let(State.readTyped("demo_multiplier", FloatType)().unwrap('some'));
+            const multiplier = $.let(State.read([FloatType], "demo_multiplier"));
 
             // Generate chart data dynamically based on multiplier
             // actual: base curve that flattens and shifts down as m increases
@@ -121,14 +123,16 @@ const interactiveDemoShowcase = East.function([], UIComponentType, ($) => {
 const DataPointType = StructType({ month: StringType, actual: FloatType, forecast: FloatType });
 
 const Dashboard = East.function([], UIComponentType, ($) => {
-    $(State.initTyped("multiplier", 1.5, FloatType)());
+    $.if(State.has("multiplier").not(), $ => {
+        $(State.write([FloatType], "multiplier", 1.5));
+    });
     const onSliderChange = East.function([FloatType], NullType, ($, v) => {
-        $(State.writeTyped("multiplier", some(v), FloatType)());
+        $(State.write([FloatType], "multiplier", v));
     });
 
     return Reactive.Root($ => {
         const months = $.const(["Jan", "Feb", "Mar", "Apr", "May", "Jun"]);
-        const m = $.let(State.readTyped("multiplier", FloatType)().unwrap('some'));
+        const m = $.let(State.read([FloatType], "multiplier"));
 
         // Generate data dynamically - curves change shape as m changes
         const data = $.let(East.Array.generate(6n, DataPointType, ($, i) => {

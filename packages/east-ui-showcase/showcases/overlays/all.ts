@@ -433,9 +433,15 @@ export default East.function(
         // =====================================================================
 
         // Initialize state for interactive examples
-        $(State.initTyped("dialog_open_count", 0n, IntegerType)());
-        $(State.initTyped("dialog_close_count", 0n, IntegerType)());
-        $(State.initTyped("drawer_open_count", 0n, IntegerType)());
+        $.if(State.has("dialog_open_count").not(), $ => {
+            $(State.write([IntegerType], "dialog_open_count", 0n));
+        });
+        $.if(State.has("dialog_close_count").not(), $ => {
+            $(State.write([IntegerType], "dialog_close_count", 0n));
+        });
+        $.if(State.has("drawer_open_count").not(), $ => {
+            $(State.write([IntegerType], "drawer_open_count", 0n));
+        });
 
         // Interactive Dialog with onOpenChange
         const interactiveDialog = $.let(
@@ -448,16 +454,16 @@ export default East.function(
                         [BooleanType],
                         NullType,
                         ($, isOpen) => {
-                            const openCount = $.let(State.readTyped("dialog_open_count", IntegerType)());
-                            const closeCount = $.let(State.readTyped("dialog_close_count", IntegerType)());
+                            const openCount = $.let(State.read([IntegerType], "dialog_open_count"));
+                            const closeCount = $.let(State.read([IntegerType], "dialog_close_count"));
 
-                            $.if(isOpen, $ => $(State.writeTyped("dialog_open_count", some(openCount.unwrap('some').add(1n)), IntegerType)())
-                            ).else($ => $(State.writeTyped("dialog_close_count", some(closeCount.unwrap('some').add(1n)), IntegerType)()))
+                            $.if(isOpen, $ => $(State.write([IntegerType], "dialog_open_count", openCount.add(1n)))
+                            ).else($ => $(State.write([IntegerType], "dialog_close_count", closeCount.add(1n))))
                         }
                     );
 
-                    const openCount = $.let(State.readTyped("dialog_open_count", IntegerType)());
-                    const closeCount = $.let(State.readTyped("dialog_close_count", IntegerType)());
+                    const openCount = $.let(State.read([IntegerType], "dialog_open_count"));
+                    const closeCount = $.let(State.read([IntegerType], "dialog_close_count"));
 
 
                     return Stack.VStack([
@@ -472,8 +478,8 @@ export default East.function(
                             { title: "Interactive Dialog", onOpenChange }
                         ),
                         Stack.HStack([
-                            Badge.Root(East.str`Opened: ${openCount.unwrap('some')}`, { colorPalette: "green", variant: "solid" }),
-                            Badge.Root(East.str`Closed: ${closeCount.unwrap('some')}`, { colorPalette: "red", variant: "solid" }),
+                            Badge.Root(East.str`Opened: ${openCount}`, { colorPalette: "green", variant: "solid" }),
+                            Badge.Root(East.str`Closed: ${closeCount}`, { colorPalette: "red", variant: "solid" }),
                         ], { gap: "2" }),
                     ], { gap: "3", align: "flex-start" });
                 }),
@@ -497,23 +503,23 @@ export default East.function(
                         [BooleanType],
                         NullType,
                         ($, isOpen) => {
-                                                const openCount = $.let(State.readTyped("drawer_open_count", IntegerType)());
-                            $.if(isOpen, $ => $(State.writeTyped("drawer_open_count", some(openCount.unwrap('some').add(1n)), IntegerType)()))
+                            const openCount = $.let(State.read([IntegerType], "drawer_open_count"));
+                            $.if(isOpen, $ => $(State.write([IntegerType], "drawer_open_count", openCount.add(1n))))
                         }
                     ));
-                    const openCount = $.let(State.readTyped("drawer_open_count", IntegerType)());
+                    const openCount = $.let(State.read([IntegerType], "drawer_open_count"));
                     return Stack.VStack([
                         Drawer.Root(
                             Button.Root("Open Drawer"),
                             [
                                 Stack.VStack([
                                     Text.Root("This drawer counts how many times it's been opened."),
-                                    Badge.Root(East.str`Times opened: ${openCount.unwrap('some')}`, { colorPalette: "purple", size: "lg" }),
+                                    Badge.Root(East.str`Times opened: ${openCount}`, { colorPalette: "purple", size: "lg" }),
                                 ], { gap: "4" }),
                             ],
                             { title: "Interactive Drawer", placement: "end", onOpenChange }
                         ),
-                        Badge.Root(East.str`Drawer opened: ${openCount.unwrap('some')} times`, { colorPalette: "purple", variant: "solid" }),
+                        Badge.Root(East.str`Drawer opened: ${openCount} times`, { colorPalette: "purple", variant: "solid" }),
                     ], { gap: "3", align: "flex-start" });
                 }),
                 some(`Reactive.Root($ => {

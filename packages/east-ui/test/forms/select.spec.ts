@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Select, Style } from "../../src/index.js";
 
 describeEast("Select", (test) => {
@@ -14,9 +14,9 @@ describeEast("Select", (test) => {
     test("creates select item with value and label", $ => {
         const item = $.let(Select.Item("us", "United States"));
 
-        $(assertEast.equal(item.value, "us"));
-        $(assertEast.equal(item.label, "United States"));
-        $(assertEast.equal(item.disabled.hasTag("none"), true));
+        $(Assert.equal(item.value, "us"));
+        $(Assert.equal(item.label, "United States"));
+        $(Assert.equal(item.disabled.hasTag("none"), true));
     });
 
     test("creates select item with string expressions", $ => {
@@ -25,8 +25,8 @@ describeEast("Select", (test) => {
             "United Kingdom"
         ));
 
-        $(assertEast.equal(item.value, "uk"));
-        $(assertEast.equal(item.label, "United Kingdom"));
+        $(Assert.equal(item.value, "uk"));
+        $(Assert.equal(item.label, "United Kingdom"));
     });
 
     test("creates disabled select item", $ => {
@@ -34,9 +34,9 @@ describeEast("Select", (test) => {
             disabled: true,
         }));
 
-        $(assertEast.equal(item.value, "restricted"));
-        $(assertEast.equal(item.disabled.hasTag("some"), true));
-        $(assertEast.equal(item.disabled.unwrap("some"), true));
+        $(Assert.equal(item.value, "restricted"));
+        $(Assert.equal(item.disabled.hasTag("some"), true));
+        $(Assert.equal(item.disabled.unwrap("some"), true));
     });
 
     test("creates enabled select item explicitly", $ => {
@@ -44,7 +44,7 @@ describeEast("Select", (test) => {
             disabled: false,
         }));
 
-        $(assertEast.equal(item.disabled.unwrap("some"), false));
+        $(Assert.equal(item.disabled.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -56,7 +56,7 @@ describeEast("Select", (test) => {
             Select.Item("us", "United States"),
         ]));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").value.hasTag("none"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").value.hasTag("none"), true));
     });
 
     test("creates select with string initial value", $ => {
@@ -65,8 +65,8 @@ describeEast("Select", (test) => {
             Select.Item("uk", "United Kingdom"),
         ]));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").value.hasTag("some"), true));
-        $(assertEast.equal(select.unwrap().unwrap("Select").value.unwrap("some"), "us"));
+        $(Assert.equal(select.unwrap().unwrap("Select").value.hasTag("some"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").value.unwrap("some"), "us"));
     });
 
     test("creates select with expression initial value", $ => {
@@ -75,7 +75,7 @@ describeEast("Select", (test) => {
             Select.Item("ca", "Canada"),
         ]));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").value.unwrap("some"), "ca"));
+        $(Assert.equal(select.unwrap().unwrap("Select").value.unwrap("some"), "ca"));
     });
 
     test("creates select with multiple items", $ => {
@@ -87,7 +87,7 @@ describeEast("Select", (test) => {
         ]));
 
         // Verify select was created with items (items array is embedded in East value)
-        $(assertEast.equal(select.unwrap().unwrap("Select").value.hasTag("none"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").value.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -101,8 +101,8 @@ describeEast("Select", (test) => {
             placeholder: "Select a country",
         }));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").placeholder.hasTag("some"), true));
-        $(assertEast.equal(select.unwrap().unwrap("Select").placeholder.unwrap("some"), "Select a country"));
+        $(Assert.equal(select.unwrap().unwrap("Select").placeholder.hasTag("some"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").placeholder.unwrap("some"), "Select a country"));
     });
 
     test("creates select without placeholder", $ => {
@@ -110,7 +110,7 @@ describeEast("Select", (test) => {
             Select.Item("us", "United States"),
         ]));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").placeholder.hasTag("none"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").placeholder.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -126,8 +126,8 @@ describeEast("Select", (test) => {
             multiple: true,
         }));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").multiple.hasTag("some"), true));
-        $(assertEast.equal(select.unwrap().unwrap("Select").multiple.unwrap("some"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").multiple.hasTag("some"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").multiple.unwrap("some"), true));
     });
 
     test("creates single selection select explicitly", $ => {
@@ -137,7 +137,7 @@ describeEast("Select", (test) => {
             multiple: false,
         }));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").multiple.unwrap("some"), false));
+        $(Assert.equal(select.unwrap().unwrap("Select").multiple.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -151,8 +151,8 @@ describeEast("Select", (test) => {
             disabled: true,
         }));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").disabled.hasTag("some"), true));
-        $(assertEast.equal(select.unwrap().unwrap("Select").disabled.unwrap("some"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").disabled.hasTag("some"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").disabled.unwrap("some"), true));
     });
 
     test("creates enabled select explicitly", $ => {
@@ -162,7 +162,7 @@ describeEast("Select", (test) => {
             disabled: false,
         }));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").disabled.unwrap("some"), false));
+        $(Assert.equal(select.unwrap().unwrap("Select").disabled.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -176,8 +176,8 @@ describeEast("Select", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").size.hasTag("some"), true));
-        $(assertEast.equal(select.unwrap().unwrap("Select").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").size.hasTag("some"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates medium select", $ => {
@@ -187,7 +187,7 @@ describeEast("Select", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates large select", $ => {
@@ -197,7 +197,7 @@ describeEast("Select", (test) => {
             size: "lg",
         }));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").size.unwrap("some").hasTag("lg"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").size.unwrap("some").hasTag("lg"), true));
     });
 
     test("creates select with Style.Size helper", $ => {
@@ -207,7 +207,7 @@ describeEast("Select", (test) => {
             size: Style.Size("md"),
         }));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").size.unwrap("some").hasTag("md"), true));
     });
 
     // =========================================================================
@@ -226,11 +226,11 @@ describeEast("Select", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").value.unwrap("some"), "us"));
-        $(assertEast.equal(select.unwrap().unwrap("Select").placeholder.unwrap("some"), "Select a country"));
-        $(assertEast.equal(select.unwrap().unwrap("Select").multiple.unwrap("some"), false));
-        $(assertEast.equal(select.unwrap().unwrap("Select").disabled.unwrap("some"), false));
-        $(assertEast.equal(select.unwrap().unwrap("Select").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").value.unwrap("some"), "us"));
+        $(Assert.equal(select.unwrap().unwrap("Select").placeholder.unwrap("some"), "Select a country"));
+        $(Assert.equal(select.unwrap().unwrap("Select").multiple.unwrap("some"), false));
+        $(Assert.equal(select.unwrap().unwrap("Select").disabled.unwrap("some"), false));
+        $(Assert.equal(select.unwrap().unwrap("Select").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates country selector", $ => {
@@ -245,8 +245,8 @@ describeEast("Select", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").placeholder.unwrap("some"), "Select your country"));
-        $(assertEast.equal(select.unwrap().unwrap("Select").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").placeholder.unwrap("some"), "Select your country"));
+        $(Assert.equal(select.unwrap().unwrap("Select").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates color picker select", $ => {
@@ -260,14 +260,14 @@ describeEast("Select", (test) => {
             placeholder: "Select colors",
         }));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").multiple.unwrap("some"), true));
-        $(assertEast.equal(select.unwrap().unwrap("Select").placeholder.unwrap("some"), "Select colors"));
+        $(Assert.equal(select.unwrap().unwrap("Select").multiple.unwrap("some"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").placeholder.unwrap("some"), "Select colors"));
     });
 
     test("creates select with disabled item", $ => {
         // Test the disabled item directly before adding to select
         const disabledItem = $.let(Select.Item("enterprise", "Enterprise Plan", { disabled: true }));
-        $(assertEast.equal(disabledItem.disabled.unwrap("some"), true));
+        $(Assert.equal(disabledItem.disabled.unwrap("some"), true));
 
         // Then create the select with the items
         const select = $.let(Select.Root("", [
@@ -278,7 +278,7 @@ describeEast("Select", (test) => {
             placeholder: "Select a plan",
         }));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").placeholder.unwrap("some"), "Select a plan"));
+        $(Assert.equal(select.unwrap().unwrap("Select").placeholder.unwrap("some"), "Select a plan"));
     });
 
     test("creates disabled readonly select", $ => {
@@ -289,7 +289,7 @@ describeEast("Select", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(select.unwrap().unwrap("Select").value.unwrap("some"), "current"));
-        $(assertEast.equal(select.unwrap().unwrap("Select").disabled.unwrap("some"), true));
+        $(Assert.equal(select.unwrap().unwrap("Select").value.unwrap("some"), "current"));
+        $(Assert.equal(select.unwrap().unwrap("Select").disabled.unwrap("some"), true));
     });
 });

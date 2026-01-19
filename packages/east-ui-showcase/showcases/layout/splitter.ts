@@ -226,8 +226,12 @@ export default East.function(
         // =====================================================================
 
         // Initialize state for interactive example
-        $(State.initTyped("splitter_left_size", 50.0, FloatType)());
-        $(State.initTyped("splitter_right_size", 50.0, FloatType)());
+        $.if(State.has("splitter_left_size").not(), $ => {
+            $(State.write([FloatType], "splitter_left_size", 50.0));
+        });
+        $.if(State.has("splitter_right_size").not(), $ => {
+            $(State.write([FloatType], "splitter_right_size", 50.0));
+        });
 
         // Interactive Splitter with onResize
         const interactiveSplitter = $.let(
@@ -235,8 +239,8 @@ export default East.function(
                 "Interactive Splitter",
                 "Drag to see onResize callback",
                 Reactive.Root($ => {
-                    const leftSize = $.let(State.readTyped("splitter_left_size", FloatType)());
-                    const rightSize = $.let(State.readTyped("splitter_right_size", FloatType)());
+                    const leftSize = $.let(State.read([FloatType], "splitter_left_size"));
+                    const rightSize = $.let(State.read([FloatType], "splitter_right_size"));
 
                     const onResize = East.function(
                         [Splitter.Types.ResizeDetails],
@@ -244,8 +248,8 @@ export default East.function(
                         ($, details) => {
                             // Update state with new sizes
                             const sizes = $.let(details.size);
-                            $(State.writeTyped("splitter_left_size", some(sizes.get(0n)), FloatType)());
-                            $(State.writeTyped("splitter_right_size", some(sizes.get(1n)), FloatType)());
+                            $(State.write([FloatType], "splitter_left_size", sizes.get(0n)));
+                            $(State.write([FloatType], "splitter_right_size", sizes.get(1n)));
                         }
                     );
 
@@ -264,11 +268,11 @@ export default East.function(
                         ], { height: "150px" }),
                         Stack.HStack([
                             Badge.Root(
-                                East.str`Left: ${East.print(leftSize.unwrap('some'))}%`,
+                                East.str`Left: ${East.print(leftSize)}%`,
                                 { colorPalette: "blue", variant: "solid" }
                             ),
                             Badge.Root(
-                                East.str`Right: ${East.print(rightSize.unwrap('some'))}%`,
+                                East.str`Right: ${East.print(rightSize)}%`,
                                 { colorPalette: "green", variant: "solid" }
                             ),
                         ], { gap: "2" }),

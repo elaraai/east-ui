@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { DataList } from "../../src/index.js";
 
 describeEast("DataList", (test) => {
@@ -14,8 +14,8 @@ describeEast("DataList", (test) => {
     test("creates item with string label and value", $ => {
         const item = $.let(DataList.Item("Status", "Active"));
 
-        $(assertEast.equal(item.label, "Status"));
-        $(assertEast.equal(item.value, "Active"));
+        $(Assert.equal(item.label, "Status"));
+        $(Assert.equal(item.value, "Active"));
     });
 
     test("creates item with expression label and value", $ => {
@@ -24,8 +24,8 @@ describeEast("DataList", (test) => {
             "John Doe"
         ));
 
-        $(assertEast.equal(item.label, "Name"));
-        $(assertEast.equal(item.value, "John Doe"));
+        $(Assert.equal(item.label, "Name"));
+        $(Assert.equal(item.value, "John Doe"));
     });
 
     test("creates item with mixed string and expression", $ => {
@@ -34,8 +34,8 @@ describeEast("DataList", (test) => {
             "Administrator"
         ));
 
-        $(assertEast.equal(item.label, "Role"));
-        $(assertEast.equal(item.value, "Administrator"));
+        $(Assert.equal(item.label, "Role"));
+        $(Assert.equal(item.value, "Administrator"));
     });
 
     // =========================================================================
@@ -48,9 +48,9 @@ describeEast("DataList", (test) => {
             DataList.Item("Email", "alice@example.com"),
         ]));
 
-        $(assertEast.equal(list.unwrap().unwrap("DataList").orientation.hasTag("none"), true));
-        $(assertEast.equal(list.unwrap().unwrap("DataList").size.hasTag("none"), true));
-        $(assertEast.equal(list.unwrap().unwrap("DataList").variant.hasTag("none"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").orientation.hasTag("none"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").size.hasTag("none"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").variant.hasTag("none"), true));
     });
 
     test("creates data list with single item", $ => {
@@ -58,14 +58,14 @@ describeEast("DataList", (test) => {
             DataList.Item("Status", "Active"),
         ]));
 
-        $(assertEast.equal(list.unwrap().unwrap("DataList").orientation.hasTag("none"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").orientation.hasTag("none"), true));
     });
 
     test("creates empty data list", $ => {
         const list = $.let(DataList.Root([]));
 
-        $(assertEast.equal(list.unwrap().unwrap("DataList").orientation.hasTag("none"), true));
-        $(assertEast.equal(list.unwrap().unwrap("DataList").size.hasTag("none"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").orientation.hasTag("none"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").size.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -79,8 +79,8 @@ describeEast("DataList", (test) => {
             orientation: "horizontal",
         }));
 
-        $(assertEast.equal(list.unwrap().unwrap("DataList").orientation.hasTag("some"), true));
-        $(assertEast.equal(list.unwrap().unwrap("DataList").orientation.unwrap("some").hasTag("horizontal"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").orientation.hasTag("some"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").orientation.unwrap("some").hasTag("horizontal"), true));
     });
 
     test("creates vertical data list", $ => {
@@ -90,7 +90,7 @@ describeEast("DataList", (test) => {
             orientation: "vertical",
         }));
 
-        $(assertEast.equal(list.unwrap().unwrap("DataList").orientation.unwrap("some").hasTag("vertical"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").orientation.unwrap("some").hasTag("vertical"), true));
     });
 
     // =========================================================================
@@ -104,7 +104,7 @@ describeEast("DataList", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(list.unwrap().unwrap("DataList").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates data list with md size", $ => {
@@ -114,7 +114,7 @@ describeEast("DataList", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(list.unwrap().unwrap("DataList").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates data list with lg size", $ => {
@@ -124,7 +124,7 @@ describeEast("DataList", (test) => {
             size: "lg",
         }));
 
-        $(assertEast.equal(list.unwrap().unwrap("DataList").size.unwrap("some").hasTag("lg"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").size.unwrap("some").hasTag("lg"), true));
     });
 
     // =========================================================================
@@ -138,8 +138,8 @@ describeEast("DataList", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(list.unwrap().unwrap("DataList").variant.hasTag("some"), true));
-        $(assertEast.equal(list.unwrap().unwrap("DataList").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").variant.hasTag("some"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates data list with bold variant", $ => {
@@ -149,7 +149,7 @@ describeEast("DataList", (test) => {
             variant: "bold",
         }));
 
-        $(assertEast.equal(list.unwrap().unwrap("DataList").variant.unwrap("some").hasTag("bold"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").variant.unwrap("some").hasTag("bold"), true));
     });
 
     test("creates data list with DataListVariant helper", $ => {
@@ -159,7 +159,7 @@ describeEast("DataList", (test) => {
             variant: "bold",
         }));
 
-        $(assertEast.equal(list.unwrap().unwrap("DataList").variant.unwrap("some").hasTag("bold"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").variant.unwrap("some").hasTag("bold"), true));
     });
 
     // =========================================================================
@@ -176,9 +176,9 @@ describeEast("DataList", (test) => {
             variant: "bold",
         }));
 
-        $(assertEast.equal(list.unwrap().unwrap("DataList").orientation.unwrap("some").hasTag("horizontal"), true));
-        $(assertEast.equal(list.unwrap().unwrap("DataList").size.unwrap("some").hasTag("md"), true));
-        $(assertEast.equal(list.unwrap().unwrap("DataList").variant.unwrap("some").hasTag("bold"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").orientation.unwrap("some").hasTag("horizontal"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").variant.unwrap("some").hasTag("bold"), true));
     });
 
     test("creates user details data list", $ => {
@@ -192,8 +192,8 @@ describeEast("DataList", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(list.unwrap().unwrap("DataList").orientation.unwrap("some").hasTag("vertical"), true));
-        $(assertEast.equal(list.unwrap().unwrap("DataList").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").orientation.unwrap("some").hasTag("vertical"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates product info data list", $ => {
@@ -205,7 +205,7 @@ describeEast("DataList", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(list.unwrap().unwrap("DataList").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates order summary data list", $ => {
@@ -220,9 +220,9 @@ describeEast("DataList", (test) => {
             variant: "bold",
         }));
 
-        $(assertEast.equal(list.unwrap().unwrap("DataList").orientation.unwrap("some").hasTag("horizontal"), true));
-        $(assertEast.equal(list.unwrap().unwrap("DataList").size.unwrap("some").hasTag("lg"), true));
-        $(assertEast.equal(list.unwrap().unwrap("DataList").variant.unwrap("some").hasTag("bold"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").orientation.unwrap("some").hasTag("horizontal"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").size.unwrap("some").hasTag("lg"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").variant.unwrap("some").hasTag("bold"), true));
     });
 
     test("creates metadata data list", $ => {
@@ -232,8 +232,8 @@ describeEast("DataList", (test) => {
             DataList.Item("Version", "1.2.3"),
         ]));
 
-        $(assertEast.equal(list.unwrap().unwrap("DataList").orientation.hasTag("none"), true));
-        $(assertEast.equal(list.unwrap().unwrap("DataList").size.hasTag("none"), true));
-        $(assertEast.equal(list.unwrap().unwrap("DataList").variant.hasTag("none"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").orientation.hasTag("none"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").size.hasTag("none"), true));
+        $(Assert.equal(list.unwrap().unwrap("DataList").variant.hasTag("none"), true));
     });
 });

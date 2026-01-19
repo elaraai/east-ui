@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Tabs, Text } from "../../src/index.js";
 
 describeEast("Tabs", (test) => {
@@ -16,9 +16,9 @@ describeEast("Tabs", (test) => {
             Text.Root("Content for tab 1"),
         ]));
 
-        $(assertEast.equal(item.value, "tab-1"));
-        $(assertEast.equal(item.trigger, "Tab 1"));
-        $(assertEast.equal(item.disabled.hasTag("none"), true));
+        $(Assert.equal(item.value, "tab-1"));
+        $(Assert.equal(item.trigger, "Tab 1"));
+        $(Assert.equal(item.disabled.hasTag("none"), true));
     });
 
     test("creates item with multiple children", $ => {
@@ -31,8 +31,8 @@ describeEast("Tabs", (test) => {
             ]
         ));
 
-        $(assertEast.equal(item.value, "tab-2"));
-        $(assertEast.equal(item.trigger, "Tab 2"));
+        $(Assert.equal(item.value, "tab-2"));
+        $(Assert.equal(item.trigger, "Tab 2"));
     });
 
     test("creates disabled item", $ => {
@@ -42,8 +42,8 @@ describeEast("Tabs", (test) => {
             disabled: true,
         }));
 
-        $(assertEast.equal(item.disabled.hasTag("some"), true));
-        $(assertEast.equal(item.disabled.unwrap("some"), true));
+        $(Assert.equal(item.disabled.hasTag("some"), true));
+        $(Assert.equal(item.disabled.unwrap("some"), true));
     });
 
     test("creates enabled item explicitly", $ => {
@@ -53,7 +53,7 @@ describeEast("Tabs", (test) => {
             disabled: false,
         }));
 
-        $(assertEast.equal(item.disabled.unwrap("some"), false));
+        $(Assert.equal(item.disabled.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -66,8 +66,8 @@ describeEast("Tabs", (test) => {
             Tabs.Item("b", "Tab B", [Text.Root("Content B")]),
         ]));
 
-        $(assertEast.equal(tabs.unwrap().getTag(), "Tabs"));
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.hasTag("none"), true));
+        $(Assert.equal(tabs.unwrap().getTag(), "Tabs"));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.hasTag("none"), true));
     });
 
     test("creates tabs with single item", $ => {
@@ -75,13 +75,13 @@ describeEast("Tabs", (test) => {
             Tabs.Item("single", "Only Tab", [Text.Root("Content")]),
         ]));
 
-        $(assertEast.equal(tabs.unwrap().getTag(), "Tabs"));
+        $(Assert.equal(tabs.unwrap().getTag(), "Tabs"));
     });
 
     test("creates empty tabs", $ => {
         const tabs = $.let(Tabs.Root([]));
 
-        $(assertEast.equal(tabs.unwrap().getTag(), "Tabs"));
+        $(Assert.equal(tabs.unwrap().getTag(), "Tabs"));
     });
 
     // =========================================================================
@@ -96,8 +96,8 @@ describeEast("Tabs", (test) => {
             defaultValue: "a",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").defaultValue.hasTag("some"), true));
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").defaultValue.unwrap("some"), "a"));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").defaultValue.hasTag("some"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").defaultValue.unwrap("some"), "a"));
     });
 
     test("creates tabs with controlled value", $ => {
@@ -108,8 +108,8 @@ describeEast("Tabs", (test) => {
             value: "b",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").value.hasTag("some"), true));
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").value.unwrap("some"), "b"));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").value.hasTag("some"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").value.unwrap("some"), "b"));
     });
 
     // =========================================================================
@@ -123,9 +123,9 @@ describeEast("Tabs", (test) => {
             variant: "line",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.hasTag("some"), true));
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").variant.hasTag("some"), true));
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").variant.unwrap("some").hasTag("line"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.hasTag("some"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").variant.hasTag("some"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").variant.unwrap("some").hasTag("line"), true));
     });
 
     test("creates tabs with subtle variant", $ => {
@@ -135,7 +135,7 @@ describeEast("Tabs", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates tabs with enclosed variant", $ => {
@@ -145,7 +145,7 @@ describeEast("Tabs", (test) => {
             variant: "enclosed",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").variant.unwrap("some").hasTag("enclosed"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").variant.unwrap("some").hasTag("enclosed"), true));
     });
 
     test("creates tabs with outline variant", $ => {
@@ -155,7 +155,7 @@ describeEast("Tabs", (test) => {
             variant: "outline",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
     });
 
     test("creates tabs with plain variant", $ => {
@@ -165,7 +165,7 @@ describeEast("Tabs", (test) => {
             variant: "plain",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").variant.unwrap("some").hasTag("plain"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").variant.unwrap("some").hasTag("plain"), true));
     });
 
     // =========================================================================
@@ -179,7 +179,7 @@ describeEast("Tabs", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates tabs with md size", $ => {
@@ -189,7 +189,7 @@ describeEast("Tabs", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates tabs with lg size", $ => {
@@ -199,7 +199,7 @@ describeEast("Tabs", (test) => {
             size: "lg",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").size.unwrap("some").hasTag("lg"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").size.unwrap("some").hasTag("lg"), true));
     });
 
     // =========================================================================
@@ -213,7 +213,7 @@ describeEast("Tabs", (test) => {
             orientation: "horizontal",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").orientation.unwrap("some").hasTag("horizontal"), true));
     });
 
     test("creates vertical tabs", $ => {
@@ -223,7 +223,7 @@ describeEast("Tabs", (test) => {
             orientation: "vertical",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").orientation.unwrap("some").hasTag("vertical"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").orientation.unwrap("some").hasTag("vertical"), true));
     });
 
     // =========================================================================
@@ -237,7 +237,7 @@ describeEast("Tabs", (test) => {
             fitted: true,
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").fitted.unwrap("some"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").fitted.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -251,7 +251,7 @@ describeEast("Tabs", (test) => {
             justify: "start",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").justify.unwrap("some").hasTag("start"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").justify.unwrap("some").hasTag("start"), true));
     });
 
     test("creates tabs with center justify", $ => {
@@ -261,7 +261,7 @@ describeEast("Tabs", (test) => {
             justify: "center",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").justify.unwrap("some").hasTag("center"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").justify.unwrap("some").hasTag("center"), true));
     });
 
     test("creates tabs with end justify", $ => {
@@ -271,7 +271,7 @@ describeEast("Tabs", (test) => {
             justify: "end",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").justify.unwrap("some").hasTag("end"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").justify.unwrap("some").hasTag("end"), true));
     });
 
     // =========================================================================
@@ -285,7 +285,7 @@ describeEast("Tabs", (test) => {
             lazyMount: true,
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").lazyMount.unwrap("some"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").lazyMount.unwrap("some"), true));
     });
 
     test("creates tabs with unmount on exit", $ => {
@@ -295,7 +295,7 @@ describeEast("Tabs", (test) => {
             unmountOnExit: true,
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").unmountOnExit.unwrap("some"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").unmountOnExit.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -309,7 +309,7 @@ describeEast("Tabs", (test) => {
             activationMode: "automatic",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").activationMode.unwrap("some").hasTag("automatic"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").activationMode.unwrap("some").hasTag("automatic"), true));
     });
 
     test("creates tabs with manual activation", $ => {
@@ -319,7 +319,7 @@ describeEast("Tabs", (test) => {
             activationMode: "manual",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").activationMode.unwrap("some").hasTag("manual"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").activationMode.unwrap("some").hasTag("manual"), true));
     });
 
     // =========================================================================
@@ -333,7 +333,7 @@ describeEast("Tabs", (test) => {
             colorPalette: "blue",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").colorPalette.unwrap("some").hasTag("blue"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").colorPalette.unwrap("some").hasTag("blue"), true));
     });
 
     test("creates tabs with green color palette", $ => {
@@ -343,7 +343,7 @@ describeEast("Tabs", (test) => {
             colorPalette: "green",
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").colorPalette.unwrap("some").hasTag("green"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").colorPalette.unwrap("some").hasTag("green"), true));
     });
 
     // =========================================================================
@@ -363,11 +363,11 @@ describeEast("Tabs", (test) => {
             colorPalette: "blue",
         }));
 
-        $(assertEast.equal(tabs.unwrap().getTag(), "Tabs"));
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").defaultValue.unwrap("some"), "overview"));
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").variant.unwrap("some").hasTag("enclosed"), true));
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").size.unwrap("some").hasTag("md"), true));
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").fitted.unwrap("some"), true));
+        $(Assert.equal(tabs.unwrap().getTag(), "Tabs"));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").defaultValue.unwrap("some"), "overview"));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").variant.unwrap("some").hasTag("enclosed"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").fitted.unwrap("some"), true));
     });
 
     test("creates vertical tabs with lazy loading", $ => {
@@ -381,9 +381,9 @@ describeEast("Tabs", (test) => {
             unmountOnExit: true,
         }));
 
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").orientation.unwrap("some").hasTag("vertical"), true));
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").lazyMount.unwrap("some"), true));
-        $(assertEast.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").unmountOnExit.unwrap("some"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").orientation.unwrap("some").hasTag("vertical"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").lazyMount.unwrap("some"), true));
+        $(Assert.equal(tabs.unwrap().unwrap("Tabs").style.unwrap("some").unmountOnExit.unwrap("some"), true));
     });
 });

@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Tag, Style } from "../../src/index.js";
 
 describeEast("Tag", (test) => {
@@ -14,17 +14,17 @@ describeEast("Tag", (test) => {
     test("creates tag with string label", $ => {
         const tag = $.let(Tag.Root("JavaScript"));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").label, "JavaScript"));
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").variant.hasTag("none"), true));
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").colorPalette.hasTag("none"), true));
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").size.hasTag("none"), true));
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").closable.hasTag("none"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").label, "JavaScript"));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").variant.hasTag("none"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").colorPalette.hasTag("none"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").size.hasTag("none"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").closable.hasTag("none"), true));
     });
 
     test("creates tag with expression label", $ => {
         const tag = $.let(Tag.Root("TypeScript"));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").label, "TypeScript"));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").label, "TypeScript"));
     });
 
     // =========================================================================
@@ -36,8 +36,8 @@ describeEast("Tag", (test) => {
             variant: "solid",
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").variant.hasTag("some"), true));
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").variant.unwrap("some").hasTag("solid"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").variant.hasTag("some"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").variant.unwrap("some").hasTag("solid"), true));
     });
 
     test("creates subtle variant tag", $ => {
@@ -45,7 +45,7 @@ describeEast("Tag", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates outline variant tag", $ => {
@@ -53,7 +53,7 @@ describeEast("Tag", (test) => {
             variant: "outline",
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").variant.unwrap("some").hasTag("outline"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").variant.unwrap("some").hasTag("outline"), true));
     });
 
     test("creates tag with Style.StyleVariant helper", $ => {
@@ -61,7 +61,7 @@ describeEast("Tag", (test) => {
             variant: Style.StyleVariant("solid"),
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").variant.unwrap("some").hasTag("solid"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").variant.unwrap("some").hasTag("solid"), true));
     });
 
     // =========================================================================
@@ -73,8 +73,8 @@ describeEast("Tag", (test) => {
             colorPalette: "blue",
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").colorPalette.hasTag("some"), true));
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").colorPalette.unwrap("some").hasTag("blue"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").colorPalette.hasTag("some"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").colorPalette.unwrap("some").hasTag("blue"), true));
     });
 
     test("creates tag with green color palette", $ => {
@@ -82,7 +82,7 @@ describeEast("Tag", (test) => {
             colorPalette: "green",
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").colorPalette.unwrap("some").hasTag("green"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").colorPalette.unwrap("some").hasTag("green"), true));
     });
 
     test("creates tag with cyan color palette", $ => {
@@ -90,7 +90,7 @@ describeEast("Tag", (test) => {
             colorPalette: "cyan",
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").colorPalette.unwrap("some").hasTag("cyan"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").colorPalette.unwrap("some").hasTag("cyan"), true));
     });
 
     test("creates tag with Style.ColorScheme helper", $ => {
@@ -98,7 +98,7 @@ describeEast("Tag", (test) => {
             colorPalette: Style.ColorScheme("purple"),
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").colorPalette.unwrap("some").hasTag("purple"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").colorPalette.unwrap("some").hasTag("purple"), true));
     });
 
     // =========================================================================
@@ -110,8 +110,8 @@ describeEast("Tag", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").size.hasTag("some"), true));
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").size.hasTag("some"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates medium tag", $ => {
@@ -119,7 +119,7 @@ describeEast("Tag", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates large tag", $ => {
@@ -127,7 +127,7 @@ describeEast("Tag", (test) => {
             size: "lg",
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").size.unwrap("some").hasTag("lg"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").size.unwrap("some").hasTag("lg"), true));
     });
 
     test("creates extra large tag", $ => {
@@ -135,7 +135,7 @@ describeEast("Tag", (test) => {
             size: "xl",
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").size.unwrap("some").hasTag("xl"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").size.unwrap("some").hasTag("xl"), true));
     });
 
     test("creates tag with string literal size", $ => {
@@ -143,7 +143,7 @@ describeEast("Tag", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").size.unwrap("some").hasTag("md"), true));
     });
 
     // =========================================================================
@@ -155,8 +155,8 @@ describeEast("Tag", (test) => {
             closable: true,
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").closable.hasTag("some"), true));
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").closable.unwrap("some"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").closable.hasTag("some"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").closable.unwrap("some"), true));
     });
 
     test("creates non-closable tag explicitly", $ => {
@@ -164,7 +164,7 @@ describeEast("Tag", (test) => {
             closable: false,
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").closable.unwrap("some"), false));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").closable.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -179,11 +179,11 @@ describeEast("Tag", (test) => {
             closable: true,
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").label, "Complete"));
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").variant.unwrap("some").hasTag("solid"), true));
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").colorPalette.unwrap("some").hasTag("blue"), true));
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").size.unwrap("some").hasTag("md"), true));
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").closable.unwrap("some"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").label, "Complete"));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").variant.unwrap("some").hasTag("solid"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").colorPalette.unwrap("some").hasTag("blue"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").closable.unwrap("some"), true));
     });
 
     test("creates programming language tag", $ => {
@@ -192,8 +192,8 @@ describeEast("Tag", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").label, "Python"));
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").colorPalette.unwrap("some").hasTag("yellow"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").label, "Python"));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").colorPalette.unwrap("some").hasTag("yellow"), true));
     });
 
     test("creates filter chip tag", $ => {
@@ -203,8 +203,8 @@ describeEast("Tag", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").closable.unwrap("some"), true));
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").closable.unwrap("some"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates status tag", $ => {
@@ -214,8 +214,8 @@ describeEast("Tag", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").label, "In Progress"));
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").variant.unwrap("some").hasTag("solid"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").label, "In Progress"));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").variant.unwrap("some").hasTag("solid"), true));
     });
 
     test("creates removable skill tag", $ => {
@@ -225,7 +225,7 @@ describeEast("Tag", (test) => {
             closable: true,
         }));
 
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").variant.unwrap("some").hasTag("outline"), true));
-        $(assertEast.equal(tag.unwrap().unwrap("Tag").closable.unwrap("some"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").variant.unwrap("some").hasTag("outline"), true));
+        $(Assert.equal(tag.unwrap().unwrap("Tag").closable.unwrap("some"), true));
     });
 });

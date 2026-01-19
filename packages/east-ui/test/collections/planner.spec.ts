@@ -4,7 +4,7 @@
  */
 
 import { East, FloatType, StringType } from "@elaraai/east";
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Planner, Text, Badge } from "../../src/index.js";
 
 describeEast("Planner", (test) => {
@@ -17,10 +17,10 @@ describeEast("Planner", (test) => {
             start: 1.0,
         }));
 
-        $(assertEast.equal(event.start, 1.0));
-        $(assertEast.equal(event.end.hasTag("none"), true));
-        $(assertEast.equal(event.label.hasTag("none"), true));
-        $(assertEast.equal(event.colorPalette.hasTag("none"), true));
+        $(Assert.equal(event.start, 1.0));
+        $(Assert.equal(event.end.hasTag("none"), true));
+        $(Assert.equal(event.label.hasTag("none"), true));
+        $(Assert.equal(event.colorPalette.hasTag("none"), true));
     });
 
     test("creates event with start and end", $ => {
@@ -29,9 +29,9 @@ describeEast("Planner", (test) => {
             end: 5.0,
         }));
 
-        $(assertEast.equal(event.start, 1.0));
-        $(assertEast.equal(event.end.hasTag("some"), true));
-        $(assertEast.equal(event.end.unwrap("some"), 5.0));
+        $(Assert.equal(event.start, 1.0));
+        $(Assert.equal(event.end.hasTag("some"), true));
+        $(Assert.equal(event.end.unwrap("some"), 5.0));
     });
 
     test("creates event with label", $ => {
@@ -41,8 +41,8 @@ describeEast("Planner", (test) => {
             label: "Task A",
         }));
 
-        $(assertEast.equal(event.label.hasTag("some"), true));
-        $(assertEast.equal(event.label.unwrap("some"), "Task A"));
+        $(Assert.equal(event.label.hasTag("some"), true));
+        $(Assert.equal(event.label.unwrap("some"), "Task A"));
     });
 
     test("creates event with colorPalette", $ => {
@@ -52,8 +52,8 @@ describeEast("Planner", (test) => {
             colorPalette: "blue",
         }));
 
-        $(assertEast.equal(event.colorPalette.hasTag("some"), true));
-        $(assertEast.equal(event.colorPalette.unwrap("some").hasTag("blue"), true));
+        $(Assert.equal(event.colorPalette.hasTag("some"), true));
+        $(Assert.equal(event.colorPalette.unwrap("some").hasTag("blue"), true));
     });
 
     test("creates event with all options", $ => {
@@ -64,10 +64,10 @@ describeEast("Planner", (test) => {
             colorPalette: "green",
         }));
 
-        $(assertEast.equal(event.start, 2.0));
-        $(assertEast.equal(event.end.unwrap("some"), 6.0));
-        $(assertEast.equal(event.label.unwrap("some"), "Important Task"));
-        $(assertEast.equal(event.colorPalette.unwrap("some").hasTag("green"), true));
+        $(Assert.equal(event.start, 2.0));
+        $(Assert.equal(event.end.unwrap("some"), 6.0));
+        $(Assert.equal(event.label.unwrap("some"), "Important Task"));
+        $(Assert.equal(event.colorPalette.unwrap("some").hasTag("green"), true));
     });
 
     // =========================================================================
@@ -84,7 +84,7 @@ describeEast("Planner", (test) => {
             row => [Planner.Event({ start: row.start, end: row.end })],
         ));
 
-        $(assertEast.equal(planner.unwrap().hasTag("Planner"), true));
+        $(Assert.equal(planner.unwrap().hasTag("Planner"), true));
     });
 
     test("creates planner with style", $ => {
@@ -99,10 +99,10 @@ describeEast("Planner", (test) => {
             }
         ));
 
-        $(assertEast.equal(planner.unwrap().hasTag("Planner"), true));
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.hasTag("some"), true));
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotMode.hasTag("some"), true));
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotMode.unwrap("some").hasTag("single"), true));
+        $(Assert.equal(planner.unwrap().hasTag("Planner"), true));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.hasTag("some"), true));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotMode.hasTag("some"), true));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotMode.unwrap("some").hasTag("single"), true));
     });
 
     test("creates planner with span mode", $ => {
@@ -115,7 +115,7 @@ describeEast("Planner", (test) => {
             }
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotMode.unwrap("some").hasTag("span"), true));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotMode.unwrap("some").hasTag("span"), true));
     });
 
     test("creates planner with minSlot and maxSlot", $ => {
@@ -129,8 +129,8 @@ describeEast("Planner", (test) => {
             }
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").minSlot.unwrap("some"), 1.0));
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").maxSlot.unwrap("some"), 10.0));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").minSlot.unwrap("some"), 1.0));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").maxSlot.unwrap("some"), 10.0));
     });
 
     test("creates planner with slotMinWidth", $ => {
@@ -143,7 +143,7 @@ describeEast("Planner", (test) => {
             }
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotMinWidth.unwrap("some"), "80px"));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotMinWidth.unwrap("some"), "80px"));
     });
 
     test("creates planner with slotLabel function", $ => {
@@ -160,7 +160,7 @@ describeEast("Planner", (test) => {
             }
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotLabel.hasTag("some"), true));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotLabel.hasTag("some"), true));
     });
 
     // =========================================================================
@@ -177,7 +177,7 @@ describeEast("Planner", (test) => {
             }
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotLineStroke.unwrap("some"), "gray.200"));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotLineStroke.unwrap("some"), "gray.200"));
     });
 
     test("creates planner with slot line width", $ => {
@@ -190,7 +190,7 @@ describeEast("Planner", (test) => {
             }
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotLineWidth.unwrap("some"), 2.0));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotLineWidth.unwrap("some"), 2.0));
     });
 
     test("creates planner with slot line dash", $ => {
@@ -203,7 +203,7 @@ describeEast("Planner", (test) => {
             }
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotLineDash.unwrap("some"), "4 2"));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotLineDash.unwrap("some"), "4 2"));
     });
 
     test("creates planner with slot line opacity", $ => {
@@ -216,7 +216,7 @@ describeEast("Planner", (test) => {
             }
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotLineOpacity.unwrap("some"), 0.5));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").slotLineOpacity.unwrap("some"), 0.5));
     });
 
     // =========================================================================
@@ -233,7 +233,7 @@ describeEast("Planner", (test) => {
             }
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").variant.unwrap("some").hasTag("outline"), true));
     });
 
     test("creates planner with size", $ => {
@@ -246,7 +246,7 @@ describeEast("Planner", (test) => {
             }
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates planner with striped", $ => {
@@ -259,7 +259,7 @@ describeEast("Planner", (test) => {
             }
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").striped.unwrap("some"), true));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").striped.unwrap("some"), true));
     });
 
     test("creates planner with interactive", $ => {
@@ -272,7 +272,7 @@ describeEast("Planner", (test) => {
             }
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").interactive.unwrap("some"), true));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").interactive.unwrap("some"), true));
     });
 
     test("creates planner with stickyHeader", $ => {
@@ -285,7 +285,7 @@ describeEast("Planner", (test) => {
             }
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").stickyHeader.unwrap("some"), true));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").stickyHeader.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -305,7 +305,7 @@ describeEast("Planner", (test) => {
             ],
         ));
 
-        $(assertEast.equal(planner.unwrap().hasTag("Planner"), true));
+        $(Assert.equal(planner.unwrap().hasTag("Planner"), true));
     });
 
     // =========================================================================
@@ -322,7 +322,7 @@ describeEast("Planner", (test) => {
             row => [Planner.Event({ start: row.start, end: row.end })],
         ));
 
-        $(assertEast.equal(planner.unwrap().hasTag("Planner"), true));
+        $(Assert.equal(planner.unwrap().hasTag("Planner"), true));
     });
 
     test("creates planner with column config object", $ => {
@@ -337,7 +337,7 @@ describeEast("Planner", (test) => {
             row => [Planner.Event({ start: row.priority })],
         ));
 
-        $(assertEast.equal(planner.unwrap().hasTag("Planner"), true));
+        $(Assert.equal(planner.unwrap().hasTag("Planner"), true));
     });
 
     // =========================================================================
@@ -354,7 +354,7 @@ describeEast("Planner", (test) => {
             }
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").colorPalette.unwrap("some").hasTag("purple"), true));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").style.unwrap("some").colorPalette.unwrap("some").hasTag("purple"), true));
     });
 
     // =========================================================================
@@ -376,9 +376,9 @@ describeEast("Planner", (test) => {
             row => [Planner.Event({ start: row.start, end: row.end })],
         ));
 
-        $(assertEast.equal(planner.unwrap().hasTag("Planner"), true));
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").rows.size(), 2n));
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").columns.size(), 1n));
+        $(Assert.equal(planner.unwrap().hasTag("Planner"), true));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").rows.size(), 2n));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").columns.size(), 1n));
     });
 
     test("column render function uses row field for conditional styling", $ => {
@@ -399,9 +399,9 @@ describeEast("Planner", (test) => {
             row => [Planner.Event({ start: row.start, end: row.end })],
         ));
 
-        $(assertEast.equal(planner.unwrap().hasTag("Planner"), true));
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").rows.size(), 2n));
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").columns.size(), 2n));
+        $(Assert.equal(planner.unwrap().hasTag("Planner"), true));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").rows.size(), 2n));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").columns.size(), 2n));
     });
 
     test("column render function accesses multiple row fields", $ => {
@@ -419,8 +419,8 @@ describeEast("Planner", (test) => {
             row => [Planner.Event({ start: row.start, end: row.end })],
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").rows.size(), 1n));
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").columns.size(), 2n));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").rows.size(), 1n));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").columns.size(), 2n));
     });
 
     // =========================================================================
@@ -445,8 +445,8 @@ describeEast("Planner", (test) => {
             row => [Planner.Event({ start: row.start, end: row.end })],
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").columns.size(), 2n));
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").rows.size(), 2n));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").columns.size(), 2n));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").rows.size(), 2n));
     });
 
     test("creates planner with struct field using value function", $ => {
@@ -467,8 +467,8 @@ describeEast("Planner", (test) => {
             row => [Planner.Event({ start: row.start, end: row.end })],
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").columns.size(), 2n));
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").rows.size(), 2n));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").columns.size(), 2n));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").rows.size(), 2n));
     });
 
     test("creates planner mixing primitive and complex columns", $ => {
@@ -490,7 +490,7 @@ describeEast("Planner", (test) => {
             row => [Planner.Event({ start: row.start, end: row.end })],
         ));
 
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").columns.size(), 3n));
-        $(assertEast.equal(planner.unwrap().unwrap("Planner").rows.size(), 2n));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").columns.size(), 3n));
+        $(Assert.equal(planner.unwrap().unwrap("Planner").rows.size(), 2n));
     });
 });

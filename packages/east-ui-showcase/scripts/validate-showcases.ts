@@ -8,7 +8,8 @@
 
 
 // Import all exports from showcases
-import { State, dialog_open, drawer_open } from "@elaraai/east-ui";
+import { dialog_open, drawer_open } from "@elaraai/east-ui";
+import { StateImpl } from "@elaraai/east-ui-components";
 import * as showcases from "../showcases/index.js";
 import { PlatformFunction } from "@elaraai/east/internal";
 
@@ -27,7 +28,7 @@ for (const [name, exported] of Object.entries(showcases)) {
     // Check if it's an East function by checking for toIR method
     try {
         // Try to compile the function - this validates the East IR
-        exported.toIR().compile([...State.Implementation, ...OverlayImpl]);
+        exported.toIR().compile([...StateImpl, ...OverlayImpl]);
         console.log(`  ✅ ${name}`);
         passed++;
     } catch (error) {

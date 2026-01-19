@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { FileUpload } from "../../src/index.js";
 
 describeEast("FileUpload", (test) => {
@@ -14,9 +14,9 @@ describeEast("FileUpload", (test) => {
     test("creates file upload with no options", $ => {
         const upload = $.let(FileUpload.Root());
 
-        $(assertEast.equal(upload.unwrap().getTag(), "FileUpload"));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").accept.hasTag("none"), true));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").maxFiles.hasTag("none"), true));
+        $(Assert.equal(upload.unwrap().getTag(), "FileUpload"));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").accept.hasTag("none"), true));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").maxFiles.hasTag("none"), true));
     });
 
     test("creates file upload with label", $ => {
@@ -24,8 +24,8 @@ describeEast("FileUpload", (test) => {
             label: "Upload file",
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").label.hasTag("some"), true));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").label.unwrap("some"), "Upload file"));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").label.hasTag("some"), true));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").label.unwrap("some"), "Upload file"));
     });
 
     test("creates file upload with trigger text", $ => {
@@ -33,7 +33,7 @@ describeEast("FileUpload", (test) => {
             triggerText: "Choose file",
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").triggerText.unwrap("some"), "Choose file"));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").triggerText.unwrap("some"), "Choose file"));
     });
 
     test("creates file upload with dropzone text", $ => {
@@ -41,7 +41,7 @@ describeEast("FileUpload", (test) => {
             dropzoneText: "or drag and drop here",
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").dropzoneText.unwrap("some"), "or drag and drop here"));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").dropzoneText.unwrap("some"), "or drag and drop here"));
     });
 
     // =========================================================================
@@ -53,8 +53,8 @@ describeEast("FileUpload", (test) => {
             accept: "image/*",
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").accept.hasTag("some"), true));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").accept.unwrap("some"), "image/*"));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").accept.hasTag("some"), true));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").accept.unwrap("some"), "image/*"));
     });
 
     test("creates file upload with specific extensions", $ => {
@@ -62,7 +62,7 @@ describeEast("FileUpload", (test) => {
             accept: ".pdf,.doc,.docx",
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").accept.unwrap("some"), ".pdf,.doc,.docx"));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").accept.unwrap("some"), ".pdf,.doc,.docx"));
     });
 
     test("creates file upload with video accept pattern", $ => {
@@ -70,7 +70,7 @@ describeEast("FileUpload", (test) => {
             accept: "video/*",
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").accept.unwrap("some"), "video/*"));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").accept.unwrap("some"), "video/*"));
     });
 
     // =========================================================================
@@ -82,8 +82,8 @@ describeEast("FileUpload", (test) => {
             maxFiles: 5,
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").maxFiles.hasTag("some"), true));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").maxFiles.unwrap("some"), 5n));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").maxFiles.hasTag("some"), true));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").maxFiles.unwrap("some"), 5n));
     });
 
     test("creates file upload with maxFileSize", $ => {
@@ -91,8 +91,8 @@ describeEast("FileUpload", (test) => {
             maxFileSize: 5 * 1024 * 1024, // 5MB
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").maxFileSize.hasTag("some"), true));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").maxFileSize.unwrap("some"), 5242880n));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").maxFileSize.hasTag("some"), true));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").maxFileSize.unwrap("some"), 5242880n));
     });
 
     test("creates file upload with minFileSize", $ => {
@@ -100,7 +100,7 @@ describeEast("FileUpload", (test) => {
             minFileSize: 1024, // 1KB
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").minFileSize.unwrap("some"), 1024n));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").minFileSize.unwrap("some"), 1024n));
     });
 
     test("creates file upload with all size constraints", $ => {
@@ -110,9 +110,9 @@ describeEast("FileUpload", (test) => {
             minFileSize: 100,
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").maxFiles.unwrap("some"), 3n));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").maxFileSize.unwrap("some"), 10485760n));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").minFileSize.unwrap("some"), 100n));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").maxFiles.unwrap("some"), 3n));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").maxFileSize.unwrap("some"), 10485760n));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").minFileSize.unwrap("some"), 100n));
     });
 
     // =========================================================================
@@ -124,8 +124,8 @@ describeEast("FileUpload", (test) => {
             directory: true,
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").directory.hasTag("some"), true));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").directory.unwrap("some"), true));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").directory.hasTag("some"), true));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").directory.unwrap("some"), true));
     });
 
     test("creates file upload disabled", $ => {
@@ -133,7 +133,7 @@ describeEast("FileUpload", (test) => {
             disabled: true,
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").disabled.unwrap("some"), true));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").disabled.unwrap("some"), true));
     });
 
     test("creates required file upload", $ => {
@@ -141,7 +141,7 @@ describeEast("FileUpload", (test) => {
             required: true,
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").required.unwrap("some"), true));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").required.unwrap("some"), true));
     });
 
     test("creates file upload with allowDrop disabled", $ => {
@@ -149,7 +149,7 @@ describeEast("FileUpload", (test) => {
             allowDrop: false,
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").allowDrop.unwrap("some"), false));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").allowDrop.unwrap("some"), false));
     });
 
     test("creates file upload with name", $ => {
@@ -157,7 +157,7 @@ describeEast("FileUpload", (test) => {
             name: "document",
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").name.unwrap("some"), "document"));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").name.unwrap("some"), "document"));
     });
 
     // =========================================================================
@@ -169,8 +169,8 @@ describeEast("FileUpload", (test) => {
             capture: "user",
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").capture.hasTag("some"), true));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").capture.unwrap("some").hasTag("user"), true));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").capture.hasTag("some"), true));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").capture.unwrap("some").hasTag("user"), true));
     });
 
     test("creates file upload with environment camera capture", $ => {
@@ -178,7 +178,7 @@ describeEast("FileUpload", (test) => {
             capture: "environment",
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").capture.unwrap("some").hasTag("environment"), true));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").capture.unwrap("some").hasTag("environment"), true));
     });
 
     // =========================================================================
@@ -195,11 +195,11 @@ describeEast("FileUpload", (test) => {
             triggerText: "Choose files",
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").accept.unwrap("some"), "image/*"));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").maxFiles.unwrap("some"), 5n));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").label.unwrap("some"), "Upload images"));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").dropzoneText.unwrap("some"), "or drag and drop here"));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").triggerText.unwrap("some"), "Choose files"));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").accept.unwrap("some"), "image/*"));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").maxFiles.unwrap("some"), 5n));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").label.unwrap("some"), "Upload images"));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").dropzoneText.unwrap("some"), "or drag and drop here"));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").triggerText.unwrap("some"), "Choose files"));
     });
 
     test("creates single document upload", $ => {
@@ -210,9 +210,9 @@ describeEast("FileUpload", (test) => {
             label: "Upload document",
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").accept.unwrap("some"), ".pdf"));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").maxFiles.unwrap("some"), 1n));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").required.unwrap("some"), true));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").accept.unwrap("some"), ".pdf"));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").maxFiles.unwrap("some"), 1n));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").required.unwrap("some"), true));
     });
 
     test("creates folder upload", $ => {
@@ -221,8 +221,8 @@ describeEast("FileUpload", (test) => {
             label: "Upload folder",
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").directory.unwrap("some"), true));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").label.unwrap("some"), "Upload folder"));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").directory.unwrap("some"), true));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").label.unwrap("some"), "Upload folder"));
     });
 
     test("creates mobile camera capture upload", $ => {
@@ -233,9 +233,9 @@ describeEast("FileUpload", (test) => {
             label: "Take photo",
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").accept.unwrap("some"), "image/*"));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").capture.unwrap("some").hasTag("environment"), true));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").label.unwrap("some"), "Take photo"));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").accept.unwrap("some"), "image/*"));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").capture.unwrap("some").hasTag("environment"), true));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").label.unwrap("some"), "Take photo"));
     });
 
     test("creates bulk file upload", $ => {
@@ -248,8 +248,8 @@ describeEast("FileUpload", (test) => {
             allowDrop: true,
         }));
 
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").maxFiles.unwrap("some"), 100n));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").maxFileSize.unwrap("some"), 52428800n));
-        $(assertEast.equal(upload.unwrap().unwrap("FileUpload").allowDrop.unwrap("some"), true));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").maxFiles.unwrap("some"), 100n));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").maxFileSize.unwrap("some"), 52428800n));
+        $(Assert.equal(upload.unwrap().unwrap("FileUpload").allowDrop.unwrap("some"), true));
     });
 });

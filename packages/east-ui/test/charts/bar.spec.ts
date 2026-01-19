@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Chart } from "../../src/index.js";
 
 describeEast("Chart.Bar", (test) => {
@@ -22,10 +22,10 @@ describeEast("Chart.Bar", (test) => {
             { allocation: { color: "teal.solid" } }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "BarChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.size(), 1n));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.get(0n).name, "allocation"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.get(0n).color.unwrap("some"), "teal.solid"));
+        $(Assert.equal(chart.unwrap().getTag(), "BarChart"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.size(), 1n));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.get(0n).name, "allocation"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.get(0n).color.unwrap("some"), "teal.solid"));
     });
 
     test("creates bar chart with array series spec", $ => {
@@ -36,8 +36,8 @@ describeEast("Chart.Bar", (test) => {
             ["allocation"]
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.size(), 1n));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.get(0n).name, "allocation"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.size(), 1n));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.get(0n).name, "allocation"));
     });
 
     test("creates bar chart with x-axis dataKey", $ => {
@@ -49,7 +49,7 @@ describeEast("Chart.Bar", (test) => {
             { xAxis: { dataKey: "type" } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").xAxis.unwrap("some").dataKey.unwrap("some"), "type"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").xAxis.unwrap("some").dataKey.unwrap("some"), "type"));
     });
 
     // =========================================================================
@@ -70,10 +70,10 @@ describeEast("Chart.Bar", (test) => {
             { xAxis: { dataKey: "month" } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.size(), 3n));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.get(0n).stackId.unwrap("some"), "a"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.get(1n).stackId.unwrap("some"), "a"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.get(2n).stackId.unwrap("some"), "a"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.size(), 3n));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.get(0n).stackId.unwrap("some"), "a"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.get(1n).stackId.unwrap("some"), "a"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.get(2n).stackId.unwrap("some"), "a"));
     });
 
     test("creates 100% stacked bar chart with stackOffset expand", $ => {
@@ -92,8 +92,8 @@ describeEast("Chart.Bar", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").stackOffset.unwrap("some").hasTag("expand"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").yAxis.unwrap("some").tickFormat.unwrap("some").hasTag("percent"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").stackOffset.unwrap("some").hasTag("expand"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").yAxis.unwrap("some").tickFormat.unwrap("some").hasTag("percent"), true));
     });
 
     // =========================================================================
@@ -116,8 +116,8 @@ describeEast("Chart.Bar", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").layout.unwrap("some").hasTag("vertical"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").yAxis.unwrap("some").dataKey.unwrap("some"), "month"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").layout.unwrap("some").hasTag("vertical"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").yAxis.unwrap("some").dataKey.unwrap("some"), "month"));
     });
 
     // =========================================================================
@@ -139,9 +139,9 @@ describeEast("Chart.Bar", (test) => {
             { xAxis: { dataKey: "type" } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.size(), 4n));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.get(0n).stackId.hasTag("none"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.get(0n).color.unwrap("some"), "blue.solid"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.size(), 4n));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.get(0n).stackId.hasTag("none"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.get(0n).color.unwrap("some"), "blue.solid"));
     });
 
     // =========================================================================
@@ -157,7 +157,7 @@ describeEast("Chart.Bar", (test) => {
             { barSize: 30n }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").barSize.unwrap("some"), 30n));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").barSize.unwrap("some"), 30n));
     });
 
     test("creates bar chart with custom bar gap", $ => {
@@ -169,7 +169,7 @@ describeEast("Chart.Bar", (test) => {
             { barGap: 10n }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").barGap.unwrap("some"), 10n));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").barGap.unwrap("some"), 10n));
     });
 
     // =========================================================================
@@ -185,7 +185,7 @@ describeEast("Chart.Bar", (test) => {
             { yAxis: { tickFormat: "percent", domain: [0, 100] } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").yAxis.unwrap("some").tickFormat.unwrap("some").hasTag("percent"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").yAxis.unwrap("some").tickFormat.unwrap("some").hasTag("percent"), true));
     });
 
     test("creates bar chart with currency y-axis formatter", $ => {
@@ -201,7 +201,7 @@ describeEast("Chart.Bar", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").yAxis.unwrap("some").tickFormat.unwrap("some").hasTag("currency"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").yAxis.unwrap("some").tickFormat.unwrap("some").hasTag("currency"), true));
     });
 
     test("creates bar chart with compact y-axis formatter", $ => {
@@ -213,7 +213,7 @@ describeEast("Chart.Bar", (test) => {
             { yAxis: { tickFormat: "compact" } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").yAxis.unwrap("some").tickFormat.unwrap("some").hasTag("compact"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").yAxis.unwrap("some").tickFormat.unwrap("some").hasTag("compact"), true));
     });
 
     // =========================================================================
@@ -229,7 +229,7 @@ describeEast("Chart.Bar", (test) => {
             { grid: { show: true } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates bar chart with legend", $ => {
@@ -241,7 +241,7 @@ describeEast("Chart.Bar", (test) => {
             { legend: { show: true } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").legend.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates bar chart with tooltip", $ => {
@@ -253,7 +253,7 @@ describeEast("Chart.Bar", (test) => {
             { tooltip: { show: true } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").tooltip.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -269,8 +269,8 @@ describeEast("Chart.Bar", (test) => {
             { margin: { top: 20n, right: 30n, bottom: 20n, left: 30n } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").margin.unwrap("some").top.unwrap("some"), 20n));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").margin.unwrap("some").left.unwrap("some"), 30n));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").margin.unwrap("some").top.unwrap("some"), 20n));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").margin.unwrap("some").left.unwrap("some"), 30n));
     });
 
     // =========================================================================
@@ -287,7 +287,7 @@ describeEast("Chart.Bar", (test) => {
             { xAxis: { dataKey: "type" }, brush: {} }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").brush.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").brush.hasTag("some"), true));
     });
 
     test("creates bar chart with brush configuration", $ => {
@@ -299,9 +299,9 @@ describeEast("Chart.Bar", (test) => {
             { brush: { dataKey: "type", height: 30n, travellerWidth: 8n } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").brush.unwrap("some").dataKey.unwrap("some"), "type"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").brush.unwrap("some").height.unwrap("some"), 30n));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").brush.unwrap("some").travellerWidth.unwrap("some"), 8n));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").brush.unwrap("some").dataKey.unwrap("some"), "type"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").brush.unwrap("some").height.unwrap("some"), 30n));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").brush.unwrap("some").travellerWidth.unwrap("some"), 8n));
     });
 
     // =========================================================================
@@ -324,9 +324,9 @@ describeEast("Chart.Bar", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "BarChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.get(0n).name, "allocation"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").grid.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().getTag(), "BarChart"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.get(0n).name, "allocation"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").grid.unwrap("some").show.unwrap("some"), true));
     });
 
     test("creates complete stacked bar chart matching Chakra BarChartStacked example", $ => {
@@ -348,9 +348,9 @@ describeEast("Chart.Bar", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.size(), 3n));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.get(0n).stackId.unwrap("some"), "a"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").legend.unwrap("some").show.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.size(), 3n));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.get(0n).stackId.unwrap("some"), "a"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").legend.unwrap("some").show.unwrap("some"), true));
     });
 });
 
@@ -375,9 +375,9 @@ describeEast("Chart.Bar Pivot", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "BarChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").pivotKey.unwrap("some"), "category"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").valueKey.unwrap("some"), "value"));
+        $(Assert.equal(chart.unwrap().getTag(), "BarChart"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").pivotKey.unwrap("some"), "category"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").valueKey.unwrap("some"), "value"));
     });
 
     test("creates chart without pivotKey (backward compat)", $ => {
@@ -389,7 +389,7 @@ describeEast("Chart.Bar Pivot", (test) => {
             { xAxis: { dataKey: "month" } }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").pivotKey.hasTag("none"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").pivotKey.hasTag("none"), true));
     });
 
     test("creates chart with pivotColors mapping", $ => {
@@ -414,8 +414,8 @@ describeEast("Chart.Bar Pivot", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").pivotKey.unwrap("some"), "region"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.get(0n).pivotColors.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").pivotKey.unwrap("some"), "region"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.get(0n).pivotColors.hasTag("some"), true));
     });
 });
 
@@ -442,9 +442,9 @@ describeEast("Chart.BarMulti", (test) => {
             }
         ));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "BarChart"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").series.size(), 2n));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").valueKey.unwrap("some"), "value"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarChart").dataSeries.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().getTag(), "BarChart"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").series.size(), 2n));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").valueKey.unwrap("some"), "value"));
+        $(Assert.equal(chart.unwrap().unwrap("BarChart").dataSeries.hasTag("some"), true));
     });
 });

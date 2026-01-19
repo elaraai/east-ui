@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Field } from "../../src/index.js";
 
 describeEast("Field", (test) => {
@@ -18,12 +18,12 @@ describeEast("Field", (test) => {
             { placeholder: "you@example.com" }
         ));
 
-        $(assertEast.equal(field.unwrap().unwrap("Field").label, "Email"));
-        $(assertEast.equal(field.unwrap().unwrap("Field").helperText.hasTag("none"), true));
-        $(assertEast.equal(field.unwrap().unwrap("Field").errorText.hasTag("none"), true));
-        $(assertEast.equal(field.unwrap().unwrap("Field").required.hasTag("none"), true));
-        $(assertEast.equal(field.unwrap().unwrap("Field").disabled.hasTag("none"), true));
-        $(assertEast.equal(field.unwrap().unwrap("Field").readOnly.hasTag("none"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").label, "Email"));
+        $(Assert.equal(field.unwrap().unwrap("Field").helperText.hasTag("none"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").errorText.hasTag("none"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").required.hasTag("none"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").disabled.hasTag("none"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").readOnly.hasTag("none"), true));
     });
 
     test("creates field with checkbox control", $ => {
@@ -32,9 +32,9 @@ describeEast("Field", (test) => {
             false
         ));
 
-        $(assertEast.equal(field.unwrap().unwrap("Field").label, "Accept Terms"));
+        $(Assert.equal(field.unwrap().unwrap("Field").label, "Accept Terms"));
         // Verify control is a Checkbox
-        $(assertEast.equal(field.unwrap().unwrap("Field").control.hasTag("Checkbox"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").control.hasTag("Checkbox"), true));
     });
 
     // =========================================================================
@@ -48,8 +48,8 @@ describeEast("Field", (test) => {
             { placeholder: "you@example.com", helperText: "We'll never share your email." }
         ));
 
-        $(assertEast.equal(field.unwrap().unwrap("Field").helperText.hasTag("some"), true));
-        $(assertEast.equal(field.unwrap().unwrap("Field").helperText.unwrap("some"), "We'll never share your email."));
+        $(Assert.equal(field.unwrap().unwrap("Field").helperText.hasTag("some"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").helperText.unwrap("some"), "We'll never share your email."));
     });
 
     test("creates field with long helper text", $ => {
@@ -59,7 +59,7 @@ describeEast("Field", (test) => {
             { helperText: "Must be at least 8 characters with one uppercase, one lowercase, and one number." }
         ));
 
-        $(assertEast.equal(field.unwrap().unwrap("Field").helperText.unwrap("some"), "Must be at least 8 characters with one uppercase, one lowercase, and one number."));
+        $(Assert.equal(field.unwrap().unwrap("Field").helperText.unwrap("some"), "Must be at least 8 characters with one uppercase, one lowercase, and one number."));
     });
 
     // =========================================================================
@@ -73,8 +73,8 @@ describeEast("Field", (test) => {
             { errorText: "Email is required" }
         ));
 
-        $(assertEast.equal(field.unwrap().unwrap("Field").errorText.hasTag("some"), true));
-        $(assertEast.equal(field.unwrap().unwrap("Field").errorText.unwrap("some"), "Email is required"));
+        $(Assert.equal(field.unwrap().unwrap("Field").errorText.hasTag("some"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").errorText.unwrap("some"), "Email is required"));
     });
 
     // =========================================================================
@@ -88,8 +88,8 @@ describeEast("Field", (test) => {
             { placeholder: "Enter username", required: true }
         ));
 
-        $(assertEast.equal(field.unwrap().unwrap("Field").required.hasTag("some"), true));
-        $(assertEast.equal(field.unwrap().unwrap("Field").required.unwrap("some"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").required.hasTag("some"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").required.unwrap("some"), true));
     });
 
     test("creates non-required field explicitly", $ => {
@@ -99,7 +99,7 @@ describeEast("Field", (test) => {
             { required: false }
         ));
 
-        $(assertEast.equal(field.unwrap().unwrap("Field").required.unwrap("some"), false));
+        $(Assert.equal(field.unwrap().unwrap("Field").required.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -113,8 +113,8 @@ describeEast("Field", (test) => {
             { disabled: true }
         ));
 
-        $(assertEast.equal(field.unwrap().unwrap("Field").disabled.hasTag("some"), true));
-        $(assertEast.equal(field.unwrap().unwrap("Field").disabled.unwrap("some"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").disabled.hasTag("some"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").disabled.unwrap("some"), true));
     });
 
     test("creates enabled field explicitly", $ => {
@@ -124,7 +124,7 @@ describeEast("Field", (test) => {
             { disabled: false }
         ));
 
-        $(assertEast.equal(field.unwrap().unwrap("Field").disabled.unwrap("some"), false));
+        $(Assert.equal(field.unwrap().unwrap("Field").disabled.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -138,8 +138,8 @@ describeEast("Field", (test) => {
             { readOnly: true }
         ));
 
-        $(assertEast.equal(field.unwrap().unwrap("Field").readOnly.hasTag("some"), true));
-        $(assertEast.equal(field.unwrap().unwrap("Field").readOnly.unwrap("some"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").readOnly.hasTag("some"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").readOnly.unwrap("some"), true));
     });
 
     test("creates editable field explicitly", $ => {
@@ -149,7 +149,7 @@ describeEast("Field", (test) => {
             { readOnly: false }
         ));
 
-        $(assertEast.equal(field.unwrap().unwrap("Field").readOnly.unwrap("some"), false));
+        $(Assert.equal(field.unwrap().unwrap("Field").readOnly.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -170,12 +170,12 @@ describeEast("Field", (test) => {
             }
         ));
 
-        $(assertEast.equal(field.unwrap().unwrap("Field").label, "Password"));
-        $(assertEast.equal(field.unwrap().unwrap("Field").helperText.unwrap("some"), "Must be at least 8 characters"));
-        $(assertEast.equal(field.unwrap().unwrap("Field").errorText.unwrap("some"), "Password is too short"));
-        $(assertEast.equal(field.unwrap().unwrap("Field").required.unwrap("some"), true));
-        $(assertEast.equal(field.unwrap().unwrap("Field").disabled.unwrap("some"), false));
-        $(assertEast.equal(field.unwrap().unwrap("Field").readOnly.unwrap("some"), false));
+        $(Assert.equal(field.unwrap().unwrap("Field").label, "Password"));
+        $(Assert.equal(field.unwrap().unwrap("Field").helperText.unwrap("some"), "Must be at least 8 characters"));
+        $(Assert.equal(field.unwrap().unwrap("Field").errorText.unwrap("some"), "Password is too short"));
+        $(Assert.equal(field.unwrap().unwrap("Field").required.unwrap("some"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").disabled.unwrap("some"), false));
+        $(Assert.equal(field.unwrap().unwrap("Field").readOnly.unwrap("some"), false));
     });
 
     test("creates email field with validation", $ => {
@@ -189,9 +189,9 @@ describeEast("Field", (test) => {
             }
         ));
 
-        $(assertEast.equal(field.unwrap().unwrap("Field").label, "Email Address"));
-        $(assertEast.equal(field.unwrap().unwrap("Field").helperText.unwrap("some"), "Enter your work email"));
-        $(assertEast.equal(field.unwrap().unwrap("Field").required.unwrap("some"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").label, "Email Address"));
+        $(Assert.equal(field.unwrap().unwrap("Field").helperText.unwrap("some"), "Enter your work email"));
+        $(Assert.equal(field.unwrap().unwrap("Field").required.unwrap("some"), true));
     });
 
     test("creates read-only display field", $ => {
@@ -204,8 +204,8 @@ describeEast("Field", (test) => {
             }
         ));
 
-        $(assertEast.equal(field.unwrap().unwrap("Field").readOnly.unwrap("some"), true));
-        $(assertEast.equal(field.unwrap().unwrap("Field").helperText.unwrap("some"), "This value cannot be changed"));
+        $(Assert.equal(field.unwrap().unwrap("Field").readOnly.unwrap("some"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").helperText.unwrap("some"), "This value cannot be changed"));
     });
 
     test("creates disabled field with explanation", $ => {
@@ -218,8 +218,8 @@ describeEast("Field", (test) => {
             }
         ));
 
-        $(assertEast.equal(field.unwrap().unwrap("Field").disabled.unwrap("some"), true));
-        $(assertEast.equal(field.unwrap().unwrap("Field").helperText.unwrap("some"), "Upgrade to enable this feature"));
-        $(assertEast.equal(field.unwrap().unwrap("Field").control.hasTag("Checkbox"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").disabled.unwrap("some"), true));
+        $(Assert.equal(field.unwrap().unwrap("Field").helperText.unwrap("some"), "Upgrade to enable this feature"));
+        $(Assert.equal(field.unwrap().unwrap("Field").control.hasTag("Checkbox"), true));
     });
 });

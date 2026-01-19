@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Code, Style } from "../../src/index.js";
 
 describeEast("Code", (test) => {
@@ -14,16 +14,16 @@ describeEast("Code", (test) => {
     test("creates code with string value", $ => {
         const code = $.let(Code.Root("const x = 1"));
 
-        $(assertEast.equal(code.unwrap().unwrap("Code").value, "const x = 1"));
+        $(Assert.equal(code.unwrap().unwrap("Code").value, "const x = 1"));
     });
 
     test("creates code with no style - all options are none", $ => {
         const code = $.let(Code.Root("hello"));
 
-        $(assertEast.equal(code.unwrap().unwrap("Code").value, "hello"));
-        $(assertEast.equal(code.unwrap().unwrap("Code").variant.hasTag("none"), true));
-        $(assertEast.equal(code.unwrap().unwrap("Code").colorPalette.hasTag("none"), true));
-        $(assertEast.equal(code.unwrap().unwrap("Code").size.hasTag("none"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").value, "hello"));
+        $(Assert.equal(code.unwrap().unwrap("Code").variant.hasTag("none"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").colorPalette.hasTag("none"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").size.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -35,8 +35,8 @@ describeEast("Code", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(code.unwrap().unwrap("Code").variant.hasTag("some"), true));
-        $(assertEast.equal(code.unwrap().unwrap("Code").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").variant.hasTag("some"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates surface variant code", $ => {
@@ -44,7 +44,7 @@ describeEast("Code", (test) => {
             variant: "surface",
         }));
 
-        $(assertEast.equal(code.unwrap().unwrap("Code").variant.unwrap("some").hasTag("surface"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").variant.unwrap("some").hasTag("surface"), true));
     });
 
     test("creates outline variant code", $ => {
@@ -52,7 +52,7 @@ describeEast("Code", (test) => {
             variant: "outline",
         }));
 
-        $(assertEast.equal(code.unwrap().unwrap("Code").variant.unwrap("some").hasTag("outline"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").variant.unwrap("some").hasTag("outline"), true));
     });
 
     // =========================================================================
@@ -64,8 +64,8 @@ describeEast("Code", (test) => {
             colorPalette: "blue",
         }));
 
-        $(assertEast.equal(code.unwrap().unwrap("Code").colorPalette.hasTag("some"), true));
-        $(assertEast.equal(code.unwrap().unwrap("Code").colorPalette.unwrap("some"), "blue"));
+        $(Assert.equal(code.unwrap().unwrap("Code").colorPalette.hasTag("some"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").colorPalette.unwrap("some"), "blue"));
     });
 
     // =========================================================================
@@ -77,8 +77,8 @@ describeEast("Code", (test) => {
             size: "xs",
         }));
 
-        $(assertEast.equal(code.unwrap().unwrap("Code").size.hasTag("some"), true));
-        $(assertEast.equal(code.unwrap().unwrap("Code").size.unwrap("some").hasTag("xs"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").size.hasTag("some"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").size.unwrap("some").hasTag("xs"), true));
     });
 
     test("creates small code", $ => {
@@ -86,7 +86,7 @@ describeEast("Code", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(code.unwrap().unwrap("Code").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates medium code", $ => {
@@ -94,7 +94,7 @@ describeEast("Code", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(code.unwrap().unwrap("Code").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates large code", $ => {
@@ -102,7 +102,7 @@ describeEast("Code", (test) => {
             size: "lg",
         }));
 
-        $(assertEast.equal(code.unwrap().unwrap("Code").size.unwrap("some").hasTag("lg"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").size.unwrap("some").hasTag("lg"), true));
     });
 
     test("creates code with Style.Size helper", $ => {
@@ -110,7 +110,7 @@ describeEast("Code", (test) => {
             size: Style.Size("md"),
         }));
 
-        $(assertEast.equal(code.unwrap().unwrap("Code").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").size.unwrap("some").hasTag("md"), true));
     });
 
     // =========================================================================
@@ -124,10 +124,10 @@ describeEast("Code", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(code.unwrap().unwrap("Code").value, "function hello() {}"));
-        $(assertEast.equal(code.unwrap().unwrap("Code").variant.unwrap("some").hasTag("subtle"), true));
-        $(assertEast.equal(code.unwrap().unwrap("Code").colorPalette.unwrap("some"), "purple"));
-        $(assertEast.equal(code.unwrap().unwrap("Code").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").value, "function hello() {}"));
+        $(Assert.equal(code.unwrap().unwrap("Code").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").colorPalette.unwrap("some"), "purple"));
+        $(Assert.equal(code.unwrap().unwrap("Code").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates inline code snippet", $ => {
@@ -136,7 +136,7 @@ describeEast("Code", (test) => {
             colorPalette: "gray",
         }));
 
-        $(assertEast.equal(code.unwrap().unwrap("Code").value, "console.log()"));
-        $(assertEast.equal(code.unwrap().unwrap("Code").variant.unwrap("some").hasTag("surface"), true));
+        $(Assert.equal(code.unwrap().unwrap("Code").value, "console.log()"));
+        $(Assert.equal(code.unwrap().unwrap("Code").variant.unwrap("some").hasTag("surface"), true));
     });
 });

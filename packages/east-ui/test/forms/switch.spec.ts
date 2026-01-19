@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Switch, Style } from "../../src/index.js";
 
 describeEast("Switch", (test) => {
@@ -14,15 +14,15 @@ describeEast("Switch", (test) => {
     test("creates switch with checked true", $ => {
         const sw = $.let(Switch.Root(true));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").checked, true));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").label.hasTag("none"), true));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").disabled.hasTag("none"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").checked, true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").label.hasTag("none"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").disabled.hasTag("none"), true));
     });
 
     test("creates switch with checked false", $ => {
         const sw = $.let(Switch.Root(false));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").checked, false));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").checked, false));
     });
 
     // =========================================================================
@@ -34,8 +34,8 @@ describeEast("Switch", (test) => {
             label: "Enable notifications",
         }));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").label.hasTag("some"), true));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").label.unwrap("some"), "Enable notifications"));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").label.hasTag("some"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").label.unwrap("some"), "Enable notifications"));
     });
 
     test("creates switch with long label", $ => {
@@ -43,7 +43,7 @@ describeEast("Switch", (test) => {
             label: "Enable all email notifications for this account",
         }));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").label.unwrap("some"), "Enable all email notifications for this account"));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").label.unwrap("some"), "Enable all email notifications for this account"));
     });
 
     // =========================================================================
@@ -55,8 +55,8 @@ describeEast("Switch", (test) => {
             disabled: true,
         }));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").disabled.hasTag("some"), true));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").disabled.unwrap("some"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").disabled.hasTag("some"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").disabled.unwrap("some"), true));
     });
 
     test("creates enabled switch explicitly", $ => {
@@ -64,7 +64,7 @@ describeEast("Switch", (test) => {
             disabled: false,
         }));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").disabled.unwrap("some"), false));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").disabled.unwrap("some"), false));
     });
 
     // =========================================================================
@@ -76,8 +76,8 @@ describeEast("Switch", (test) => {
             colorPalette: "blue",
         }));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").colorPalette.hasTag("some"), true));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").colorPalette.unwrap("some").hasTag("blue"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").colorPalette.hasTag("some"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").colorPalette.unwrap("some").hasTag("blue"), true));
     });
 
     test("creates switch with green color palette", $ => {
@@ -85,7 +85,7 @@ describeEast("Switch", (test) => {
             colorPalette: "green",
         }));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").colorPalette.unwrap("some").hasTag("green"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").colorPalette.unwrap("some").hasTag("green"), true));
     });
 
     test("creates switch with teal color palette", $ => {
@@ -93,7 +93,7 @@ describeEast("Switch", (test) => {
             colorPalette: "teal",
         }));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").colorPalette.unwrap("some").hasTag("teal"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").colorPalette.unwrap("some").hasTag("teal"), true));
     });
 
     test("creates switch with Style.ColorScheme helper", $ => {
@@ -101,7 +101,7 @@ describeEast("Switch", (test) => {
             colorPalette: Style.ColorScheme("purple"),
         }));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").colorPalette.unwrap("some").hasTag("purple"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").colorPalette.unwrap("some").hasTag("purple"), true));
     });
 
     // =========================================================================
@@ -113,8 +113,8 @@ describeEast("Switch", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").size.hasTag("some"), true));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").size.hasTag("some"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates medium switch", $ => {
@@ -122,7 +122,7 @@ describeEast("Switch", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates large switch", $ => {
@@ -130,7 +130,7 @@ describeEast("Switch", (test) => {
             size: "lg",
         }));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").size.unwrap("some").hasTag("lg"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").size.unwrap("some").hasTag("lg"), true));
     });
 
     test("creates switch with Style.Size helper", $ => {
@@ -138,7 +138,7 @@ describeEast("Switch", (test) => {
             size: Style.Size("md"),
         }));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").size.unwrap("some").hasTag("md"), true));
     });
 
     // =========================================================================
@@ -153,11 +153,11 @@ describeEast("Switch", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").checked, true));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").label.unwrap("some"), "Dark mode"));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").disabled.unwrap("some"), false));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").colorPalette.unwrap("some").hasTag("blue"), true));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").checked, true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").label.unwrap("some"), "Dark mode"));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").disabled.unwrap("some"), false));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").colorPalette.unwrap("some").hasTag("blue"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates dark mode toggle switch", $ => {
@@ -166,9 +166,9 @@ describeEast("Switch", (test) => {
             colorPalette: "gray",
         }));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").checked, false));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").label.unwrap("some"), "Dark mode"));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").colorPalette.unwrap("some").hasTag("gray"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").checked, false));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").label.unwrap("some"), "Dark mode"));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").colorPalette.unwrap("some").hasTag("gray"), true));
     });
 
     test("creates notification settings switch", $ => {
@@ -178,10 +178,10 @@ describeEast("Switch", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").checked, true));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").label.unwrap("some"), "Push notifications"));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").colorPalette.unwrap("some").hasTag("green"), true));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").checked, true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").label.unwrap("some"), "Push notifications"));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").colorPalette.unwrap("some").hasTag("green"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates disabled premium feature switch", $ => {
@@ -191,8 +191,8 @@ describeEast("Switch", (test) => {
             colorPalette: "gray",
         }));
 
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").checked, false));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").disabled.unwrap("some"), true));
-        $(assertEast.equal(sw.unwrap().unwrap("Switch").colorPalette.unwrap("some").hasTag("gray"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").checked, false));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").disabled.unwrap("some"), true));
+        $(Assert.equal(sw.unwrap().unwrap("Switch").colorPalette.unwrap("some").hasTag("gray"), true));
     });
 });

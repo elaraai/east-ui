@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Menu, Button, Text } from "../../src/index.js";
 
 describeEast("Menu", (test) => {
@@ -20,9 +20,9 @@ describeEast("Menu", (test) => {
             ]
         ));
 
-        $(assertEast.equal(menu.unwrap().getTag(), "Menu"));
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").trigger.unwrap().getTag(), "Button"));
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").items.size(), 2n));
+        $(Assert.equal(menu.unwrap().getTag(), "Menu"));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").trigger.unwrap().getTag(), "Button"));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").items.size(), 2n));
     });
 
     test("creates menu with text trigger", $ => {
@@ -33,7 +33,7 @@ describeEast("Menu", (test) => {
             ]
         ));
 
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").trigger.unwrap().getTag(), "Text"));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").trigger.unwrap().getTag(), "Text"));
     });
 
     test("creates menu with default options", $ => {
@@ -42,7 +42,7 @@ describeEast("Menu", (test) => {
             [Menu.Item("item", "Item")]
         ));
 
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").placement.hasTag("none"), true));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").placement.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -52,29 +52,29 @@ describeEast("Menu", (test) => {
     test("creates menu item with value and label", $ => {
         const item = $.let(Menu.Item("save", "Save"));
 
-        $(assertEast.equal(item.getTag(), "Item"));
-        $(assertEast.equal(item.unwrap("Item").value, "save"));
-        $(assertEast.equal(item.unwrap("Item").label, "Save"));
-        $(assertEast.equal(item.unwrap("Item").disabled.hasTag("none"), true));
+        $(Assert.equal(item.getTag(), "Item"));
+        $(Assert.equal(item.unwrap("Item").value, "save"));
+        $(Assert.equal(item.unwrap("Item").label, "Save"));
+        $(Assert.equal(item.unwrap("Item").disabled.hasTag("none"), true));
     });
 
     test("creates disabled menu item", $ => {
         const item = $.let(Menu.Item("locked", "Locked Action", true));
 
-        $(assertEast.equal(item.unwrap("Item").disabled.hasTag("some"), true));
-        $(assertEast.equal(item.unwrap("Item").disabled.unwrap("some"), true));
+        $(Assert.equal(item.unwrap("Item").disabled.hasTag("some"), true));
+        $(Assert.equal(item.unwrap("Item").disabled.unwrap("some"), true));
     });
 
     test("creates enabled menu item explicitly", $ => {
         const item = $.let(Menu.Item("enabled", "Enabled Action", false));
 
-        $(assertEast.equal(item.unwrap("Item").disabled.unwrap("some"), false));
+        $(Assert.equal(item.unwrap("Item").disabled.unwrap("some"), false));
     });
 
     test("creates menu separator", $ => {
         const separator = $.let(Menu.Separator());
 
-        $(assertEast.equal(separator.getTag(), "Separator"));
+        $(Assert.equal(separator.getTag(), "Separator"));
     });
 
     // =========================================================================
@@ -94,10 +94,10 @@ describeEast("Menu", (test) => {
             ]
         ));
 
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").items.size(), 6n));
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").items.get(0n).getTag(), "Item"));
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").items.get(2n).getTag(), "Separator"));
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").items.get(4n).getTag(), "Separator"));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").items.size(), 6n));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").items.get(0n).getTag(), "Item"));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").items.get(2n).getTag(), "Separator"));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").items.get(4n).getTag(), "Separator"));
     });
 
     // =========================================================================
@@ -111,8 +111,8 @@ describeEast("Menu", (test) => {
             { placement: "bottom" }
         ));
 
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").placement.hasTag("some"), true));
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").placement.unwrap("some").hasTag("bottom"), true));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").placement.hasTag("some"), true));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").placement.unwrap("some").hasTag("bottom"), true));
     });
 
     test("creates menu with bottom-start placement", $ => {
@@ -122,7 +122,7 @@ describeEast("Menu", (test) => {
             { placement: "bottom-start" }
         ));
 
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").placement.unwrap("some").hasTag("bottom-start"), true));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").placement.unwrap("some").hasTag("bottom-start"), true));
     });
 
     test("creates menu with bottom-end placement", $ => {
@@ -132,7 +132,7 @@ describeEast("Menu", (test) => {
             { placement: "bottom-end" }
         ));
 
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").placement.unwrap("some").hasTag("bottom-end"), true));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").placement.unwrap("some").hasTag("bottom-end"), true));
     });
 
     test("creates menu with top placement", $ => {
@@ -142,7 +142,7 @@ describeEast("Menu", (test) => {
             { placement: "top" }
         ));
 
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").placement.unwrap("some").hasTag("top"), true));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").placement.unwrap("some").hasTag("top"), true));
     });
 
     test("creates menu with right placement", $ => {
@@ -152,7 +152,7 @@ describeEast("Menu", (test) => {
             { placement: "right" }
         ));
 
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").placement.unwrap("some").hasTag("right"), true));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").placement.unwrap("some").hasTag("right"), true));
     });
 
     test("creates menu with left placement", $ => {
@@ -162,7 +162,7 @@ describeEast("Menu", (test) => {
             { placement: "left" }
         ));
 
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").placement.unwrap("some").hasTag("left"), true));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").placement.unwrap("some").hasTag("left"), true));
     });
 
     // =========================================================================
@@ -185,8 +185,8 @@ describeEast("Menu", (test) => {
             { placement: "bottom-start" }
         ));
 
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").items.size(), 8n));
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").trigger.unwrap().unwrap("Button").label, "File"));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").items.size(), 8n));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").trigger.unwrap().unwrap("Button").label, "File"));
     });
 
     test("creates context menu", $ => {
@@ -201,8 +201,8 @@ describeEast("Menu", (test) => {
             ]
         ));
 
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").items.get(0n).unwrap("Item").value, "cut"));
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").items.get(3n).getTag(), "Separator"));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").items.get(0n).unwrap("Item").value, "cut"));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").items.get(3n).getTag(), "Separator"));
     });
 
     test("creates menu with disabled items", $ => {
@@ -219,9 +219,9 @@ describeEast("Menu", (test) => {
             { placement: "bottom" }
         ));
 
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").items.get(0n).unwrap("Item").disabled.unwrap("some"), true));
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").items.get(1n).unwrap("Item").disabled.unwrap("some"), true));
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").items.get(3n).unwrap("Item").disabled.hasTag("none"), true));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").items.get(0n).unwrap("Item").disabled.unwrap("some"), true));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").items.get(1n).unwrap("Item").disabled.unwrap("some"), true));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").items.get(3n).unwrap("Item").disabled.hasTag("none"), true));
     });
 
     test("creates user actions menu", $ => {
@@ -236,7 +236,7 @@ describeEast("Menu", (test) => {
             { placement: "bottom-end" }
         ));
 
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").items.get(3n).unwrap("Item").value, "logout"));
-        $(assertEast.equal(menu.unwrap().unwrap("Menu").placement.unwrap("some").hasTag("bottom-end"), true));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").items.get(3n).unwrap("Item").value, "logout"));
+        $(Assert.equal(menu.unwrap().unwrap("Menu").placement.unwrap("some").hasTag("bottom-end"), true));
     });
 });

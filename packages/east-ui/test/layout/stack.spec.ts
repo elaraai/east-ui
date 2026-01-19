@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Stack, Text, Style } from "../../src/index.js";
 
 describeEast("Stack", (test) => {
@@ -14,16 +14,16 @@ describeEast("Stack", (test) => {
     test("creates stack with empty children", $ => {
         const stack = $.let(Stack.Root([]));
 
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").children.size(), 0n));
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.hasTag("none"), true));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").children.size(), 0n));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.hasTag("none"), true));
     });
 
     test("creates stack with single text child", $ => {
         const textChild = Text.Root("Hello");
         const stack = $.let(Stack.Root([textChild]));
 
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").children.size(), 1n));
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.hasTag("none"), true));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").children.size(), 1n));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.hasTag("none"), true));
     });
 
     test("creates stack with multiple text children", $ => {
@@ -36,7 +36,7 @@ describeEast("Stack", (test) => {
             child3,
         ]));
 
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").children.size(), 3n));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").children.size(), 3n));
     });
 
     // =========================================================================
@@ -48,9 +48,9 @@ describeEast("Stack", (test) => {
             direction: Style.FlexDirection("row"),
         }));
 
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.hasTag("some"), true));
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").direction.hasTag("some"), true));
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("row"), true));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.hasTag("some"), true));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").direction.hasTag("some"), true));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("row"), true));
     });
 
     test("creates stack with gap", $ => {
@@ -58,8 +58,8 @@ describeEast("Stack", (test) => {
             gap: "4",
         }));
 
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").gap.hasTag("some"), true));
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").gap.unwrap("some"), "4"));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").gap.hasTag("some"), true));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").gap.unwrap("some"), "4"));
     });
 
     test("creates stack with align", $ => {
@@ -67,8 +67,8 @@ describeEast("Stack", (test) => {
             align: Style.AlignItems("center"),
         }));
 
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").align.hasTag("some"), true));
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").align.unwrap("some").hasTag("center"), true));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").align.hasTag("some"), true));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").align.unwrap("some").hasTag("center"), true));
     });
 
     test("creates stack with justify", $ => {
@@ -76,8 +76,8 @@ describeEast("Stack", (test) => {
             justify: Style.JustifyContent("space-between"),
         }));
 
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").justify.hasTag("some"), true));
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").justify.unwrap("some").hasTag("space-between"), true));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").justify.hasTag("some"), true));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").justify.unwrap("some").hasTag("space-between"), true));
     });
 
     test("creates stack with wrap", $ => {
@@ -85,8 +85,8 @@ describeEast("Stack", (test) => {
             wrap: Style.FlexWrap("wrap"),
         }));
 
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").wrap.hasTag("some"), true));
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").wrap.unwrap("some").hasTag("wrap"), true));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").wrap.hasTag("some"), true));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").wrap.unwrap("some").hasTag("wrap"), true));
     });
 
     test("creates stack with padding", $ => {
@@ -94,11 +94,11 @@ describeEast("Stack", (test) => {
             padding: Stack.Padding({ top: "4", right: "4", bottom: "4", left: "4" }),
         }));
 
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").padding.hasTag("some"), true));
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").padding.unwrap("some").top.unwrap("some"), "4"));
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").padding.unwrap("some").right.unwrap("some"), "4"));
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").padding.unwrap("some").bottom.unwrap("some"), "4"));
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").padding.unwrap("some").left.unwrap("some"), "4"));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").padding.hasTag("some"), true));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").padding.unwrap("some").top.unwrap("some"), "4"));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").padding.unwrap("some").right.unwrap("some"), "4"));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").padding.unwrap("some").bottom.unwrap("some"), "4"));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").padding.unwrap("some").left.unwrap("some"), "4"));
     });
 
     test("creates stack with background", $ => {
@@ -106,8 +106,8 @@ describeEast("Stack", (test) => {
             background: "gray.100",
         }));
 
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").background.hasTag("some"), true));
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").background.unwrap("some"), "gray.100"));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").background.hasTag("some"), true));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").background.unwrap("some"), "gray.100"));
     });
 
     // =========================================================================
@@ -117,7 +117,7 @@ describeEast("Stack", (test) => {
     test("creates stack with no style - style option is none", $ => {
         const stack = $.let(Stack.Root([]));
 
-        $(assertEast.equal(stack.unwrap().unwrap("Stack").style.hasTag("none"), true));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -135,15 +135,15 @@ describeEast("Stack", (test) => {
         }));
 
         const style = stack.unwrap().unwrap("Stack").style.unwrap("some");
-        $(assertEast.equal(style.direction.unwrap("some").hasTag("row"), true));
-        $(assertEast.equal(style.gap.unwrap("some"), "4"));
-        $(assertEast.equal(style.align.unwrap("some").hasTag("center"), true));
-        $(assertEast.equal(style.justify.unwrap("some").hasTag("space-between"), true));
-        $(assertEast.equal(style.padding.unwrap("some").top.unwrap("some"), "2"));
-        $(assertEast.equal(style.background.unwrap("some"), "gray.50"));
+        $(Assert.equal(style.direction.unwrap("some").hasTag("row"), true));
+        $(Assert.equal(style.gap.unwrap("some"), "4"));
+        $(Assert.equal(style.align.unwrap("some").hasTag("center"), true));
+        $(Assert.equal(style.justify.unwrap("some").hasTag("space-between"), true));
+        $(Assert.equal(style.padding.unwrap("some").top.unwrap("some"), "2"));
+        $(Assert.equal(style.background.unwrap("some"), "gray.50"));
         // Other styles should be none
-        $(assertEast.equal(style.wrap.hasTag("none"), true));
-        $(assertEast.equal(style.margin.hasTag("none"), true));
+        $(Assert.equal(style.wrap.hasTag("none"), true));
+        $(Assert.equal(style.margin.hasTag("none"), true));
     });
 
     // =========================================================================
@@ -156,10 +156,10 @@ describeEast("Stack", (test) => {
         const rowReverse = $.let(Stack.Root([], { direction: Style.FlexDirection("row-reverse") }));
         const columnReverse = $.let(Stack.Root([], { direction: Style.FlexDirection("column-reverse") }));
 
-        $(assertEast.equal(row.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("row"), true));
-        $(assertEast.equal(column.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("column"), true));
-        $(assertEast.equal(rowReverse.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("row-reverse"), true));
-        $(assertEast.equal(columnReverse.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("column-reverse"), true));
+        $(Assert.equal(row.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("row"), true));
+        $(Assert.equal(column.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("column"), true));
+        $(Assert.equal(rowReverse.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("row-reverse"), true));
+        $(Assert.equal(columnReverse.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("column-reverse"), true));
     });
 
     // =========================================================================
@@ -171,9 +171,9 @@ describeEast("Stack", (test) => {
         const wrap = $.let(Stack.Root([], { wrap: Style.FlexWrap("wrap") }));
         const wrapReverse = $.let(Stack.Root([], { wrap: Style.FlexWrap("wrap-reverse") }));
 
-        $(assertEast.equal(nowrap.unwrap().unwrap("Stack").style.unwrap("some").wrap.unwrap("some").hasTag("nowrap"), true));
-        $(assertEast.equal(wrap.unwrap().unwrap("Stack").style.unwrap("some").wrap.unwrap("some").hasTag("wrap"), true));
-        $(assertEast.equal(wrapReverse.unwrap().unwrap("Stack").style.unwrap("some").wrap.unwrap("some").hasTag("wrap-reverse"), true));
+        $(Assert.equal(nowrap.unwrap().unwrap("Stack").style.unwrap("some").wrap.unwrap("some").hasTag("nowrap"), true));
+        $(Assert.equal(wrap.unwrap().unwrap("Stack").style.unwrap("some").wrap.unwrap("some").hasTag("wrap"), true));
+        $(Assert.equal(wrapReverse.unwrap().unwrap("Stack").style.unwrap("some").wrap.unwrap("some").hasTag("wrap-reverse"), true));
     });
 
     // =========================================================================
@@ -183,9 +183,9 @@ describeEast("Stack", (test) => {
     test("HStack creates horizontal stack", $ => {
         const hstack = $.let(Stack.HStack([]));
 
-        $(assertEast.equal(hstack.unwrap().unwrap("Stack").style.hasTag("some"), true));
-        $(assertEast.equal(hstack.unwrap().unwrap("Stack").style.unwrap("some").direction.hasTag("some"), true));
-        $(assertEast.equal(hstack.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("row"), true));
+        $(Assert.equal(hstack.unwrap().unwrap("Stack").style.hasTag("some"), true));
+        $(Assert.equal(hstack.unwrap().unwrap("Stack").style.unwrap("some").direction.hasTag("some"), true));
+        $(Assert.equal(hstack.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("row"), true));
     });
 
     test("HStack with gap", $ => {
@@ -193,8 +193,8 @@ describeEast("Stack", (test) => {
             gap: "4",
         }));
 
-        $(assertEast.equal(hstack.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("row"), true));
-        $(assertEast.equal(hstack.unwrap().unwrap("Stack").style.unwrap("some").gap.unwrap("some"), "4"));
+        $(Assert.equal(hstack.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("row"), true));
+        $(Assert.equal(hstack.unwrap().unwrap("Stack").style.unwrap("some").gap.unwrap("some"), "4"));
     });
 
     test("HStack with children and styling", $ => {
@@ -209,12 +209,12 @@ describeEast("Stack", (test) => {
             justify: Style.JustifyContent("space-between"),
         }));
 
-        $(assertEast.equal(hstack.unwrap().unwrap("Stack").children.size(), 2n));
+        $(Assert.equal(hstack.unwrap().unwrap("Stack").children.size(), 2n));
         const style = hstack.unwrap().unwrap("Stack").style.unwrap("some");
-        $(assertEast.equal(style.direction.unwrap("some").hasTag("row"), true));
-        $(assertEast.equal(style.gap.unwrap("some"), "4"));
-        $(assertEast.equal(style.align.unwrap("some").hasTag("center"), true));
-        $(assertEast.equal(style.justify.unwrap("some").hasTag("space-between"), true));
+        $(Assert.equal(style.direction.unwrap("some").hasTag("row"), true));
+        $(Assert.equal(style.gap.unwrap("some"), "4"));
+        $(Assert.equal(style.align.unwrap("some").hasTag("center"), true));
+        $(Assert.equal(style.justify.unwrap("some").hasTag("space-between"), true));
     });
 
     // =========================================================================
@@ -224,9 +224,9 @@ describeEast("Stack", (test) => {
     test("VStack creates vertical stack", $ => {
         const vstack = $.let(Stack.VStack([]));
 
-        $(assertEast.equal(vstack.unwrap().unwrap("Stack").style.hasTag("some"), true));
-        $(assertEast.equal(vstack.unwrap().unwrap("Stack").style.unwrap("some").direction.hasTag("some"), true));
-        $(assertEast.equal(vstack.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("column"), true));
+        $(Assert.equal(vstack.unwrap().unwrap("Stack").style.hasTag("some"), true));
+        $(Assert.equal(vstack.unwrap().unwrap("Stack").style.unwrap("some").direction.hasTag("some"), true));
+        $(Assert.equal(vstack.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("column"), true));
     });
 
     test("VStack with gap", $ => {
@@ -234,8 +234,8 @@ describeEast("Stack", (test) => {
             gap: "4",
         }));
 
-        $(assertEast.equal(vstack.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("column"), true));
-        $(assertEast.equal(vstack.unwrap().unwrap("Stack").style.unwrap("some").gap.unwrap("some"), "4"));
+        $(Assert.equal(vstack.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("column"), true));
+        $(Assert.equal(vstack.unwrap().unwrap("Stack").style.unwrap("some").gap.unwrap("some"), "4"));
     });
 
     test("VStack with children and styling", $ => {
@@ -249,11 +249,11 @@ describeEast("Stack", (test) => {
             align: Style.AlignItems("stretch"),
         }));
 
-        $(assertEast.equal(vstack.unwrap().unwrap("Stack").children.size(), 2n));
+        $(Assert.equal(vstack.unwrap().unwrap("Stack").children.size(), 2n));
         const style = vstack.unwrap().unwrap("Stack").style.unwrap("some");
-        $(assertEast.equal(style.direction.unwrap("some").hasTag("column"), true));
-        $(assertEast.equal(style.gap.unwrap("some"), "4"));
-        $(assertEast.equal(style.align.unwrap("some").hasTag("stretch"), true));
+        $(Assert.equal(style.direction.unwrap("some").hasTag("column"), true));
+        $(Assert.equal(style.gap.unwrap("some"), "4"));
+        $(Assert.equal(style.align.unwrap("some").hasTag("stretch"), true));
     });
 
     // =========================================================================
@@ -275,9 +275,9 @@ describeEast("Stack", (test) => {
             gap: "4",
         }));
 
-        $(assertEast.equal(outerStack.unwrap().unwrap("Stack").children.size(), 2n));
-        $(assertEast.equal(outerStack.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("column"), true));
-        $(assertEast.equal(outerStack.unwrap().unwrap("Stack").style.unwrap("some").gap.unwrap("some"), "4"));
+        $(Assert.equal(outerStack.unwrap().unwrap("Stack").children.size(), 2n));
+        $(Assert.equal(outerStack.unwrap().unwrap("Stack").style.unwrap("some").direction.unwrap("some").hasTag("column"), true));
+        $(Assert.equal(outerStack.unwrap().unwrap("Stack").style.unwrap("some").gap.unwrap("some"), "4"));
     });
 
     // =========================================================================
@@ -300,10 +300,10 @@ describeEast("Stack", (test) => {
             background: "white",
         }));
 
-        $(assertEast.equal(navBar.unwrap().unwrap("Stack").children.size(), 3n));
+        $(Assert.equal(navBar.unwrap().unwrap("Stack").children.size(), 3n));
         const style = navBar.unwrap().unwrap("Stack").style.unwrap("some");
-        $(assertEast.equal(style.direction.unwrap("some").hasTag("row"), true));
-        $(assertEast.equal(style.justify.unwrap("some").hasTag("space-between"), true));
+        $(Assert.equal(style.direction.unwrap("some").hasTag("row"), true));
+        $(Assert.equal(style.justify.unwrap("some").hasTag("space-between"), true));
     });
 
     test("creates form layout", $ => {
@@ -318,10 +318,10 @@ describeEast("Stack", (test) => {
             width: "100%",
         }));
 
-        $(assertEast.equal(formLayout.unwrap().unwrap("Stack").children.size(), 2n));
+        $(Assert.equal(formLayout.unwrap().unwrap("Stack").children.size(), 2n));
         const style = formLayout.unwrap().unwrap("Stack").style.unwrap("some");
-        $(assertEast.equal(style.direction.unwrap("some").hasTag("column"), true));
-        $(assertEast.equal(style.align.unwrap("some").hasTag("stretch"), true));
-        $(assertEast.equal(style.width.unwrap("some"), "100%"));
+        $(Assert.equal(style.direction.unwrap("some").hasTag("column"), true));
+        $(Assert.equal(style.align.unwrap("some").hasTag("stretch"), true));
+        $(Assert.equal(style.width.unwrap("some"), "100%"));
     });
 });

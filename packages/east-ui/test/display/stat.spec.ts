@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Stat } from "../../src/index.js";
 
 describeEast("Stat", (test) => {
@@ -14,10 +14,10 @@ describeEast("Stat", (test) => {
     test("creates stat with label and value", $ => {
         const stat = $.let(Stat.Root("Revenue", "$45,231"));
 
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").label, "Revenue"));
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").value, "$45,231"));
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").helpText.hasTag("none"), true));
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").indicator.hasTag("none"), true));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").label, "Revenue"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").value, "$45,231"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").helpText.hasTag("none"), true));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").indicator.hasTag("none"), true));
     });
 
     test("creates stat with expression values", $ => {
@@ -26,14 +26,14 @@ describeEast("Stat", (test) => {
             "1,234"
         ));
 
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").label, "Users"));
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").value, "1,234"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").label, "Users"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").value, "1,234"));
     });
 
     test("creates stat with numeric-like value", $ => {
         const stat = $.let(Stat.Root("Count", "42"));
 
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").value, "42"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").value, "42"));
     });
 
     // =========================================================================
@@ -45,8 +45,8 @@ describeEast("Stat", (test) => {
             helpText: "From last month",
         }));
 
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").helpText.hasTag("some"), true));
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").helpText.unwrap("some"), "From last month"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").helpText.hasTag("some"), true));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").helpText.unwrap("some"), "From last month"));
     });
 
     test("creates stat with trend help text", $ => {
@@ -54,8 +54,8 @@ describeEast("Stat", (test) => {
             helpText: "Compared to last week",
         }));
 
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").value, "+23.36%"));
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").helpText.unwrap("some"), "Compared to last week"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").value, "+23.36%"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").helpText.unwrap("some"), "Compared to last week"));
     });
 
     // =========================================================================
@@ -67,8 +67,8 @@ describeEast("Stat", (test) => {
             indicator: "up",
         }));
 
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").indicator.hasTag("some"), true));
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").indicator.unwrap("some").hasTag("up"), true));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").indicator.hasTag("some"), true));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").indicator.unwrap("some").hasTag("up"), true));
     });
 
     test("creates stat with down indicator", $ => {
@@ -76,7 +76,7 @@ describeEast("Stat", (test) => {
             indicator: "down",
         }));
 
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").indicator.unwrap("some").hasTag("down"), true));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").indicator.unwrap("some").hasTag("down"), true));
     });
 
     test("creates stat with StatIndicator helper", $ => {
@@ -84,7 +84,7 @@ describeEast("Stat", (test) => {
             indicator: "up",
         }));
 
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").indicator.unwrap("some").hasTag("up"), true));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").indicator.unwrap("some").hasTag("up"), true));
     });
 
     // =========================================================================
@@ -97,10 +97,10 @@ describeEast("Stat", (test) => {
             indicator: "up",
         }));
 
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").label, "Revenue"));
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").value, "$45,231"));
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").helpText.unwrap("some"), "+20.1% from last month"));
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").indicator.unwrap("some").hasTag("up"), true));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").label, "Revenue"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").value, "$45,231"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").helpText.unwrap("some"), "+20.1% from last month"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").indicator.unwrap("some").hasTag("up"), true));
     });
 
     test("creates revenue stat with positive trend", $ => {
@@ -109,8 +109,8 @@ describeEast("Stat", (test) => {
             indicator: "up",
         }));
 
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").label, "Monthly Revenue"));
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").helpText.unwrap("some"), "+12.5%"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").label, "Monthly Revenue"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").helpText.unwrap("some"), "+12.5%"));
     });
 
     test("creates user stat with negative trend", $ => {
@@ -119,8 +119,8 @@ describeEast("Stat", (test) => {
             indicator: "down",
         }));
 
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").value, "892"));
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").indicator.unwrap("some").hasTag("down"), true));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").value, "892"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").indicator.unwrap("some").hasTag("down"), true));
     });
 
     test("creates conversion rate stat", $ => {
@@ -128,16 +128,16 @@ describeEast("Stat", (test) => {
             helpText: "Goal: 4%",
         }));
 
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").label, "Conversion Rate"));
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").helpText.unwrap("some"), "Goal: 4%"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").label, "Conversion Rate"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").helpText.unwrap("some"), "Goal: 4%"));
     });
 
     test("creates simple count stat", $ => {
         const stat = $.let(Stat.Root("Total Orders", "1,567"));
 
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").label, "Total Orders"));
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").value, "1,567"));
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").helpText.hasTag("none"), true));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").label, "Total Orders"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").value, "1,567"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").helpText.hasTag("none"), true));
     });
 
     test("creates percentage stat with indicator", $ => {
@@ -145,7 +145,7 @@ describeEast("Stat", (test) => {
             indicator: "up",
         }));
 
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").value, "98.5%"));
-        $(assertEast.equal(stat.unwrap().unwrap("Stat").indicator.unwrap("some").hasTag("up"), true));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").value, "98.5%"));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").indicator.unwrap("some").hasTag("up"), true));
     });
 });

@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Chart } from "../../src/index.js";
 import { none, some } from "@elaraai/east";
 
@@ -19,10 +19,10 @@ describeEast("Chart.BarList", (test) => {
             { name: "Bing", value: 200000, color: none },
         ]));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "BarList"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").data.size(), 3n));
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").data.get(0n).name, "Google"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").data.get(0n).value, 1200000));
+        $(Assert.equal(chart.unwrap().getTag(), "BarList"));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").data.size(), 3n));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").data.get(0n).name, "Google"));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").data.get(0n).value, 1200000));
     });
 
     test("creates bar list with many items", $ => {
@@ -36,9 +36,9 @@ describeEast("Chart.BarList", (test) => {
             { name: "Yandex", value: 100000, color: none },
         ]));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").data.size(), 7n));
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").data.get(4n).name, "ChatGPT"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").data.get(4n).value, 1345000));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").data.size(), 7n));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").data.get(4n).name, "ChatGPT"));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").data.get(4n).value, 1345000));
     });
 
     // =========================================================================
@@ -53,9 +53,9 @@ describeEast("Chart.BarList", (test) => {
             sort: { by: "value", direction: "desc" },
         }));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").sort.hasTag("some"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").sort.unwrap("some").by, "value"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").sort.unwrap("some").direction.hasTag("desc"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").sort.hasTag("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").sort.unwrap("some").by, "value"));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").sort.unwrap("some").direction.hasTag("desc"), true));
     });
 
     test("creates bar list with ascending sort", $ => {
@@ -66,7 +66,7 @@ describeEast("Chart.BarList", (test) => {
             sort: { by: "value", direction: "asc" },
         }));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").sort.unwrap("some").direction.hasTag("asc"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").sort.unwrap("some").direction.hasTag("asc"), true));
     });
 
     test("creates bar list with sort by name", $ => {
@@ -77,7 +77,7 @@ describeEast("Chart.BarList", (test) => {
             sort: { by: "name", direction: "asc" },
         }));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").sort.unwrap("some").by, "name"));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").sort.unwrap("some").by, "name"));
     });
 
     // =========================================================================
@@ -91,7 +91,7 @@ describeEast("Chart.BarList", (test) => {
             showValue: true,
         }));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").showValue.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").showValue.unwrap("some"), true));
     });
 
     test("creates bar list without value display", $ => {
@@ -101,7 +101,7 @@ describeEast("Chart.BarList", (test) => {
             showValue: false,
         }));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").showValue.unwrap("some"), false));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").showValue.unwrap("some"), false));
     });
 
     test("creates bar list with label display", $ => {
@@ -111,7 +111,7 @@ describeEast("Chart.BarList", (test) => {
             showLabel: true,
         }));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").showLabel.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").showLabel.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -125,7 +125,7 @@ describeEast("Chart.BarList", (test) => {
             valueFormat: "compact",
         }));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").valueFormat.unwrap("some").hasTag("compact"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").valueFormat.unwrap("some").hasTag("compact"), true));
     });
 
     test("creates bar list with percent value format", $ => {
@@ -136,7 +136,7 @@ describeEast("Chart.BarList", (test) => {
             valueFormat: "percent",
         }));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").valueFormat.unwrap("some").hasTag("percent"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").valueFormat.unwrap("some").hasTag("percent"), true));
     });
 
     test("creates bar list with currency value format", $ => {
@@ -146,7 +146,7 @@ describeEast("Chart.BarList", (test) => {
             valueFormat: Chart.TickFormat.Currency({ currency: "USD" }),
         }));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").valueFormat.unwrap("some").hasTag("currency"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").valueFormat.unwrap("some").hasTag("currency"), true));
     });
 
     // =========================================================================
@@ -160,7 +160,7 @@ describeEast("Chart.BarList", (test) => {
             color: "teal.subtle",
         }));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").color.unwrap("some"), "teal.subtle"));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").color.unwrap("some"), "teal.subtle"));
     });
 
     test("creates bar list with pink color", $ => {
@@ -170,7 +170,7 @@ describeEast("Chart.BarList", (test) => {
             color: "pink.subtle",
         }));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").color.unwrap("some"), "pink.subtle"));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").color.unwrap("some"), "pink.subtle"));
     });
 
     // =========================================================================
@@ -183,8 +183,8 @@ describeEast("Chart.BarList", (test) => {
             { name: "Direct", value: 100000, color: some("blue.solid") },
         ]));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").data.get(0n).color.unwrap("some"), "teal.solid"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").data.get(1n).color.unwrap("some"), "blue.solid"));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").data.get(0n).color.unwrap("some"), "teal.solid"));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").data.get(1n).color.unwrap("some"), "blue.solid"));
     });
 
     // =========================================================================
@@ -206,12 +206,12 @@ describeEast("Chart.BarList", (test) => {
             color: "teal.subtle",
         }));
 
-        $(assertEast.equal(chart.unwrap().getTag(), "BarList"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").data.size(), 7n));
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").sort.unwrap("some").by, "value"));
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").sort.unwrap("some").direction.hasTag("desc"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").showValue.unwrap("some"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").color.unwrap("some"), "teal.subtle"));
+        $(Assert.equal(chart.unwrap().getTag(), "BarList"));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").data.size(), 7n));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").sort.unwrap("some").by, "value"));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").sort.unwrap("some").direction.hasTag("desc"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").showValue.unwrap("some"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").color.unwrap("some"), "teal.subtle"));
     });
 
     test("creates funnel-style bar list matching Chakra BarListWithFormatter example", $ => {
@@ -227,8 +227,8 @@ describeEast("Chart.BarList", (test) => {
             color: "pink.subtle",
         }));
 
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").data.size(), 4n));
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").valueFormat.unwrap("some").hasTag("percent"), true));
-        $(assertEast.equal(chart.unwrap().unwrap("BarList").color.unwrap("some"), "pink.subtle"));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").data.size(), 4n));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").valueFormat.unwrap("some").hasTag("percent"), true));
+        $(Assert.equal(chart.unwrap().unwrap("BarList").color.unwrap("some"), "pink.subtle"));
     });
 });

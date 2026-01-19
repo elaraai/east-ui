@@ -5,9 +5,9 @@
 
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { describeEast, assertEast } from "../platforms.spec.js";
-import { East, IntegerType, StringType, BooleanType, NullType, ArrayType, some } from "@elaraai/east";
-import { Reactive, State, Button, Text, Stat, Stack, UIComponentType } from "../../src/index.js";
+import { describeEast, Assert } from "../platforms.spec.js";
+import { East, IntegerType, StringType, BooleanType, NullType, ArrayType } from "@elaraai/east";
+import { Reactive, State, Button, Text, Stat, Stack, UIComponentType } from "@elaraai/east-ui";
 
 // Module-level constant (NOT a capture - in module scope)
 const TITLE = "Counter";
@@ -25,37 +25,50 @@ describeEast("Reactive.Root - Valid Cases", (test) => {
     // Test 1: Simple state read
     test("creates reactive with simple state read", $ => {
         const reactive = $.let(Reactive.Root($ => {
-            const count = $.let(State.readTyped("counter", IntegerType)());
-            return Stat.Root("Counter", East.str`${count.unwrap("some")}`);
+            // Use State.has to check, then read
+            $.if(State.has("counter"), $ => {
+                const count = $.let(State.read([IntegerType], "counter"));
+                $.return(Stat.Root("Counter", East.str`${count}`));
+            });
+            return Stat.Root("Counter", "0");
         }));
 
-        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
+        $(Assert.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
     // Test 2: Multiple state reads
     test("creates reactive with multiple state reads", $ => {
         const reactive = $.let(Reactive.Root($ => {
-            const a = $.let(State.readTyped("keyA", IntegerType)());
-            const b = $.let(State.readTyped("keyB", IntegerType)());
-            const c = $.let(State.readTyped("keyC", StringType)());
-            return Text.Root(East.str`${a.unwrap("some")} ${b.unwrap("some")} ${c.unwrap("some")}`);
+            // Initialize values first
+            $(State.write([IntegerType], "keyA", 1n));
+            $(State.write([IntegerType], "keyB", 2n));
+            $(State.write([StringType], "keyC", "test"));
+
+            const a = $.let(State.read([IntegerType], "keyA"));
+            const b = $.let(State.read([IntegerType], "keyB"));
+            const c = $.let(State.read([StringType], "keyC"));
+            return Text.Root(East.str`${a} ${b} ${c}`);
         }));
 
-        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
+        $(Assert.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
     // Test 3: Dynamic/computed key
     test("creates reactive with dynamic computed key", $ => {
         const reactive = $.let(Reactive.Root($ => {
-            const userId = $.let(State.readTyped("currentUser", StringType)());
-            const userData = $.let(State.readTyped(
-                East.str`user_${userId.unwrap("some")}`,
-                StringType
-            )());
-            return Text.Root(userData.unwrap("some"));
+            // Initialize values
+            $(State.write([StringType], "currentUser", "alice"));
+            $(State.write([StringType], "user_alice", "Alice Smith"));
+
+            const userId = $.let(State.read([StringType], "currentUser"));
+            const userData = $.let(State.read(
+                [StringType],
+                East.str`user_${userId}`
+            ));
+            return Text.Root(userData);
         }));
 
-        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
+        $(Assert.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
     // =========================================================================
@@ -68,7 +81,7 @@ describeEast("Reactive.Root - Valid Cases", (test) => {
             return Text.Root("Hello, World!");
         }));
 
-        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
+        $(Assert.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
     // =========================================================================
@@ -78,12 +91,13 @@ describeEast("Reactive.Root - Valid Cases", (test) => {
     // Test 5: Module-level constant
     test("allows module-level constants (not captures)", $ => {
         const reactive = $.let(Reactive.Root($ => {
-            const count = $.let(State.readTyped("counter", IntegerType)());
+            $(State.write([IntegerType], "counter", 42n));
+            const count = $.let(State.read([IntegerType], "counter"));
             // TITLE is module-level, not a capture
-            return Stat.Root(TITLE, East.str`${count.unwrap("some")}`);
+            return Stat.Root(TITLE, East.str`${count}`);
         }));
 
-        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
+        $(Assert.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
     // =========================================================================
@@ -93,31 +107,33 @@ describeEast("Reactive.Root - Valid Cases", (test) => {
     // Test 7: Callback defined inside
     test("allows callbacks defined inside the body", $ => {
         const reactive = $.let(Reactive.Root($ => {
-            const count = $.let(State.readTyped("counter", IntegerType)());
-            return Button.Root(East.str`Count: ${count.unwrap("some")}`, {
+            $(State.write([IntegerType], "counter", 0n));
+            const count = $.let(State.read([IntegerType], "counter"));
+            return Button.Root(East.str`Count: ${count}`, {
                 // This callback is defined inside, not captured
                 onClick: East.function([], NullType, $ => {
-                    const current = $.let(State.readTyped("counter", IntegerType)());
-                    $(State.writeTyped("counter", some(current.unwrap("some").add(1n)), IntegerType)());
+                    const current = $.let(State.read([IntegerType], "counter"));
+                    $(State.write([IntegerType], "counter", current.add(1n)));
                 })
             });
         }));
 
-        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
+        $(Assert.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
     // Test 9: State write in onClick
     test("allows state writes in onClick callbacks", $ => {
-        const reactive = $.let(Reactive.Root(_$ => {
+        const reactive = $.let(Reactive.Root($ => {
+            $(State.write([IntegerType], "counter", 0n));
             return Button.Root("Increment", {
                 onClick: East.function([], NullType, $ => {
-                    const current = $.let(State.readTyped("counter", IntegerType)());
-                    $(State.writeTyped("counter", some(current.unwrap("some").add(1n)), IntegerType)());
+                    const current = $.let(State.read([IntegerType], "counter"));
+                    $(State.write([IntegerType], "counter", current.add(1n)));
                 })
             });
         }));
 
-        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
+        $(Assert.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
     // =========================================================================
@@ -126,38 +142,41 @@ describeEast("Reactive.Root - Valid Cases", (test) => {
 
     // Test 8: Nested Reactive.Root
     test("allows nested Reactive.Root", $ => {
-        const reactive = $.let(Reactive.Root(_$ => {
+        const reactive = $.let(Reactive.Root($ => {
+            $(State.write([IntegerType], "inner", 99n));
             return Stack.VStack([
                 Text.Root("Header"),
                 // Nested Reactive is fine - it's a new scope
                 Reactive.Root($ => {
-                    const count = $.let(State.readTyped("inner", IntegerType)());
-                    return Text.Root(East.str`${count.unwrap("some")}`);
+                    const count = $.let(State.read([IntegerType], "inner"));
+                    return Text.Root(East.str`${count}`);
                 }),
             ]);
         }));
 
-        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
+        $(Assert.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
     // =========================================================================
     // Conditional Logic
     // =========================================================================
 
-    // Test 10: Conditional state read
-    test("allows conditional state reads", $ => {
+    // Test 10: Conditional state read with has check
+    test("allows conditional state reads with has check", $ => {
         const reactive = $.let(Reactive.Root($ => {
-            $(State.initTyped("showDetails", false, BooleanType)());
-            const show = $.let(State.readTyped("showDetails", BooleanType)());
-            $.if(show.unwrap("some"), $ => {
-                const details = $.let(State.readTyped("details", StringType)());
-                $.return(Text.Root(East.str`${details.unwrap("some")}`));
+            $(State.write([BooleanType], "showDetails", false));
+            $(State.write([StringType], "details", "Secret info"));
+
+            const show = $.let(State.read([BooleanType], "showDetails"));
+            $.if(show, $ => {
+                const details = $.let(State.read([StringType], "details"));
+                $.return(Text.Root(details));
             }).else($ => {
                 $.return(Text.Root("Hidden"));
             })
         }));
 
-        $(assertEast.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
+        $(Assert.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
     });
 
 });
@@ -196,11 +215,12 @@ describe("Reactive.Root - Invalid Cases (Capture Validation)", () => {
         assert.throws(
             () => {
                 East.function([], UIComponentType, $ => {
-                    const config = $.let(State.readTyped("config", StringType)());
+                    $(State.write([StringType], "config", "test"));
+                    const config = $.let(State.read([StringType], "config"));
 
                     return Reactive.Root(_$ => {
                         // ERROR: captures `config` from parent scope
-                        return Text.Root(config.unwrap("some"));
+                        return Text.Root(config);
                     });
                 });
             },
@@ -239,9 +259,10 @@ describe("Reactive.Root - Invalid Cases (Capture Validation)", () => {
                     const offset = $.let(East.value(100n, IntegerType));
 
                     return Reactive.Root($ => {
-                        const count = $.let(State.readTyped("counter", IntegerType)());
+                        $(State.write([IntegerType], "counter", 0n));
+                        const count = $.let(State.read([IntegerType], "counter"));
                         // ERROR: captures `offset` in arithmetic expression
-                        return Stat.Root("Adjusted", East.str`${count.unwrap("some").add(offset)}`);
+                        return Stat.Root("Adjusted", East.str`${count.add(offset)}`);
                     });
                 });
             },
@@ -332,9 +353,10 @@ describe("Reactive.Root - Invalid Cases (Capture Validation)", () => {
                     const prefix = $.let(East.value("Value: ", StringType));
 
                     return Reactive.Root($ => {
-                        const count = $.let(State.readTyped("counter", IntegerType)());
+                        $(State.write([IntegerType], "counter", 0n));
+                        const count = $.let(State.read([IntegerType], "counter"));
                         // ERROR: captures `prefix` in string template
-                        return Text.Root(East.str`${prefix}${count.unwrap("some")}`);
+                        return Text.Root(East.str`${prefix}${count}`);
                     });
                 });
             },

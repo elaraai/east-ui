@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, assertEast } from "../platforms.spec.js";
+import { describeEast, Assert } from "@elaraai/east-node-std";
 import { Progress, Style } from "../../src/index.js";
 
 describeEast("Progress", (test) => {
@@ -14,27 +14,27 @@ describeEast("Progress", (test) => {
     test("creates progress with value only", $ => {
         const progress = $.let(Progress.Root(50.0));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").value, 50.0));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").min.hasTag("none"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").max.hasTag("none"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").value, 50.0));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").min.hasTag("none"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").max.hasTag("none"), true));
     });
 
     test("creates progress with different value", $ => {
         const progress = $.let(Progress.Root(75.0));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").value, 75.0));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").value, 75.0));
     });
 
     test("creates progress at zero", $ => {
         const progress = $.let(Progress.Root(0.0));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").value, 0.0));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").value, 0.0));
     });
 
     test("creates progress at full", $ => {
         const progress = $.let(Progress.Root(100.0));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").value, 100.0));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").value, 100.0));
     });
 
     // =========================================================================
@@ -46,8 +46,8 @@ describeEast("Progress", (test) => {
             min: 0,
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").min.hasTag("some"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").min.unwrap("some"), 0.0));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").min.hasTag("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").min.unwrap("some"), 0.0));
     });
 
     test("creates progress with max", $ => {
@@ -55,8 +55,8 @@ describeEast("Progress", (test) => {
             max: 100,
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").max.hasTag("some"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").max.unwrap("some"), 100.0));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").max.hasTag("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").max.unwrap("some"), 100.0));
     });
 
     test("creates progress with min and max", $ => {
@@ -65,8 +65,8 @@ describeEast("Progress", (test) => {
             max: 100,
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").min.unwrap("some"), 0.0));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").max.unwrap("some"), 100.0));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").min.unwrap("some"), 0.0));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").max.unwrap("some"), 100.0));
     });
 
     // =========================================================================
@@ -78,8 +78,8 @@ describeEast("Progress", (test) => {
             colorPalette: "blue",
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").colorPalette.hasTag("some"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").colorPalette.unwrap("some").hasTag("blue"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").colorPalette.hasTag("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").colorPalette.unwrap("some").hasTag("blue"), true));
     });
 
     test("creates progress with green color palette", $ => {
@@ -87,7 +87,7 @@ describeEast("Progress", (test) => {
             colorPalette: "green",
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").colorPalette.unwrap("some").hasTag("green"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").colorPalette.unwrap("some").hasTag("green"), true));
     });
 
     test("creates progress with Style.ColorScheme helper", $ => {
@@ -95,7 +95,7 @@ describeEast("Progress", (test) => {
             colorPalette: Style.ColorScheme("purple"),
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").colorPalette.unwrap("some").hasTag("purple"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").colorPalette.unwrap("some").hasTag("purple"), true));
     });
 
     // =========================================================================
@@ -107,8 +107,8 @@ describeEast("Progress", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").size.hasTag("some"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").size.unwrap("some").hasTag("sm"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").size.hasTag("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").size.unwrap("some").hasTag("sm"), true));
     });
 
     test("creates medium progress", $ => {
@@ -116,7 +116,7 @@ describeEast("Progress", (test) => {
             size: "md",
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").size.unwrap("some").hasTag("md"), true));
     });
 
     test("creates large progress", $ => {
@@ -124,7 +124,7 @@ describeEast("Progress", (test) => {
             size: "lg",
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").size.unwrap("some").hasTag("lg"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").size.unwrap("some").hasTag("lg"), true));
     });
 
     test("creates progress with Style.Size helper", $ => {
@@ -132,7 +132,7 @@ describeEast("Progress", (test) => {
             size: Style.Size("md"),
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").size.unwrap("some").hasTag("md"), true));
     });
 
     // =========================================================================
@@ -144,8 +144,8 @@ describeEast("Progress", (test) => {
             variant: "outline",
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").variant.hasTag("some"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").variant.unwrap("some").hasTag("outline"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").variant.hasTag("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").variant.unwrap("some").hasTag("outline"), true));
     });
 
     test("creates subtle variant progress", $ => {
@@ -153,7 +153,7 @@ describeEast("Progress", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     test("creates progress with ProgressVariant helper", $ => {
@@ -161,7 +161,7 @@ describeEast("Progress", (test) => {
             variant: "subtle",
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").variant.unwrap("some").hasTag("subtle"), true));
     });
 
     // =========================================================================
@@ -173,8 +173,8 @@ describeEast("Progress", (test) => {
             striped: true,
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").striped.hasTag("some"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").striped.unwrap("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").striped.hasTag("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").striped.unwrap("some"), true));
     });
 
     test("creates non-striped progress explicitly", $ => {
@@ -182,7 +182,7 @@ describeEast("Progress", (test) => {
             striped: false,
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").striped.unwrap("some"), false));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").striped.unwrap("some"), false));
     });
 
     test("creates animated progress", $ => {
@@ -190,8 +190,8 @@ describeEast("Progress", (test) => {
             animated: true,
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").animated.hasTag("some"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").animated.unwrap("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").animated.hasTag("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").animated.unwrap("some"), true));
     });
 
     test("creates striped and animated progress", $ => {
@@ -200,8 +200,8 @@ describeEast("Progress", (test) => {
             animated: true,
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").striped.unwrap("some"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").animated.unwrap("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").striped.unwrap("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").animated.unwrap("some"), true));
     });
 
     // =========================================================================
@@ -213,8 +213,8 @@ describeEast("Progress", (test) => {
             label: "Upload Progress",
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").label.hasTag("some"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").label.unwrap("some"), "Upload Progress"));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").label.hasTag("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").label.unwrap("some"), "Upload Progress"));
     });
 
     test("creates progress with valueText", $ => {
@@ -222,8 +222,8 @@ describeEast("Progress", (test) => {
             valueText: "75%",
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").valueText.hasTag("some"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").valueText.unwrap("some"), "75%"));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").valueText.hasTag("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").valueText.unwrap("some"), "75%"));
     });
 
     test("creates progress with label and valueText", $ => {
@@ -232,8 +232,8 @@ describeEast("Progress", (test) => {
             valueText: "60 MB / 100 MB",
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").label.unwrap("some"), "Download"));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").valueText.unwrap("some"), "60 MB / 100 MB"));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").label.unwrap("some"), "Download"));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").valueText.unwrap("some"), "60 MB / 100 MB"));
     });
 
     // =========================================================================
@@ -253,16 +253,16 @@ describeEast("Progress", (test) => {
             valueText: "75%",
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").value, 75.0));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").min.unwrap("some"), 0.0));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").max.unwrap("some"), 100.0));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").colorPalette.unwrap("some").hasTag("blue"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").size.unwrap("some").hasTag("md"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").variant.unwrap("some").hasTag("subtle"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").striped.unwrap("some"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").animated.unwrap("some"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").label.unwrap("some"), "Progress"));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").valueText.unwrap("some"), "75%"));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").value, 75.0));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").min.unwrap("some"), 0.0));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").max.unwrap("some"), 100.0));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").colorPalette.unwrap("some").hasTag("blue"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").size.unwrap("some").hasTag("md"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").variant.unwrap("some").hasTag("subtle"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").striped.unwrap("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").animated.unwrap("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").label.unwrap("some"), "Progress"));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").valueText.unwrap("some"), "75%"));
     });
 
     test("creates upload progress bar", $ => {
@@ -272,8 +272,8 @@ describeEast("Progress", (test) => {
             valueText: "45%",
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").value, 45.0));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").label.unwrap("some"), "Uploading..."));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").value, 45.0));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").label.unwrap("some"), "Uploading..."));
     });
 
     test("creates loading indicator", $ => {
@@ -284,8 +284,8 @@ describeEast("Progress", (test) => {
             size: "sm",
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").striped.unwrap("some"), true));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").animated.unwrap("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").striped.unwrap("some"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").animated.unwrap("some"), true));
     });
 
     test("creates completion progress", $ => {
@@ -295,7 +295,7 @@ describeEast("Progress", (test) => {
             valueText: "100%",
         }));
 
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").value, 100.0));
-        $(assertEast.equal(progress.unwrap().unwrap("Progress").colorPalette.unwrap("some").hasTag("green"), true));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").value, 100.0));
+        $(Assert.equal(progress.unwrap().unwrap("Progress").colorPalette.unwrap("some").hasTag("green"), true));
     });
 });

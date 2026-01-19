@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast } from "./platforms.spec.js";
+import { describeEast } from "@elaraai/east-node-std";
 import {
     Box,
     Stack,
