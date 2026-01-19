@@ -470,13 +470,13 @@ export default East.function(
                 })),
                 some(`
                 Reactive.Root(East.function([], UIComponentType, $ => {
-                    const lastEvent = $.let(State.readTyped("table_last_event", StringType)());
+                    const lastEvent = $.let(State.read([StringType], "table_last_event"));
 
                     const onRowClick = East.function(
                         [Table.Types.RowClickEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("table_last_event", some(East.str\`onRowClick: row \${event.rowIndex}\`), StringType)());
+                            $(State.write([StringType], "table_last_event", East.str\`onRowClick: row \${event.rowIndex}\`));
                         }
                     );
 
@@ -484,7 +484,7 @@ export default East.function(
                         [Table.Types.RowClickEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("table_last_event", some(East.str\`onRowDoubleClick: row \${event.rowIndex}\`), StringType)());
+                            $(State.write([StringType], "table_last_event", East.str\`onRowDoubleClick: row \${event.rowIndex}\`));
                         }
                     );
 
@@ -492,7 +492,7 @@ export default East.function(
                         [Table.Types.CellClickEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("table_last_event", some(East.str\`onCellClick: row \${event.rowIndex}, col \${event.columnKey}\`), StringType)());
+                            $(State.write([StringType], "table_last_event", East.str\`onCellClick: row \${event.rowIndex}, col \${event.columnKey}\`));
                         }
                     );
 
@@ -500,7 +500,7 @@ export default East.function(
                         [Table.Types.CellClickEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("table_last_event", some(East.str\`onCellDoubleClick: row \${event.rowIndex}, col \${event.columnKey}\`), StringType)());
+                            $(State.write([StringType], "table_last_event", East.str\`onCellDoubleClick: row \${event.rowIndex}, col \${event.columnKey}\`));
                         }
                     );
 
@@ -508,12 +508,12 @@ export default East.function(
                         [Table.Types.RowSelectionEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("table_last_event", some(
+                            $(State.write([StringType], "table_last_event",
                                 event.selected.ifElse(
                                     _$ => East.str\`onRowSelectionChange: selected row \${event.rowIndex}\`,
                                     _$ => East.str\`onRowSelectionChange: deselected row \${event.rowIndex}\`
                                 )
-                            ), StringType)());
+                            ));
                         }
                     );
 
@@ -521,7 +521,7 @@ export default East.function(
                         [Table.Types.SortEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("table_last_event", some(East.str\`onSortChange: \${event.columnKey} - \${event.sortDirection.getTag()}\`), StringType)());
+                            $(State.write([StringType], "table_last_event", East.str\`onSortChange: \${event.columnKey} - \${event.sortDirection.getTag()}\`));
                         }
                     );
 
@@ -549,11 +549,11 @@ export default East.function(
                             }
                         ),
                         Badge.Root(
-                            East.equal(lastEvent.unwrap('some').length(), 0n).ifElse(_$ => "Interact with the table", _$ => lastEvent.unwrap('some')),
+                            East.equal(lastEvent.length(), 0n).ifElse(_$ => "Interact with the table", _$ => lastEvent),
                             { colorPalette: "blue", variant: "outline" }
                         ),
                     ], { gap: "3", align: "stretch" });
-                })
+                }))
                 `)
             )
         );

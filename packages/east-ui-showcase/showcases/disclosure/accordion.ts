@@ -285,14 +285,14 @@ export default East.function(
                     ], { gap: "3", align: "stretch" });
                 })),
                 some(`
-                    Reactive.Root($ => {
-                        const expanded = $.let(State.readTyped("accordion_expanded", ArrayType(StringType))());
+                    Reactive.Root(East.function([], UIComponentType, $ => {
+                        const expanded = $.let(State.read([ArrayType(StringType)], "accordion_expanded"));
 
                         const onValueChange = East.function(
                             [ArrayType(StringType)],
                             NullType,
                             ($, newValue) => {
-                                $(State.writeTyped("accordion_expanded", some(newValue), ArrayType(StringType))());
+                                $(State.write([ArrayType(StringType)], "accordion_expanded", newValue));
                             }
                         );
 
@@ -316,12 +316,12 @@ export default East.function(
                                 }),
                             ], { width: "100%" }),
                             Badge.Root(
-                                East.str\`Expanded: \${expanded.unwrap('some').size()}\`,
+                                East.str\`Expanded: \${expanded.size()}\`,
                                 { colorPalette: "green", variant: "solid" }
                             ),
-                            Text.Root(East.str\`Sections expanded: \${expanded.unwrap('some').size()}\`),
+                            Text.Root(East.str\`Sections expanded: \${expanded.size()}\`),
                         ], { gap: "3", align: "stretch" });
-                    })
+                    }))
                 `)
             )
         );

@@ -281,13 +281,13 @@ export default East.function(
                         Text.Root(East.str`Items selected: ${selected.size()}`),
                     ], { gap: "3", align: "stretch" });
                 })),
-                some(`Reactive.Root($ => {
-    const selected = $.let(State.readTyped("tree_selected", ArrayType(StringType))());
+                some(`Reactive.Root(East.function([], UIComponentType, $ => {
+    const selected = $.let(State.read([ArrayType(StringType)], "tree_selected"));
     const onSelectionChange = East.function([ArrayType(StringType)], NullType, ($, newSelection) => {
-        $(State.writeTyped("tree_selected", some(newSelection), ArrayType(StringType))());
+        $(State.write([ArrayType(StringType)], "tree_selected", newSelection));
     });
     return TreeView.Root([...nodes], { selectionMode: "multiple", onSelectionChange });
-})`)
+}))`)
             )
         );
 
@@ -329,13 +329,13 @@ export default East.function(
                         Text.Root(East.str`Nodes expanded: ${expanded.size()}`),
                     ], { gap: "3", align: "stretch" });
                 })),
-                some(`Reactive.Root($ => {
-    const expanded = $.let(State.readTyped("tree_expanded", ArrayType(StringType))());
+                some(`Reactive.Root(East.function([], UIComponentType, $ => {
+    const expanded = $.let(State.read([ArrayType(StringType)], "tree_expanded"));
     const onExpandedChange = East.function([ArrayType(StringType)], NullType, ($, newExpanded) => {
-        $(State.writeTyped("tree_expanded", some(newExpanded), ArrayType(StringType))());
+        $(State.write([ArrayType(StringType)], "tree_expanded", newExpanded));
     });
     return TreeView.Root([...nodes], { onExpandedChange });
-})`)
+}))`)
             )
         );
 

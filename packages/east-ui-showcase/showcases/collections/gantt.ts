@@ -534,15 +534,15 @@ export default East.function(
                     ], { gap: "3", align: "stretch" });
                 })),
                 some(`
-                Reactive.Root($ => {
-                    const lastEvent = $.let(State.readTyped("gantt_last_event", StringType)());
+                Reactive.Root(East.function([], UIComponentType, $ => {
+                    const lastEvent = $.let(State.read([StringType], "gantt_last_event"));
 
                     // Table-inherited callbacks
                     const onRowClick = East.function(
                         [Table.Types.RowClickEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("gantt_last_event", some(East.str\`onRowClick: row \${event.rowIndex} \`), StringType)());
+                            $(State.write([StringType], "gantt_last_event", East.str\`onRowClick: row \${event.rowIndex}\`));
                         }
                     );
 
@@ -550,7 +550,7 @@ export default East.function(
                         [Table.Types.RowClickEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("gantt_last_event", some(East.str\`onRowDoubleClick: row \${event.rowIndex}\`), StringType)());
+                            $(State.write([StringType], "gantt_last_event", East.str\`onRowDoubleClick: row \${event.rowIndex}\`));
                         }
                     );
 
@@ -558,7 +558,7 @@ export default East.function(
                         [Table.Types.CellClickEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("gantt_last_event", some(East.str\`onCellClick: row \${event.rowIndex}, col \${event.columnKey}\`), StringType)());
+                            $(State.write([StringType], "gantt_last_event", East.str\`onCellClick: row \${event.rowIndex}, col \${event.columnKey}\`));
                         }
                     );
 
@@ -566,7 +566,7 @@ export default East.function(
                         [Table.Types.CellClickEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("gantt_last_event", some(East.str\`onCellDoubleClick: row \${event.rowIndex}, col \${event.columnKey}\`), StringType)());
+                            $(State.write([StringType], "gantt_last_event", East.str\`onCellDoubleClick: row \${event.rowIndex}, col \${event.columnKey}\`));
                         }
                     );
 
@@ -574,7 +574,7 @@ export default East.function(
                         [Table.Types.SortEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("gantt_last_event", some(East.str\`onSortChange: \${event.columnKey} - \${event.sortDirection.getTag()}\`), StringType)());
+                            $(State.write([StringType], "gantt_last_event", East.str\`onSortChange: \${event.columnKey} - \${event.sortDirection.getTag()}\`));
                         }
                     );
 
@@ -583,7 +583,7 @@ export default East.function(
                         [Gantt.Types.TaskClickEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("gantt_last_event", some(East.str\`onTaskClick: row \${event.rowIndex}, task \${event.taskIndex}\`), StringType)());
+                            $(State.write([StringType], "gantt_last_event", East.str\`onTaskClick: row \${event.rowIndex}, task \${event.taskIndex}\`));
                         }
                     );
 
@@ -591,7 +591,7 @@ export default East.function(
                         [Gantt.Types.TaskClickEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("gantt_last_event", some(East.str\`onTaskDoubleClick: row \${event.rowIndex}, task \${event.taskIndex}\`), StringType)());
+                            $(State.write([StringType], "gantt_last_event", East.str\`onTaskDoubleClick: row \${event.rowIndex}, task \${event.taskIndex}\`));
                         }
                     );
 
@@ -599,7 +599,7 @@ export default East.function(
                         [Gantt.Types.TaskDragEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("gantt_last_event", some(East.str\`onTaskDrag: row \${event.rowIndex}, task \${event.taskIndex} moved\`), StringType)());
+                            $(State.write([StringType], "gantt_last_event", East.str\`onTaskDrag: row \${event.rowIndex}, task \${event.taskIndex} moved\`));
                         }
                     );
 
@@ -607,7 +607,7 @@ export default East.function(
                         [Gantt.Types.TaskDurationChangeEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("gantt_last_event", some(East.str\`onTaskDurationChange: row \${event.rowIndex}, task \${event.taskIndex}, new end date\`), StringType)());
+                            $(State.write([StringType], "gantt_last_event", East.str\`onTaskDurationChange: row \${event.rowIndex}, task \${event.taskIndex}, new end date\`));
                         }
                     );
 
@@ -615,7 +615,7 @@ export default East.function(
                         [Gantt.Types.TaskProgressChangeEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("gantt_last_event", some(East.str\`onTaskProgressChange: row \${event.rowIndex}, task \${event.taskIndex}, progress \${event.newProgress}\`), StringType)());
+                            $(State.write([StringType], "gantt_last_event", East.str\`onTaskProgressChange: row \${event.rowIndex}, task \${event.taskIndex}, progress \${event.newProgress}\`));
                         }
                     );
 
@@ -623,7 +623,7 @@ export default East.function(
                         [Gantt.Types.MilestoneClickEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("gantt_last_event", some(East.str\`onMilestoneClick: row \${event.rowIndex}, milestone \${event.milestoneIndex}\`), StringType)());
+                            $(State.write([StringType], "gantt_last_event", East.str\`onMilestoneClick: row \${event.rowIndex}, milestone \${event.milestoneIndex}\`));
                         }
                     );
 
@@ -631,7 +631,7 @@ export default East.function(
                         [Gantt.Types.MilestoneClickEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("gantt_last_event", some(East.str\`onMilestoneDoubleClick: row \${event.rowIndex}, milestone \${event.milestoneIndex}\`), StringType)());
+                            $(State.write([StringType], "gantt_last_event", East.str\`onMilestoneDoubleClick: row \${event.rowIndex}, milestone \${event.milestoneIndex}\`));
                         }
                     );
 
@@ -639,7 +639,7 @@ export default East.function(
                         [Gantt.Types.MilestoneDragEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("gantt_last_event", some(East.str\`onMilestoneDrag: row \${event.rowIndex}, milestone \${event.milestoneIndex} moved\`), StringType)());
+                            $(State.write([StringType], "gantt_last_event", East.str\`onMilestoneDrag: row \${event.rowIndex}, milestone \${event.milestoneIndex} moved\`));
                         }
                     );
 
@@ -675,11 +675,11 @@ export default East.function(
                             }
                         ),
                         Badge.Root(
-                            East.equal(lastEvent.unwrap('some').length(), 0n).ifElse($ => "Interact with the Gantt chart", $ => lastEvent.unwrap('some')),
+                            East.equal(lastEvent.length(), 0n).ifElse($ => "Interact with the Gantt chart", $ => lastEvent),
                             { colorPalette: "blue", variant: "outline" }
                         ),
                     ], { gap: "3", align: "stretch" });
-                })
+                }))
             `)
             )
         );
@@ -737,19 +737,21 @@ export default East.function(
                 })),
                 some(`
                 // Initialize state with task start date
-                $(State.initTyped("gantt_task_start", new Date("2024-01-15"), DateTimeType)());
+                $.if(State.has("gantt_task_start").not(), $ => {
+                    $(State.write([DateTimeType], "gantt_task_start", new Date("2024-01-15")));
+                });
 
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     // Read from state
-                    const taskStart = $.let(State.readTyped("gantt_task_start", DateTimeType)());
-                    const taskEnd = $.let(East.datetime.addDays(taskStart, 14n));
+                    const taskStart = $.let(State.read([DateTimeType], "gantt_task_start"));
+                    const taskEnd = $.let(taskStart.addDays(14));
 
                     // Update state on drag
                     const onTaskDrag = East.function(
                         [Gantt.Types.TaskDragEvent],
                         NullType,
                         ($, event) => {
-                            $(State.writeTyped("gantt_task_start", some(event.newStart), DateTimeType)());
+                            $(State.write([DateTimeType], "gantt_task_start", event.newStart));
                         }
                     );
 
@@ -759,7 +761,7 @@ export default East.function(
                         _row => [Gantt.Task({ start: taskStart, end: taskEnd, label: "Drag me!" })],
                         { interactive: true, onTaskDrag, dragStep: variant("days", 1) }
                     );
-                })
+                }))
             `)
             )
         );

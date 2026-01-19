@@ -248,14 +248,14 @@ export default East.function(
                     ], { gap: "3", align: "stretch" });
                 })),
                 some(`
-                    Reactive.Root($ => {
-                        const currentIndex = $.let(State.readTyped("carousel_index", IntegerType)());
+                    Reactive.Root(East.function([], UIComponentType, $ => {
+                        const currentIndex = $.let(State.read([IntegerType], "carousel_index"));
 
                         const onIndexChange = East.function(
                             [IntegerType],
                             NullType,
                             ($, newIndex) => {
-                                $(State.writeTyped("carousel_index", some(newIndex), IntegerType)());
+                                $(State.write([IntegerType], "carousel_index", newIndex));
                             }
                         );
 
@@ -273,11 +273,11 @@ export default East.function(
                                 }),
                             ], { width: "100%" }),
                             Badge.Root(
-                                East.str\`Current slide: \${currentIndex.unwrap('some').add(1n)} of 4\`,
+                                East.str\`Current slide: \${currentIndex.add(1n)} of 4\`,
                                 { colorPalette: "blue", variant: "solid" }
                             ),
                         ], { gap: "3", align: "stretch" });
-                    })
+                    }))
                 `)
             )
         );

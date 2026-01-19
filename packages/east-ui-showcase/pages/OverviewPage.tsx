@@ -130,7 +130,7 @@ const Dashboard = East.function([], UIComponentType, ($) => {
         $(State.write([FloatType], "multiplier", v));
     });
 
-    return Reactive.Root($ => {
+    return Reactive.Root(East.function([], UIComponentType, $ => {
         const months = $.const(["Jan", "Feb", "Mar", "Apr", "May", "Jun"]);
         const m = $.let(State.read([FloatType], "multiplier"));
 
@@ -158,7 +158,7 @@ const Dashboard = East.function([], UIComponentType, ($) => {
                 },
             }),
         ]);
-    });
+    }));
 });
         `)
     );
