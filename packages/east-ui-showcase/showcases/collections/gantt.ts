@@ -384,7 +384,7 @@ export default East.function(
             ShowcaseCard(
                 "All Callbacks",
                 "Click rows, cells, tasks, milestones or drag to see events",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const lastEvent = $.let(State.read([StringType], "gantt_last_event"));
 
                     // Table-inherited callbacks
@@ -532,7 +532,7 @@ export default East.function(
                             { colorPalette: "blue", variant: "outline" }
                         ),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`
                 Reactive.Root($ => {
                     const lastEvent = $.let(State.readTyped("gantt_last_event", StringType)());
@@ -697,7 +697,7 @@ export default East.function(
             ShowcaseCard(
                 "Reactive Drag",
                 "Drag task to update state - position persists after re-render",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     // Read task start date from state
                     const taskStart = $.let(State.read([DateTimeType], "gantt_task_start"));
                     // Calculate end date (14 days after start)
@@ -734,7 +734,7 @@ export default East.function(
                         ),
                         Text.Root(East.str`Start: ${taskStart}`, { fontSize: "sm", color: "fg.muted" }),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`
                 // Initialize state with task start date
                 $(State.initTyped("gantt_task_start", new Date("2024-01-15"), DateTimeType)());

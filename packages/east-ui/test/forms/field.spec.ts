@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Field } from "../../src/index.js";
 
 describeEast("Field", (test) => {
@@ -222,4 +222,4 @@ describeEast("Field", (test) => {
         $(Assert.equal(field.unwrap().unwrap("Field").helperText.unwrap("some"), "Upgrade to enable this feature"));
         $(Assert.equal(field.unwrap().unwrap("Field").control.hasTag("Checkbox"), true));
     });
-});
+}, {   platformFns: TestImpl,});

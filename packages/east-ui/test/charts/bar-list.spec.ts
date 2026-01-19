@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Chart } from "../../src/index.js";
 import { none, some } from "@elaraai/east";
 
@@ -231,4 +231,4 @@ describeEast("Chart.BarList", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("BarList").valueFormat.unwrap("some").hasTag("percent"), true));
         $(Assert.equal(chart.unwrap().unwrap("BarList").color.unwrap("some"), "pink.subtle"));
     });
-});
+}, {   platformFns: TestImpl,});

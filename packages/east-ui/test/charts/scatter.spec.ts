@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Chart } from "../../src/index.js";
 
 describeEast("Chart.Scatter", (test) => {
@@ -239,7 +239,7 @@ describeEast("Chart.Scatter", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("ScatterChart").series.size(), 2n));
         $(Assert.equal(chart.unwrap().unwrap("ScatterChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
-});
+}, {   platformFns: TestImpl,});
 
 describeEast("Chart.Scatter Pivot", (test) => {
     // =========================================================================
@@ -303,7 +303,7 @@ describeEast("Chart.Scatter Pivot", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("ScatterChart").pivotKey.unwrap("some"), "region"));
         $(Assert.equal(chart.unwrap().unwrap("ScatterChart").series.get(0n).pivotColors.hasTag("some"), true));
     });
-});
+}, {   platformFns: TestImpl,});
 
 describeEast("Chart.ScatterMulti", (test) => {
     test("creates scatter chart with multi-series data", $ => {
@@ -333,4 +333,4 @@ describeEast("Chart.ScatterMulti", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("ScatterChart").valueKey.unwrap("some"), "value"));
         $(Assert.equal(chart.unwrap().unwrap("ScatterChart").dataSeries.hasTag("some"), true));
     });
-});
+}, {   platformFns: TestImpl,});

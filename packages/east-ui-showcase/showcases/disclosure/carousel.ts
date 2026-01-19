@@ -217,7 +217,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Carousel",
                 "Navigate to see onIndexChange callback",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const currentIndex = $.let(State.read([IntegerType], "carousel_index"));
 
                     const onIndexChange = East.function(
@@ -246,7 +246,7 @@ export default East.function(
                             { colorPalette: "blue", variant: "solid" }
                         ),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`
                     Reactive.Root($ => {
                         const currentIndex = $.let(State.readTyped("carousel_index", IntegerType)());

@@ -12,7 +12,7 @@ import {
     useSyncExternalStore,
     type ReactNode,
 } from "react";
-import { State, UIComponentType } from "@elaraai/east-ui";
+import { UIComponentType } from "@elaraai/east-ui";
 import { type UIStoreInterface } from "./store.js";
 import { StateImpl, getStore } from "./state-runtime.js";
 import { EastChakraComponent } from "../component.js";

@@ -247,7 +247,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Selection",
                 "Click items to see onSelectionChange callback",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const selected = $.let(State.read([ArrayType(StringType)], "tree_selected"));
 
                     const onSelectionChange = East.function(
@@ -280,7 +280,7 @@ export default East.function(
                         ),
                         Text.Root(East.str`Items selected: ${selected.size()}`),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`Reactive.Root($ => {
     const selected = $.let(State.readTyped("tree_selected", ArrayType(StringType))());
     const onSelectionChange = East.function([ArrayType(StringType)], NullType, ($, newSelection) => {
@@ -296,7 +296,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Expand",
                 "Expand/collapse to see onExpandedChange callback",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const expanded = $.let(State.read([ArrayType(StringType)], "tree_expanded"));
 
                     const onExpandedChange = East.function(
@@ -328,7 +328,7 @@ export default East.function(
                         ),
                         Text.Root(East.str`Nodes expanded: ${expanded.size()}`),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`Reactive.Root($ => {
     const expanded = $.let(State.readTyped("tree_expanded", ArrayType(StringType))());
     const onExpandedChange = East.function([ArrayType(StringType)], NullType, ($, newExpanded) => {

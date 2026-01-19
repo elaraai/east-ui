@@ -4,7 +4,7 @@
  */
 
 import { East, FloatType, StringType } from "@elaraai/east";
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Planner, Text, Badge } from "../../src/index.js";
 
 describeEast("Planner", (test) => {
@@ -493,4 +493,4 @@ describeEast("Planner", (test) => {
         $(Assert.equal(planner.unwrap().unwrap("Planner").columns.size(), 3n));
         $(Assert.equal(planner.unwrap().unwrap("Planner").rows.size(), 2n));
     });
-});
+}, {   platformFns: TestImpl,});

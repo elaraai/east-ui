@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Flex, Text, Style } from "../../src/index.js";
 
 describeEast("Flex", (test) => {
@@ -349,4 +349,4 @@ describeEast("Flex", (test) => {
         $(Assert.equal(outerFlex.unwrap().unwrap("Flex").style.unwrap("some").padding.unwrap("some").top.unwrap("some"), "4"));
         $(Assert.equal(outerFlex.unwrap().unwrap("Flex").style.unwrap("some").background.unwrap("some"), "gray.100"));
     });
-});
+}, {   platformFns: TestImpl,});

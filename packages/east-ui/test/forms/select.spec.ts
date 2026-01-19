@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Select, Style } from "../../src/index.js";
 
 describeEast("Select", (test) => {
@@ -292,4 +292,4 @@ describeEast("Select", (test) => {
         $(Assert.equal(select.unwrap().unwrap("Select").value.unwrap("some"), "current"));
         $(Assert.equal(select.unwrap().unwrap("Select").disabled.unwrap("some"), true));
     });
-});
+}, {   platformFns: TestImpl,});

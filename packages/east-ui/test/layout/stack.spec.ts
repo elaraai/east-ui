@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Stack, Text, Style } from "../../src/index.js";
 
 describeEast("Stack", (test) => {
@@ -324,4 +324,4 @@ describeEast("Stack", (test) => {
         $(Assert.equal(style.align.unwrap("some").hasTag("stretch"), true));
         $(Assert.equal(style.width.unwrap("some"), "100%"));
     });
-});
+}, {   platformFns: TestImpl,});

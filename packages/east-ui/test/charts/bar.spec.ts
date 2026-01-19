@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Chart } from "../../src/index.js";
 
 describeEast("Chart.Bar", (test) => {
@@ -352,7 +352,7 @@ describeEast("Chart.Bar", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("BarChart").series.get(0n).stackId.unwrap("some"), "a"));
         $(Assert.equal(chart.unwrap().unwrap("BarChart").legend.unwrap("some").show.unwrap("some"), true));
     });
-});
+}, {   platformFns: TestImpl,});
 
 describeEast("Chart.Bar Pivot", (test) => {
     // =========================================================================
@@ -417,7 +417,7 @@ describeEast("Chart.Bar Pivot", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("BarChart").pivotKey.unwrap("some"), "region"));
         $(Assert.equal(chart.unwrap().unwrap("BarChart").series.get(0n).pivotColors.hasTag("some"), true));
     });
-});
+}, {   platformFns: TestImpl,});
 
 describeEast("Chart.BarMulti", (test) => {
     test("creates bar chart with multi-series data", $ => {
@@ -447,4 +447,4 @@ describeEast("Chart.BarMulti", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("BarChart").valueKey.unwrap("some"), "value"));
         $(Assert.equal(chart.unwrap().unwrap("BarChart").dataSeries.hasTag("some"), true));
     });
-});
+}, {   platformFns: TestImpl,});

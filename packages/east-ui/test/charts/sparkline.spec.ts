@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Sparkline } from "../../src/index.js";
 
 describeEast("Sparkline", (test) => {
@@ -200,4 +200,4 @@ describeEast("Sparkline", (test) => {
         $(Assert.equal(sparkline.unwrap().unwrap("Sparkline").type.unwrap("some").hasTag("area"), true));
         $(Assert.equal(sparkline.unwrap().unwrap("Sparkline").color.unwrap("some"), "teal.400"));
     });
-});
+}, {   platformFns: TestImpl,});

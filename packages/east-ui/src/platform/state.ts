@@ -13,14 +13,7 @@
  * @packageDocumentation
  */
 
-import {
-    East,
-    StringType,
-    BlobType,
-    NullType,
-    BooleanType,
-} from "@elaraai/east";
-import { OptionType } from "@elaraai/east/internal";
+import { East, StringType, NullType, BooleanType } from "@elaraai/east";
 
 /**
  * Reads a Beast2-encoded value from state storage.

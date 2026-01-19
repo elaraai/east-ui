@@ -4,7 +4,7 @@
  */
 
 import { Icon } from "../../src/display/icon/index.js";
-import { describeEast as describe, Assert } from "@elaraai/east-node-std";
+import { describeEast as describe, Assert, TestImpl } from "@elaraai/east-node-std";
 
 describe("Icon", (test) => {
     // =========================================================================
@@ -160,4 +160,4 @@ describe("Icon", (test) => {
         $(Assert.equal(icon.unwrap().unwrap("Icon").name, "file-code"));
         $(Assert.equal(icon.unwrap().unwrap("Icon").style.unwrap("some").color.unwrap("some"), "blue.500"));
     });
-});
+}, {   platformFns: TestImpl,});

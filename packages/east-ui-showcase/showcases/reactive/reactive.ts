@@ -109,7 +109,7 @@ export default East.function(
             ShowcaseCard(
                 "Reactive (Live)",
                 "Uses Reactive.Root - automatically updates when state changes!",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const liveValue = $.let(State.read([IntegerType], "reactive_counter"));
                     return Stack.VStack([
                         Badge.Root("Uses Reactive.Root", { colorPalette: "green", variant: "solid" }),
@@ -119,7 +119,7 @@ export default East.function(
                             Button.Root("+", { variant: "solid", colorPalette: "blue", onClick: incrementCounter }),
                         ], { gap: "2" }),
                     ], { gap: "4", align: "center" });
-                }),
+                })),
                 some(`
                     Reactive.Root($ => {
                         const liveValue = $.let(State.read([IntegerType], "reactive_counter"));
@@ -144,7 +144,7 @@ export default East.function(
             ShowcaseCard(
                 "Reactive Chart",
                 "A live-updating chart! Click Boost or Crash to see the revenue bar change in real-time.",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const revenueValue = $.let(State.read([FloatType], "reactive_revenue"));
 
                     // Determine color based on revenue level
@@ -173,7 +173,7 @@ export default East.function(
                             Button.Root("Boost +20%", { variant: "solid", colorPalette: "green", onClick: boostRevenue }),
                         ], { gap: "2" }),
                     ], { gap: "4", align: "center" });
-                }),
+                })),
                 some(`
                     Reactive.Root($ => {
                         const revenueValue = $.let(State.read([FloatType], "reactive_revenue"));
@@ -217,10 +217,10 @@ export default East.function(
             ShowcaseCard(
                 "Nested Reactive (Live)",
                 "Uses Reactive.Root within Reactive.Root - automatically updates when state changes!",
-                Reactive.Root(_$ => {
+                Reactive.Root(East.function([], UIComponentType, _$ => {
                     return Stack.VStack([
                         Badge.Root("Uses Reactive.Root", { colorPalette: "green", variant: "solid" }),
-                        Reactive.Root($ => {
+                        Reactive.Root(East.function([], UIComponentType, $ => {
                             $.if(State.has("reactive_factor").not(), $ => {
                                 $(State.write([BooleanType], "reactive_factor", true));
                             });
@@ -239,13 +239,13 @@ export default East.function(
                                 Stat.Root("Live Value", East.print(adjusted)),
                                 Switch.Root(factor, { onChange })
                             ], { gap: "4", align: "center" });
-                        }),
+                        })),
                         Stack.HStack([
                             Button.Root("-", { variant: "solid", colorPalette: "red", onClick: decrementCounter }),
                             Button.Root("+", { variant: "solid", colorPalette: "blue", onClick: incrementCounter }),
                         ], { gap: "2" }),
                     ], { gap: "4", align: "center" });
-                }),
+                })),
                 some(`
                     Reactive.Root(_$ => {
                         return Stack.VStack([

@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Checkbox, Style } from "../../src/index.js";
 
 describeEast("Checkbox", (test) => {
@@ -208,4 +208,4 @@ describeEast("Checkbox", (test) => {
         $(Assert.equal(checkbox.unwrap().unwrap("Checkbox").disabled.unwrap("some"), true));
         $(Assert.equal(checkbox.unwrap().unwrap("Checkbox").colorPalette.unwrap("some").hasTag("gray"), true));
     });
-});
+}, {   platformFns: TestImpl,});

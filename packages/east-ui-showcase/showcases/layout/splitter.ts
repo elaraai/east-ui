@@ -238,7 +238,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Splitter",
                 "Drag to see onResize callback",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const leftSize = $.let(State.read([FloatType], "splitter_left_size"));
                     const rightSize = $.let(State.read([FloatType], "splitter_right_size"));
 
@@ -277,9 +277,9 @@ export default East.function(
                             ),
                         ], { gap: "2" }),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`
-                    Reactive.Root($ => {
+                    Reactive.Root(East.function([], UIComponentType, $ => {
                         const leftSize = $.let(State.readTyped("splitter_left_size", FloatType)());
                         const rightSize = $.let(State.readTyped("splitter_right_size", FloatType)());
 

@@ -349,7 +349,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Tabs",
                 "Click tabs to see onValueChange callback",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const selected = $.let(State.read([StringType], "tabs_selected"));
 
                     const onValueChange = East.function(
@@ -383,9 +383,9 @@ export default East.function(
                             { colorPalette: "blue", variant: "solid" }
                         ),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`
-                    Reactive.Root($ => {
+                    Reactive.Root(East.function([], UIComponentType, $ => {
                         const selected = $.let(State.readTyped("tabs_selected", StringType)());
 
                         const onValueChange = East.function(

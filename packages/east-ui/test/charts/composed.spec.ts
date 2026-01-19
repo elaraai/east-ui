@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Chart } from "../../src/index.js";
 
 describeEast("Chart.Composed", (test) => {
@@ -203,7 +203,7 @@ describeEast("Chart.Composed", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("ComposedChart").barSize.unwrap("some"), 20n));
         $(Assert.equal(chart.unwrap().unwrap("ComposedChart").barGap.unwrap("some"), 4n));
     });
-});
+}, {   platformFns: TestImpl,});
 
 describeEast("Chart.Composed Pivot", (test) => {
     // =========================================================================
@@ -300,7 +300,7 @@ describeEast("Chart.Composed Pivot", (test) => {
 
         $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.get(0n).unwrap("bar").pivotColors.hasTag("some"), true));
     });
-});
+}, {   platformFns: TestImpl,});
 
 describeEast("Chart.ComposedMulti", (test) => {
     // =========================================================================
@@ -365,4 +365,4 @@ describeEast("Chart.ComposedMulti", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 3n));
         $(Assert.equal(chart.unwrap().unwrap("ComposedChart").dataSeries.hasTag("some"), true));
     });
-});
+}, {   platformFns: TestImpl,});

@@ -1,0 +1,15 @@
+. /home/crambelsoupy/.nvm/nvm.sh && nvm use && npm run test
+Found '/home/crambelsoupy/src/east-ui/.nvmrc' with version <22>
+Now using node v22.21.1 (npm v10.9.4)
+
+> east-ui-monorepo@0.0.1-beta.6 test
+> npm run test --workspaces --if-present
+
+
+> @elaraai/east-ui@0.0.1-beta.22 test
+> npm run build && npm run lint && node --enable-source-maps --test 'dist/test/**/*.spec.js' 'dist/src/**/*.spec.js'
+
+
+> @elaraai/east-ui@0.0.1-beta.22 build
+> tsc
+

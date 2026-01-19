@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Button, Style } from "../../src/index.js";
 
 describeEast("Button", (test) => {
@@ -279,4 +279,4 @@ describeEast("Button", (test) => {
         $(Assert.equal(button.unwrap().unwrap("Button").style.unwrap("some").loading.hasTag("none"), true));
         $(Assert.equal(button.unwrap().unwrap("Button").style.unwrap("some").disabled.hasTag("none"), true));
     });
-});
+}, {   platformFns: TestImpl,});

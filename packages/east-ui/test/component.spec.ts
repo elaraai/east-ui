@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast } from "@elaraai/east-node-std";
+import { describeEast, TestImpl } from "@elaraai/east-node-std";
 import {
     Box,
     Stack,
@@ -71,4 +71,4 @@ describeEast("UIComponentType - Nested Components", (test) => {
             { padding: Box.Padding({ top: "6", right: "6", bottom: "6", left: "6" }), background: "white" }
         ), UIComponentType);
     });
-});
+}, {   platformFns: TestImpl,});

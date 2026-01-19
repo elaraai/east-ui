@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Table, Badge, Text, Stack } from "../../src/index.js";
 import { East } from "@elaraai/east";
 
@@ -360,4 +360,4 @@ describeEast("Table", (test) => {
         $(Assert.equal(table.unwrap().unwrap("Table").columns.size(), 3n));
         $(Assert.equal(table.unwrap().unwrap("Table").rows.size(), 2n));
     });
-});
+}, {   platformFns: TestImpl,});

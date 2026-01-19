@@ -393,7 +393,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Input",
                 "Type to see live updates via onChange callback",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const text = $.let(State.read([StringType], "form_string_input"));
                     const focusCount = $.let(State.read([IntegerType], "form_focus_count"));
                     const blurCount = $.let(State.read([IntegerType], "form_blur_count"));
@@ -424,9 +424,9 @@ export default East.function(
                             Badge.Root(East.str`Blur: ${blurCount}`, { colorPalette: "orange" }),
                         ], { gap: "2" }),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const text = $.let(State.read([StringType], "form_string_input"));
                     const focusCount = $.let(State.read([IntegerType], "form_focus_count"));
                     const blurCount = $.let(State.read([IntegerType], "form_blur_count"));
@@ -467,7 +467,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Checkbox",
                 "Toggle to see state changes via onChange",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const checked = $.let(State.read([BooleanType], "form_checkbox"));
                     const onChange = East.function([BooleanType], NullType, ($, newValue) => {
                         $(State.write([BooleanType], "form_checkbox", newValue));
@@ -484,9 +484,9 @@ export default East.function(
                             { colorPalette: checked.ifElse(_$ => variant("green", null), _$ => variant("gray", null)) }
                         ),
                     ], { gap: "3", align: "flex-start" });
-                }),
+                })),
                 some(`
-                    Reactive.Root($ => {
+                    Reactive.Root(East.function([], UIComponentType, $ => {
                         const checked = $.let(State.read([BooleanType], "form_checkbox"));
                         const onChange = East.function([BooleanType], NullType, ($, newValue) => {
                             $(State.write([BooleanType], "form_checkbox", newValue));
@@ -513,7 +513,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Switch",
                 "Toggle switch with live state feedback",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const enabled = $.let(State.read([BooleanType], "form_switch"));
                     const onChange = East.function([BooleanType], NullType, ($, newValue) => {
                         $(State.write([BooleanType], "form_switch", newValue));
@@ -533,9 +533,9 @@ export default East.function(
                             }
                         ),
                     ], { gap: "3", align: "flex-start" });
-                }),
+                })),
                 some(`
-                    Reactive.Root($ => {
+                    Reactive.Root(East.function([], UIComponentType, $ => {
                         const enabled = $.let(State.read([BooleanType], "form_switch"));
                         const onChange = East.function([BooleanType], NullType, ($, newValue) => {
                             $(State.write([BooleanType], "form_switch", newValue));
@@ -565,7 +565,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Slider",
                 "Drag to see live value updates",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const value = $.let(State.read([FloatType], "form_slider"));
                     const onChange = East.function([FloatType], NullType, ($, newValue) => {
                         $(State.write([FloatType], "form_slider", newValue));
@@ -584,9 +584,9 @@ export default East.function(
                             { colorPalette: "blue", variant: "solid" }
                         ),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`
-                    Reactive.Root($ => {
+                    Reactive.Root(East.function([], UIComponentType, $ => {
                         const value = $.let(State.read([FloatType], "form_slider"));
                         const onChange = East.function([FloatType], NullType, ($, newValue) => {
                             $(State.write([FloatType], "form_slider", newValue));
@@ -615,7 +615,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Select",
                 "Select an option to see onChange callback",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const selected = $.let(State.read([StringType], "form_select"));
                     const onChange = East.function([StringType], NullType, ($, newValue) => {
                         $(State.write([StringType], "form_select", newValue));
@@ -633,9 +633,9 @@ export default East.function(
                             _$ => "(none)"
                         )}`),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`
-                    Reactive.Root($ => {
+                    Reactive.Root(East.function([], UIComponentType, $ => {
                         const selected = $.let(State.read([StringType], "form_select"));
                         const onChange = East.function([StringType], NullType, ($, newValue) => {
                             $(State.write([StringType], "form_select", newValue));
@@ -663,7 +663,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Textarea",
                 "Type to see character count update",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const text = $.let(State.read([StringType], "form_textarea"));
                     const onChange = East.function([StringType], NullType, ($, newValue) => {
                         $(State.write([StringType], "form_textarea", newValue));
@@ -679,9 +679,9 @@ export default East.function(
                             Badge.Root(East.str`${text.length()} chars`, { colorPalette: "blue" }),
                         ], { gap: "2" }),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`
-                    Reactive.Root($ => {
+                    Reactive.Root(East.function([], UIComponentType, $ => {
                         const text = $.let(State.read([StringType], "form_textarea"));
                         const onChange = East.function([StringType], NullType, ($, newValue) => {
                             $(State.write([StringType], "form_textarea", newValue));
@@ -707,7 +707,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Tags Input",
                 "Add/remove tags to see onChange callback",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const tags = $.let(State.read([ArrayType(StringType)], "form_tags"));
                     const onChange = East.function([ArrayType(StringType)], NullType, ($, newValue) => {
                         $(State.write([ArrayType(StringType)], "form_tags", newValue));
@@ -721,9 +721,9 @@ export default East.function(
                         }),
                         Badge.Root(East.str`${tags.size()} tags`, { colorPalette: "purple" }),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`
-                    Reactive.Root($ => {
+                    Reactive.Root(East.function([], UIComponentType, $ => {
                         const tags = $.let(State.read([ArrayType(StringType)], "form_tags"));
                         const onChange = East.function([ArrayType(StringType)], NullType, ($, newValue) => {
                             $(State.write([ArrayType(StringType)], "form_tags", newValue));
@@ -747,7 +747,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Integer Input",
                 "Numeric input with live value display",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const value = $.let(State.read([IntegerType], "form_integer_input"));
                     const onChange = East.function([IntegerType], NullType, ($, newValue) => {
                         $(State.write([IntegerType], "form_integer_input", newValue));
@@ -766,9 +766,9 @@ export default East.function(
                             { colorPalette: "teal", variant: "solid" }
                         ),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const value = $.let(State.read([IntegerType], "form_integer_input"));
                     const onChange = East.function([IntegerType], NullType, ($, newValue) => {
                         $(State.write([IntegerType], "form_integer_input", newValue));
@@ -797,7 +797,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Float Input",
                 "Decimal input with precision display",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const value = $.let(State.read([FloatType], "form_float_input"));
                     const onChange = East.function([FloatType], NullType, ($, newValue) => {
                         $(State.write([FloatType], "form_float_input", newValue));
@@ -813,9 +813,9 @@ export default East.function(
                         }),
                         Text.Root(East.str`Value: ${East.print(value)}`),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`
-                    Reactive.Root($ => {
+                    Reactive.Root(East.function([], UIComponentType, $ => {
                         const value = $.let(State.read([FloatType], "form_float_input"));
                         const onChange = East.function([FloatType], NullType, ($, newValue) => {
                             $(State.write([FloatType], "form_float_input", newValue));
@@ -841,7 +841,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive DateTime Input",
                 "Date picker with live value display",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const value = $.let(State.read([DateTimeType], "form_datetime_input"));
                     const onChange = East.function([DateTimeType], NullType, ($, newValue) => {
                         $(State.write([DateTimeType], "form_datetime_input", newValue));
@@ -855,9 +855,9 @@ export default East.function(
                         Text.Root(East.str`Month: ${value.getMonth()}`),
                         Text.Root(East.str`Day: ${value.getDayOfMonth()}`),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`
-                    Reactive.Root($ => {
+                    Reactive.Root(East.function([], UIComponentType, $ => {
                         const value = $.let(State.read([DateTimeType], "form_datetime_input"));
                         const onChange = East.function([DateTimeType], NullType, ($, newValue) => {
                             $(State.write([DateTimeType], "form_datetime_input", newValue));

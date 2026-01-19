@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Slider, Style } from "../../src/index.js";
 
 describeEast("Slider", (test) => {
@@ -309,4 +309,4 @@ describeEast("Slider", (test) => {
         $(Assert.equal(slider.unwrap().unwrap("Slider").disabled.unwrap("some"), true));
         $(Assert.equal(slider.unwrap().unwrap("Slider").colorPalette.unwrap("some").hasTag("gray"), true));
     });
-});
+}, {   platformFns: TestImpl,});

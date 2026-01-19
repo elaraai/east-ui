@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Chart } from "../../src/index.js";
 
 describeEast("Chart.Line", (test) => {
@@ -497,7 +497,7 @@ describeEast("Chart.Line", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("LineChart").series.size(), 2n));
         $(Assert.equal(chart.unwrap().unwrap("LineChart").legend.unwrap("some").show.unwrap("some"), true));
     });
-});
+}, {   platformFns: TestImpl,});
 
 describeEast("Chart.Line Pivot", (test) => {
     // =========================================================================
@@ -562,7 +562,7 @@ describeEast("Chart.Line Pivot", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("LineChart").pivotKey.unwrap("some"), "region"));
         $(Assert.equal(chart.unwrap().unwrap("LineChart").series.get(0n).pivotColors.hasTag("some"), true));
     });
-});
+}, {   platformFns: TestImpl,});
 
 describeEast("Chart.LineMulti", (test) => {
     // =========================================================================
@@ -653,4 +653,4 @@ describeEast("Chart.LineMulti", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("LineChart").valueKey.unwrap("some"), "amount"));
         $(Assert.equal(chart.unwrap().unwrap("LineChart").showDots.unwrap("some"), true));
     });
-});
+}, {   platformFns: TestImpl,});

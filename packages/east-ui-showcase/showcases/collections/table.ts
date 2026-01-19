@@ -383,7 +383,7 @@ export default East.function(
             ShowcaseCard(
                 "All Callbacks",
                 "Click, double-click rows/cells, or click headers to sort",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const lastEvent = $.let(State.read([StringType], "table_last_event"));
 
                     const onRowClick = East.function(
@@ -467,9 +467,9 @@ export default East.function(
                             { colorPalette: "blue", variant: "outline" }
                         ),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const lastEvent = $.let(State.readTyped("table_last_event", StringType)());
 
                     const onRowClick = East.function(

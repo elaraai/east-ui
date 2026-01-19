@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Link } from "../../src/index.js";
 
 describeEast("Link", (test) => {
@@ -128,4 +128,4 @@ describeEast("Link", (test) => {
         $(Assert.equal(link.unwrap().unwrap("Link").value, "GitHub"));
         $(Assert.equal(link.unwrap().unwrap("Link").external.unwrap("some"), true));
     });
-});
+}, {   platformFns: TestImpl,});

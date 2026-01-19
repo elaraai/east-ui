@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Separator } from "../../src/index.js";
 
 describeEast("Separator", (test) => {
@@ -212,4 +212,4 @@ describeEast("Separator", (test) => {
         $(Assert.equal(sectionDivider.unwrap().unwrap("Separator").color.unwrap("some"), "blue.300"));
         $(Assert.equal(sectionDivider.unwrap().unwrap("Separator").size.unwrap("some").hasTag("sm"), true));
     });
-});
+}, {   platformFns: TestImpl,});

@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Grid, Style, Text } from "../../src/index.js";
 
 describeEast("Grid", (test) => {
@@ -204,4 +204,4 @@ describeEast("Grid", (test) => {
         $(Assert.equal(grid.unwrap().unwrap("Grid").style.unwrap("some").alignItems.unwrap("some").hasTag("stretch"), true));
         $(Assert.equal(grid.unwrap().unwrap("Grid").style.unwrap("some").autoFlow.unwrap("some").hasTag("row dense"), true));
     });
-});
+}, {   platformFns: TestImpl,});

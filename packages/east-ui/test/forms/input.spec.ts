@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Input, Style } from "../../src/index.js";
 import { tokenizeDateTimeFormat } from "@elaraai/east/internal";
 
@@ -361,4 +361,4 @@ describeEast("Input", (test) => {
 
         $(Assert.equal(input.unwrap().unwrap("StringInput").size.unwrap("some").hasTag("md"), true));
     });
-});
+}, {   platformFns: TestImpl,});

@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Stat } from "../../src/index.js";
 
 describeEast("Stat", (test) => {
@@ -148,4 +148,4 @@ describeEast("Stat", (test) => {
         $(Assert.equal(stat.unwrap().unwrap("Stat").value, "98.5%"));
         $(Assert.equal(stat.unwrap().unwrap("Stat").indicator.unwrap("some").hasTag("up"), true));
     });
-});
+}, {   platformFns: TestImpl,});

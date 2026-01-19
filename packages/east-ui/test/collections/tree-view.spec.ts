@@ -4,7 +4,7 @@
  */
 
 import { TreeView } from "../../src/collections/tree-view/index.js";
-import { describeEast as describe, Assert } from "@elaraai/east-node-std";
+import { describeEast as describe, Assert, TestImpl } from "@elaraai/east-node-std";
 
 describe("TreeView", (test) => {
     // =========================================================================
@@ -232,4 +232,4 @@ describe("TreeView", (test) => {
         $(Assert.equal(tree.unwrap().unwrap("TreeView").style.unwrap("some").variant.unwrap("some").hasTag("subtle"), true));
         $(Assert.equal(tree.unwrap().unwrap("TreeView").style.unwrap("some").size.unwrap("some").hasTag("sm"), true));
     });
-});
+}, {   platformFns: TestImpl,});

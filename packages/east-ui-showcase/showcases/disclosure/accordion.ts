@@ -247,7 +247,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Accordion",
                 "Expand/collapse to see onValueChange callback",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const expanded = $.let(State.read([ArrayType(StringType)], "accordion_expanded"));
 
                     const onValueChange = East.function(
@@ -283,7 +283,7 @@ export default East.function(
                         ),
                         Text.Root(East.str`Sections expanded: ${expanded.size()}`),
                     ], { gap: "3", align: "stretch" });
-                }),
+                })),
                 some(`
                     Reactive.Root($ => {
                         const expanded = $.let(State.readTyped("accordion_expanded", ArrayType(StringType))());

@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { TagsInput, Style } from "../../src/index.js";
 
 describeEast("TagsInput", (test) => {
@@ -363,4 +363,4 @@ describeEast("TagsInput", (test) => {
         $(Assert.equal(tagsInput.unwrap().unwrap("TagsInput").readOnly.unwrap("some"), true));
         $(Assert.equal(tagsInput.unwrap().unwrap("TagsInput").variant.unwrap("some").hasTag("subtle"), true));
     });
-});
+}, {   platformFns: TestImpl,});

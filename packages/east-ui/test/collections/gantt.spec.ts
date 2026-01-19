@@ -4,7 +4,7 @@
  */
 
 import { East } from "@elaraai/east";
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Gantt, Text, Badge } from "../../src/index.js";
 
 describeEast("Gantt", (test) => {
@@ -375,4 +375,4 @@ describeEast("Gantt", (test) => {
         $(Assert.equal(gantt.unwrap().unwrap("Gantt").columns.size(), 3n));
         $(Assert.equal(gantt.unwrap().unwrap("Gantt").rows.size(), 2n));
     });
-});
+}, {   platformFns: TestImpl,});

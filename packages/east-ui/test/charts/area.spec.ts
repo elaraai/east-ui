@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Chart } from "../../src/index.js";
 
 describeEast("Chart.Area", (test) => {
@@ -284,7 +284,7 @@ describeEast("Chart.Area", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("AreaChart").grid.unwrap("some").show.unwrap("some"), true));
         $(Assert.equal(chart.unwrap().unwrap("AreaChart").fillOpacity.unwrap("some"), 0.2));
     });
-});
+}, {   platformFns: TestImpl,});
 
 describeEast("Chart.Area Pivot", (test) => {
     // =========================================================================
@@ -349,7 +349,7 @@ describeEast("Chart.Area Pivot", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("AreaChart").pivotKey.unwrap("some"), "region"));
         $(Assert.equal(chart.unwrap().unwrap("AreaChart").series.get(0n).pivotColors.hasTag("some"), true));
     });
-});
+}, {   platformFns: TestImpl,});
 
 describeEast("Chart.AreaMulti", (test) => {
     test("creates area chart with multi-series data", $ => {
@@ -379,7 +379,7 @@ describeEast("Chart.AreaMulti", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("AreaChart").valueKey.unwrap("some"), "value"));
         $(Assert.equal(chart.unwrap().unwrap("AreaChart").dataSeries.hasTag("some"), true));
     });
-});
+}, {   platformFns: TestImpl,});
 
 // ============================================================================
 // Area Range Charts
@@ -544,7 +544,7 @@ describeEast("Chart.AreaRange", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").grid.unwrap("some").show.unwrap("some"), true));
         $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").fillOpacity.unwrap("some"), 0.4));
     });
-});
+}, {   platformFns: TestImpl,});
 
 describeEast("Chart.AreaRangeMulti", (test) => {
     test("creates area range chart with multi-series data", $ => {
@@ -625,4 +625,4 @@ describeEast("Chart.AreaRangeMulti", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").grid.unwrap("some").show.unwrap("some"), true));
         $(Assert.equal(chart.unwrap().unwrap("AreaRangeChart").fillOpacity.unwrap("some"), 0.3));
     });
-});
+}, {   platformFns: TestImpl,});

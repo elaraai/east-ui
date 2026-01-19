@@ -448,7 +448,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Dialog",
                 "Dialog with onOpenChange callback",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
 
                     const onOpenChange = East.function(
                         [BooleanType],
@@ -482,8 +482,8 @@ export default East.function(
                             Badge.Root(East.str`Closed: ${closeCount}`, { colorPalette: "red", variant: "solid" }),
                         ], { gap: "2" }),
                     ], { gap: "3", align: "flex-start" });
-                }),
-                some(`Reactive.Root($ => {
+                })),
+                some(`Reactive.Root(East.function([], UIComponentType, $ => {
     const openCount = $.let(State.readTyped("dialog_open_count", IntegerType)());
     const onOpenChange = East.function([BooleanType], NullType, ($, isOpen) => {
         // Track open/close events
@@ -498,7 +498,7 @@ export default East.function(
             ShowcaseCard(
                 "Interactive Drawer",
                 "Drawer with onOpenChange callback",
-                Reactive.Root($ => {
+                Reactive.Root(East.function([], UIComponentType, $ => {
                     const onOpenChange = $.let(East.function(
                         [BooleanType],
                         NullType,
@@ -521,8 +521,8 @@ export default East.function(
                         ),
                         Badge.Root(East.str`Drawer opened: ${openCount} times`, { colorPalette: "purple", variant: "solid" }),
                     ], { gap: "3", align: "flex-start" });
-                }),
-                some(`Reactive.Root($ => {
+                })),
+                some(`Reactive.Root(East.function([], UIComponentType, $ => {
     const openCount = $.let(State.readTyped("drawer_open_count", IntegerType)());
     const onOpenChange = East.function([BooleanType], NullType, ($, isOpen) => {
         // Track open events

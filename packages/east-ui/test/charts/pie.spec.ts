@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { describeEast, Assert } from "@elaraai/east-node-std";
+import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Chart } from "../../src/index.js";
 import { none, some } from "@elaraai/east";
 
@@ -253,4 +253,4 @@ describeEast("Chart.Pie", (test) => {
         $(Assert.equal(chart.unwrap().unwrap("PieChart").outerRadius.unwrap("some"), 80));
         $(Assert.equal(chart.unwrap().unwrap("PieChart").tooltip.unwrap("some").show.unwrap("some"), true));
     });
-});
+}, {   platformFns: TestImpl,});

@@ -48,7 +48,7 @@ const interactiveDemoShowcase = East.function([], UIComponentType, ($) => {
     });
 
     const content = $.let(EastBox.Root([
-        Reactive.Root($ => {
+        Reactive.Root(East.function([], UIComponentType, $ => {
             // Month names as East array
             const monthNames = $.const(["Jan", "Feb", "Mar", "Apr", "May", "Jun"]);
 
@@ -112,7 +112,7 @@ const interactiveDemoShowcase = East.function([], UIComponentType, ($) => {
                     }),
                 ], { height: "280px", width: "100%" }),
             ], { gap: "4", align: "stretch" });
-        }),
+        })),
     ], { width: "100%" }));
 
     return ShowcaseCard(

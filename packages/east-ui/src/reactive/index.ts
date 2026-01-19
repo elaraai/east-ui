@@ -3,16 +3,9 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import {
-    East,
-    type ExprType,
-    type BlockBuilder,
-    variant, 
-    printLocations
-} from "@elaraai/east";
+import { East, type ExprType, variant, type CallableFunctionExpr } from "@elaraai/east";
 
 import { UIComponentType } from "../component.js";
-import { OutOfScopeException } from "@elaraai/east/internal";
 
 // ============================================================================
 // Reactive Component Builder
@@ -59,29 +52,12 @@ import { OutOfScopeException } from "@elaraai/east/internal";
  * ```
  */
 function createReactive(
-    body: ($: BlockBuilder<typeof UIComponentType>) => ExprType<typeof UIComponentType> | void,
+    body: CallableFunctionExpr<[], typeof UIComponentType>,
 ): ExprType<typeof UIComponentType> {
-    // Create the inner render function
-    const renderFn = East.function([], UIComponentType, body);
-
     // Get the IR and validate no captures from parent scope
-    try {
-        renderFn.toIR();
-    } catch (e) {
-        if (e instanceof OutOfScopeException) {
-            throw new Error(
-                `Reactive.Root body must be a free function with no captures from parent scope. ` +
-                `Found capture from variable defined at ${printLocations(e.definedLocation)}. ` +
-                `Move state reads inside the Reactive body or use State for shared data.`
-            );
-        } else {
-            throw e;
-        }
-    }
-
     // Return the ReactiveComponent variant
     return East.value(variant("ReactiveComponent", {
-        render: renderFn
+        render: body
     }), UIComponentType);
 }
 
