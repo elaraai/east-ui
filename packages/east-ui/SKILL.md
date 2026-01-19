@@ -1,6 +1,6 @@
 ---
 name: east-ui
-description: Type-safe UI component library for the East language. Use when writing East programs that define user interfaces with declarative components. Triggers for: (1) Writing East programs with @elaraai/east-ui, (2) Creating layouts with Box, Flex, Stack, Grid, (3) Forms with Input, Select, Checkbox, Switch, Slider, (4) Data display with Table, TreeView, DataList, Gantt, Planner, (5) Charts with Chart.Line, Chart.Bar, Chart.Area, Chart.Pie, Chart.Scatter, (6) Overlays with Dialog, Drawer, Popover, Menu, Tooltip, (7) State management with State.readTyped, State.writeTyped.
+description: "Type-safe UI component library for the East language. Use when writing East programs that define user interfaces with declarative components. Triggers for: (1) Writing East programs with @elaraai/east-ui, (2) Creating layouts with Box, Flex, Stack, Grid, (3) Forms with Input, Select, Checkbox, Switch, Slider, (4) Data display with Table, TreeView, DataList, Gantt, Planner, (5) Charts with Chart.Line, Chart.Bar, Chart.Area, Chart.Pie, Chart.Scatter, (6) Overlays with Dialog, Drawer, Popover, Menu, Tooltip, (7) State management with State.readTyped, State.writeTyped."
 ---
 
 # East UI
