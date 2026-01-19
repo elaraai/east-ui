@@ -1,6 +1,6 @@
 {
   "name": "@elaraai/east-ui-components",
-  "version": "0.0.1-beta.24",
+  "version": "0.0.1-beta.25",
   "description": "React components for rendering East UI types with Chakra UI",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -29,7 +29,7 @@
   },
   "peerDependencies": {
     "@elaraai/east": "^0.0.1-beta.30",
-    "@elaraai/east-ui": "^0.0.1-beta.24",
+    "@elaraai/east-ui": "^0.0.1-beta.25",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
