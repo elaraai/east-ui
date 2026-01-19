@@ -11,7 +11,7 @@
     },
     "dependencies": {
         "@chakra-ui/react": "^3.30.0",
-        "@elaraai/e3-api-client": "^0.0.2-beta.12",
+        "@elaraai/e3-api-client": "^0.0.2-beta.14",
         "@elaraai/east": "^0.0.1-beta.29",
         "@elaraai/east-ui": "*",
         "@elaraai/east-ui-components": "*",
