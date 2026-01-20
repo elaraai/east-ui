@@ -177,19 +177,64 @@ const TaskPreviewContent = memo(function TaskPreviewContent({
     };
 
     // Function panel content
-    const functionPanel = useMemo(() => (
-        <Box height="100%" overflow="auto" p="4">
-            {ir ? (
-                <EastChakraComponent value={ir} />
-            ) : (
-                <Center>
+    const functionPanel = useMemo(() => {
+        // Task not up-to-date - show status message
+        if (taskInfo?.status.type !== 'up-to-date') {
+            return (
+                <Box height="100%" display="flex" alignItems="center" justifyContent="center">
+                    <VStack gap={2}>
+                        <Text color="gray.500">
+                            Task is {taskInfo?.status.type ?? 'unknown'}
+                        </Text>
+                        <Text color="gray.400" fontSize="sm">
+                            Run the task to see output
+                        </Text>
+                    </VStack>
+                </Box>
+            );
+        }
+
+        // Loading - show spinner
+        if (isLoading) {
+            return (
+                <Box height="100%" display="flex" alignItems="center" justifyContent="center">
+                    <VStack gap={2}>
+                        <Spinner size="md" />
+                        <Text color="gray.500" fontSize="sm">Loading component...</Text>
+                    </VStack>
+                </Box>
+            );
+        }
+
+        // UIComponent loaded - render it
+        if (ir !== null) {
+            return (
+                <Box height="100%" overflow="auto" p="4">
+                    <EastChakraComponent value={ir} />
+                </Box>
+            );
+        }
+
+        // Not a UIComponent - output exists but couldn't decode as UIComponent
+        if (output && ir === null) {
+            return (
+                <Box height="100%" display="flex" alignItems="center" justifyContent="center">
                     <Text color="gray.500">
-                        No output available for task "{task}"
+                        Output is not a UIComponent
                     </Text>
-                </Center>
-            )}
-        </Box>
-    ), [ir, task]);
+                </Box>
+            );
+        }
+
+        // No output available
+        return (
+            <Box height="100%" display="flex" alignItems="center" justifyContent="center">
+                <Text color="gray.500">
+                    No output available for task "{task}"
+                </Text>
+            </Box>
+        );
+    }, [ir, task, isLoading, output, taskInfo?.status.type]);
 
     // Get active tab content
     const activeLogContent = useMemo(() => tabs.value === 'stderr' ? stderrContent : stdoutContent, [tabs.value, stderrContent, stdoutContent]);
