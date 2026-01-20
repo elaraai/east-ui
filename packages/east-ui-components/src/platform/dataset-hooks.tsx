@@ -4,7 +4,7 @@
  */
 
 /**
- * React hooks and provider for Dataset platform functions.
+ * React hooks and provider for ReactiveDataset platform functions.
  *
  * @packageDocumentation
  */
@@ -21,61 +21,66 @@ import {
 } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
-    DatasetStore,
-    type DatasetStoreInterface,
-    type DatasetStoreConfig,
+    ReactiveDatasetCache,
+    type ReactiveDatasetCacheInterface,
+    type ReactiveDatasetCacheConfig,
     type DatasetPath,
     datasetCacheKey,
 } from "./dataset-store.js";
 import {
-    initializeDatasetStore,
-    clearDatasetStore,
+    initializeReactiveDatasetCache,
+    clearReactiveDatasetCache,
 } from "./dataset-runtime.js";
 
 // =============================================================================
 // Context
 // =============================================================================
 
-const DatasetStoreContext = createContext<DatasetStoreInterface | null>(null);
+const ReactiveDatasetCacheContext = createContext<ReactiveDatasetCacheInterface | null>(null);
 
 /**
- * Props for the DatasetStoreProvider component.
+ * Props for the ReactiveDatasetProvider component.
  */
-export interface DatasetStoreProviderProps {
+export interface ReactiveDatasetProviderProps {
     /** Child components */
     children: ReactNode;
-    /** Configuration for the dataset store */
-    config: DatasetStoreConfig;
+    /** Configuration for the reactive dataset cache */
+    config: ReactiveDatasetCacheConfig;
     /** Optional external QueryClient (if not provided, one will be created) */
     queryClient?: QueryClient;
 }
 
 /**
- * Provides a DatasetStore to the component tree.
+ * @deprecated Use `ReactiveDatasetProviderProps` instead.
+ */
+export type DatasetStoreProviderProps = ReactiveDatasetProviderProps;
+
+/**
+ * Provides a ReactiveDatasetCache to the component tree.
  *
  * @remarks
- * Sets up TanStack Query and DatasetStore for dataset operations.
- * Also configures the store's scheduler to use `queueMicrotask` for deferred
+ * Sets up TanStack Query and ReactiveDatasetCache for reactive dataset operations.
+ * Also configures the cache's scheduler to use `queueMicrotask` for deferred
  * notifications, avoiding "setState during render" errors in React.
  *
  * @example
  * ```tsx
- * import { DatasetStoreProvider } from "@elaraai/east-ui-components";
+ * import { ReactiveDatasetProvider } from "@elaraai/east-ui-components";
  *
  * function App() {
  *     return (
- *         <DatasetStoreProvider config={{ apiUrl: "http://localhost:3000", token: "..." }}>
+ *         <ReactiveDatasetProvider config={{ apiUrl: "http://localhost:3000", token: "..." }}>
  *             <MyComponent />
- *         </DatasetStoreProvider>
+ *         </ReactiveDatasetProvider>
  *     );
  * }
  * ```
  */
-export function DatasetStoreProvider({
+export function ReactiveDatasetProvider({
     children,
     config,
     queryClient: externalQueryClient,
-}: DatasetStoreProviderProps) {
+}: ReactiveDatasetProviderProps) {
     // Create or use provided QueryClient
     const queryClient = useMemo(
         () =>
@@ -91,113 +96,138 @@ export function DatasetStoreProvider({
         [externalQueryClient, config.staleTime]
     );
 
-    // Create DatasetStore
-    const store = useMemo(
-        () => new DatasetStore(queryClient, config),
+    // Create ReactiveDatasetCache
+    const cache = useMemo(
+        () => new ReactiveDatasetCache(queryClient, config),
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [queryClient, config.apiUrl, config.repo, config.token, config.staleTime]
     );
 
-    // Set global store reference and configure scheduler
+    // Set global cache reference and configure scheduler
     useEffect(() => {
-        initializeDatasetStore(store);
+        initializeReactiveDatasetCache(cache);
 
         // Configure deferred notifications
-        store.setScheduler((notify) => queueMicrotask(notify));
+        cache.setScheduler((notify) => queueMicrotask(notify));
 
         return () => {
-            store.destroy();
-            clearDatasetStore();
+            cache.destroy();
+            clearReactiveDatasetCache();
         };
-    }, [store]);
+    }, [cache]);
 
-    // Expose store for debugging
+    // Expose cache for debugging
     useEffect(() => {
         if (typeof window !== "undefined") {
-            (window as unknown as Record<string, unknown>).__EAST_DATASET_STORE__ = store;
+            (window as unknown as Record<string, unknown>).__EAST_REACTIVE_DATASET_CACHE__ = cache;
         }
         return () => {
             if (typeof window !== "undefined") {
-                delete (window as unknown as Record<string, unknown>).__EAST_DATASET_STORE__;
+                delete (window as unknown as Record<string, unknown>).__EAST_REACTIVE_DATASET_CACHE__;
             }
         };
-    }, [store]);
+    }, [cache]);
 
     return (
         <QueryClientProvider client={queryClient}>
-            <DatasetStoreContext.Provider value={store}>
+            <ReactiveDatasetCacheContext.Provider value={cache}>
                 {children}
-            </DatasetStoreContext.Provider>
+            </ReactiveDatasetCacheContext.Provider>
         </QueryClientProvider>
     );
 }
+
+/**
+ * @deprecated Use `ReactiveDatasetProvider` instead.
+ */
+export const DatasetStoreProvider = ReactiveDatasetProvider;
 
 // =============================================================================
 // Hooks
 // =============================================================================
 
 /**
- * Hook to access the DatasetStore from context.
+ * Hook to access the ReactiveDatasetCache from context.
  *
- * @returns The DatasetStore instance
- * @throws Error if used outside of a DatasetStoreProvider
+ * @returns The ReactiveDatasetCache instance
+ * @throws Error if used outside of a ReactiveDatasetProvider
  */
-export function useDatasetStore(): DatasetStoreInterface {
-    const store = useContext(DatasetStoreContext);
-    if (!store) {
-        throw new Error("useDatasetStore must be used within a DatasetStoreProvider");
+export function useReactiveDatasetCache(): ReactiveDatasetCacheInterface {
+    const cache = useContext(ReactiveDatasetCacheContext);
+    if (!cache) {
+        throw new Error("useReactiveDatasetCache must be used within a ReactiveDatasetProvider");
     }
-    return store;
+    return cache;
 }
 
 /**
- * Hook to subscribe to dataset store changes using React 18's useSyncExternalStore.
+ * @deprecated Use `useReactiveDatasetCache` instead.
+ */
+export const useDatasetStore = useReactiveDatasetCache;
+
+/**
+ * Hook to subscribe to reactive dataset cache changes using React 18's useSyncExternalStore.
  *
  * @returns The current snapshot version
  */
-export function useDatasetStoreSubscription(): number {
-    const store = useDatasetStore();
-    const subscribe = useCallback((cb: () => void) => store.subscribe(cb), [store]);
-    const getSnapshot = useCallback(() => store.getSnapshot(), [store]);
+export function useReactiveDatasetCacheSubscription(): number {
+    const cache = useReactiveDatasetCache();
+    const subscribe = useCallback((cb: () => void) => cache.subscribe(cb), [cache]);
+    const getSnapshot = useCallback(() => cache.getSnapshot(), [cache]);
 
     return useSyncExternalStore(subscribe, getSnapshot);
 }
 
 /**
- * Hook to subscribe to a specific dataset key.
+ * @deprecated Use `useReactiveDatasetCacheSubscription` instead.
+ */
+export const useDatasetStoreSubscription = useReactiveDatasetCacheSubscription;
+
+/**
+ * Hook to subscribe to a specific reactive dataset key.
  *
  * @param workspace - The workspace name
  * @param path - The dataset path
  * @returns The cached value, or undefined if not loaded
  */
-export function useDatasetKey(workspace: string, path: DatasetPath): Uint8Array | undefined {
-    const store = useDatasetStore();
+export function useReactiveDatasetKey(workspace: string, path: DatasetPath): Uint8Array | undefined {
+    const cache = useReactiveDatasetCache();
     const key = datasetCacheKey(workspace, path);
 
     const subscribe = useCallback(
-        (cb: () => void) => store.subscribe(key, cb),
-        [store, key]
+        (cb: () => void) => cache.subscribe(key, cb),
+        [cache, key]
     );
     const getSnapshot = useCallback(
-        () => store.read(workspace, path),
-        [store, workspace, path]
+        () => cache.read(workspace, path),
+        [cache, workspace, path]
     );
 
     return useSyncExternalStore(subscribe, getSnapshot);
 }
 
 /**
- * Dataset to preload.
+ * @deprecated Use `useReactiveDatasetKey` instead.
  */
-export interface DatasetToPreload {
+export const useDatasetKey = useReactiveDatasetKey;
+
+/**
+ * Reactive dataset to preload.
+ */
+export interface ReactiveDatasetToPreload {
     workspace: string;
     path: DatasetPath;
 }
 
 /**
- * Result of usePreloadDatasets hook.
+ * @deprecated Use `ReactiveDatasetToPreload` instead.
  */
-export interface PreloadDatasetsResult {
+export type DatasetToPreload = ReactiveDatasetToPreload;
+
+/**
+ * Result of usePreloadReactiveDatasets hook.
+ */
+export interface PreloadReactiveDatasetsResult {
     /** True while preloading */
     loading: boolean;
     /** Error if preloading failed */
@@ -207,7 +237,12 @@ export interface PreloadDatasetsResult {
 }
 
 /**
- * Hook to preload datasets before rendering.
+ * @deprecated Use `PreloadReactiveDatasetsResult` instead.
+ */
+export type PreloadDatasetsResult = PreloadReactiveDatasetsResult;
+
+/**
+ * Hook to preload reactive datasets before rendering.
  *
  * @param datasets - Array of datasets to preload
  * @returns Loading state and error
@@ -217,7 +252,7 @@ export interface PreloadDatasetsResult {
  * import { variant } from "@elaraai/east";
  *
  * function MyComponent() {
- *     const { loading, error } = usePreloadDatasets([
+ *     const { loading, error } = usePreloadReactiveDatasets([
  *         { workspace: "production", path: [variant("field", "inputs"), variant("field", "config")] },
  *         { workspace: "production", path: [variant("field", "data")] },
  *     ]);
@@ -229,8 +264,8 @@ export interface PreloadDatasetsResult {
  * }
  * ```
  */
-export function usePreloadDatasets(datasets: DatasetToPreload[]): PreloadDatasetsResult {
-    const store = useDatasetStore();
+export function usePreloadReactiveDatasets(datasets: ReactiveDatasetToPreload[]): PreloadReactiveDatasetsResult {
+    const cache = useReactiveDatasetCache();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
     const [reloadTrigger, setReloadTrigger] = useState(0);
@@ -247,7 +282,7 @@ export function usePreloadDatasets(datasets: DatasetToPreload[]): PreloadDataset
         setError(null);
 
         Promise.all(
-            datasets.map(({ workspace, path }) => store.preload(workspace, path))
+            datasets.map(({ workspace, path }) => cache.preload(workspace, path))
         )
             .then(() => {
                 if (!cancelled) {
@@ -265,7 +300,7 @@ export function usePreloadDatasets(datasets: DatasetToPreload[]): PreloadDataset
             cancelled = true;
         };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [store, datasetsKey, reloadTrigger]);
+    }, [cache, datasetsKey, reloadTrigger]);
 
     const reload = useCallback(() => {
         setReloadTrigger(t => t + 1);
@@ -275,11 +310,16 @@ export function usePreloadDatasets(datasets: DatasetToPreload[]): PreloadDataset
 }
 
 /**
- * Props for the DatasetLoader component.
+ * @deprecated Use `usePreloadReactiveDatasets` instead.
  */
-export interface DatasetLoaderProps {
+export const usePreloadDatasets = usePreloadReactiveDatasets;
+
+/**
+ * Props for the ReactiveDatasetLoader component.
+ */
+export interface ReactiveDatasetLoaderProps {
     /** Datasets to preload */
-    datasets: DatasetToPreload[];
+    datasets: ReactiveDatasetToPreload[];
     /** Children to render when loaded */
     children: ReactNode;
     /** Loading fallback */
@@ -289,7 +329,12 @@ export interface DatasetLoaderProps {
 }
 
 /**
- * Component that preloads datasets before rendering children.
+ * @deprecated Use `ReactiveDatasetLoaderProps` instead.
+ */
+export type DatasetLoaderProps = ReactiveDatasetLoaderProps;
+
+/**
+ * Component that preloads reactive datasets before rendering children.
  *
  * @example
  * ```tsx
@@ -297,8 +342,8 @@ export interface DatasetLoaderProps {
  *
  * function App() {
  *     return (
- *         <DatasetStoreProvider config={{ apiUrl: "..." }}>
- *             <DatasetLoader
+ *         <ReactiveDatasetProvider config={{ apiUrl: "..." }}>
+ *             <ReactiveDatasetLoader
  *                 datasets={[
  *                     { workspace: "production", path: [variant("field", "config")] }
  *                 ]}
@@ -306,19 +351,19 @@ export interface DatasetLoaderProps {
  *                 onError={(err, reload) => <ErrorWithRetry error={err} onRetry={reload} />}
  *             >
  *                 <EastComponent render={myApp} />
- *             </DatasetLoader>
- *         </DatasetStoreProvider>
+ *             </ReactiveDatasetLoader>
+ *         </ReactiveDatasetProvider>
  *     );
  * }
  * ```
  */
-export function DatasetLoader({
+export function ReactiveDatasetLoader({
     datasets,
     children,
     fallback = null,
     onError,
-}: DatasetLoaderProps) {
-    const { loading, error, reload } = usePreloadDatasets(datasets);
+}: ReactiveDatasetLoaderProps) {
+    const { loading, error, reload } = usePreloadReactiveDatasets(datasets);
 
     if (loading) {
         return <>{fallback}</>;
@@ -343,7 +388,12 @@ export function DatasetLoader({
 }
 
 /**
- * Hook to write to a dataset from React code.
+ * @deprecated Use `ReactiveDatasetLoader` instead.
+ */
+export const DatasetLoader = ReactiveDatasetLoader;
+
+/**
+ * Hook to write to a reactive dataset from React code.
  *
  * @returns A function to write to a dataset
  *
@@ -352,7 +402,7 @@ export function DatasetLoader({
  * import { encodeBeast2For, IntegerType, variant } from "@elaraai/east";
  *
  * function UpdateButton() {
- *     const writeDataset = useDatasetWrite();
+ *     const writeDataset = useReactiveDatasetWrite();
  *
  *     const handleUpdate = async () => {
  *         await writeDataset(
@@ -366,38 +416,48 @@ export function DatasetLoader({
  * }
  * ```
  */
-export function useDatasetWrite(): (
+export function useReactiveDatasetWrite(): (
     workspace: string,
     path: DatasetPath,
     value: Uint8Array
 ) => Promise<void> {
-    const store = useDatasetStore();
+    const cache = useReactiveDatasetCache();
     return useCallback(
         (workspace: string, path: DatasetPath, value: Uint8Array) =>
-            store.write(workspace, path, value),
-        [store]
+            cache.write(workspace, path, value),
+        [cache]
     );
 }
 
 /**
- * Hook to check if a dataset is cached.
+ * @deprecated Use `useReactiveDatasetWrite` instead.
+ */
+export const useDatasetWrite = useReactiveDatasetWrite;
+
+/**
+ * Hook to check if a reactive dataset is cached.
  *
  * @param workspace - The workspace name
  * @param path - The dataset path
  * @returns True if the dataset is cached
  */
-export function useDatasetHas(workspace: string, path: DatasetPath): boolean {
-    const store = useDatasetStore();
+export function useReactiveDatasetHas(workspace: string, path: DatasetPath): boolean {
+    const cache = useReactiveDatasetCache();
     const key = datasetCacheKey(workspace, path);
 
     const subscribe = useCallback(
-        (cb: () => void) => store.subscribe(key, cb),
-        [store, key]
+        (cb: () => void) => cache.subscribe(key, cb),
+        [cache, key]
     );
     const getSnapshot = useCallback(
-        () => store.has(workspace, path),
-        [store, workspace, path]
+        () => cache.has(workspace, path),
+        [cache, workspace, path]
     );
 
     return useSyncExternalStore(subscribe, getSnapshot);
 }
+
+/**
+ * @deprecated Use `useReactiveDatasetHas` instead.
+ */
+export const useDatasetHas = useReactiveDatasetHas;

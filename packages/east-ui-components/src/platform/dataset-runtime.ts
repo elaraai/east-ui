@@ -4,12 +4,12 @@
  */
 
 /**
- * Runtime implementations for Dataset platform functions.
+ * Runtime implementations for ReactiveDataset platform functions.
  *
  * @remarks
- * This module contains all runtime implementations for dataset management:
- * - Platform function implementations (DatasetImpl)
- * - Singleton store management (getDatasetStore, initializeDatasetStore)
+ * This module contains all runtime implementations for reactive dataset management:
+ * - Platform function implementations (ReactiveDatasetPlatform)
+ * - Singleton cache management (getReactiveDatasetCache, initializeReactiveDatasetCache)
  * - Reactive dependency tracking (enableDatasetTracking, disableDatasetTracking, etc.)
  *
  * @packageDocumentation
@@ -22,67 +22,82 @@ import {
 } from "@elaraai/east";
 import { type PlatformFunction } from "@elaraai/east/internal";
 import {
-    use_dataset_get,
-    use_dataset_set,
-    use_dataset_has,
-    use_dataset_list,
-    use_dataset_subscribe,
+    reactive_dataset_get,
+    reactive_dataset_set,
+    reactive_dataset_has,
+    reactive_dataset_list,
+    reactive_dataset_subscribe,
 } from "@elaraai/east-ui";
 import {
-    type DatasetStoreInterface,
+    type ReactiveDatasetCacheInterface,
     type DatasetPath,
     datasetCacheKey,
 } from "./dataset-store.js";
 
 // =============================================================================
-// Singleton Store
+// Singleton Cache
 // =============================================================================
 
-let _datasetStore: DatasetStoreInterface | null = null;
+let _reactiveDatasetCache: ReactiveDatasetCacheInterface | null = null;
 
 /**
- * Returns the singleton DatasetStore instance used by Dataset platform functions.
+ * Returns the singleton ReactiveDatasetCache instance used by ReactiveDataset platform functions.
  *
- * @returns The current `DatasetStoreInterface` instance
- * @throws Error if DatasetStore has not been initialized
+ * @returns The current `ReactiveDatasetCacheInterface` instance
+ * @throws Error if ReactiveDatasetCache has not been initialized
  *
  * @remarks
- * Unlike the State store, the DatasetStore must be explicitly initialized
+ * Unlike the State store, the ReactiveDatasetCache must be explicitly initialized
  * with configuration (API URL, auth token, etc.) before use.
- * Call `initializeDatasetStore()` or use `DatasetStoreProvider` in React.
+ * Call `initializeReactiveDatasetCache()` or use `ReactiveDatasetProvider` in React.
  */
-export function getDatasetStore(): DatasetStoreInterface {
-    if (!_datasetStore) {
+export function getReactiveDatasetCache(): ReactiveDatasetCacheInterface {
+    if (!_reactiveDatasetCache) {
         throw new Error(
-            "DatasetStore not initialized. " +
-            "Use DatasetStoreProvider in React or call initializeDatasetStore() directly."
+            "ReactiveDatasetCache not initialized. " +
+            "Use ReactiveDatasetProvider in React or call initializeReactiveDatasetCache() directly."
         );
     }
-    return _datasetStore;
+    return _reactiveDatasetCache;
 }
 
 /**
- * Initializes or replaces the singleton DatasetStore.
+ * @deprecated Use `getReactiveDatasetCache` instead.
+ */
+export const getDatasetStore = getReactiveDatasetCache;
+
+/**
+ * Initializes or replaces the singleton ReactiveDatasetCache.
  *
- * @param store - The DatasetStore instance to use for all Dataset operations
+ * @param cache - The ReactiveDatasetCache instance to use for all ReactiveDataset operations
  *
  * @remarks
- * Call this before any Dataset operations.
- * In React applications, prefer using `DatasetStoreProvider` instead.
+ * Call this before any ReactiveDataset operations.
+ * In React applications, prefer using `ReactiveDatasetProvider` instead.
  */
-export function initializeDatasetStore(store: DatasetStoreInterface): void {
-    _datasetStore = store;
+export function initializeReactiveDatasetCache(cache: ReactiveDatasetCacheInterface): void {
+    _reactiveDatasetCache = cache;
 }
 
 /**
- * Clears the singleton DatasetStore.
+ * @deprecated Use `initializeReactiveDatasetCache` instead.
+ */
+export const initializeDatasetStore = initializeReactiveDatasetCache;
+
+/**
+ * Clears the singleton ReactiveDatasetCache.
  *
  * @remarks
- * Used during cleanup, typically when the DatasetStoreProvider unmounts.
+ * Used during cleanup, typically when the ReactiveDatasetProvider unmounts.
  */
-export function clearDatasetStore(): void {
-    _datasetStore = null;
+export function clearReactiveDatasetCache(): void {
+    _reactiveDatasetCache = null;
 }
+
+/**
+ * @deprecated Use `clearReactiveDatasetCache` instead.
+ */
+export const clearDatasetStore = clearReactiveDatasetCache;
 
 // =============================================================================
 // Reactive Dependency Tracking
@@ -192,42 +207,42 @@ const listCache: Map<string, string[]> = new Map();
 // =============================================================================
 
 /**
- * Platform function implementations for Dataset operations.
+ * Platform function implementations for ReactiveDataset operations.
  *
  * @remarks
- * Pass this array to `ir.compile()` to enable Dataset platform functions.
- * The implementations use the singleton store from `getDatasetStore()`.
+ * Pass this array to `ir.compile()` to enable ReactiveDataset platform functions.
+ * The implementations use the singleton cache from `getReactiveDatasetCache()`.
  *
  * @example
  * ```ts
- * import { Dataset } from "@elaraai/east-ui";
- * import { DatasetImpl } from "@elaraai/east-ui-components";
+ * import { ReactiveDataset } from "@elaraai/east-ui";
+ * import { ReactiveDatasetPlatform } from "@elaraai/east-ui-components";
  *
- * const fn = East.function([], BooleanType, $ => Dataset.has("ws", path));
- * const compiled = fn.toIR().compile(DatasetImpl);
+ * const fn = East.function([], BooleanType, $ => ReactiveDataset.has("ws", path));
+ * const compiled = fn.toIR().compile(ReactiveDatasetPlatform);
  * ```
  */
-export const DatasetImpl: PlatformFunction[] = [
+export const ReactiveDatasetPlatform: PlatformFunction[] = [
     /**
-     * use_dataset_get implementation.
+     * reactive_dataset_get implementation.
      *
      * Reads a dataset value, tracking the access for reactivity.
      */
-    use_dataset_get.implement((type: EastTypeValue) => (workspace: unknown, path: unknown) => {
+    reactive_dataset_get.implement((type: EastTypeValue) => (workspace: unknown, path: unknown) => {
         const ws = workspace as string;
         const datasetPath = path as DatasetPath;
-        const store = getDatasetStore();
+        const cache = getReactiveDatasetCache();
 
         // Track this path for reactive updates
         trackDatasetPath(ws, datasetPath);
 
-        // Get cached value from store
-        const cached = store.read(ws, datasetPath);
+        // Get cached value from cache
+        const cached = cache.read(ws, datasetPath);
         if (cached === undefined) {
             const key = datasetCacheKey(ws, datasetPath);
             throw new Error(
                 `Dataset not loaded: ${key}. ` +
-                "Ensure the dataset is preloaded before rendering using usePreloadDatasets() or DatasetLoader."
+                "Ensure the dataset is preloaded before rendering using usePreloadReactiveDatasets() or ReactiveDatasetLoader."
             );
         }
 
@@ -237,42 +252,42 @@ export const DatasetImpl: PlatformFunction[] = [
     }),
 
     /**
-     * use_dataset_set implementation.
+     * reactive_dataset_set implementation.
      *
      * Writes a value to a dataset. The write is queued and executed asynchronously.
      */
-    use_dataset_set.implement((type: EastTypeValue) => (workspace: unknown, path: unknown, value: unknown) => {
+    reactive_dataset_set.implement((type: EastTypeValue) => (workspace: unknown, path: unknown, value: unknown) => {
         const ws = workspace as string;
         const datasetPath = path as DatasetPath;
-        const store = getDatasetStore();
+        const cache = getReactiveDatasetCache();
 
         // Encode value
         const encode = encodeBeast2For(type);
         const encoded = encode(value);
 
         // Queue the async write
-        queueWrite(() => store.write(ws, datasetPath, encoded));
+        queueWrite(() => cache.write(ws, datasetPath, encoded));
 
         return null;
     }),
 
     /**
-     * use_dataset_has implementation.
+     * reactive_dataset_has implementation.
      */
-    use_dataset_has.implement((workspace: unknown, path: unknown) => {
+    reactive_dataset_has.implement((workspace: unknown, path: unknown) => {
         const ws = workspace as string;
         const datasetPath = path as DatasetPath;
-        const store = getDatasetStore();
+        const cache = getReactiveDatasetCache();
 
-        return store.has(ws, datasetPath);
+        return cache.has(ws, datasetPath);
     }),
 
     /**
-     * use_dataset_list implementation.
+     * reactive_dataset_list implementation.
      *
      * Returns cached list or throws if not preloaded.
      */
-    use_dataset_list.implement((workspace: unknown, path: unknown) => {
+    reactive_dataset_list.implement((workspace: unknown, path: unknown) => {
         const ws = workspace as string;
         const datasetPath = path as DatasetPath;
         const key = datasetCacheKey(ws, datasetPath);
@@ -291,34 +306,39 @@ export const DatasetImpl: PlatformFunction[] = [
     }),
 
     /**
-     * use_dataset_subscribe implementation.
+     * reactive_dataset_subscribe implementation.
      *
      * Sets up polling for a dataset.
      */
-    use_dataset_subscribe.implement((workspace: unknown, path: unknown, intervalMs: unknown) => {
+    reactive_dataset_subscribe.implement((workspace: unknown, path: unknown, intervalMs: unknown) => {
         const ws = workspace as string;
         const datasetPath = path as DatasetPath;
         const interval = Number(intervalMs);
-        const store = getDatasetStore();
+        const cache = getReactiveDatasetCache();
 
-        store.setRefetchInterval(ws, datasetPath, interval);
+        cache.setRefetchInterval(ws, datasetPath, interval);
 
         return null;
     }),
 ];
+
+/**
+ * @deprecated Use `ReactiveDatasetPlatform` instead.
+ */
+export const DatasetImpl = ReactiveDatasetPlatform;
 
 // =============================================================================
 // Helper Functions for Preloading Lists
 // =============================================================================
 
 /**
- * Preload a dataset list into cache.
+ * Preload a reactive dataset list into cache.
  *
  * @param workspace - The workspace name
  * @param path - The dataset path
  */
-export async function preloadDatasetList(workspace: string, path: DatasetPath): Promise<string[]> {
-    const store = getDatasetStore();
+export async function preloadReactiveDatasetList(workspace: string, path: DatasetPath): Promise<string[]> {
+    const cache = getReactiveDatasetCache();
     const key = datasetCacheKey(workspace, path);
 
     // Check cache
@@ -328,14 +348,24 @@ export async function preloadDatasetList(workspace: string, path: DatasetPath): 
     }
 
     // Fetch and cache
-    const result = await store.list(workspace, path);
+    const result = await cache.list(workspace, path);
     listCache.set(key, result);
     return result;
 }
 
 /**
- * Clear the list cache.
+ * @deprecated Use `preloadReactiveDatasetList` instead.
  */
-export function clearDatasetListCache(): void {
+export const preloadDatasetList = preloadReactiveDatasetList;
+
+/**
+ * Clear the reactive dataset list cache.
+ */
+export function clearReactiveDatasetListCache(): void {
     listCache.clear();
 }
+
+/**
+ * @deprecated Use `clearReactiveDatasetListCache` instead.
+ */
+export const clearDatasetListCache = clearReactiveDatasetListCache;

@@ -41,22 +41,22 @@ export const DatasetPathType = ArrayType(DatasetPathSegmentType);
  * - Returns cached value if available
  * - Throws if dataset not found or not yet loaded
  *
- * Implementation provided by `DatasetImpl` in `@elaraai/east-ui-components`.
+ * Implementation provided by `ReactiveDatasetPlatform` in `@elaraai/east-ui-components`.
  *
  * @example
  * ```ts
- * import { Dataset } from "@elaraai/east-ui";
+ * import { ReactiveDataset } from "@elaraai/east-ui";
  * import { variant, IntegerType } from "@elaraai/east";
  *
- * const value = Dataset.get(
+ * const value = ReactiveDataset.get(
  *     [IntegerType],
  *     "production",
  *     [variant("field", "inputs"), variant("field", "count")]
  * );
  * ```
  */
-export const use_dataset_get = East.genericPlatform(
-    "use_dataset_get",
+export const reactive_dataset_get = East.genericPlatform(
+    "reactive_dataset_get",
     ["T"],
     [StringType, DatasetPathType],  // workspace, path
     "T"
@@ -76,10 +76,10 @@ export const use_dataset_get = East.genericPlatform(
  * - Invalidates cached data and triggers re-renders in reactive components
  * - Throws if write fails
  *
- * Implementation provided by `DatasetImpl` in `@elaraai/east-ui-components`.
+ * Implementation provided by `ReactiveDatasetPlatform` in `@elaraai/east-ui-components`.
  */
-export const use_dataset_set = East.genericPlatform(
-    "use_dataset_set",
+export const reactive_dataset_set = East.genericPlatform(
+    "reactive_dataset_set",
     ["T"],
     [StringType, DatasetPathType, "T"],  // workspace, path, value
     NullType
@@ -93,10 +93,10 @@ export const use_dataset_set = East.genericPlatform(
  * @returns Boolean indicating whether the dataset exists and is assigned
  *
  * @remarks
- * Implementation provided by `DatasetImpl` in `@elaraai/east-ui-components`.
+ * Implementation provided by `ReactiveDatasetPlatform` in `@elaraai/east-ui-components`.
  */
-export const use_dataset_has = East.platform(
-    "use_dataset_has",
+export const reactive_dataset_has = East.platform(
+    "reactive_dataset_has",
     [StringType, DatasetPathType],  // workspace, path
     BooleanType
 );
@@ -109,10 +109,10 @@ export const use_dataset_has = East.platform(
  * @returns Array of field names
  *
  * @remarks
- * Implementation provided by `DatasetImpl` in `@elaraai/east-ui-components`.
+ * Implementation provided by `ReactiveDatasetPlatform` in `@elaraai/east-ui-components`.
  */
-export const use_dataset_list = East.platform(
-    "use_dataset_list",
+export const reactive_dataset_list = East.platform(
+    "reactive_dataset_list",
     [StringType, DatasetPathType],  // workspace, path
     ArrayType(StringType)
 );
@@ -130,10 +130,10 @@ export const use_dataset_list = East.platform(
  * - Useful for datasets that may be updated by external processes (e.g., task outputs)
  * - Changes will trigger re-renders in reactive components that read the dataset
  *
- * Implementation provided by `DatasetImpl` in `@elaraai/east-ui-components`.
+ * Implementation provided by `ReactiveDatasetPlatform` in `@elaraai/east-ui-components`.
  */
-export const use_dataset_subscribe = East.platform(
-    "use_dataset_subscribe",
+export const reactive_dataset_subscribe = East.platform(
+    "reactive_dataset_subscribe",
     [StringType, DatasetPathType, IntegerType],  // workspace, path, intervalMs
     NullType
 );

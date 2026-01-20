@@ -9,7 +9,7 @@ import { describe, it } from "node:test";
 import { East, NullType, type BlockBuilder } from "@elaraai/east";
 import { TestImpl } from "@elaraai/east-node-std";
 import { StateImpl } from "../src/platform/state-runtime.js";
-import { DatasetImpl } from "../src/platform/dataset-runtime.js";
+import { ReactiveDatasetPlatform } from "../src/platform/dataset-runtime.js";
 
 /**
  * Creates a test platform that includes State platform functions.
@@ -26,17 +26,17 @@ export function createTestPlatform() {
 }
 
 /**
- * Creates a test platform that includes both State and Dataset platform functions.
+ * Creates a test platform that includes both State and ReactiveDataset platform functions.
  *
- * Use this for tests that need to use State and Dataset operations.
+ * Use this for tests that need to use State and ReactiveDataset operations.
  *
- * @returns A platform array for compiling East functions with State and Dataset support
+ * @returns A platform array for compiling East functions with State and ReactiveDataset support
  */
 export function createFullTestPlatform() {
     return [
         ...TestImpl,
         ...StateImpl,
-        ...DatasetImpl,
+        ...ReactiveDatasetPlatform,
     ];
 }
 

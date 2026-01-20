@@ -4,11 +4,14 @@
  */
 
 /**
- * DatasetStore for managing e3 dataset caching and reactivity.
+ * ReactiveDatasetCache for managing e3 dataset caching and reactivity.
  *
  * @remarks
  * Combines TanStack Query for network operations with a local
  * subscription system for reactive updates in East UI components.
+ *
+ * This differs from raw `@elaraai/e3-api-client` dataset functions which
+ * are for direct API calls without reactive binding or caching.
  *
  * Uses e3-api-client for all e3 API interactions.
  *
@@ -39,9 +42,9 @@ export type DatasetPathSegment = ValueTypeOf<typeof DatasetPathSegmentType>;
 export type DatasetPath = ValueTypeOf<typeof DatasetPathType>;
 
 /**
- * Configuration for the DatasetStore.
+ * Configuration for the ReactiveDatasetCache.
  */
-export interface DatasetStoreConfig {
+export interface ReactiveDatasetCacheConfig {
     /** Base URL of the e3 API server */
     apiUrl: string;
     /** Repository name (default: 'default') */
@@ -53,9 +56,14 @@ export interface DatasetStoreConfig {
 }
 
 /**
- * Interface for the DatasetStore.
+ * @deprecated Use `ReactiveDatasetCacheConfig` instead.
  */
-export interface DatasetStoreInterface {
+export type DatasetStoreConfig = ReactiveDatasetCacheConfig;
+
+/**
+ * Interface for the ReactiveDatasetCache.
+ */
+export interface ReactiveDatasetCacheInterface {
     /** Read a cached dataset value synchronously */
     read(workspace: string, path: DatasetPath): Uint8Array | undefined;
     /** Check if a dataset is cached */
@@ -81,10 +89,15 @@ export interface DatasetStoreInterface {
     /** Batch multiple operations */
     batch<T>(fn: () => T): T;
     /** Get the configuration */
-    getConfig(): DatasetStoreConfig;
+    getConfig(): ReactiveDatasetCacheConfig;
     /** Clean up resources */
     destroy(): void;
 }
+
+/**
+ * @deprecated Use `ReactiveDatasetCacheInterface` instead.
+ */
+export type DatasetStoreInterface = ReactiveDatasetCacheInterface;
 
 /**
  * Convert a dataset path to a string key for caching.
@@ -109,14 +122,17 @@ function toTreePath(path: DatasetPath): TreePath {
 }
 
 /**
- * DatasetStore manages dataset caching and reactivity.
+ * ReactiveDatasetCache manages dataset caching and reactivity.
  *
  * @remarks
  * Combines TanStack Query for network operations with a local
  * subscription system for reactive updates. Uses e3-api-client
  * for all e3 API interactions.
+ *
+ * This differs from raw `@elaraai/e3-api-client` dataset functions which
+ * are for direct API calls without reactive binding or caching.
  */
-export class DatasetStore implements DatasetStoreInterface {
+export class ReactiveDatasetCache implements ReactiveDatasetCacheInterface {
     private queryClient: QueryClient;
     private config: {
         apiUrl: string;
@@ -159,7 +175,7 @@ export class DatasetStore implements DatasetStoreInterface {
     private scheduler: ((notify: () => void) => void) | undefined;
     private flushScheduled = false;
 
-    constructor(queryClient: QueryClient, config: DatasetStoreConfig) {
+    constructor(queryClient: QueryClient, config: ReactiveDatasetCacheConfig) {
         this.queryClient = queryClient;
         this.config = {
             apiUrl: config.apiUrl,
@@ -172,8 +188,8 @@ export class DatasetStore implements DatasetStoreInterface {
     /**
      * Get the configuration.
      */
-    getConfig(): DatasetStoreConfig {
-        const result: DatasetStoreConfig = {
+    getConfig(): ReactiveDatasetCacheConfig {
+        const result: ReactiveDatasetCacheConfig = {
             apiUrl: this.config.apiUrl,
             repo: this.config.repo,
             staleTime: this.config.staleTime,
@@ -593,8 +609,18 @@ export class DatasetStore implements DatasetStoreInterface {
 }
 
 /**
- * Create a new DatasetStore.
+ * Create a new ReactiveDatasetCache.
  */
-export function createDatasetStore(queryClient: QueryClient, config: DatasetStoreConfig): DatasetStore {
-    return new DatasetStore(queryClient, config);
+export function createReactiveDatasetCache(queryClient: QueryClient, config: ReactiveDatasetCacheConfig): ReactiveDatasetCache {
+    return new ReactiveDatasetCache(queryClient, config);
 }
+
+/**
+ * @deprecated Use `ReactiveDatasetCache` instead.
+ */
+export const DatasetStore = ReactiveDatasetCache;
+
+/**
+ * @deprecated Use `createReactiveDatasetCache` instead.
+ */
+export const createDatasetStore = createReactiveDatasetCache;

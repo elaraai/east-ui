@@ -20,13 +20,14 @@ export {
     state_read,
     state_write,
     state_has,
-    // Dataset
-    Dataset,
-    use_dataset_get,
-    use_dataset_set,
-    use_dataset_has,
-    use_dataset_list,
-    use_dataset_subscribe,
+    // ReactiveDataset
+    ReactiveDataset,
+    Dataset, // deprecated alias
+    reactive_dataset_get,
+    reactive_dataset_set,
+    reactive_dataset_has,
+    reactive_dataset_list,
+    reactive_dataset_subscribe,
     DatasetPathSegmentType,
     DatasetPathType,
 } from "@elaraai/east-ui";
@@ -54,20 +55,31 @@ export {
     trackKey,
 } from "./state-runtime.js";
 
-// Dataset store types and classes
+// ReactiveDataset cache types and classes
 export {
+    ReactiveDatasetCache,
+    createReactiveDatasetCache,
+    type ReactiveDatasetCacheInterface,
+    type ReactiveDatasetCacheConfig,
+    // Deprecated aliases
     DatasetStore,
     createDatasetStore,
     type DatasetStoreInterface,
     type DatasetStoreConfig,
+    // Shared types
     type DatasetPath,
     type DatasetPathSegment,
     datasetCacheKey,
     datasetPathToString,
 } from "./dataset-store.js";
 
-// Dataset runtime implementations
+// ReactiveDataset runtime implementations
 export {
+    ReactiveDatasetPlatform,
+    getReactiveDatasetCache,
+    initializeReactiveDatasetCache,
+    clearReactiveDatasetCache,
+    // Deprecated aliases
     DatasetImpl,
     getDatasetStore,
     initializeDatasetStore,
@@ -78,17 +90,32 @@ export {
     isDatasetTracking,
     trackDatasetPath,
     // Helper functions
+    preloadReactiveDatasetList,
+    clearReactiveDatasetListCache,
+    // Deprecated aliases
     preloadDatasetList,
     clearDatasetListCache,
 } from "./dataset-runtime.js";
 
-// Dataset React hooks and components
+// ReactiveDataset React hooks and components
 export {
     // Provider
+    ReactiveDatasetProvider,
+    type ReactiveDatasetProviderProps,
+    // Deprecated aliases
     DatasetStoreProvider,
     type DatasetStoreProviderProps,
 
     // Hooks
+    useReactiveDatasetCache,
+    useReactiveDatasetCacheSubscription,
+    useReactiveDatasetKey,
+    usePreloadReactiveDatasets,
+    type ReactiveDatasetToPreload,
+    type PreloadReactiveDatasetsResult,
+    useReactiveDatasetWrite,
+    useReactiveDatasetHas,
+    // Deprecated aliases
     useDatasetStore,
     useDatasetStoreSubscription,
     useDatasetKey,
@@ -99,6 +126,9 @@ export {
     useDatasetHas,
 
     // Components
+    ReactiveDatasetLoader,
+    type ReactiveDatasetLoaderProps,
+    // Deprecated aliases
     DatasetLoader,
     type DatasetLoaderProps,
 } from "./dataset-hooks.js";
@@ -182,34 +212,39 @@ export const StateRuntime = {
 } as const;
 
 // =============================================================================
-// DatasetRuntime Namespace
+// ReactiveDatasetRuntime Namespace
 // =============================================================================
 
 import {
-    DatasetImpl,
-    getDatasetStore,
-    initializeDatasetStore,
+    ReactiveDatasetPlatform,
+    getReactiveDatasetCache,
+    initializeReactiveDatasetCache,
 } from "./dataset-runtime.js";
 
 /**
- * Runtime implementations for Dataset platform functions.
+ * Runtime implementations for ReactiveDataset platform functions.
  *
  * @remarks
- * Provides platform implementations and store access for e3 datasets.
- * Use `DatasetRuntime.Implementation` with `ir.compile()` to enable Dataset operations.
+ * Provides platform implementations and cache access for reactive e3 datasets.
+ * Use `ReactiveDatasetRuntime.Implementation` with `ir.compile()` to enable
+ * ReactiveDataset operations.
  *
- * Datasets are reactive - changes trigger re-renders in `Reactive.Root` components
- * that read the dataset, similar to `State` platform functions.
+ * ReactiveDataset enables reactive data binding to e3 datasets. Changes trigger
+ * re-renders in `Reactive.Root` components that read the dataset, similar to
+ * `State` platform functions.
+ *
+ * This differs from the raw `@elaraai/e3-api-client` dataset functions which
+ * are for direct API calls without reactive binding or caching.
  *
  * @example
  * ```ts
  * import { East, IntegerType, variant } from "@elaraai/east";
- * import { Dataset, Reactive, Text, UIComponentType } from "@elaraai/east-ui";
- * import { DatasetRuntime, StateRuntime } from "@elaraai/east-ui-components";
+ * import { ReactiveDataset, Reactive, Text, UIComponentType } from "@elaraai/east-ui";
+ * import { ReactiveDatasetRuntime, StateRuntime } from "@elaraai/east-ui-components";
  *
  * const app = East.function([], UIComponentType, $ => {
  *     return Reactive.Root($ => {
- *         const count = $.let(Dataset.get(
+ *         const count = $.let(ReactiveDataset.get(
  *             [IntegerType],
  *             "production",
  *             [variant("field", "inputs"), variant("field", "count")]
@@ -218,27 +253,32 @@ import {
  *     });
  * });
  *
- * // Compile with both State and Dataset implementations
+ * // Compile with both State and ReactiveDataset implementations
  * const compiled = app.toIR().compile([
  *     ...StateRuntime.Implementation,
- *     ...DatasetRuntime.Implementation,
+ *     ...ReactiveDatasetRuntime.Implementation,
  * ]);
  * ```
  */
-export const DatasetRuntime = {
+export const ReactiveDatasetRuntime = {
     /**
-     * Platform function implementations for Dataset operations.
-     * Pass to `ir.compile()` to enable `Dataset.read`, `Dataset.write`, etc.
+     * Platform function implementations for ReactiveDataset operations.
+     * Pass to `ir.compile()` to enable `ReactiveDataset.get`, `ReactiveDataset.set`, etc.
      */
-    Implementation: DatasetImpl,
+    Implementation: ReactiveDatasetPlatform,
     /**
-     * Returns the singleton DatasetStore instance.
-     * Throws if not initialized - must use DatasetStoreProvider or initializeDatasetStore().
+     * Returns the singleton ReactiveDatasetCache instance.
+     * Throws if not initialized - must use ReactiveDatasetProvider or initializeReactiveDatasetCache().
      */
-    getStore: getDatasetStore,
+    getCache: getReactiveDatasetCache,
     /**
-     * Initializes or replaces the singleton DatasetStore instance.
-     * In React, prefer using DatasetStoreProvider instead.
+     * Initializes or replaces the singleton ReactiveDatasetCache instance.
+     * In React, prefer using ReactiveDatasetProvider instead.
      */
-    initializeStore: initializeDatasetStore,
+    initializeCache: initializeReactiveDatasetCache,
 } as const;
+
+/**
+ * @deprecated Use `ReactiveDatasetRuntime` instead.
+ */
+export const DatasetRuntime = ReactiveDatasetRuntime;

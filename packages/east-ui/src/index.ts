@@ -71,13 +71,14 @@ export {
     state_read,
     state_write,
     state_has,
-    // Dataset
-    Dataset,
-    use_dataset_get,
-    use_dataset_set,
-    use_dataset_has,
-    use_dataset_list,
-    use_dataset_subscribe,
+    // ReactiveDataset
+    ReactiveDataset,
+    Dataset, // deprecated alias
+    reactive_dataset_get,
+    reactive_dataset_set,
+    reactive_dataset_has,
+    reactive_dataset_list,
+    reactive_dataset_subscribe,
     DatasetPathSegmentType,
     DatasetPathType,
 } from "./platform/index.js";

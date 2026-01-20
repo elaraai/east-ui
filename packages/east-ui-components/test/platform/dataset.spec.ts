@@ -7,30 +7,30 @@ import { test, describe, beforeEach, afterEach } from "node:test";
 import assert from "node:assert";
 import { East, IntegerType, StringType, NullType, encodeBeast2For, variant } from "@elaraai/east";
 import { TestImpl, Assert } from "@elaraai/east-node-std";
-import { Dataset, DatasetPathType, DatasetPathSegmentType } from "@elaraai/east-ui";
+import { ReactiveDataset, DatasetPathType, DatasetPathSegmentType } from "@elaraai/east-ui";
 import {
-    DatasetImpl,
-    initializeDatasetStore,
-    clearDatasetStore,
-    type DatasetStoreInterface,
+    ReactiveDatasetPlatform,
+    initializeReactiveDatasetCache,
+    clearReactiveDatasetCache,
+    type ReactiveDatasetCacheInterface,
     type DatasetPath,
-    type DatasetStoreConfig,
+    type ReactiveDatasetCacheConfig,
     datasetCacheKey,
 } from "../../src/platform/index.js";
 
 /**
- * Mock DatasetStore for testing.
+ * Mock ReactiveDatasetCache for testing.
  * Stores data in memory without network calls.
  */
-class MockDatasetStore implements DatasetStoreInterface {
+class MockReactiveDatasetCache implements ReactiveDatasetCacheInterface {
     private cache: Map<string, Uint8Array> = new Map();
     private keyVersions: Map<string, number> = new Map();
     private version: number = 0;
     private subscribers: Set<() => void> = new Set();
     private keySubscribers: Map<string, Set<() => void>> = new Map();
-    private config: DatasetStoreConfig;
+    private config: ReactiveDatasetCacheConfig;
 
-    constructor(config: DatasetStoreConfig = { apiUrl: "http://mock" }) {
+    constructor(config: ReactiveDatasetCacheConfig = { apiUrl: "http://mock" }) {
         this.config = config;
     }
 
@@ -103,7 +103,7 @@ class MockDatasetStore implements DatasetStoreInterface {
         return fn();
     }
 
-    getConfig(): DatasetStoreConfig {
+    getConfig(): ReactiveDatasetCacheConfig {
         return { ...this.config };
     }
 
@@ -138,12 +138,12 @@ class MockDatasetStore implements DatasetStoreInterface {
 }
 
 /**
- * Create a test platform that includes Dataset platform functions.
+ * Create a test platform that includes ReactiveDataset platform functions.
  */
-function createDatasetTestPlatform() {
+function createReactiveDatasetTestPlatform() {
     return [
         ...TestImpl,
-        ...DatasetImpl,
+        ...ReactiveDatasetPlatform,
     ];
 }
 
@@ -161,36 +161,36 @@ function makePathValue(...fields: string[]) {
     return fields.map(f => variant("field", f));
 }
 
-describe("Dataset Platform Functions", () => {
-    let mockStore: MockDatasetStore;
-    const platform = createDatasetTestPlatform();
+describe("ReactiveDataset Platform Functions", () => {
+    let mockCache: MockReactiveDatasetCache;
+    const platform = createReactiveDatasetTestPlatform();
 
     beforeEach(() => {
-        mockStore = new MockDatasetStore();
-        initializeDatasetStore(mockStore);
+        mockCache = new MockReactiveDatasetCache();
+        initializeReactiveDatasetCache(mockCache);
     });
 
     afterEach(() => {
-        clearDatasetStore();
+        clearReactiveDatasetCache();
     });
 
     // =========================================================================
-    // Dataset.get (read)
+    // ReactiveDataset.get (read)
     // =========================================================================
 
-    describe("Dataset.get", () => {
+    describe("ReactiveDataset.get", () => {
         test("reads integer value from cache", () => {
-            // Preload data into mock store
+            // Preload data into mock cache
             const path = makePath("inputs", "count");
             const encode = encodeBeast2For(IntegerType);
-            mockStore.setData("production", path, encode(42n));
+            mockCache.setData("production", path, encode(42n));
 
             // Create function that takes workspace and path as parameters
             const testFn = East.function(
                 [StringType, DatasetPathType],
                 NullType,
                 ($, workspace, pathParam) => {
-                    const value = $.let(Dataset.get([IntegerType], workspace, pathParam));
+                    const value = $.let(ReactiveDataset.get([IntegerType], workspace, pathParam));
                     $(Assert.equal(value, 42n));
                 }
             );
@@ -202,13 +202,13 @@ describe("Dataset Platform Functions", () => {
         test("reads string value from cache", () => {
             const path = makePath("config", "name");
             const encode = encodeBeast2For(StringType);
-            mockStore.setData("production", path, encode("test-value"));
+            mockCache.setData("production", path, encode("test-value"));
 
             const testFn = East.function(
                 [StringType, DatasetPathType],
                 NullType,
                 ($, workspace, pathParam) => {
-                    const value = $.let(Dataset.get([StringType], workspace, pathParam));
+                    const value = $.let(ReactiveDataset.get([StringType], workspace, pathParam));
                     $(Assert.equal(value, "test-value"));
                 }
             );
@@ -222,7 +222,7 @@ describe("Dataset Platform Functions", () => {
                 [StringType, DatasetPathType],
                 NullType,
                 ($, workspace, pathParam) => {
-                    $.let(Dataset.get([IntegerType], workspace, pathParam));
+                    $.let(ReactiveDataset.get([IntegerType], workspace, pathParam));
                 }
             );
             const compiled = testFn.toIR().compile(platform);
@@ -234,16 +234,16 @@ describe("Dataset Platform Functions", () => {
     });
 
     // =========================================================================
-    // Dataset.has
+    // ReactiveDataset.has
     // =========================================================================
 
-    describe("Dataset.has", () => {
+    describe("ReactiveDataset.has", () => {
         test("returns false for missing dataset", () => {
             const testFn = East.function(
                 [StringType, DatasetPathType],
                 NullType,
                 ($, workspace, pathParam) => {
-                    const exists = $.let(Dataset.has(workspace, pathParam));
+                    const exists = $.let(ReactiveDataset.has(workspace, pathParam));
                     $(Assert.equal(exists, false));
                 }
             );
@@ -255,13 +255,13 @@ describe("Dataset Platform Functions", () => {
         test("returns true for existing dataset", () => {
             const path = makePath("inputs", "count");
             const encode = encodeBeast2For(IntegerType);
-            mockStore.setData("production", path, encode(42n));
+            mockCache.setData("production", path, encode(42n));
 
             const testFn = East.function(
                 [StringType, DatasetPathType],
                 NullType,
                 ($, workspace, pathParam) => {
-                    const exists = $.let(Dataset.has(workspace, pathParam));
+                    const exists = $.let(ReactiveDataset.has(workspace, pathParam));
                     $(Assert.equal(exists, true));
                 }
             );
@@ -272,16 +272,16 @@ describe("Dataset Platform Functions", () => {
     });
 
     // =========================================================================
-    // Dataset.set (write)
+    // ReactiveDataset.set (write)
     // =========================================================================
 
-    describe("Dataset.set", () => {
-        test("writes integer value to store", async () => {
+    describe("ReactiveDataset.set", () => {
+        test("writes integer value to cache", async () => {
             const testFn = East.function(
                 [StringType, DatasetPathType, IntegerType],
                 NullType,
                 ($, workspace, pathParam, value) => {
-                    $(Dataset.set([IntegerType], workspace, pathParam, value));
+                    $(ReactiveDataset.set([IntegerType], workspace, pathParam, value));
                 }
             );
 
@@ -293,15 +293,15 @@ describe("Dataset Platform Functions", () => {
 
             // Verify data was written
             const path = makePath("outputs", "result");
-            assert.strictEqual(mockStore.has("production", path), true);
+            assert.strictEqual(mockCache.has("production", path), true);
         });
 
-        test("writes string value to store", async () => {
+        test("writes string value to cache", async () => {
             const testFn = East.function(
                 [StringType, DatasetPathType, StringType],
                 NullType,
                 ($, workspace, pathParam, value) => {
-                    $(Dataset.set([StringType], workspace, pathParam, value));
+                    $(ReactiveDataset.set([StringType], workspace, pathParam, value));
                 }
             );
 
@@ -313,21 +313,21 @@ describe("Dataset Platform Functions", () => {
 
             // Verify data was written
             const path = makePath("config", "status");
-            assert.strictEqual(mockStore.has("production", path), true);
+            assert.strictEqual(mockCache.has("production", path), true);
         });
     });
 
     // =========================================================================
-    // Dataset.subscribe
+    // ReactiveDataset.subscribe
     // =========================================================================
 
-    describe("Dataset.subscribe", () => {
+    describe("ReactiveDataset.subscribe", () => {
         test("does not throw when called", () => {
             const testFn = East.function(
                 [StringType, DatasetPathType, IntegerType],
                 NullType,
                 ($, workspace, pathParam, intervalMs) => {
-                    $(Dataset.subscribe(workspace, pathParam, intervalMs));
+                    $(ReactiveDataset.subscribe(workspace, pathParam, intervalMs));
                 }
             );
 
@@ -348,7 +348,7 @@ describe("Dataset Platform Functions", () => {
                 [StringType, DatasetPathType, IntegerType],
                 NullType,
                 ($, workspace, pathParam, value) => {
-                    $(Dataset.set([IntegerType], workspace, pathParam, value));
+                    $(ReactiveDataset.set([IntegerType], workspace, pathParam, value));
                 }
             );
 
@@ -363,7 +363,7 @@ describe("Dataset Platform Functions", () => {
                 [StringType, DatasetPathType],
                 NullType,
                 ($, workspace, pathParam) => {
-                    const value = $.let(Dataset.get([IntegerType], workspace, pathParam));
+                    const value = $.let(ReactiveDataset.get([IntegerType], workspace, pathParam));
                     $(Assert.equal(value, 999n));
                 }
             );
