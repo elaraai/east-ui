@@ -64,5 +64,20 @@ export { Reactive } from "./reactive/index.js";
 // Component Types
 export { UIComponentType } from "./component.js";
 
-// Platform (state management - signatures only)
-export { State, state_read, state_write, state_has } from "./platform/index.js";
+// Platform (state and dataset management - signatures only)
+export {
+    // State
+    State,
+    state_read,
+    state_write,
+    state_has,
+    // Dataset
+    Dataset,
+    use_dataset_get,
+    use_dataset_set,
+    use_dataset_has,
+    use_dataset_list,
+    use_dataset_subscribe,
+    DatasetPathSegmentType,
+    DatasetPathType,
+} from "./platform/index.js";
