@@ -16,7 +16,7 @@
  */
 
 import { QueryClient, QueryObserver } from "@tanstack/react-query";
-import { BlobType, equalFor } from "@elaraai/east";
+import { BlobType, equalFor, type ValueTypeOf } from "@elaraai/east";
 import {
     datasetGet,
     datasetSet,
@@ -24,19 +24,17 @@ import {
     datasetListAt,
 } from "@elaraai/e3-api-client";
 import type { TreePath } from "@elaraai/e3-types";
+import { DatasetPathSegmentType, DatasetPathType } from "@elaraai/east-ui";
 
 /**
- * Dataset path segment - field access into data tree.
+ * Dataset path segment - derived from East type definition.
  */
-export interface DatasetPathSegment {
-    type: "field";
-    value: string;
-}
+export type DatasetPathSegment = ValueTypeOf<typeof DatasetPathSegmentType>;
 
 /**
- * Dataset path - array of path segments.
+ * Dataset path - derived from East type definition.
  */
-export type DatasetPath = DatasetPathSegment[];
+export type DatasetPath = ValueTypeOf<typeof DatasetPathType>;
 
 /**
  * Configuration for the DatasetStore.
