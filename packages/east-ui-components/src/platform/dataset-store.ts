@@ -16,12 +16,14 @@
  */
 
 import { QueryClient, QueryObserver } from "@tanstack/react-query";
-import { BlobType, equalFor, type ValueTypeOf } from "@elaraai/east";
+import { type ValueTypeOf, variant } from "@elaraai/east";
 import {
     datasetGet,
     datasetSet,
     datasetList as e3DatasetList,
     datasetListAt,
+    workspaceStatus,
+    type DatasetStatusInfo,
 } from "@elaraai/e3-api-client";
 import type { TreePath } from "@elaraai/e3-types";
 import { DatasetPathSegmentType, DatasetPathType } from "@elaraai/east-ui";
@@ -84,8 +86,6 @@ export interface DatasetStoreInterface {
     destroy(): void;
 }
 
-const blobEqual = equalFor(BlobType);
-
 /**
  * Convert a dataset path to a string key for caching.
  */
@@ -128,6 +128,10 @@ export class DatasetStore implements DatasetStoreInterface {
     // Local cache for synchronous access
     private cache: Map<string, Uint8Array> = new Map();
 
+    // Hash tracking for efficient change detection
+    // Maps cache key -> last known e3 content hash
+    private knownHashes: Map<string, string | null> = new Map();
+
     // Subscription management
     private keySubscribers: Map<string, Set<() => void>> = new Map();
     private globalSubscribers: Set<() => void> = new Set();
@@ -136,8 +140,13 @@ export class DatasetStore implements DatasetStoreInterface {
     private version: number = 0;
     private keyVersions: Map<string, number> = new Map();
 
-    // Active query observers for polling
-    private observers: Map<string, QueryObserver<Uint8Array, Error>> = new Map();
+    // Workspace status polling - groups subscriptions by workspace for efficiency
+    // Maps workspace -> { intervalMs, paths, intervalId }
+    private workspacePollers: Map<string, {
+        intervalMs: number;
+        paths: Set<string>; // Set of path strings being watched
+        intervalId: ReturnType<typeof setInterval> | null;
+    }> = new Map();
 
     // Batching
     private batchDepth: number = 0;
@@ -213,7 +222,10 @@ export class DatasetStore implements DatasetStoreInterface {
 
         // Optimistic update
         const previous = this.cache.get(key);
+        const previousHash = this.knownHashes.get(key);
         this.cache.set(key, value);
+        // Mark hash as unknown until we get confirmation
+        this.knownHashes.delete(key);
         this.notifyChange(key);
 
         try {
@@ -231,12 +243,22 @@ export class DatasetStore implements DatasetStoreInterface {
             await this.queryClient.invalidateQueries({
                 queryKey: this.queryKey(workspace, path),
             });
+
+            // Trigger a poll to get the new hash
+            const poller = this.workspacePollers.get(workspace);
+            if (poller) {
+                this.pollWorkspaceStatus(workspace);
+            }
         } catch (error) {
             // Rollback on failure
             if (previous !== undefined) {
                 this.cache.set(key, previous);
+                if (previousHash !== undefined) {
+                    this.knownHashes.set(key, previousHash);
+                }
             } else {
                 this.cache.delete(key);
+                this.knownHashes.delete(key);
             }
             this.notifyChange(key);
             throw error;
@@ -314,36 +336,117 @@ export class DatasetStore implements DatasetStoreInterface {
 
     /**
      * Set refetch interval for a dataset (polling).
+     *
+     * @remarks
+     * Uses hash-based change detection for efficiency:
+     * 1. Polls workspaceStatus to get dataset hashes (lightweight)
+     * 2. Compares hashes to detect changes
+     * 3. Only fetches full content when hash changes
+     *
+     * Multiple subscriptions to the same workspace share a single poller.
      */
     setRefetchInterval(workspace: string, path: DatasetPath, intervalMs: number): void {
-        const key = datasetCacheKey(workspace, path);
+        const pathStr = datasetPathToString(path);
 
-        // Remove existing observer
-        const existing = this.observers.get(key);
-        if (existing) {
-            existing.destroy();
+        // Get or create workspace poller
+        let poller = this.workspacePollers.get(workspace);
+
+        if (poller) {
+            // Add this path to the existing poller
+            poller.paths.add(pathStr);
+
+            // If the new interval is shorter, restart with shorter interval
+            if (intervalMs < poller.intervalMs) {
+                if (poller.intervalId) {
+                    clearInterval(poller.intervalId);
+                }
+                poller.intervalMs = intervalMs;
+                poller.intervalId = setInterval(
+                    () => this.pollWorkspaceStatus(workspace),
+                    intervalMs
+                );
+            }
+        } else {
+            // Create new poller for this workspace
+            poller = {
+                intervalMs,
+                paths: new Set([pathStr]),
+                intervalId: setInterval(
+                    () => this.pollWorkspaceStatus(workspace),
+                    intervalMs
+                ),
+            };
+            this.workspacePollers.set(workspace, poller);
+
+            // Do an immediate poll
+            this.pollWorkspaceStatus(workspace);
         }
+    }
 
-        // Create new observer with polling
-        const observer = new QueryObserver<Uint8Array, Error>(this.queryClient, {
-            queryKey: this.queryKey(workspace, path),
-            queryFn: () => this.fetchDataset(workspace, path),
-            refetchInterval: intervalMs,
-            staleTime: 0, // Always consider stale for polling
-        });
+    /**
+     * Poll workspace status and check for hash changes.
+     */
+    private async pollWorkspaceStatus(workspace: string): Promise<void> {
+        const poller = this.workspacePollers.get(workspace);
+        if (!poller || poller.paths.size === 0) return;
 
-        // Subscribe to updates
-        observer.subscribe((result) => {
-            if (result.data) {
-                const current = this.cache.get(key);
-                if (!current || !blobEqual(current, result.data)) {
-                    this.cache.set(key, result.data);
-                    this.notifyChange(key);
+        try {
+            const status = await workspaceStatus(
+                this.config.apiUrl,
+                this.config.repo,
+                workspace,
+                this.getRequestOptions()
+            );
+
+            // Check each watched path for hash changes
+            for (const pathStr of poller.paths) {
+                const e3Path = pathStr ? `.${pathStr}` : ""; // e3 uses leading dot
+                const datasetInfo = status.datasets.find(
+                    (d: DatasetStatusInfo) => d.path === e3Path
+                );
+
+                const key = pathStr ? `${workspace}.${pathStr}` : workspace;
+                // Extract hash from East Option type
+                const currentHash = datasetInfo?.hash?.type === "some"
+                    ? datasetInfo.hash.value
+                    : null;
+                const knownHash = this.knownHashes.get(key);
+
+                // Check if hash changed (or if we don't have data yet)
+                if (currentHash !== knownHash || !this.cache.has(key)) {
+                    // Hash changed - fetch the new data
+                    if (currentHash !== null) {
+                        // Dataset has a value - fetch it
+                        const path = this.stringToPath(pathStr);
+                        try {
+                            const data = await this.fetchDataset(workspace, path);
+                            this.cache.set(key, data);
+                            this.knownHashes.set(key, currentHash);
+                            this.notifyChange(key);
+                        } catch (error) {
+                            console.error(`Failed to fetch dataset ${key}:`, error);
+                        }
+                    } else {
+                        // Dataset is unset - clear from cache
+                        if (this.cache.has(key)) {
+                            this.cache.delete(key);
+                            this.knownHashes.set(key, null);
+                            this.notifyChange(key);
+                        }
+                    }
                 }
             }
-        });
+        } catch (error) {
+            console.error(`Failed to poll workspace status for ${workspace}:`, error);
+        }
+    }
 
-        this.observers.set(key, observer);
+    /**
+     * Convert a path string back to DatasetPath.
+     */
+    private stringToPath(pathStr: string): DatasetPath {
+        if (!pathStr) return [];
+        return pathStr.split(".").map(field => variant("field", field));
     }
 
     // =========================================================================
@@ -473,13 +576,18 @@ export class DatasetStore implements DatasetStoreInterface {
      * Cleanup resources.
      */
     destroy(): void {
-        for (const observer of this.observers.values()) {
-            observer.destroy();
+        // Clear workspace pollers
+        for (const poller of this.workspacePollers.values()) {
+            if (poller.intervalId) {
+                clearInterval(poller.intervalId);
+            }
         }
-        this.observers.clear();
+        this.workspacePollers.clear();
+
         this.keySubscribers.clear();
         this.globalSubscribers.clear();
         this.cache.clear();
+        this.knownHashes.clear();
         this.pendingFetches.clear();
     }
 }
