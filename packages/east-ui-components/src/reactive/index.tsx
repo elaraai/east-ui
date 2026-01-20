@@ -8,6 +8,11 @@ import type { ValueTypeOf } from "@elaraai/east";
 import type { UIComponentType } from "@elaraai/east-ui";
 import { EastChakraComponent } from "../component.js";
 import { enableTracking, disableTracking, getStore } from "../platform/state-runtime.js";
+import {
+    enableDatasetTracking,
+    disableDatasetTracking,
+    getDatasetStore,
+} from "../platform/dataset-runtime.js";
 
 /**
  * Value type for ReactiveComponent variant.
@@ -17,11 +22,22 @@ export interface ReactiveValue {
 }
 
 /**
+ * Try to get the dataset store, returning null if not initialized.
+ */
+function tryGetDatasetStore() {
+    try {
+        return getDatasetStore();
+    } catch {
+        return null;
+    }
+}
+
+/**
  * Renders a reactive component that re-renders independently when its dependencies change.
  *
  * @remarks
  * This component executes the render function with dependency tracking enabled.
- * It subscribes only to the state keys that were accessed during rendering,
+ * It subscribes only to the state and dataset keys that were accessed during rendering,
  * enabling selective re-rendering when those specific keys change.
  *
  * The render function must be a "free function" with no captures from parent
@@ -43,37 +59,66 @@ export interface ReactiveValue {
  * ```
  */
 export function EastReactiveComponent({ value }: { value: ReactiveValue }) {
-    const store = getStore();
+    const stateStore = getStore();
+    const datasetStore = tryGetDatasetStore();
 
     // Track dependencies across renders
-    const depsRef = useRef<string[]>([]);
+    const stateDepsRef = useRef<string[]>([]);
+    const datasetDepsRef = useRef<string[]>([]);
 
-    // Execute render with dependency tracking
+    // Execute render with dependency tracking for both state and datasets
     const executeWithTracking = useCallback(() => {
+        // Enable tracking for state
         enableTracking();
+        // Enable tracking for datasets (only if dataset store is available)
+        if (datasetStore) {
+            enableDatasetTracking();
+        }
+
         try {
             const result = value.render();
-            depsRef.current = disableTracking();
+            stateDepsRef.current = disableTracking();
+            datasetDepsRef.current = datasetStore ? disableDatasetTracking() : [];
             return result;
         } catch (e) {
             disableTracking();
+            if (datasetStore) {
+                disableDatasetTracking();
+            }
             throw e;
         }
-    }, [value]);
+    }, [value, datasetStore]);
 
-    // Subscribe to the keys we depend on
+    // Subscribe to the keys we depend on (both state and datasets)
     const subscribe = useCallback((cb: () => void) => {
-        // Subscribe to all current dependencies
-        const unsubs = depsRef.current.map(key => store.subscribe(key, cb));
-        return () => unsubs.forEach(fn => fn());
-    }, [store]);
+        // Subscribe to state dependencies
+        const stateUnsubs = stateDepsRef.current.map(key => stateStore.subscribe(key, cb));
 
-    // Snapshot based on our dependencies' versions
+        // Subscribe to dataset dependencies (if dataset store is available)
+        const datasetUnsubs = datasetStore
+            ? datasetDepsRef.current.map(key => datasetStore.subscribe(key, cb))
+            : [];
+
+        return () => {
+            stateUnsubs.forEach(fn => fn());
+            datasetUnsubs.forEach(fn => fn());
+        };
+    }, [stateStore, datasetStore]);
+
+    // Snapshot based on our dependencies' versions (both state and datasets)
     const getSnapshot = useCallback(() => {
-        return depsRef.current
-            .map(k => `${k}:${store.getKeyVersion(k)}`)
+        const stateSnapshot = stateDepsRef.current
+            .map(k => `s:${k}:${stateStore.getKeyVersion(k)}`)
             .join(",");
-    }, [store]);
+
+        const datasetSnapshot = datasetStore
+            ? datasetDepsRef.current
+                .map(k => `d:${k}:${datasetStore.getKeyVersion(k)}`)
+                .join(",")
+            : "";
+
+        return `${stateSnapshot}|${datasetSnapshot}`;
+    }, [stateStore, datasetStore]);
 
     // Subscribe and get snapshot
     const snapshot = useSyncExternalStore(subscribe, getSnapshot);
