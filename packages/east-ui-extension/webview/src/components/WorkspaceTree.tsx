@@ -13,11 +13,13 @@ import {
     TreeView,
     createTreeCollection,
 } from '@chakra-ui/react';
-import { useE3Context } from '../context/E3Context';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDatabase, faCog } from '@fortawesome/free-solid-svg-icons';
+import { useE3Context, getSelectedWorkspace } from '../context/E3Context';
 import { useWorkspaces, useWorkspaceStatus } from '../hooks/useE3Data';
-import type { WorkspaceInfo, TaskStatusInfo } from '@elaraai/e3-api-client';
+import type { WorkspaceInfo, TaskStatusInfo, DatasetStatusInfo } from '@elaraai/e3-api-client';
 
-function getStatusColor(status: TaskStatusInfo['status']['type']): string {
+function getTaskStatusColor(status: TaskStatusInfo['status']['type']): string {
     switch (status) {
         case 'up-to-date':
             return 'green';
@@ -37,20 +39,48 @@ function getStatusColor(status: TaskStatusInfo['status']['type']): string {
     }
 }
 
-interface TreeNode {
+function getInputStatusColor(status: DatasetStatusInfo['status']['type']): string {
+    switch (status) {
+        case 'up-to-date':
+            return 'green';
+        case 'stale':
+            return 'yellow';
+        case 'unset':
+            return 'gray';
+        default:
+            return 'gray';
+    }
+}
+
+interface BaseNode {
     value: string;
     label: string;
-    type: 'workspace' | 'task';
-    task?: TaskStatusInfo;
     children: TreeNode[];
 }
+
+interface WorkspaceNode extends BaseNode {
+    type: 'workspace';
+}
+
+interface TaskNode extends BaseNode {
+    type: 'task';
+    task: TaskStatusInfo;
+}
+
+interface InputNode extends BaseNode {
+    type: 'input';
+    dataset: DatasetStatusInfo;
+}
+
+type TreeNode = WorkspaceNode | TaskNode | InputNode;
 
 interface WorkspaceTreeContentProps {
     workspaces: WorkspaceInfo[];
 }
 
 function WorkspaceTreeContent({ workspaces }: WorkspaceTreeContentProps) {
-    const { apiUrl, selectedWorkspace, setSelectedWorkspace, setSelectedTask } = useE3Context();
+    const { apiUrl, selection, setSelection } = useE3Context();
+    const selectedWorkspace = getSelectedWorkspace(selection);
 
     // Fetch status for selected workspace
     const { data: status, isLoading: statusLoading } = useWorkspaceStatus(apiUrl, selectedWorkspace);
@@ -60,11 +90,28 @@ function WorkspaceTreeContent({ workspaces }: WorkspaceTreeContentProps) {
         return workspaces.map((ws): TreeNode => {
             const children: TreeNode[] = [];
 
-            // Add tasks if this workspace is selected and has status
-            if (selectedWorkspace === ws.name && status?.tasks) {
+            // Add inputs and tasks directly if this workspace is selected and has status
+            if (selectedWorkspace === ws.name && status) {
+                // Filter inputs from datasets (not task outputs, path starts with .inputs)
+                const inputs = status.datasets.filter(d =>
+                    !d.isTaskOutput && d.path.startsWith('.inputs')
+                );
+
+                // Add inputs directly (shown with database icon)
+                for (const input of inputs) {
+                    children.push({
+                        value: `${ws.name}/input:${input.path}`,
+                        label: input.path.replace(/^\.inputs\./, ''),
+                        type: 'input',
+                        dataset: input,
+                        children: [],
+                    });
+                }
+
+                // Add tasks directly (shown with cog icon)
                 for (const task of status.tasks) {
                     children.push({
-                        value: `${ws.name}/${task.name}`,
+                        value: `${ws.name}/task:${task.name}`,
                         label: task.name,
                         type: 'task',
                         task,
@@ -99,15 +146,23 @@ function WorkspaceTreeContent({ workspaces }: WorkspaceTreeContentProps) {
         const selected = details.selectedValue[0];
         if (!selected) return;
 
-        if (selected.includes('/')) {
-            // Task selected
-            const [workspace, task] = selected.split('/');
-            setSelectedWorkspace(workspace);
-            setSelectedTask(task);
+        if (selected.includes('/task:')) {
+            // Task selected: "workspace/task:taskName"
+            const [workspace, task] = selected.split('/task:');
+            setSelection({ type: 'task', workspace, task });
+        } else if (selected.includes('/input:')) {
+            // Input selected: "workspace/input:.inputs.foo"
+            const [workspace, path] = selected.split('/input:');
+            setSelection({ type: 'input', workspace, path });
+        } else if (selected.includes('/__')) {
+            // Group selected - ignore (groups are just for organization)
         } else {
             // Workspace selected - toggle expansion
-            setSelectedWorkspace(selectedWorkspace === selected ? null : selected);
-            setSelectedTask(null);
+            if (selectedWorkspace === selected) {
+                setSelection({ type: 'none' });
+            } else {
+                setSelection({ type: 'workspace', workspace: selected });
+            }
         }
     };
 
@@ -118,7 +173,7 @@ function WorkspaceTreeContent({ workspaces }: WorkspaceTreeContentProps) {
         if (expanded.length > 0) {
             const lastExpanded = expanded[expanded.length - 1];
             if (!lastExpanded.includes('/')) {
-                setSelectedWorkspace(lastExpanded);
+                setSelection({ type: 'workspace', workspace: lastExpanded });
             }
         }
     };
@@ -152,7 +207,20 @@ interface TreeNodeRendererProps {
     isLoadingTasks?: boolean;
 }
 
+// Helper to get a stable key for a node
+function getNodeKey(node: TreeNode): string {
+    switch (node.type) {
+        case 'task':
+            return `${node.value}-${node.task.status.type}`;
+        case 'input':
+            return `${node.value}-${node.dataset.status.type}`;
+        default:
+            return node.value;
+    }
+}
+
 function TreeNodeRenderer({ node, indexPath, isLoadingTasks }: TreeNodeRendererProps) {
+    // Workspace - top-level branch
     if (node.type === 'workspace') {
         return (
             <TreeView.NodeProvider node={node} indexPath={indexPath}>
@@ -167,12 +235,12 @@ function TreeNodeRenderer({ node, indexPath, isLoadingTasks }: TreeNodeRendererP
                     <TreeView.BranchContent>
                         {node.children.length === 0 && !isLoadingTasks ? (
                             <Text fontSize="xs" color="gray.500" pl={6} py={1}>
-                                No tasks
+                                No inputs or tasks
                             </Text>
                         ) : (
                             node.children.map((child, childIndex) => (
                                 <TreeNodeRenderer
-                                    key={`${child.value}-${child.task?.status.type}`}
+                                    key={getNodeKey(child)}
                                     node={child}
                                     indexPath={[...indexPath, childIndex]}
                                 />
@@ -185,15 +253,57 @@ function TreeNodeRenderer({ node, indexPath, isLoadingTasks }: TreeNodeRendererP
     }
 
     // Task item
+    if (node.type === 'task') {
+        return (
+            <TreeView.NodeProvider node={node} indexPath={indexPath}>
+                <TreeView.Item>
+                    <HStack gap={2} flex={1} minWidth={0}>
+                        <Box color="gray.500" flexShrink={0}>
+                            <FontAwesomeIcon icon={faCog} size="xs" />
+                        </Box>
+                        <Text
+                            fontSize="sm"
+                            overflow="hidden"
+                            textOverflow="ellipsis"
+                            whiteSpace="nowrap"
+                            flex={1}
+                            minWidth={0}
+                            title={node.label}
+                        >
+                            {node.label}
+                        </Text>
+                        <Badge colorPalette={getTaskStatusColor(node.task.status.type)} size="sm" flexShrink={0}>
+                            {node.task.status.type}
+                        </Badge>
+                    </HStack>
+                </TreeView.Item>
+            </TreeView.NodeProvider>
+        );
+    }
+
+    // Input item
     return (
         <TreeView.NodeProvider node={node} indexPath={indexPath}>
             <TreeView.Item>
-                {node.task && (
-                    <Badge colorPalette={getStatusColor(node.task.status.type)} size="sm">
-                        {node.task.status.type}
+                <HStack gap={2} flex={1} minWidth={0}>
+                    <Box color="blue.500" flexShrink={0}>
+                        <FontAwesomeIcon icon={faDatabase} size="xs" />
+                    </Box>
+                    <Text
+                        fontSize="sm"
+                        overflow="hidden"
+                        textOverflow="ellipsis"
+                        whiteSpace="nowrap"
+                        flex={1}
+                        minWidth={0}
+                        title={node.label}
+                    >
+                        {node.label}
+                    </Text>
+                    <Badge colorPalette={getInputStatusColor(node.dataset.status.type)} size="sm" flexShrink={0}>
+                        {node.dataset.status.type}
                     </Badge>
-                )}
-                <TreeView.ItemText>{node.label}</TreeView.ItemText>
+                </HStack>
             </TreeView.Item>
         </TreeView.NodeProvider>
     );

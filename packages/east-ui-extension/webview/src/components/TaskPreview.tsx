@@ -37,6 +37,7 @@ import { useWorkspaceStatus } from '../hooks/useE3Data';
 import { useTaskOutput } from '../hooks/useTaskOutput';
 import { useTaskLogs } from '../hooks/useTaskLogs';
 import { ErrorDisplay } from './ErrorDisplay';
+import { InputPreview } from './InputPreview';
 import { UIComponentType } from '@elaraai/east-ui';
 import type { TaskStatusInfo } from '@elaraai/e3-api-client';
 
@@ -418,7 +419,10 @@ const TaskPreviewContent = memo(function TaskPreviewContent({
  * Forces clean re-render when task changes via the memo comparison.
  */
 export function TaskPreview() {
-    const { apiUrl, selectedWorkspace, selectedTask } = useE3Context();
+    const { apiUrl, selection } = useE3Context();
+    const selectedWorkspace = selection.type !== 'none' ? selection.workspace : null;
+    const selectedTask = selection.type === 'task' ? selection.task : null;
+
     const { data: status } = useWorkspaceStatus(apiUrl, selectedWorkspace);
 
     // Find the selected task info
@@ -426,6 +430,11 @@ export function TaskPreview() {
         if (!status || !selectedTask) return null;
         return status.tasks.find((t) => t.name === selectedTask) ?? null;
     }, [status, selectedTask]);
+
+    // Input selected - render InputPreview
+    if (selection.type === 'input') {
+        return <InputPreview />;
+    }
 
     // No task selected
     if (!selectedWorkspace || !selectedTask) {

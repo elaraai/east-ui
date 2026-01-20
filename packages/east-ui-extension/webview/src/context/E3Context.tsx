@@ -5,13 +5,18 @@
 
 import { createContext, useContext, useState, type ReactNode } from 'react';
 
+// Discriminated union for selection state
+export type Selection =
+    | { type: 'none' }
+    | { type: 'workspace'; workspace: string }
+    | { type: 'task'; workspace: string; task: string }
+    | { type: 'input'; workspace: string; path: string };
+
 interface E3ContextValue {
     apiUrl: string;
     repoPath: string;
-    selectedWorkspace: string | null;
-    setSelectedWorkspace: (workspace: string | null) => void;
-    selectedTask: string | null;
-    setSelectedTask: (task: string | null) => void;
+    selection: Selection;
+    setSelection: (selection: Selection) => void;
     sidebarVisible: boolean;
     toggleSidebar: () => void;
 }
@@ -25,8 +30,7 @@ interface E3ProviderProps {
 }
 
 export function E3Provider({ apiUrl, repoPath, children }: E3ProviderProps) {
-    const [selectedWorkspace, setSelectedWorkspace] = useState<string | null>(null);
-    const [selectedTask, setSelectedTask] = useState<string | null>(null);
+    const [selection, setSelection] = useState<Selection>({ type: 'none' });
     const [sidebarVisible, setSidebarVisible] = useState(true);
 
     return (
@@ -34,13 +38,8 @@ export function E3Provider({ apiUrl, repoPath, children }: E3ProviderProps) {
             value={{
                 apiUrl,
                 repoPath,
-                selectedWorkspace,
-                setSelectedWorkspace: (workspace) => {
-                    setSelectedWorkspace(workspace);
-                    setSelectedTask(null); // Clear task when workspace changes
-                },
-                selectedTask,
-                setSelectedTask,
+                selection,
+                setSelection,
                 sidebarVisible,
                 toggleSidebar: () => setSidebarVisible((prev) => !prev),
             }}
@@ -56,4 +55,9 @@ export function useE3Context(): E3ContextValue {
         throw new Error('useE3Context must be used within an E3Provider');
     }
     return context;
+}
+
+// Helper to extract workspace from any selection that has one
+export function getSelectedWorkspace(selection: Selection): string | null {
+    return selection.type === 'none' ? null : selection.workspace;
 }

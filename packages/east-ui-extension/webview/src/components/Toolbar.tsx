@@ -10,10 +10,24 @@ import { ElaraLogo } from './ElaraLogo';
 import { useE3Context } from '../context/E3Context';
 
 export function Toolbar() {
-    const { repoPath, selectedWorkspace, selectedTask, toggleSidebar } = useE3Context();
+    const { repoPath, selection, toggleSidebar } = useE3Context();
 
     // Get just the repo name from the full path
     const repoName = repoPath.split('/').pop() ?? repoPath;
+
+    // Get display text for current selection
+    const selectionText = (() => {
+        switch (selection.type) {
+            case 'none':
+                return null;
+            case 'workspace':
+                return selection.workspace;
+            case 'task':
+                return `${selection.workspace} / ${selection.task}`;
+            case 'input':
+                return `${selection.workspace} / ${selection.path.replace(/^\.inputs\./, '')}`;
+        }
+    })();
 
     return (
         <Flex
@@ -49,10 +63,9 @@ export function Toolbar() {
                 <Badge colorPalette="green" variant="subtle" fontSize="xs">
                     Connected
                 </Badge>
-                {selectedWorkspace && (
+                {selectionText && (
                     <Badge colorPalette="blue" variant="subtle" fontSize="xs">
-                        {selectedWorkspace}
-                        {selectedTask && ` / ${selectedTask}`}
+                        {selectionText}
                     </Badge>
                 )}
             </Flex>
