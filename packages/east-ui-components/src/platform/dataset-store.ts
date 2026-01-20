@@ -18,7 +18,7 @@
  * @packageDocumentation
  */
 
-import { QueryClient, QueryObserver } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { type ValueTypeOf, variant } from "@elaraai/east";
 import {
     datasetGet,
