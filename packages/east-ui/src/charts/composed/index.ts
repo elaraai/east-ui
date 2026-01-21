@@ -17,8 +17,6 @@ import {
     StringType,
     StructType,
     variant,
-    IntegerType,
-    FloatType,
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
@@ -45,7 +43,7 @@ import {
 import {
     ComposedSeriesType,
     type ComposedChartStyle,
-    type ComposedChartMultiStyle,
+    type ComposedChartMultiStyleMapped,
     type ComposedSeriesConfig,
     type ComposedChartStyleBase,
     type ComposedChartBrushStyle,
@@ -57,12 +55,15 @@ export {
     ComposedSeriesType,
     type ComposedChartStyle,
     type ComposedChartMultiStyle,
+    type ComposedChartMultiStyleMapped,
     type ComposedSeriesConfig,
+    type ComposedSeriesConfigFor,
     type ComposedChartStyleBase,
     type ComposedChartBrushStyle,
     type ComposedLineSeries,
     type ComposedAreaSeries,
     type ComposedAreaRangeSeries,
+    type ComposedAreaRangeSeriesFor,
     type ComposedBarSeries,
     type ComposedScatterSeries,
     type ComposedSeriesBase,
@@ -71,9 +72,6 @@ export {
 // ============================================================================
 // Type Helpers
 // ============================================================================
-
-// Numeric types that can be used as Y-axis values
-type NumericEastType = IntegerType | FloatType;
 
 // Extract struct fields from array type
 type ExtractStructFields<T> = T extends ArrayType<infer S>
@@ -84,11 +82,6 @@ type ExtractStructFields<T> = T extends ArrayType<infer S>
 
 // Extract fields from data (handles SubtypeExprOrValue wrapping)
 type DataFields<T extends SubtypeExprOrValue<ArrayType<StructType>>> = ExtractStructFields<TypeOf<T>>;
-
-// Extract only numeric field keys from a struct's fields
-type NumericFieldKeys<Fields> = {
-    [K in keyof Fields]: Fields[K] extends NumericEastType ? K : never
-}[keyof Fields];
 
 // All field keys as strings
 type FieldKeys<Fields> = keyof Fields & string;
@@ -112,6 +105,7 @@ function seriesConfigToVariant(name: string, config: ComposedSeriesConfig) {
         case "line":
             return variant("line", {
                 name,
+                dataKey: some(config.dataKey ?? name), // defaults to series name
                 color: config.color !== undefined ? some(config.color) : none,
                 stackId: config.stackId !== undefined ? some(config.stackId) : none,
                 label: config.label !== undefined ? some(config.label) : none,
@@ -128,6 +122,7 @@ function seriesConfigToVariant(name: string, config: ComposedSeriesConfig) {
         case "area":
             return variant("area", {
                 name,
+                dataKey: some(config.dataKey ?? name), // defaults to series name
                 color: config.color !== undefined ? some(config.color) : none,
                 stackId: config.stackId !== undefined ? some(config.stackId) : none,
                 label: config.label !== undefined ? some(config.label) : none,
@@ -157,6 +152,7 @@ function seriesConfigToVariant(name: string, config: ComposedSeriesConfig) {
         case "bar":
             return variant("bar", {
                 name,
+                dataKey: some(config.dataKey ?? name), // defaults to series name
                 color: config.color !== undefined ? some(config.color) : none,
                 stackId: config.stackId !== undefined ? some(config.stackId) : none,
                 label: config.label !== undefined ? some(config.label) : none,
@@ -173,6 +169,7 @@ function seriesConfigToVariant(name: string, config: ComposedSeriesConfig) {
         case "scatter":
             return variant("scatter", {
                 name,
+                dataKey: some(config.dataKey ?? name), // defaults to series name
                 color: config.color !== undefined ? some(config.color) : none,
                 stackId: none, // scatter doesn't stack but ChartSeriesType has it
                 label: config.label !== undefined ? some(config.label) : none,
@@ -304,15 +301,10 @@ export function createComposedChart<T extends SubtypeExprOrValue<ArrayType<Struc
  * ```
  */
 export function createComposedChartMulti<
-    K extends string,
-    T extends SubtypeExprOrValue<ArrayType<StructType>>
+    D extends Record<string, SubtypeExprOrValue<ArrayType<StructType>>>
 >(
-    data: Record<K, T>,
-    style: ComposedChartMultiStyle<
-        FieldKeys<DataFields<T>>,
-        NumericFieldKeys<DataFields<T>> & string,
-        K
-    >
+    data: D,
+    style: ComposedChartMultiStyleMapped<D>
 ): ExprType<UIComponentType> {
     // Create empty data array (renderer will use dataSeries instead)
     const data_mapped = East.value([], ArrayType(DictType(StringType, LiteralValueType)));
@@ -320,7 +312,7 @@ export function createComposedChartMulti<
     // Map each series array to Dict format
     const seriesDataMap = new Map<string, ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>>();
 
-    for (const [seriesName, seriesData] of Object.entries(data) as [string, T][]) {
+    for (const [seriesName, seriesData] of Object.entries(data) as [string, D[keyof D]][]) {
         const series_expr = East.value(seriesData) as ExprType<ArrayType<StructType>>;
         const field_types = Expr.type(series_expr).value.fields;
 
@@ -340,16 +332,16 @@ export function createComposedChartMulti<
     // Build series entries from record keys and config
     const seriesEntries = Object.keys(data).map(key => [
         key,
-        style.series[key as K] ?? { type: "line" as const }
+        style.series[key as keyof D & string] ?? { type: "line" as const }
     ] as const);
 
     return buildComposedChart(
         data_mapped,
         dataSeries_mapped,
-        seriesEntries as [string, ComposedSeriesConfig][],
-        style,
-        style.valueKey,
-        style.pivotKey
+        seriesEntries as unknown as [string, ComposedSeriesConfig][],
+        style as any,
+        undefined,
+        style.pivotKey as string | undefined
     );
 }
 
@@ -361,9 +353,9 @@ function buildComposedChart(
     data_mapped: ExprType<ArrayType<DictType<typeof StringType, typeof LiteralValueType>>>,
     dataSeries_mapped: ExprType<typeof MultiSeriesDataType> | undefined,
     seriesEntries: readonly [string, ComposedSeriesConfig][],
-    style: ComposedChartStyleBase<string> & { brush?: ComposedChartBrushStyle<string>; pivotKey?: string; valueKey?: string },
-    valueKey?: string,
-    pivotKey?: string
+    style: ComposedChartStyleBase<string> & { brush?: ComposedChartBrushStyle<string> | undefined; pivotKey?: string | undefined; valueKey?: string | undefined },
+    valueKey?: string | undefined,
+    pivotKey?: string | undefined
 ): ExprType<UIComponentType> {
     // Convert series to variant array
     const series_mapped = seriesEntries.map(([name, config]) =>

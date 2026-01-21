@@ -281,6 +281,7 @@ function buildAreaChart(
 
         return {
             name: name,
+            dataKey: some(name), // dataKey defaults to series name
             color: config?.color !== undefined ? some(config.color) : none,
             stackId: config?.stackId !== undefined ? some(config.stackId) : none,
             label: config?.label !== undefined ? some(config.label) : none,

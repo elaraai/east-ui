@@ -62,6 +62,7 @@ import {
  */
 export const LineChartSeriesType = StructType({
     name: StringType,
+    dataKey: OptionType(StringType),
     color: OptionType(StringType),
     stackId: OptionType(StringType),
     label: OptionType(StringType),

@@ -321,17 +321,15 @@ describeEast("Chart.ComposedMulti", (test) => {
             },
             {
                 xAxis: { dataKey: "month" },
-                valueKey: "value",
                 series: {
-                    revenue: { type: "bar", color: "teal.solid" },
-                    profit: { type: "line", color: "purple.solid" },
+                    revenue: { type: "bar", dataKey: "value", color: "teal.solid" },
+                    profit: { type: "line", dataKey: "value", color: "purple.solid" },
                 },
             }
         ));
 
         $(Assert.equal(chart.unwrap().getTag(), "ComposedChart"));
         $(Assert.equal(chart.unwrap().unwrap("ComposedChart").series.size(), 2n));
-        $(Assert.equal(chart.unwrap().unwrap("ComposedChart").valueKey.unwrap("some"), "value"));
     });
 
     test("creates composed multi chart with mixed types", $ => {
@@ -352,11 +350,10 @@ describeEast("Chart.ComposedMulti", (test) => {
             },
             {
                 xAxis: { dataKey: "x" },
-                valueKey: "value",
                 series: {
-                    bars: { type: "bar", color: "teal.solid" },
-                    lines: { type: "line", color: "purple.solid", showDots: true },
-                    areas: { type: "area", color: "blue.solid", fillOpacity: 0.3 },
+                    bars: { type: "bar", dataKey: "value", color: "teal.solid" },
+                    lines: { type: "line", dataKey: "value", color: "purple.solid", showDots: true },
+                    areas: { type: "area", dataKey: "value", color: "blue.solid", fillOpacity: 0.3 },
                 },
             }
         ));

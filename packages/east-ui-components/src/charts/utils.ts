@@ -740,23 +740,57 @@ export function convertChartData(
  * @param valueKey - The key containing the y-value in each data point
  * @returns Array of merged data points
  */
+/** Extract a single value field */
+export interface ValueFieldConfig {
+    type: 'value';
+    key: string;
+}
+
+/** Extract low/high fields and combine into [low, high] array */
+export interface RangeFieldConfig {
+    type: 'range';
+    lowKey: string;
+    highKey: string;
+}
+
+/** Series field extraction configuration */
+export type SeriesFieldConfig = ValueFieldConfig | RangeFieldConfig;
+
 export function convertMultiSeriesData(
     dataSeries: Map<string, Map<string, ValueTypeOf<typeof LiteralValueType>>[]>,
     xAxisKey: string,
-    valueKey: string
+    defaultValueKey: string,
+    seriesConfigs?: Map<string, SeriesFieldConfig>
 ): Record<string, unknown>[] {
     // Collect all unique x-axis values
     const xAxisValues = new Set<unknown>();
     const seriesData = new Map<string, Map<unknown, unknown>>();
 
     dataSeries.forEach((dataPoints, seriesName) => {
+        const config = seriesConfigs?.get(seriesName);
         const seriesMap = new Map<unknown, unknown>();
+
         dataPoints.forEach(point => {
             const xValue = point.get(xAxisKey);
-            const yValue = point.get(valueKey);
-            if (xValue !== undefined) {
-                const xConverted = convertLiteralValue(xValue);
-                xAxisValues.add(xConverted);
+            if (xValue === undefined) return;
+
+            const xConverted = convertLiteralValue(xValue);
+            xAxisValues.add(xConverted);
+
+            if (config?.type === 'range') {
+                // Range: combine low/high into [low, high] array
+                const lowValue = point.get(config.lowKey);
+                const highValue = point.get(config.highKey);
+                if (lowValue !== undefined && highValue !== undefined) {
+                    seriesMap.set(xConverted, [
+                        convertLiteralValue(lowValue),
+                        convertLiteralValue(highValue)
+                    ]);
+                }
+            } else {
+                // Value: extract single field (use config key or default)
+                const valueKey = config?.type === 'value' ? config.key : defaultValueKey;
+                const yValue = point.get(valueKey);
                 if (yValue !== undefined) {
                     seriesMap.set(xConverted, convertLiteralValue(yValue));
                 }
@@ -905,6 +939,8 @@ export interface PrepareChartDataConfig {
     pivotKey?: string | undefined;
     /** East series array for extracting colors and config */
     mappedSeries: readonly BaseSeriesFields[];
+    /** Per-series field extraction config (for area-range with lowKey/highKey) */
+    seriesFieldConfigs?: Map<string, SeriesFieldConfig> | undefined;
 }
 
 /**
@@ -930,7 +966,7 @@ export interface PrepareChartDataConfig {
  * @returns Prepared data, series for useChart, and seriesOriginMap for config lookup
  */
 export function prepareChartData(config: PrepareChartDataConfig): PreparedChartData {
-    const { rawData, dataSeries, xAxisKey, valueKey, pivotKey, mappedSeries } = config;
+    const { rawData, dataSeries, xAxisKey, valueKey, pivotKey, mappedSeries, seriesFieldConfigs } = config;
 
     let data: Record<string, unknown>[];
     let series: ChartSeriesItem[];
@@ -1047,9 +1083,10 @@ export function prepareChartData(config: PrepareChartDataConfig): PreparedChartD
 
     // ========================================================================
     // Mode 3: Multi-series without pivot
+    // (valueKey is optional if all series have configs in seriesFieldConfigs)
     // ========================================================================
-    else if (dataSeries && xAxisKey && valueKey) {
-        data = convertMultiSeriesData(dataSeries, xAxisKey, valueKey);
+    else if (dataSeries && xAxisKey && (valueKey || seriesFieldConfigs)) {
+        data = convertMultiSeriesData(dataSeries, xAxisKey, valueKey ?? '', seriesFieldConfigs);
         series = mappedSeries.map((s, idx) => {
             const item: ChartSeriesItem = {
                 name: s.name,

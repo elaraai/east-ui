@@ -23,6 +23,7 @@ import { getShikiHighlighter } from '../shiki';
 import { faCode, faColumns, faTerminal, faCopy, faCheck } from '@fortawesome/free-solid-svg-icons';
 import {
     decodeBeast2,
+    decodeBeast2For,
     isTypeValueEqual,
     toEastTypeValue,
     toJSONFor,
@@ -32,6 +33,9 @@ import {
     EastStoreProvider,
     createEastStore,
     EastChakraComponent,
+    StateImpl,
+    DatasetImpl,
+    OverlayImpl,
 } from '@elaraai/east-ui-components';
 import { useE3Context } from '../context/E3Context';
 import { useWorkspaceStatus } from '../hooks/useE3Data';
@@ -41,6 +45,9 @@ import { ErrorDisplay } from './ErrorDisplay';
 import { InputPreview } from './InputPreview';
 import { UIComponentType } from '@elaraai/east-ui';
 import type { TaskStatusInfo } from '@elaraai/e3-api-client';
+
+// Combined platform implementations for decoding Beast2 with Reactive components
+const platformImplementations = [...StateImpl, ...DatasetImpl, ...OverlayImpl];
 
 // Hook to load shiki and track ready state
 function useShikiReady() {
@@ -76,6 +83,7 @@ interface TaskPreviewContentProps {
     workspace: string;
     task: string;
     taskInfo: TaskStatusInfo | null;
+    outputHash: string | null;
 }
 
 
@@ -104,9 +112,10 @@ const TaskPreviewContent = memo(function TaskPreviewContent({
     workspace,
     task,
     taskInfo,
+    outputHash,
 }: TaskPreviewContentProps) {
-    // Fetch task output
-    const { data: output, isLoading, error } = useTaskOutput(apiUrl, workspace, taskInfo);
+    // Fetch task output - pass outputHash so query refetches when data changes
+    const { data: output, isLoading, error } = useTaskOutput(apiUrl, workspace, taskInfo, outputHash);
 
     // Fetch task logs (stdout and stderr)
     const { data: stdout } = useTaskLogs(apiUrl, workspace, taskInfo, 'stdout');
@@ -116,18 +125,16 @@ const TaskPreviewContent = memo(function TaskPreviewContent({
     const ir = useMemo(() => {
         if (!output) return null;
         try {
-            const decoded = decodeBeast2(output);
-            // console.log('[East] Decoded task output:', {
-            //     type: decoded.type,
-            //     value: decoded.value,
-            //     target_type: toEastTypeValue(UIComponentType),
-            //     equal: isTypeValueEqual(decoded.type, toEastTypeValue(UIComponentType))
-            // });
-            if (isTypeValueEqual(decoded.type, toEastTypeValue(UIComponentType))) {
-                console.log('[East] Task output decoded as East IR');
-                return decoded.value as ValueTypeOf<UIComponentType>;
+            // First check the type without platform (to see if it's UIComponentType)
+            const { type } = decodeBeast2(output);
+            if (isTypeValueEqual(type, toEastTypeValue(UIComponentType))) {
+                // Decode with platform implementations for Reactive components
+                const decoder = decodeBeast2For(UIComponentType, { platform: platformImplementations });
+                const value = decoder(output);
+                console.log('[East] Task output decoded as East IR with platform support');
+                return value as ValueTypeOf<UIComponentType>;
             } else {
-                console.warn('[East] Task output is not of type UIComponentType, got:', decoded.type);
+                console.warn('[East] Task output is not of type UIComponentType, got:', type);
                 return null;
             }
         } catch (e) {
@@ -449,7 +456,7 @@ const TaskPreviewContent = memo(function TaskPreviewContent({
             </Box>
         </EastStoreProvider>
     );
-}, (prev, next) => prev.task === next.task && prev.workspace === next.workspace);
+}, (prev, next) => prev.task === next.task && prev.workspace === next.workspace && prev.outputHash === next.outputHash);
 
 /**
  * Outer component that handles context and passes props to memoized inner component.
@@ -467,6 +474,13 @@ export function TaskPreview() {
         if (!status || !selectedTask) return null;
         return status.tasks.find((t) => t.name === selectedTask) ?? null;
     }, [status, selectedTask]);
+
+    // Find the output dataset's hash - this changes when task output changes
+    const outputHash = useMemo(() => {
+        if (!status || !taskInfo?.output) return null;
+        const outputDataset = status.datasets.find((d) => d.path === taskInfo.output);
+        return outputDataset?.hash?.type === 'some' ? outputDataset.hash.value : null;
+    }, [status, taskInfo?.output]);
 
     // Input selected - render InputPreview
     if (selection.type === 'input') {
@@ -502,6 +516,7 @@ export function TaskPreview() {
             workspace={selectedWorkspace}
             task={selectedTask}
             taskInfo={taskInfo}
+            outputHash={outputHash}
         />
     );
 }

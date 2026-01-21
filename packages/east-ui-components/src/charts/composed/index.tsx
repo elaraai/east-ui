@@ -55,6 +55,8 @@ export type ComposedChartValue = ValueTypeOf<typeof EastChart.Types.ComposedChar
 /** Extended series item with chart type and type-specific properties */
 interface ComposedSeriesItem extends ChartSeriesItem {
     chartType: "line" | "area" | "areaRange" | "bar" | "scatter";
+    // Per-series data key (for multi-series with different field names)
+    dataKey?: string;
     // Line-specific
     strokeWidth?: number;
     strokeDasharray?: string;
@@ -81,6 +83,7 @@ function toComposedSeriesItem(seriesVariant: ValueTypeOf<typeof EastChart.Types.
                 name: v.name,
                 color: getSomeorUndefined(v.color) ?? "teal.solid",
             };
+            const dataKey = getSomeorUndefined(v.dataKey);
             const stackId = getSomeorUndefined(v.stackId);
             const label = getSomeorUndefined(v.label);
             const strokeWidth = getSomeorUndefined(v.strokeWidth);
@@ -89,6 +92,7 @@ function toComposedSeriesItem(seriesVariant: ValueTypeOf<typeof EastChart.Types.
             const showLine = getSomeorUndefined(v.showLine);
             const yAxisId = getSomeorUndefined(v.yAxisId);
 
+            if (dataKey !== undefined) result.dataKey = dataKey;
             if (stackId !== undefined) result.stackId = stackId;
             if (label !== undefined) result.label = label;
             if (strokeWidth !== undefined) result.strokeWidth = Number(strokeWidth);
@@ -105,6 +109,7 @@ function toComposedSeriesItem(seriesVariant: ValueTypeOf<typeof EastChart.Types.
                 name: v.name,
                 color: getSomeorUndefined(v.color) ?? "teal.solid",
             };
+            const dataKey = getSomeorUndefined(v.dataKey);
             const stackId = getSomeorUndefined(v.stackId);
             const label = getSomeorUndefined(v.label);
             const strokeWidth = getSomeorUndefined(v.strokeWidth);
@@ -113,6 +118,7 @@ function toComposedSeriesItem(seriesVariant: ValueTypeOf<typeof EastChart.Types.
             const fillOpacity = getSomeorUndefined(v.fillOpacity);
             const yAxisId = getSomeorUndefined(v.yAxisId);
 
+            if (dataKey !== undefined) result.dataKey = dataKey;
             if (stackId !== undefined) result.stackId = stackId;
             if (label !== undefined) result.label = label;
             if (strokeWidth !== undefined) result.strokeWidth = Number(strokeWidth);
@@ -149,6 +155,7 @@ function toComposedSeriesItem(seriesVariant: ValueTypeOf<typeof EastChart.Types.
                 name: v.name,
                 color: getSomeorUndefined(v.color) ?? "teal.solid",
             };
+            const dataKey = getSomeorUndefined(v.dataKey);
             const stackId = getSomeorUndefined(v.stackId);
             const label = getSomeorUndefined(v.label);
             const strokeWidth = getSomeorUndefined(v.strokeWidth);
@@ -157,6 +164,7 @@ function toComposedSeriesItem(seriesVariant: ValueTypeOf<typeof EastChart.Types.
             const fillOpacity = getSomeorUndefined(v.fillOpacity);
             const yAxisId = getSomeorUndefined(v.yAxisId);
 
+            if (dataKey !== undefined) result.dataKey = dataKey;
             if (stackId !== undefined) result.stackId = stackId;
             if (label !== undefined) result.label = label;
             if (strokeWidth !== undefined) result.strokeWidth = Number(strokeWidth);
@@ -173,11 +181,13 @@ function toComposedSeriesItem(seriesVariant: ValueTypeOf<typeof EastChart.Types.
                 name: v.name,
                 color: getSomeorUndefined(v.color) ?? "teal.solid",
             };
+            const dataKey = getSomeorUndefined(v.dataKey);
             const label = getSomeorUndefined(v.label);
             const fill = getSomeorUndefined(v.fill);
             const fillOpacity = getSomeorUndefined(v.fillOpacity);
             const yAxisId = getSomeorUndefined(v.yAxisId);
 
+            if (dataKey !== undefined) result.dataKey = dataKey;
             if (label !== undefined) result.label = label;
             if (fill !== undefined) result.fill = fill;
             if (fillOpacity !== undefined) result.fillOpacity = fillOpacity;
@@ -206,6 +216,9 @@ export const EastChakraComposedChart = memo(function EastChakraComposedChart({ v
         return xAxis ? getSomeorUndefined(xAxis.dataKey) : undefined;
     }, [value.xAxis]);
 
+    // Convert series to composed format with chart type info
+    const composedSeries = useMemo(() => value.series.map(toComposedSeriesItem), [value.series]);
+
     // Convert composed series variants to flat series for prepareChartData
     // Each variant (line, area, bar, etc.) has name, color, pivotColors, layerIndex
     // We need to preserve the Option types as prepareChartData expects them
@@ -220,6 +233,21 @@ export const EastChakraComposedChart = memo(function EastChakraComposedChart({ v
         });
     }), [value.series]);
 
+    // Build series field configs for each series
+    // - Area-range: { type: 'range', lowKey, highKey }
+    // - Others: { type: 'value', key: dataKey } when dataKey is specified
+    const seriesFieldConfigs = useMemo(() => {
+        const configs = new Map<string, { type: 'value'; key: string } | { type: 'range'; lowKey: string; highKey: string }>();
+        for (const s of composedSeries) {
+            if (s.chartType === 'areaRange' && s.lowKey && s.highKey) {
+                configs.set(s.name as string, { type: 'range', lowKey: s.lowKey, highKey: s.highKey });
+            } else if (s.dataKey) {
+                configs.set(s.name as string, { type: 'value', key: s.dataKey });
+            }
+        }
+        return configs.size > 0 ? configs : undefined;
+    }, [composedSeries]);
+
     // Prepare chart data and series (handles pivot, multi-series, and regular modes)
     const { data: chartData, series: baseSeries, seriesOriginMap, layerIndexMap } = useMemo(() => {
         const config = {
@@ -229,12 +257,10 @@ export const EastChakraComposedChart = memo(function EastChakraComposedChart({ v
             valueKey: getSomeorUndefined(value.valueKey),
             pivotKey: getSomeorUndefined(value.pivotKey),
             mappedSeries: flatSeries as unknown as Parameters<typeof prepareChartData>[0]["mappedSeries"],
+            seriesFieldConfigs,
         };
         return prepareChartData(config);
-    }, [value.data, value.dataSeries, value.valueKey, value.pivotKey, flatSeries, xAxisDataKey]);
-
-    // Convert series to composed format with chart type info
-    const composedSeries = useMemo(() => value.series.map(toComposedSeriesItem), [value.series]);
+    }, [value.data, value.dataSeries, value.valueKey, value.pivotKey, flatSeries, xAxisDataKey, seriesFieldConfigs]);
 
     // Merge base series with composed series info for rendering
     // In pivot mode, baseSeries are generated from pivot values; otherwise they match composedSeries

@@ -260,10 +260,9 @@ export default East.function(
                         },
                         {
                             xAxis: { dataKey: "month" },
-                            valueKey: "value",
                             series: {
-                                revenue: { type: "bar", color: "teal.solid" },
-                                profit: { type: "line", color: "purple.solid", showDots: true },
+                                revenue: { type: "bar", dataKey: "value", color: "teal.solid" },
+                                profit: { type: "line", dataKey: "value", color: "purple.solid", showDots: true },
                             },
                             grid: { show: true },
                             tooltip: { show: true },
@@ -288,10 +287,9 @@ export default East.function(
                         },
                         {
                             xAxis: { dataKey: "month" },
-                            valueKey: "value",
                             series: {
-                                revenue: { type: "bar", color: "teal.solid" },
-                                profit: { type: "line", color: "purple.solid" },
+                                revenue: { type: "bar", dataKey: "value", color: "teal.solid" },
+                                profit: { type: "line", dataKey: "value", color: "purple.solid" },
                             },
                         }
                     )
@@ -626,11 +624,11 @@ export default East.function(
                         },
                         {
                             xAxis: { dataKey: "month" },
-                            valueKey: "value",
                             pivotKey: "region",
                             series: {
                                 revenue: {
                                     type: "bar",
+                                    dataKey: "value",
                                     color: "teal.500",
                                     layerIndex: 0n,
                                     pivotColors: new Map([
@@ -640,6 +638,7 @@ export default East.function(
                                 },
                                 profit: {
                                     type: "line",
+                                    dataKey: "value",
                                     color: "blue.500",
                                     layerIndex: 1n,
                                     showDots: true,
@@ -702,11 +701,10 @@ export default East.function(
                         },
                         {
                             xAxis: { dataKey: "month" },
-                            valueKey: "value",
                             pivotKey: "type",
                             series: {
-                                actual: { type: "bar"  },
-                                forecast: { type: "area", color: "orange.solid", fillOpacity: 0.3 },
+                                actual: { type: "bar", dataKey: "value" },
+                                forecast: { type: "area", dataKey: "value", color: "orange.solid", fillOpacity: 0.3 },
                             },
                             grid: { show: true },
                             tooltip: { show: true },
@@ -730,6 +728,84 @@ export default East.function(
                             series: {
                                 actual: { type: "bar" },
                                 forecast: { type: "area", color: "orange.solid", fillOpacity: 0.3 },
+                            },
+                        }
+                    )
+                `)
+            )
+        );
+
+        // ComposedMulti with dual Y-axis, line, scatter, and area-range
+        const multiDualAxisWithAreaRange = $.let(
+            ShowcaseCard(
+                "Multi Dual Axis + Area Range",
+                "Line, scatter, and confidence band on dual y-axes",
+                Box.Root([
+                    Chart.ComposedMulti(
+                        {
+                            actual: [
+                                { day: 1n, value: 100n },
+                                { day: 2n, value: 150n },
+                                { day: 3n, value: 130n },
+                                { day: 4n, value: 180n },
+                                { day: 5n, value: 160n },
+                            ],
+                            predicted: [
+                                { day: 1n, value: 95n },
+                                { day: 2n, value: 145n },
+                                { day: 3n, value: 140n },
+                                { day: 4n, value: 175n },
+                                { day: 5n, value: 165n },
+                            ],
+                            confidence: [
+                                { day: 1n, low: 80n, high: 110n },
+                                { day: 2n, low: 130n, high: 160n },
+                                { day: 3n, low: 120n, high: 160n },
+                                { day: 4n, low: 155n, high: 195n },
+                                { day: 5n, low: 145n, high: 185n },
+                            ],
+                            temperature: [
+                                { day: 1n, value: 22n },
+                                { day: 2n, value: 25n },
+                                { day: 3n, value: 23n },
+                                { day: 4n, value: 28n },
+                                { day: 5n, value: 26n },
+                            ],
+                        } as any,
+                        {
+                            xAxis: { dataKey: "day", label: "Day" },
+                            yAxis: { label: "Value" },
+                            yAxis2: { label: "Temperature (°C)" },
+                            series: {
+                                confidence: { type: "area-range", lowKey: "low", highKey: "high", color: "blue.200", fillOpacity: 0.3, yAxisId: "left" },
+                                actual: { type: "scatter", dataKey: "value", color: "blue.solid", yAxisId: "left" },
+                                predicted: { type: "line", dataKey: "value", color: "purple.solid", showDots: true, yAxisId: "left" },
+                                temperature: { type: "line", dataKey: "value", color: "orange.solid", showDots: true, yAxisId: "right" },
+                            },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "300px", width: "100%" }),
+                some(`
+                    Chart.ComposedMulti(
+                        {
+                            actual: [{ day: 1n, value: 100n }, ...],
+                            predicted: [{ day: 1n, value: 95n }, ...],
+                            confidence: [{ day: 1n, low: 80n, high: 110n }, ...],
+                            temperature: [{ day: 1n, value: 22n }, ...],
+                        } as any,  // Cast needed for different struct types
+                        {
+                            xAxis: { dataKey: "day" },
+                            yAxis: { label: "Value" },
+                            yAxis2: { label: "Temperature (°C)" },
+                            valueKey: "value",
+                            series: {
+                                confidence: { type: "area-range", lowKey: "low", highKey: "high", yAxisId: "left" },
+                                actual: { type: "scatter", yAxisId: "left" },
+                                predicted: { type: "line", yAxisId: "left" },
+                                temperature: { type: "line", yAxisId: "right" },
                             },
                         }
                     )
@@ -819,6 +895,7 @@ export default East.function(
                 Grid.Item(pivotWithoutColors),
                 Grid.Item(multiPivotWithColors),
                 Grid.Item(multiPivotWithoutColors),
+                Grid.Item(multiDualAxisWithAreaRange),
                 Grid.Item(axisFormatting),
             ],
             {

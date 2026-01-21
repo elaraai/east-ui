@@ -271,6 +271,7 @@ function buildLineChart(
 
         return {
             name: name,
+            dataKey: some(name), // dataKey defaults to series name
             color: config?.color !== undefined ? some(config.color) : none,
             stackId: none,
             label: config?.label !== undefined ? some(config.label) : none,

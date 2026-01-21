@@ -85,6 +85,7 @@ export type YAxisIdLiteral = "left" | "right";
  */
 export const ChartSeriesType = StructType({
     name: StringType,
+    dataKey: OptionType(StringType),
     color: OptionType(StringType),
     stackId: OptionType(StringType),
     label: OptionType(StringType),
@@ -144,6 +145,7 @@ export function ChartSeries(series: ChartSeries): ExprType<ChartSeriesType> {
         : none;
     return East.value({
         name: series.name as string,
+        dataKey: some(series.name as string), // dataKey defaults to series name
         color: series.color !== undefined ? some(series.color) : none,
         stackId: series.stackId !== undefined ? some(series.stackId) : none,
         label: series.label !== undefined ? some(series.label) : none,

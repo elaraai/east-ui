@@ -169,6 +169,8 @@ export interface ComposedSeriesBase {
 export interface ComposedLineSeries extends ComposedSeriesBase {
     /** Chart type discriminator */
     type: "line";
+    /** Field name containing Y values for this series (required for ComposedMulti) */
+    dataKey?: string;
     /** Dash pattern for dashed lines (e.g., "5 5") */
     strokeDasharray?: SubtypeExprOrValue<StringType>;
     /** Show dots at data points */
@@ -187,6 +189,8 @@ export interface ComposedLineSeries extends ComposedSeriesBase {
 export interface ComposedAreaSeries extends ComposedSeriesBase {
     /** Chart type discriminator */
     type: "area";
+    /** Field name containing Y values for this series (required for ComposedMulti) */
+    dataKey?: string;
     /** Fill color (defaults to color) */
     fill?: SubtypeExprOrValue<StringType>;
     /** Fill opacity (0-1) */
@@ -214,11 +218,68 @@ export interface ComposedAreaRangeSeries extends ComposedSeriesBase {
 }
 
 /**
+ * Area range series with constrained field keys.
+ * Used by ComposedMulti to ensure lowKey/highKey are valid fields.
+ */
+export interface ComposedAreaRangeSeriesFor<FieldKeys extends string> extends ComposedSeriesBase {
+    /** Chart type discriminator */
+    type: "area-range";
+    /** Field name for lower bound values (must be a field in this series' data) */
+    lowKey: FieldKeys;
+    /** Field name for upper bound values (must be a field in this series' data) */
+    highKey: FieldKeys;
+    /** Fill opacity (0-1) */
+    fillOpacity?: SubtypeExprOrValue<FloatType>;
+}
+
+// ============================================================================
+// Per-Series Data Key Types (for ComposedMulti with heterogeneous data)
+// ============================================================================
+
+/**
+ * Line series with typed dataKey for its specific data fields.
+ */
+export interface ComposedLineSeriesFor<FieldKeys extends string> extends Omit<ComposedLineSeries, 'type'> {
+    type: "line";
+    /** Field name containing Y values for this series */
+    dataKey: FieldKeys;
+}
+
+/**
+ * Area series with typed dataKey for its specific data fields.
+ */
+export interface ComposedAreaSeriesFor<FieldKeys extends string> extends Omit<ComposedAreaSeries, 'type'> {
+    type: "area";
+    /** Field name containing Y values for this series */
+    dataKey: FieldKeys;
+}
+
+/**
+ * Bar series with typed dataKey for its specific data fields.
+ */
+export interface ComposedBarSeriesFor<FieldKeys extends string> extends Omit<ComposedBarSeries, 'type'> {
+    type: "bar";
+    /** Field name containing Y values for this series */
+    dataKey: FieldKeys;
+}
+
+/**
+ * Scatter series with typed dataKey for its specific data fields.
+ */
+export interface ComposedScatterSeriesFor<FieldKeys extends string> extends Omit<ComposedScatterSeries, 'type'> {
+    type: "scatter";
+    /** Field name containing Y values for this series */
+    dataKey: FieldKeys;
+}
+
+/**
  * Bar series configuration.
  */
 export interface ComposedBarSeries extends ComposedSeriesBase {
     /** Chart type discriminator */
     type: "bar";
+    /** Field name containing Y values for this series (required for ComposedMulti) */
+    dataKey?: string;
     /** Fill color (defaults to color) */
     fill?: SubtypeExprOrValue<StringType>;
     /** Fill opacity (0-1) */
@@ -237,6 +298,8 @@ export interface ComposedBarSeries extends ComposedSeriesBase {
 export interface ComposedScatterSeries extends ComposedSeriesBase {
     /** Chart type discriminator */
     type: "scatter";
+    /** Field name containing Y values for this series (required for ComposedMulti) */
+    dataKey?: string;
     /** Fill color for points */
     fill?: SubtypeExprOrValue<StringType>;
     /** Fill opacity (0-1) */
@@ -254,6 +317,17 @@ export type ComposedSeriesConfig =
     | ComposedAreaRangeSeries
     | ComposedBarSeries
     | ComposedScatterSeries;
+
+/**
+ * Union type for composed series with per-series typed dataKey.
+ * Used by ComposedMulti to ensure each series' data keys match that series' data fields.
+ */
+export type ComposedSeriesConfigFor<FieldKeys extends string> =
+    | ComposedLineSeriesFor<FieldKeys>
+    | ComposedAreaSeriesFor<FieldKeys>
+    | ComposedAreaRangeSeriesFor<FieldKeys>
+    | ComposedBarSeriesFor<FieldKeys>
+    | ComposedScatterSeriesFor<FieldKeys>;
 
 // ============================================================================
 // Composed Chart Style Interfaces
@@ -339,4 +413,32 @@ export interface ComposedChartMultiStyle<
     series: { [K in SeriesKey]?: ComposedSeriesConfig };
     /** Brush configuration for data range selection */
     brush?: ComposedChartBrushStyle<DataKey>;
+}
+
+// ============================================================================
+// Type-Safe ComposedMulti (Per-Series Field Constraints)
+// ============================================================================
+
+import type { SubtypeExprOrValue as SEOV, ArrayType as AT, StructType as ST } from "@elaraai/east";
+
+/** Extract struct field keys from an array type expression */
+type ExtractFieldKeys<T> = T extends SEOV<AT<ST<infer Fields>>>
+    ? keyof Fields & string
+    : string;
+
+/**
+ * Style for ComposedMulti with per-series type constraints.
+ * Each series specifies its own data keys (dataKey for line/area/bar/scatter, lowKey/highKey for area-range).
+ *
+ * @typeParam D - Record mapping series names to their data array types
+ */
+export interface ComposedChartMultiStyleMapped<
+    D extends Record<string, SEOV<AT<ST>>>
+> extends ComposedChartStyleBase<ExtractFieldKeys<D[keyof D]>> {
+    /** Field name containing series identifiers (enables pivot/long format data within each record) */
+    pivotKey?: ExtractFieldKeys<D[keyof D]>;
+    /** Per-series configuration with type-safe field constraints (each series specifies its own dataKey or lowKey/highKey) */
+    series: { [K in keyof D & string]: ComposedSeriesConfigFor<ExtractFieldKeys<D[K]>> };
+    /** Brush configuration for data range selection */
+    brush?: ComposedChartBrushStyle<ExtractFieldKeys<D[keyof D]>>;
 }

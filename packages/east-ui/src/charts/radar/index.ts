@@ -72,6 +72,7 @@ export function createRadarChart<T extends SubtypeExprOrValue<ArrayType<StructTy
     });
     const series_mapped = Object.entries(series as Record<string, RadarChartSeriesConfig>).map(([name, config]) => ({
         name: name as string,
+        dataKey: some(name), // dataKey defaults to series name
         color: config?.color !== undefined ? some(config.color) : none,
         stackId: none,
         label: config?.label !== undefined ? some(config.label) : none,

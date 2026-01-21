@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faCheck } from '@fortawesome/free-solid-svg-icons';
 import {
     decodeBeast2,
+    decodeBeast2For,
     isTypeValueEqual,
     toEastTypeValue,
     toJSONFor,
@@ -26,6 +27,9 @@ import {
     EastStoreProvider,
     createEastStore,
     EastChakraComponent,
+    StateImpl,
+    DatasetImpl,
+    OverlayImpl,
 } from '@elaraai/east-ui-components';
 import { useE3Context } from '../context/E3Context';
 import { useWorkspaceStatus } from '../hooks/useE3Data';
@@ -33,6 +37,9 @@ import { useInputData } from '../hooks/useInputData';
 import { ErrorDisplay } from './ErrorDisplay';
 import { UIComponentType } from '@elaraai/east-ui';
 import type { DatasetStatusInfo } from '@elaraai/e3-api-client';
+
+// Combined platform implementations for decoding Beast2 with Reactive components
+const platformImplementations = [...StateImpl, ...DatasetImpl, ...OverlayImpl];
 
 interface InputPreviewContentProps {
     apiUrl: string;
@@ -57,12 +64,16 @@ const InputPreviewContent = memo(function InputPreviewContent({
     const ir = useMemo(() => {
         if (!output) return null;
         try {
-            const decoded = decodeBeast2(output);
-            if (isTypeValueEqual(decoded.type, toEastTypeValue(UIComponentType))) {
-                console.log('[East] Input decoded as East IR');
-                return decoded.value as ValueTypeOf<UIComponentType>;
+            // First check the type without platform (to see if it's UIComponentType)
+            const { type } = decodeBeast2(output);
+            if (isTypeValueEqual(type, toEastTypeValue(UIComponentType))) {
+                // Decode with platform implementations for Reactive components
+                const decoder = decodeBeast2For(UIComponentType, { platform: platformImplementations });
+                const value = decoder(output);
+                console.log('[East] Input decoded as East IR with platform support');
+                return value as ValueTypeOf<UIComponentType>;
             } else {
-                console.warn('[East] Input is not of type UIComponentType, got:', decoded.type);
+                console.warn('[East] Input is not of type UIComponentType, got:', type);
                 return null;
             }
         } catch (e) {
@@ -205,7 +216,11 @@ const InputPreviewContent = memo(function InputPreviewContent({
             </Box>
         </EastStoreProvider>
     );
-}, (prev, next) => prev.path === next.path && prev.workspace === next.workspace);
+}, (prev, next) => {
+    const prevHash = prev.inputInfo?.hash?.type === 'some' ? prev.inputInfo.hash.value : null;
+    const nextHash = next.inputInfo?.hash?.type === 'some' ? next.inputInfo.hash.value : null;
+    return prev.path === next.path && prev.workspace === next.workspace && prevHash === nextHash;
+});
 
 /**
  * Outer component that handles context and passes props to memoized inner component.

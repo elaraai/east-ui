@@ -43,8 +43,6 @@ export interface EastChakraTagProps {
  */
 export const EastChakraTag = memo(function EastChakraTag({ value }: EastChakraTagProps) {
     const props = useMemo(() => toChakraTag(value), [value]);
-    // DEBUG: Remove after fixing variant issue
-    console.log('Tag props:', props, 'raw variant:', value.variant);
     const closable = useMemo(() => getSomeorUndefined(value.closable), [value.closable]);
     const onCloseFn = useMemo(() => getSomeorUndefined(value.onClose), [value.onClose]);
 

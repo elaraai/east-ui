@@ -15,8 +15,11 @@ export function useInputData(
 ) {
     const isUpToDate = inputInfo?.status.type === 'up-to-date';
 
+    // Extract hash for query key - when hash changes, data changed
+    const hash = inputInfo?.hash?.type === 'some' ? inputInfo.hash.value : null;
+
     return useQuery({
-        queryKey: ['inputData', apiUrl, workspace, inputInfo?.path],
+        queryKey: ['inputData', apiUrl, workspace, inputInfo?.path, hash],
         queryFn: () => {
             // Parse path like ".inputs.foo" into path parts
             const pathParts = inputInfo?.path?.split('.')
