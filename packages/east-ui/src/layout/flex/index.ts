@@ -170,6 +170,9 @@ function createFlex(
             background: style.background ? variant("some", style.background) : variant("none", null),
             color: style.color ? variant("some", style.color) : variant("none", null),
             borderRadius: style.borderRadius ? variant("some", style.borderRadius) : variant("none", null),
+            border: style.border ? variant("some", style.border) : variant("none", null),
+            borderColor: style.borderColor ? variant("some", style.borderColor) : variant("none", null),
+            borderWidth: style.borderWidth ? variant("some", style.borderWidth) : variant("none", null),
         }, FlexStyleType)) : variant("none", null),
     }), UIComponentType);
 }

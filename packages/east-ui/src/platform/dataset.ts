@@ -59,7 +59,10 @@ export const reactive_dataset_get = East.genericPlatform(
     "reactive_dataset_get",
     ["T"],
     [StringType, DatasetPathType],  // workspace, path
-    "T"
+    "T",
+    {
+        optional: true
+    }
 );
 
 /**
@@ -82,7 +85,10 @@ export const reactive_dataset_set = East.genericPlatform(
     "reactive_dataset_set",
     ["T"],
     [StringType, DatasetPathType, "T"],  // workspace, path, value
-    NullType
+    NullType,
+    {
+        optional: true
+    }
 );
 
 /**
@@ -98,7 +104,10 @@ export const reactive_dataset_set = East.genericPlatform(
 export const reactive_dataset_has = East.platform(
     "reactive_dataset_has",
     [StringType, DatasetPathType],  // workspace, path
-    BooleanType
+    BooleanType,
+    {
+        optional: true
+    }
 );
 
 /**
@@ -114,7 +123,10 @@ export const reactive_dataset_has = East.platform(
 export const reactive_dataset_list = East.platform(
     "reactive_dataset_list",
     [StringType, DatasetPathType],  // workspace, path
-    ArrayType(StringType)
+    ArrayType(StringType),
+    {
+        optional: true
+    }
 );
 
 /**
@@ -135,5 +147,8 @@ export const reactive_dataset_list = East.platform(
 export const reactive_dataset_subscribe = East.platform(
     "reactive_dataset_subscribe",
     [StringType, DatasetPathType, IntegerType],  // workspace, path, intervalMs
-    NullType
+    NullType,
+    {
+        optional: true
+    }
 );

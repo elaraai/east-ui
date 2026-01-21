@@ -227,7 +227,14 @@ function createDialog(
  * });
  * ```
  */
-export const dialog_open = East.platform("dialog_open", [DialogOpenInputType], NullType);
+export const dialog_open = East.platform(
+    "dialog_open", 
+    [DialogOpenInputType], 
+    NullType,
+    {
+        optional: true
+    }
+);
 
 /**
  * Dialog component for modal overlays.

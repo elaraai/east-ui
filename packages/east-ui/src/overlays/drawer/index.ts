@@ -198,7 +198,14 @@ function createDrawer(
  * });
  * ```
  */
-export const drawer_open = East.platform("drawer_open", [DrawerOpenInputType], NullType);
+export const drawer_open = East.platform(
+    "drawer_open", 
+    [DrawerOpenInputType], 
+    NullType,
+    {
+        optional: true
+    }
+);
 
 /**
  * Drawer component for slide-in panels.

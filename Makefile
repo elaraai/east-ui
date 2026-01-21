@@ -1,4 +1,4 @@
-.PHONY: install build test lint dev clean extension extension-install set-east-version set-e3-api-server-version set-e3-api-client-version set-east-node-std-version version-prerelease version-patch version-minor version-major
+.PHONY: install build test lint dev clean extension extension-install set-east-version set-e3-api-server-version set-e3-api-client-version set-east-node-std-version set-versions version-prerelease version-patch version-minor version-major
 
 # Install all workspace dependencies
 install:
@@ -34,44 +34,43 @@ clean:
 
 
 # Update @elaraai/east version across all packages
-# Usage: make set-east-version VERSION=0.0.1-beta.1
+# Usage: make set-east-version [VERSION=0.0.1-beta.1]
+# If VERSION not specified, fetches latest beta from npm
 set-east-version:
-ifndef VERSION
-	$(error VERSION is required. Usage: make set-east-version VERSION=0.0.1-beta.1)
-endif
+	$(eval VERSION ?= $(shell npm view @elaraai/east dist-tags.beta 2>/dev/null))
 	@echo "Updating @elaraai/east to version $(VERSION)..."
 	@find . -name "package.json" -exec sed -i 's/"@elaraai\/east": "[^"]*"/"@elaraai\/east": "^$(VERSION)"/g' {} \;
 	@echo "Done. Run 'npm install' to update dependencies."
 
 # Update @elaraai/e3-api-server version
-# Usage: make set-e3-api-server-version VERSION=0.0.2-beta.1
+# Usage: make set-e3-api-server-version [VERSION=0.0.2-beta.1]
+# If VERSION not specified, fetches latest beta from npm
 set-e3-api-server-version:
-ifndef VERSION
-	$(error VERSION is required. Usage: make set-e3-api-server-version VERSION=0.0.2-beta.1)
-endif
+	$(eval VERSION ?= $(shell npm view @elaraai/e3-api-server dist-tags.beta 2>/dev/null))
 	@echo "Updating @elaraai/e3-api-server to version $(VERSION)..."
 	@find . -name "package.json" -exec sed -i 's/"@elaraai\/e3-api-server": "[^"]*"/"@elaraai\/e3-api-server": "^$(VERSION)"/g' {} \;
 	@echo "Done. Run 'npm install' to update dependencies."
 
 # Update @elaraai/e3-api-client version
-# Usage: make set-e3-api-client-version VERSION=0.0.2-beta.1
+# Usage: make set-e3-api-client-version [VERSION=0.0.2-beta.1]
+# If VERSION not specified, fetches latest beta from npm
 set-e3-api-client-version:
-ifndef VERSION
-	$(error VERSION is required. Usage: make set-e3-api-client-version VERSION=0.0.2-beta.1)
-endif
+	$(eval VERSION ?= $(shell npm view @elaraai/e3-api-client dist-tags.beta 2>/dev/null))
 	@echo "Updating @elaraai/e3-api-client to version $(VERSION)..."
 	@find . -name "package.json" -exec sed -i 's/"@elaraai\/e3-api-client": "[^"]*"/"@elaraai\/e3-api-client": "^$(VERSION)"/g' {} \;
 	@echo "Done. Run 'npm install' to update dependencies."
 
 # Update @elaraai/east-node-std version
-# Usage: make set-east-node-std-version VERSION=0.0.1-beta.19
+# Usage: make set-east-node-std-version [VERSION=0.0.1-beta.19]
+# If VERSION not specified, fetches latest beta from npm
 set-east-node-std-version:
-ifndef VERSION
-	$(error VERSION is required. Usage: make set-east-node-std-version VERSION=0.0.1-beta.19)
-endif
+	$(eval VERSION ?= $(shell npm view @elaraai/east-node-std dist-tags.beta 2>/dev/null))
 	@echo "Updating @elaraai/east-node-std to version $(VERSION)..."
 	@find . -name "package.json" -exec sed -i 's/"@elaraai\/east-node-std": "[^"]*"/"@elaraai\/east-node-std": "^$(VERSION)"/g' {} \;
 	@echo "Done. Run 'npm install' to update dependencies."
+
+# Update all dependency versions to latest beta from npm
+set-versions: set-east-version set-e3-api-server-version set-e3-api-client-version set-east-node-std-version
 
 # Bump all package versions
 version-prerelease:

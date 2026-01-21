@@ -88,6 +88,12 @@ export type BoxStyle = {
     color?: SubtypeExprOrValue<StringType>;
     /** Border radius (Chakra UI radius token or CSS value) */
     borderRadius?: SubtypeExprOrValue<StringType>;
+    /** Border shorthand (CSS value, e.g., "1px solid gray.200") */
+    border?: SubtypeExprOrValue<StringType>;
+    /** Border color (Chakra UI color token or CSS color) */
+    borderColor?: SubtypeExprOrValue<StringType>;
+    /** Border width (CSS value, e.g., "1px", "2px") */
+    borderWidth?: SubtypeExprOrValue<StringType>;
     /** Flex direction for flex containers */
     flexDirection?: SubtypeExprOrValue<FlexDirectionType> | FlexDirectionLiteral;
     /** Justify content for flex/grid containers */
@@ -140,6 +146,9 @@ export const BoxStyleType = StructType({
     background: OptionType(StringType),
     color: OptionType(StringType),
     borderRadius: OptionType(StringType),
+    border: OptionType(StringType),
+    borderColor: OptionType(StringType),
+    borderWidth: OptionType(StringType),
     flexDirection: OptionType(FlexDirectionType),
     justifyContent: OptionType(JustifyContentType),
     alignItems: OptionType(AlignItemsType),

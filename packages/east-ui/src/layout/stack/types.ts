@@ -68,6 +68,14 @@ export type StackStyle = {
     margin?: SubtypeExprOrValue<MarginType> | string;
     /** Background color (Chakra UI color token or CSS color) */
     background?: SubtypeExprOrValue<StringType>;
+    /** Border radius (Chakra UI radius token or CSS value) */
+    borderRadius?: SubtypeExprOrValue<StringType>;
+    /** Border shorthand (CSS value, e.g., "1px solid gray.200") */
+    border?: SubtypeExprOrValue<StringType>;
+    /** Border color (Chakra UI color token or CSS color) */
+    borderColor?: SubtypeExprOrValue<StringType>;
+    /** Border width (CSS value, e.g., "1px", "2px") */
+    borderWidth?: SubtypeExprOrValue<StringType>;
     /** Width (Chakra UI size token or CSS value) */
     width?: SubtypeExprOrValue<StringType>;
     /** Height (Chakra UI size token or CSS value) */
@@ -121,6 +129,10 @@ export const StackStyleType = StructType({
     padding: OptionType(PaddingType),
     margin: OptionType(MarginType),
     background: OptionType(StringType),
+    borderRadius: OptionType(StringType),
+    border: OptionType(StringType),
+    borderColor: OptionType(StringType),
+    borderWidth: OptionType(StringType),
     width: OptionType(StringType),
     height: OptionType(StringType),
     minHeight: OptionType(StringType),

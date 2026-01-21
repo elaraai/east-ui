@@ -10,11 +10,16 @@ import {
     Spinner,
     VStack,
     Flex,
+    CodeBlock,
+    IconButton,
 } from '@chakra-ui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy, faCheck } from '@fortawesome/free-solid-svg-icons';
 import {
     decodeBeast2,
     isTypeValueEqual,
     toEastTypeValue,
+    toJSONFor,
     ValueTypeOf,
 } from '@elaraai/east';
 import {
@@ -113,14 +118,50 @@ const InputPreviewContent = memo(function InputPreviewContent({
         }
 
         // Not a UIComponent - output exists but couldn't decode as UIComponent
+        // Use printFor to show the raw value as a string
         if (output && ir === null) {
-            return (
-                <Box height="100%" display="flex" alignItems="center" justifyContent="center">
-                    <Text color="gray.500">
-                        Input is not a UIComponent
-                    </Text>
-                </Box>
-            );
+            try {
+                const decoded = decodeBeast2(output);
+                const toJSON = toJSONFor(decoded.type);
+                const printed = JSON.stringify(toJSON(decoded.value), null, 2);
+                return (
+                    <Box height="100%" overflow="auto" p="4">
+                        <CodeBlock.Root code={printed} language="text">
+                            <CodeBlock.Header>
+                                <Text fontSize="xs" color="gray.500">Raw Data</Text>
+                            </CodeBlock.Header>
+                            <CodeBlock.Content>
+                                <CodeBlock.Code>
+                                    <CodeBlock.CodeText />
+                                </CodeBlock.Code>
+                            </CodeBlock.Content>
+                        </CodeBlock.Root>
+                    </Box>
+                );
+            } catch (e) {
+                const errorMessage = e instanceof Error ? e.message : String(e);
+                return (
+                    <Box height="100%" overflow="auto" p="4">
+                        <CodeBlock.Root code={errorMessage} language="text">
+                            <CodeBlock.Header>
+                                <Text fontSize="xs">Decode Error</Text>
+                                <CodeBlock.CopyTrigger asChild>
+                                    <IconButton variant="ghost" size="xs">
+                                        <CodeBlock.CopyIndicator copied={<FontAwesomeIcon icon={faCheck} />}>
+                                            <FontAwesomeIcon icon={faCopy} />
+                                        </CodeBlock.CopyIndicator>
+                                    </IconButton>
+                                </CodeBlock.CopyTrigger>
+                            </CodeBlock.Header>
+                            <CodeBlock.Content>
+                                <CodeBlock.Code>
+                                    <CodeBlock.CodeText />
+                                </CodeBlock.Code>
+                            </CodeBlock.Content>
+                        </CodeBlock.Root>
+                    </Box>
+                );
+            }
         }
 
         // No output available

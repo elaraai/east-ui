@@ -188,6 +188,67 @@ export default East.function(
             )
         );
 
+        // Border styling
+        const borders = $.let(
+            ShowcaseCard(
+                "Border Styling",
+                "Box with border, borderColor, and borderWidth",
+                Box.Root([
+                    Box.Root([
+                        Text.Root("Solid border"),
+                    ], {
+                        padding: "4",
+                        border: "2px solid",
+                        borderColor: "blue.500",
+                        borderRadius: "md",
+                    }),
+                    Box.Root([
+                        Text.Root("Dashed border"),
+                    ], {
+                        padding: "4",
+                        border: "2px dashed",
+                        borderColor: "green.500",
+                        borderRadius: "md",
+                    }),
+                    Box.Root([
+                        Text.Root("Custom width"),
+                    ], {
+                        padding: "4",
+                        borderWidth: "4px",
+                        borderColor: "red.500",
+                        background: "red.50",
+                        borderRadius: "lg",
+                    }),
+                ], {
+                    display: Style.Display("flex"),
+                    gap: "4",
+                }),
+                some(`
+                    Box.Root([
+                        Box.Root([Text.Root("Solid border")], {
+                            padding: "4",
+                            border: "2px solid",
+                            borderColor: "blue.500",
+                            borderRadius: "md",
+                        }),
+                        Box.Root([Text.Root("Dashed border")], {
+                            padding: "4",
+                            border: "2px dashed",
+                            borderColor: "green.500",
+                            borderRadius: "md",
+                        }),
+                        Box.Root([Text.Root("Custom width")], {
+                            padding: "4",
+                            borderWidth: "4px",
+                            borderColor: "red.500",
+                            background: "red.50",
+                            borderRadius: "lg",
+                        }),
+                    ], { display: Style.Display("flex"), gap: "4" })
+                `)
+            )
+        );
+
         // All justify content options
         const justify = $.let(
             ShowcaseCard(
@@ -260,6 +321,7 @@ export default East.function(
                 Grid.Item(flexColumn),
                 Grid.Item(fixed),
                 Grid.Item(nested),
+                Grid.Item(borders, { colSpan: "2" }),
                 Grid.Item(justify),
             ],
             {

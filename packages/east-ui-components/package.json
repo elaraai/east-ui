@@ -28,9 +28,9 @@
     "test:watch": "node --import tsx --test --watch test/**/*.spec.ts"
   },
   "peerDependencies": {
-    "@elaraai/e3-api-client": "^0.0.2-beta.16",
+    "@elaraai/e3-api-client": "^0.0.2-beta.17",
     "@elaraai/e3-types": "^0.0.2-beta.15",
-    "@elaraai/east": "^0.0.1-beta.30",
+    "@elaraai/east": "^0.0.1-beta.31",
     "@elaraai/east-ui": "^0.0.1-beta.26",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -56,9 +56,9 @@
     "sorted-btree": "^2.0.0-alpha.0"
   },
   "devDependencies": {
-    "@elaraai/e3-api-client": "^0.0.2-beta.16",
+    "@elaraai/e3-api-client": "^0.0.2-beta.17",
     "@elaraai/e3-types": "^0.0.2-beta.15",
-    "@elaraai/east-node-std": "^0.0.1-beta.20",
+    "@elaraai/east-node-std": "^0.0.1-beta.21",
     "@types/node": "^22.18.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

@@ -3,7 +3,7 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East, some } from "@elaraai/east";
+import { East, some, variant } from "@elaraai/east";
 import {
     UIComponentType,
     Grid,
@@ -14,6 +14,7 @@ import {
     Stat,
     Icon,
     Accordion,
+    Style,
 } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -226,6 +227,54 @@ export default East.function(
             )
         );
 
+        // Tag - Dynamic variant (testing ifElse)
+        const tagDynamic = $.let(
+            ShowcaseCard(
+                "Tag Dynamic Variant",
+                "Variant changing based on condition",
+                Stack.VStack([
+                    // Test with literal true/false conditions
+                    Stack.HStack([
+                        Tag.Root("True -> solid", {
+                            variant: East.value(true).ifElse(
+                                () => variant("solid", null),
+                                () => variant("outline", null)
+                            ),
+                            colorPalette: "blue",
+                        }),
+                        Tag.Root("False -> outline", {
+                            variant: East.value(false).ifElse(
+                                () => variant("solid", null),
+                                () => variant("outline", null)
+                            ),
+                            colorPalette: "blue",
+                        }),
+                    ], { gap: "2" }),
+                    // Test with Style helper
+                    Stack.HStack([
+                        Tag.Root("Style.StyleVariant solid", {
+                            variant: Style.StyleVariant("solid"),
+                            colorPalette: "green",
+                        }),
+                        Tag.Root("Style.StyleVariant outline", {
+                            variant: Style.StyleVariant("outline"),
+                            colorPalette: "green",
+                        }),
+                    ], { gap: "2" }),
+                ], { gap: "3", align: "flex-start" }),
+                some(`
+                    // Dynamic variant using ifElse
+                    Tag.Root("True -> solid", {
+                        variant: East.value(true).ifElse(
+                            $ => variant("solid", null),
+                            $ => variant("outline", null)
+                        ),
+                        colorPalette: "blue",
+                    })
+                `)
+            )
+        );
+
         // Avatar - Basic
         const avatarBasic = $.let(
             ShowcaseCard(
@@ -415,6 +464,7 @@ export default East.function(
                     Grid.Item(tagClosable),
                     Grid.Item(tagVariants),
                     Grid.Item(tagCustom),
+                    Grid.Item(tagDynamic, { colSpan: "2" }),
                 ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
             ]),
             Accordion.Item("avatar", "Avatar", [

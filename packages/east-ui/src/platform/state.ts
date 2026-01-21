@@ -29,7 +29,10 @@ export const state_read = East.genericPlatform(
     "state_read", 
     ["T"],
     [StringType], 
-    "T"
+    "T",
+    {
+        optional: true
+    }
 );
 
 /**
@@ -47,7 +50,10 @@ export const state_write = East.genericPlatform(
     "state_write", 
     ["T"],
     [StringType, "T"], 
-    NullType
+    NullType,
+    {
+        optional: true
+    }
 );
 
 /**
@@ -59,4 +65,11 @@ export const state_write = East.genericPlatform(
  * @remarks
  * Implementation provided by `StateImpl` in `@elaraai/east-ui-components`.
  */
-export const state_has = East.platform("state_has", [StringType], BooleanType);
+export const state_has = East.platform(
+    "state_has", 
+    [StringType], 
+    BooleanType,
+    {
+        optional: true
+    }
+);

@@ -4,7 +4,7 @@
  */
 
 import { East, some, StringType, NullType } from "@elaraai/east";
-import { Table, UIComponentType, Grid, Badge, State, Reactive, Stack, Text } from "@elaraai/east-ui";
+import { Table, UIComponentType, Grid, Badge, State, Reactive, Stack, Text, Tag } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
 /**
@@ -369,6 +369,75 @@ export default East.function(
             )
         );
 
+        // Wrapping tags in a column with Dict data
+        const wrappingTags = $.let(
+            ShowcaseCard(
+                "Wrapping Tags",
+                "Dict column rendered as tags that wrap within a fixed width",
+                Table.Root(
+                    [
+                        {
+                            name: "Server A",
+                            metrics: new Map<string, number>([["cpu", 45.2], ["mem", 78.5], ["disk", 62.1], ["net", 23.4], ["io", 15.8], ["load", 2.3]]),
+                        },
+                        {
+                            name: "Server B",
+                            metrics: new Map<string, number>([["cpu", 82.1], ["mem", 91.2], ["disk", 45.0]]),
+                        },
+                        {
+                            name: "Server C",
+                            metrics: new Map<string, number>([["cpu", 12.5], ["mem", 34.2], ["disk", 88.9], ["net", 56.7], ["io", 78.3], ["load", 1.1], ["temp", 42.0], ["power", 320.5]]),
+                        },
+                    ],
+                    {
+                        name: { header: "Server", width: "120px" },
+                        metrics: {
+                            header: "Metrics",
+                            width: "400px",
+                            maxWidth: "400px",
+                            render: (val) => Stack.HStack(
+                                val.map(($, value, key) => Tag.Root(
+                                    East.str`${key.upperCase()}:${East.Float.roundTrunc(value)}`,
+                                    { background: "gray.500", color: "white" }
+                                )).toArray(),
+                                { gap: "1", width: "380px", wrap: "wrap" }
+                            ),
+                            value: (val) => val.map(($, value) => value).mean(),
+                        },
+                    },
+                    { variant: "line" }
+                ),
+                some(`
+                    Table.Root(
+                        [
+                            {
+                                name: "Server A",
+                                metrics: new Map([["cpu", 45.2], ["mem", 78.5], ["disk", 62.1], ["net", 23.4], ["io", 15.8], ["load", 2.3]]),
+                            },
+                            // ...
+                        ],
+                        {
+                            name: { header: "Server", width: "120px" },
+                            metrics: {
+                                header: "Metrics",
+                                width: "400px",
+                                maxWidth: "400px",
+                                render: (val) => Stack.HStack(
+                                    val.map(($, value, key) => Tag.Root(
+                                        East.str\`\${key.upperCase()}:\${East.Float.roundTrunc(value)}\`,
+                                        { background: "gray.500", color: "white" }
+                                    )).toArray(),
+                                    { gap: "1", width: "380px", wrap: "wrap" }
+                                ),
+                                value: (val) => val.map(($, value) => value).mean(),
+                            },
+                        },
+                        { variant: "line" }
+                    )
+                `)
+            )
+        );
+
         // =====================================================================
         // INTERACTIVE EXAMPLES - Demonstrate callbacks with Reactive.Root
         // =====================================================================
@@ -570,6 +639,8 @@ export default East.function(
                 Grid.Item(complexColumns, { colSpan: "2" }),
                 // Column render with row access
                 Grid.Item(columnRenderWithRow, { colSpan: "2" }),
+                // Wrapping tags example
+                Grid.Item(wrappingTags, { colSpan: "2" }),
                 // Interactive example with all callbacks
                 Grid.Item(interactiveCallbacks, { colSpan: "2" }),
             ],

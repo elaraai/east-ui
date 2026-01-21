@@ -583,9 +583,12 @@ export const EastChakraTable = memo(function EastChakraTable({
                                     const meta = cell.column.columnDef.meta;
                                     const columnKey = meta?.columnKey ?? cell.column.id;
 
-                                    const cellStyle = {
+                                    const cellStyle: React.CSSProperties = {
                                         width: `var(--col-${cell.column.id}-size)`,
                                         flex: (columnSizing[cell.column.id] || meta?.width) ? 'none' : 1,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        overflow: 'hidden',
                                     };
 
                                     const cellClickHandler = onCellClickFn ? (e: React.MouseEvent) => {
