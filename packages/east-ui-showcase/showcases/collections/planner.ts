@@ -61,7 +61,7 @@ export default East.function(
                         Planner.Event({
                             start: row.slot,
                             end: row.endSlot,
-                            label: "Active",
+                            label: { value: "Active" },
                             colorPalette: "blue",
                         }),
                     ]
@@ -81,7 +81,7 @@ export default East.function(
                             Planner.Event({
                                 start: row.slot,
                                 end: row.endSlot,
-                                label: "Active",
+                                label: { value: "Active" },
                                 colorPalette: "blue",
                             }),
                         ]
@@ -102,9 +102,9 @@ export default East.function(
                     ],
                     ["name"],
                     row => [
-                        Planner.Event({ start: row.slot1, end: row.slot1.add(1.0), colorPalette: "green", label: "Sprint 1" }),
-                        Planner.Event({ start: row.slot2, end: row.slot2.add(1.0), colorPalette: "blue", label: "Sprint 2" }),
-                        Planner.Event({ start: row.slot3, end: row.slot3.add(1.0), colorPalette: "purple", label: "Sprint 3" }),
+                        Planner.Event({ start: row.slot1, end: row.slot1.add(1.0), colorPalette: "green", label: { value: "Sprint 1" } }),
+                        Planner.Event({ start: row.slot2, end: row.slot2.add(1.0), colorPalette: "blue", label: { value: "Sprint 2" } }),
+                        Planner.Event({ start: row.slot3, end: row.slot3.add(1.0), colorPalette: "purple", label: { value: "Sprint 3" } }),
                     ],
                     { maxSlot: 15.0 }
                 ),
@@ -116,9 +116,9 @@ export default East.function(
                         ],
                         ["name"],
                         row => [
-                            Planner.Event({ start: row.slot1, end: row.slot1.add(1.0), colorPalette: "green", label: "Sprint 1" }),
-                            Planner.Event({ start: row.slot2, end: row.slot2.add(1.0), colorPalette: "blue", label: "Sprint 2" }),
-                            Planner.Event({ start: row.slot3, end: row.slot3.add(1.0), colorPalette: "purple", label: "Sprint 3" }),
+                            Planner.Event({ start: row.slot1, end: row.slot1.add(1.0), colorPalette: "green", label: { value: "Sprint 1" } }),
+                            Planner.Event({ start: row.slot2, end: row.slot2.add(1.0), colorPalette: "blue", label: { value: "Sprint 2" } }),
+                            Planner.Event({ start: row.slot3, end: row.slot3.add(1.0), colorPalette: "purple", label: { value: "Sprint 3" } }),
                         ],
                         { maxSlot: 10.0 }
                     )
@@ -170,7 +170,7 @@ export default East.function(
                         { task: "Task C", start: 0.5, end: 2.0 },
                     ],
                     ["task"],
-                    row => [Planner.Event({ start: row.start, end: row.end, colorPalette: "purple", label: row.task })],
+                    row => [Planner.Event({ start: row.start, end: row.end, colorPalette: "purple", label: { value: row.task } })],
                     {
                         minSlot: 0.0,
                         maxSlot: 5.0,
@@ -185,7 +185,7 @@ export default East.function(
                             { task: "Task C", start: 0.5, end: 2.0 },
                         ],
                         ["task"],
-                        row => [Planner.Event({ start: row.start, end: row.end, colorPalette: "purple", label: row.task })],
+                        row => [Planner.Event({ start: row.start, end: row.end, colorPalette: "purple", label: { value: row.task } })],
                         {
                             minSlot: 0.0,
                             maxSlot: 5.0,
@@ -456,7 +456,7 @@ export default East.function(
                         { task: "QA Testing", assignee: "Charlie", start: 4.0, end: 6.0 },
                     ],
                     ["task", "assignee"],
-                    row => [Planner.Event({ start: row.start, end: row.end, label: row.task, colorPalette: "blue" })],
+                    row => [Planner.Event({ start: row.start, end: row.end, label: { value: row.task }, colorPalette: "blue" })],
                     {
                         maxSlot: 8.0,
                         onEventEdit: East.function([Planner.Types.ClickEvent], NullType, () => {
@@ -477,7 +477,7 @@ export default East.function(
                             { task: "QA Testing", assignee: "Charlie", start: 4.0, end: 6.0 },
                         ],
                         ["task", "assignee"],
-                        row => [Planner.Event({ start: row.start, end: row.end, label: row.task, colorPalette: "blue" })],
+                        row => [Planner.Event({ start: row.start, end: row.end, label: { value: row.task }, colorPalette: "blue" })],
                         {
                             maxSlot: 8.0,
                             onEventEdit: East.function([Planner.Types.ClickEvent], NullType, ($, ev) => {
@@ -489,6 +489,149 @@ export default East.function(
                                 return null;
                             }),
                         }
+                    )
+                `)
+            )
+        );
+
+        // Event popover with click trigger (default)
+        const popoverClick = $.let(
+            ShowcaseCard(
+                "Event Popover (Click)",
+                "Click on events to see a popover with custom content",
+                Planner.Root(
+                    [
+                        { task: "Sprint Planning", owner: "Alice", start: 1.0, end: 3.0 },
+                        { task: "Development", owner: "Bob", start: 2.0, end: 5.0 },
+                        { task: "Code Review", owner: "Charlie", start: 4.0, end: 6.0 },
+                    ],
+                    ["task", "owner"],
+                    row => [Planner.Event({ start: row.start, end: row.end, label: { value: row.task }, colorPalette: "teal" })],
+                    {
+                        maxSlot: 8.0,
+                        eventPopoverTrigger: "click",
+                    },
+                    East.function([Planner.Types.EventPopoverContext], UIComponentType, (_$, ctx) => {
+                        return Stack.VStack([
+                            Text.Root(East.str`Event Details`, { fontWeight: "bold" }),
+                            Text.Root(East.str`Row: ${ctx.rowIndex}, Event: ${ctx.eventIndex}`),
+                            Text.Root(East.str`Slots: ${ctx.start} - ${ctx.end}`),
+                        ], { gap: "2" });
+                    })
+                ),
+                some(`
+                    Planner.Root(
+                        [...],
+                        ["task", "owner"],
+                        row => [Planner.Event({ start: row.start, end: row.end, label: { value: row.task }, colorPalette: "teal" })],
+                        {
+                            maxSlot: 8.0,
+                            eventPopoverTrigger: "click",
+                        },
+                        // 5th parameter: eventPopover function receives context
+                        East.function([Planner.Types.EventPopoverContext], UIComponentType, ($, ctx) => {
+                            return Stack.VStack([
+                                Text.Root(East.str\`Event Details\`, { fontWeight: "bold" }),
+                                Text.Root(East.str\`Row: \${ctx.rowIndex}, Event: \${ctx.eventIndex}\`),
+                                Text.Root(East.str\`Slots: \${ctx.start} - \${ctx.end}\`),
+                            ], { gap: "2" });
+                        })
+                    )
+                `)
+            )
+        );
+
+        // Event popover with hover trigger
+        const popoverHover = $.let(
+            ShowcaseCard(
+                "Event Popover (Hover)",
+                "Hover over events to see a tooltip-like popover",
+                Planner.Root(
+                    [
+                        { resource: "Server A", status: "Active", start: 0.0, end: 4.0 },
+                        { resource: "Server B", status: "Idle", start: 2.0, end: 6.0 },
+                        { resource: "Server C", status: "Maintenance", start: 5.0, end: 8.0 },
+                    ],
+                    ["resource", "status"],
+                    row => [Planner.Event({ start: row.start, end: row.end, label: { value: row.resource }, colorPalette: "purple" })],
+                    {
+                        maxSlot: 10.0,
+                        eventPopoverTrigger: "hover",
+                    },
+                    East.function([Planner.Types.EventPopoverContext], UIComponentType, (_$, ctx) => {
+                        return Stack.VStack([
+                            Badge.Root(East.str`Event #${ctx.eventIndex}`, { colorPalette: "purple", variant: "solid" }),
+                            Text.Root(East.str`Duration: ${ctx.end.subtract(ctx.start)} slots`),
+                        ], { gap: "1", padding: "0px" });
+                    })
+                ),
+                some(`
+                    Planner.Root(
+                        [...],
+                        ["resource", "status"],
+                        row => [Planner.Event({ start: row.start, end: row.end, label: { value: row.resource }, colorPalette: "purple" })],
+                        {
+                            maxSlot: 10.0,
+                            eventPopoverTrigger: "hover",  // Shows on hover instead of click
+                        },
+                        East.function([Planner.Types.EventPopoverContext], UIComponentType, ($, ctx) => {
+                            return Stack.VStack([
+                                Badge.Root(East.str\`Event #\${ctx.eventIndex}\`, { colorPalette: "purple", variant: "solid" }),
+                                Text.Root(East.str\`Duration: \${ctx.end.subtract(ctx.start)} slots\`),
+                            ], { gap: "1" });
+                        })
+                    )
+                `)
+            )
+        );
+
+        // Popover combined with context menu
+        const popoverAndContextMenu = $.let(
+            ShowcaseCard(
+                "Popover with Context Menu",
+                "Click for popover, right-click for Edit/Delete menu",
+                Planner.Root(
+                    [
+                        { project: "Alpha", phase: "Design", start: 1.0, end: 3.0 },
+                        { project: "Beta", phase: "Build", start: 2.0, end: 5.0 },
+                        { project: "Gamma", phase: "Test", start: 4.0, end: 7.0 },
+                    ],
+                    ["project", "phase"],
+                    row => [Planner.Event({ start: row.start, end: row.end, label: { value: row.project }, colorPalette: "orange" })],
+                    {
+                        maxSlot: 8.0,
+                        eventPopoverTrigger: "click",
+                        onEventEdit: East.function([Planner.Types.ClickEvent], NullType, () => null),
+                        onEventDelete: East.function([Planner.Types.DeleteEvent], NullType, () => null),
+                    },
+                    East.function([Planner.Types.EventPopoverContext], UIComponentType, (_$, ctx) => {
+                        return Stack.VStack([
+                            Text.Root(East.str`Project Info`, { fontWeight: "semibold" }),
+                            Text.Root(East.str`Event #${ctx.eventIndex} in row ${ctx.rowIndex}`),
+                            Text.Root(East.str`Time: ${ctx.start} to ${ctx.end}`),
+                        ], { gap: "2" });
+                    })
+                ),
+                some(`
+                    Planner.Root(
+                        [...],
+                        ["project", "phase"],
+                        row => [Planner.Event({ start: row.start, end: row.end, label: { value: row.project }, colorPalette: "orange" })],
+                        {
+                            maxSlot: 8.0,
+                            eventPopoverTrigger: "click",
+                            // Context menu callbacks for right-click
+                            onEventEdit: East.function([Planner.Types.ClickEvent], NullType, ($, ev) => null),
+                            onEventDelete: East.function([Planner.Types.DeleteEvent], NullType, ($, ev) => null),
+                        },
+                        // Popover content function
+                        East.function([Planner.Types.EventPopoverContext], UIComponentType, ($, ctx) => {
+                            return Stack.VStack([
+                                Text.Root(East.str\`Project Info\`, { fontWeight: "semibold" }),
+                                Text.Root(East.str\`Event #\${ctx.eventIndex} in row \${ctx.rowIndex}\`),
+                                Text.Root(East.str\`Time: \${ctx.start} to \${ctx.end}\`),
+                            ], { gap: "2" });
+                        })
                     )
                 `)
             )
@@ -506,7 +649,7 @@ export default East.function(
                         { task: "Fixed Task C", start: 4.0, end: 7.0 },
                     ],
                     ["task"],
-                    row => [Planner.Event({ start: row.start, end: row.end, colorPalette: "gray", label: row.task })],
+                    row => [Planner.Event({ start: row.start, end: row.end, colorPalette: "gray", label: { value: row.task } })],
                     {
                         maxSlot: 8.0,
                         readOnly: true,
@@ -520,7 +663,7 @@ export default East.function(
                             { task: "Fixed Task C", start: 4.0, end: 7.0 },
                         ],
                         ["task"],
-                        row => [Planner.Event({ start: row.start, end: row.end, colorPalette: "gray", label: row.task })],
+                        row => [Planner.Event({ start: row.start, end: row.end, colorPalette: "gray", label: { value: row.task } })],
                         {
                             maxSlot: 8.0,
                             readOnly: true,  // Disables all event interactions
@@ -534,7 +677,7 @@ export default East.function(
         const eventStyling = $.let(
             ShowcaseCard(
                 "Event Styling",
-                "Custom color, background, opacity, font weight, style, size, and alignment",
+                "Custom background, opacity, and label styling (color, font weight, style, size, alignment)",
                 Planner.Root(
                     [
                         { task: "Default", start: 1.0, end: 4.0 },
@@ -547,35 +690,28 @@ export default East.function(
                         Planner.Event({
                             start: 1.0,
                             end: 3.0,
-                            label: "Default",
+                            label: { value: "Default" },
                             colorPalette: "blue",
                         }),
                         Planner.Event({
                             start: 4.0,
                             end: 6.0,
-                            label: "Bold Red",
+                            label: { value: "Bold Red", color: "red.600", fontWeight: "bold", fontSize: "md" },
                             colorPalette: "gray",
-                            color: "red.600",
-                            fontWeight: "bold",
-                            fontSize: "md",
                         }),
                         Planner.Event({
                             start: 7.0,
                             end: 9.0,
-                            label: "Centered",
+                            label: { value: "Centered", align: "center", color: "white", fontWeight: "semibold" },
                             background: "#ff69b4",
                             stroke: "#c71585",
-                            color: "white",
-                            fontWeight: "semibold",
-                            textAlign: "center",
                         }),
                         Planner.Event({
                             start: 10.0,
                             end: 12.0,
-                            label: "Faded Italic",
+                            label: { value: "Faded Italic", fontStyle: "italic" },
                             colorPalette: "red",
                             opacity: 0.5,
-                            fontStyle: "italic",
                         }),
                     ],
                     { maxSlot: 13.0 }
@@ -586,26 +722,149 @@ export default East.function(
                         ["task"],
                         row => [
                             // Default styling
-                            Planner.Event({ start: 1.0, end: 3.0, label: "Default", colorPalette: "blue" }),
-                            // Bold text with custom color
+                            Planner.Event({ start: 1.0, end: 3.0, label: { value: "Default" }, colorPalette: "blue" }),
+                            // Bold text with custom color (styling inside label object)
                             Planner.Event({
-                                start: 4.0, end: 6.0, label: "Bold Red",
-                                colorPalette: "gray", color: "red.600",
-                                fontWeight: "bold", fontSize: "md",
+                                start: 4.0, end: 6.0,
+                                label: { value: "Bold Red", color: "red.600", fontWeight: "bold", fontSize: "md" },
+                                colorPalette: "gray",
                             }),
                             // Custom background/stroke with centered text
                             Planner.Event({
-                                start: 7.0, end: 9.0, label: "Centered",
+                                start: 7.0, end: 9.0,
+                                label: { value: "Centered", align: "center", color: "white", fontWeight: "semibold" },
                                 background: "#ff69b4", stroke: "#c71585",
-                                color: "white", fontWeight: "semibold", textAlign: "center",
                             }),
                             // Faded with italic
                             Planner.Event({
-                                start: 10.0, end: 12.0, label: "Faded Italic",
-                                colorPalette: "red", opacity: 0.5, fontStyle: "italic",
+                                start: 10.0, end: 12.0,
+                                label: { value: "Faded Italic", fontStyle: "italic" },
+                                colorPalette: "red", opacity: 0.5,
                             }),
                         ],
                         { maxSlot: 13.0 }
+                    )
+                `)
+            )
+        );
+
+        // Overlapping events with hover dimming
+        const overlappingEvents = $.let(
+            ShowcaseCard(
+                "Overlapping Events",
+                "Hover over an event to dim others in the same row, making overlapping labels readable",
+                Planner.Root(
+                    [
+                        { resource: "Team Alpha", category: "Development" },
+                        { resource: "Team Beta", category: "Design" },
+                    ],
+                    ["resource", "category"],
+                    () => [
+                        Planner.Event({ start: 0.0, end: 3.0, label: { value: "Task A" }, colorPalette: "blue" }),
+                        Planner.Event({ start: 2.0, end: 5.0, label: { value: "Task B (overlaps A)" }, colorPalette: "green" }),
+                        Planner.Event({ start: 4.0, end: 7.0, label: { value: "Task C (overlaps B)" }, colorPalette: "orange" }),
+                        Planner.Event({ start: 6.0, end: 9.0, label: { value: "Task D (overlaps C)" }, colorPalette: "purple" }),
+                    ],
+                    { maxSlot: 10.0 }
+                ),
+                some(`
+                    Planner.Root(
+                        [
+                            { resource: "Team Alpha", category: "Development" },
+                            { resource: "Team Beta", category: "Design" },
+                        ],
+                        ["resource", "category"],
+                        () => [
+                            // Multiple overlapping events - hover to dim others
+                            Planner.Event({ start: 0.0, end: 3.0, label: { value: "Task A" }, colorPalette: "blue" }),
+                            Planner.Event({ start: 2.0, end: 5.0, label: { value: "Task B (overlaps A)" }, colorPalette: "green" }),
+                            Planner.Event({ start: 4.0, end: 7.0, label: { value: "Task C (overlaps B)" }, colorPalette: "orange" }),
+                            Planner.Event({ start: 6.0, end: 9.0, label: { value: "Task D (overlaps C)" }, colorPalette: "purple" }),
+                        ],
+                        { maxSlot: 10.0 }
+                    )
+                `)
+            )
+        );
+
+        // Events with icons
+        const withIcons = $.let(
+            ShowcaseCard(
+                "Events with Icons",
+                "Icons can be positioned independently (start, center, end) with or without labels",
+                Planner.Root(
+                    [
+                        { task: "Icon at Start", position: "start" },
+                        { task: "Icon at Center", position: "center" },
+                        { task: "Icon at End", position: "end" },
+                        { task: "Icon + Label", position: "both" },
+                    ],
+                    ["task", "position"],
+                    () => [
+                        // Icon only at start (default)
+                        Planner.Event({
+                            start: 0.0,
+                            end: 3.0,
+                            icon: { prefix: "fas", name: "check", align: "start" },
+                            colorPalette: "green",
+                        }),
+                        // Icon only at center
+                        Planner.Event({
+                            start: 4.0,
+                            end: 7.0,
+                            icon: { prefix: "fas", name: "spinner", align: "center" },
+                            colorPalette: "blue",
+                        }),
+                        // Icon only at end
+                        Planner.Event({
+                            start: 8.0,
+                            end: 11.0,
+                            icon: { prefix: "fas", name: "flag", align: "end", color: "red.500" },
+                            colorPalette: "gray",
+                        }),
+                        // Icon at start with label at end
+                        Planner.Event({
+                            start: 0.0,
+                            end: 5.0,
+                            icon: { prefix: "fas", name: "play", align: "start", size: "lg" },
+                            label: { value: "In Progress", align: "end" },
+                            colorPalette: "purple",
+                        }),
+                    ],
+                    { maxSlot: 12.0 }
+                ),
+                some(`
+                    Planner.Root(
+                        [...],
+                        ["task", "position"],
+                        () => [
+                            // Icon only at start (default alignment)
+                            Planner.Event({
+                                start: 0.0, end: 3.0,
+                                icon: { prefix: "fas", name: "check", align: "start" },
+                                colorPalette: "green",
+                            }),
+                            // Icon only at center
+                            Planner.Event({
+                                start: 4.0, end: 7.0,
+                                icon: { prefix: "fas", name: "spinner", align: "center" },
+                                colorPalette: "blue",
+                            }),
+                            // Icon only at end with custom color
+                            Planner.Event({
+                                start: 8.0, end: 11.0,
+                                icon: { prefix: "fas", name: "flag", align: "end", color: "red.500" },
+                                colorPalette: "gray",
+                            }),
+                            // Icon at start + label at end (independent positioning)
+                            Planner.Event({
+                                start: 0.0, end: 5.0,
+                                icon: { prefix: "fas", name: "play", align: "start", size: "lg" },
+                                label: { value: "In Progress", align: "end" },
+                                colorPalette: "purple",
+                            }),
+                        ],
+                        { maxSlot: 12.0 }
                     )
                 `)
             )
@@ -623,8 +882,13 @@ export default East.function(
             columnRenderWithRow,
             withBoundaries,
             withContextMenu,
+            popoverClick,
+            popoverHover,
+            popoverAndContextMenu,
             readOnlyMode,
             eventStyling,
+            overlappingEvents,
+            withIcons,
         ], { gap: "6", align: "stretch" });
     }
 );

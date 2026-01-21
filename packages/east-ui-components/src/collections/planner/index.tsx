@@ -205,6 +205,15 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
     // Extract readOnly from style (disables all event interactions)
     const readOnly = useMemo(() => style ? getSomeorUndefined(style.readOnly) ?? false : false, [style]);
 
+    // Extract eventPopover function (returns UI component for popover content)
+    const eventPopoverFn = useMemo(() => getSomeorUndefined(value.eventPopover), [value.eventPopover]);
+
+    // Extract eventPopoverTrigger from style (click or hover)
+    const eventPopoverTrigger = useMemo(
+        () => style ? getSomeorUndefined(style.eventPopoverTrigger)?.type ?? "click" : "click",
+        [style]
+    ) as "click" | "hover";
+
     // Calculate slot range from events
     const slotRange = useMemo(() => {
         let minSlot: number | null = null;
@@ -1012,7 +1021,6 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
                             <PlannerAxis
                                 startSlot={slotRange.start}
                                 endSlot={slotRange.end}
-                                width={slotGridWidth}
                                 height={headerHeight}
                                 slotWidth={slotMinWidth}
                                 getSlotLabel={getSlotLabel}
@@ -1073,6 +1081,8 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
                                                             maxSlot={slotRange.end}
                                                             stepSize={stepSize}
                                                             readOnly={readOnly}
+                                                            eventPopoverFn={eventPopoverFn}
+                                                            eventPopoverTrigger={eventPopoverTrigger}
                                                             onEventClick={handleEventClick}
                                                             onEventDoubleClick={handleEventDoubleClick}
                                                             onEventDrag={handleEventDrag}

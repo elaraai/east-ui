@@ -67,7 +67,7 @@ import { IconType } from "./display/icon/types.js";
 import { DataListRootType } from "./collections/data-list/index.js";
 import { TableColumnType, TableStyleType } from "./collections/table/types.js";
 import { GanttEventType, GanttStyleType } from "./collections/gantt/types.js";
-import { PlannerStyleType, PlannerEventType } from "./collections/planner/types.js";
+import { PlannerStyleType, PlannerEventType, EventPopoverContextType } from "./collections/planner/types.js";
 // import { TreeViewStyleType } from "./collections/tree-view/types.js";
 
 // Charts
@@ -301,6 +301,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
         })),
         columns: ArrayType(TableColumnType),
         style: OptionType(PlannerStyleType),
+        eventPopover: OptionType(FunctionType([EventPopoverContextType], node)),
     }),
 
     // Disclosure

@@ -4,17 +4,23 @@
  */
 
 import { useMemo, useState, useCallback, useRef, useEffect } from "react";
-import { Text, useToken, Menu, Portal } from "@chakra-ui/react";
+import { Text, useToken, Menu, Portal, Popover, Box } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
-import type { ValueTypeOf } from "@elaraai/east";
-import type { Planner } from "@elaraai/east-ui";
+import type { IconName, IconPrefix } from "@fortawesome/fontawesome-common-types";
+import { none, some, variant, type ValueTypeOf } from "@elaraai/east";
+import type { Planner, UIComponentType } from "@elaraai/east-ui";
 import { getSomeorUndefined } from "../../utils";
+import { EastChakraComponent } from "../../component";
 
 export type PlannerEventValue = ValueTypeOf<typeof Planner.Types.Event>;
+export type EventPopoverContext = ValueTypeOf<typeof Planner.Types.EventPopoverContext>;
+export type EventPopoverFn = ((ctx: EventPopoverContext) => ValueTypeOf<UIComponentType>) | undefined;
 
 export interface PlannerEventProps {
     value: PlannerEventValue;
+    rowIndex: number;
+    eventIndex: number;
     y: number;
     height: number;
     slotWidth: number;
@@ -24,6 +30,10 @@ export interface PlannerEventProps {
     maxSlot?: number | undefined;
     stepSize?: number | undefined;
     readOnly?: boolean | undefined;
+    eventPopoverFn?: EventPopoverFn;
+    eventPopoverTrigger?: "click" | "hover";
+    /** Whether this event should be dimmed (another event in the row is hovered) */
+    isDimmed?: boolean | undefined;
     onClick?: (() => void) | undefined;
     onDoubleClick?: (() => void) | undefined;
     onDrag?: ((previousStart: number, previousEnd: number, newStart: number, newEnd: number) => void) | undefined;
@@ -31,6 +41,10 @@ export interface PlannerEventProps {
     onPositionChange?: ((start: number, end: number) => void) | undefined;
     onEdit?: (() => void) | undefined;
     onDelete?: (() => void) | undefined;
+    /** Called when mouse enters this event */
+    onHoverStart?: (() => void) | undefined;
+    /** Called when mouse leaves this event */
+    onHoverEnd?: (() => void) | undefined;
 }
 
 /** Captured at interaction start */
@@ -48,8 +62,16 @@ interface InteractionState {
     hasMoved: boolean;
 }
 
+/** Consolidated overlay state (context menu or popover) */
+interface OverlayState {
+    active: "none" | "contextMenu" | "popover";
+    contextMenuPosition: { x: number; y: number };
+}
+
 export const PlannerEvent = ({
     value,
+    rowIndex,
+    eventIndex,
     y,
     height,
     slotWidth,
@@ -59,6 +81,9 @@ export const PlannerEvent = ({
     maxSlot,
     stepSize = 1,
     readOnly = false,
+    eventPopoverFn,
+    eventPopoverTrigger = "click",
+    isDimmed = false,
     onClick,
     onDoubleClick,
     onDrag,
@@ -66,6 +91,8 @@ export const PlannerEvent = ({
     onPositionChange,
     onEdit,
     onDelete,
+    onHoverStart,
+    onHoverEnd,
 }: PlannerEventProps) => {
     const startRef = useRef<InteractionStart | null>(null);
 
@@ -97,32 +124,60 @@ export const PlannerEvent = ({
     });
     const [isHovered, setIsHovered] = useState(false);
 
-    // Context menu state
-    const [contextMenuOpen, setContextMenuOpen] = useState(false);
-    const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+    // Consolidated overlay state (context menu or popover)
+    const [overlay, setOverlay] = useState<OverlayState>({
+        active: "none",
+        contextMenuPosition: { x: 0, y: 0 },
+    });
+    const eventRectRef = useRef<SVGRectElement>(null);
 
     // Show context menu if either callback is defined
     const hasContextMenu = useMemo(() => !readOnly && (onEdit != null || onDelete != null), [readOnly, onEdit, onDelete]);
 
+    // Show popover if eventPopoverFn is defined
+    const hasPopover = useMemo(() => eventPopoverFn != null, [eventPopoverFn]);
+
     // Derived from props
     const colorPalette = useMemo(() => getSomeorUndefined(value.colorPalette)?.type ?? "blue", [value.colorPalette]);
-    const label = useMemo(() => getSomeorUndefined(value.label), [value.label]);
 
-    // Text styling from event
-    const textColor = useMemo(() => getSomeorUndefined(value.color), [value.color]);
+    // Extract label config (nested object with value, align, color, etc.)
+    const labelProps = useMemo(() => {
+        const config = getSomeorUndefined(value.label);
+        if (!config) return null;
+        return {
+            value: config.value,
+            align: getSomeorUndefined(config.align)?.type ?? "start",
+            color: getSomeorUndefined(config.color),
+            fontWeight: getSomeorUndefined(config.fontWeight)?.type,
+            fontStyle: getSomeorUndefined(config.fontStyle)?.type,
+            fontSize: getSomeorUndefined(config.fontSize)?.type,
+        };
+    }, [value.label]);
+
+    // Extract icon config (prefix, name, align, size, color, colorPalette)
+    const iconProps = useMemo(() => {
+        const config = getSomeorUndefined(value.icon);
+        if (!config) return null;
+        return {
+            prefix: config.prefix,
+            name: config.name,
+            align: getSomeorUndefined(config.align)?.type ?? "start",
+            size: getSomeorUndefined(config.size)?.type ?? "sm",
+            color: getSomeorUndefined(config.color),
+            colorPalette: getSomeorUndefined(config.colorPalette)?.type,
+        };
+    }, [value.icon]);
+
+    // Event-level styling
     const backgroundColor = useMemo(() => getSomeorUndefined(value.background), [value.background]);
     const customStrokeColor = useMemo(() => getSomeorUndefined(value.stroke), [value.stroke]);
     const eventOpacity = useMemo(() => getSomeorUndefined(value.opacity), [value.opacity]);
-    const fontWeight = useMemo(() => getSomeorUndefined(value.fontWeight)?.type, [value.fontWeight]);
-    const fontStyle = useMemo(() => getSomeorUndefined(value.fontStyle)?.type, [value.fontStyle]);
-    const customFontSize = useMemo(() => getSomeorUndefined(value.fontSize)?.type, [value.fontSize]);
-    const textAlign = useMemo(() => getSomeorUndefined(value.textAlign)?.type, [value.textAlign]);
 
     const [fillColor, paletteStrokeColor] = useToken("colors", [`${colorPalette}.500`, `${colorPalette}.600`]);
 
     // Use custom colors if provided, otherwise use colorPalette
-    const actualFillColor = backgroundColor ?? fillColor;
-    const actualStrokeColor = customStrokeColor ?? paletteStrokeColor;
+    const actualFillColor = useMemo(() => backgroundColor ?? fillColor, [backgroundColor, fillColor]);
+    const actualStrokeColor = useMemo(() => customStrokeColor ?? paletteStrokeColor, [customStrokeColor, paletteStrokeColor]);
 
     // Calculate base x and width from local slots
     const { baseX, baseWidth } = useMemo(() => {
@@ -155,11 +210,14 @@ export const PlannerEvent = ({
 
     const eventWidth = useMemo(() => Math.max(currentWidth, 4), [currentWidth]);
     const defaultFontSize = useMemo(() => Math.min(height * 0.7, 14), [height]);
-    const fontSize = customFontSize ?? defaultFontSize;
+    const fontSize = useMemo(() => labelProps?.fontSize ?? defaultFontSize, [labelProps?.fontSize, defaultFontSize]);
     const isActive = useMemo(() => isHovered || interaction.type !== null, [isHovered, interaction.type]);
 
-    // Compute actual opacity
-    const baseOpacity = eventOpacity ?? (isActive ? 1 : 0.9);
+    // Compute actual opacity - dim when another event in the row is hovered
+    const baseOpacity = useMemo(
+        () => isDimmed ? 0.1 : (eventOpacity ?? (isActive ? 1 : 0.9)),
+        [isDimmed, eventOpacity, isActive]
+    );
 
     // Conversions with stepSize snapping
     const pixelsToSlots = useCallback((px: number): number => {
@@ -278,38 +336,96 @@ export const PlannerEvent = ({
         if (onDoubleClick && !interaction.type) onDoubleClick();
     }, [onDoubleClick, interaction.type]);
 
-    const handleMouseEnter = useCallback(() => setIsHovered(true), []);
+    const handleMouseEnter = useCallback(() => {
+        setIsHovered(true);
+        if (onHoverStart) onHoverStart();
+    }, [onHoverStart]);
     const handleMouseLeave = useCallback(() => {
         if (!interaction.type) setIsHovered(false);
-    }, [interaction.type]);
+        if (onHoverEnd) onHoverEnd();
+    }, [interaction.type, onHoverEnd]);
 
     // Context menu handler
     const handleContextMenu = useCallback((e: React.MouseEvent) => {
         if (!hasContextMenu) return;
         e.preventDefault();
         e.stopPropagation();
-        setContextMenuPosition({ x: e.clientX, y: e.clientY });
-        setContextMenuOpen(true);
+        setOverlay({ active: "contextMenu", contextMenuPosition: { x: e.clientX, y: e.clientY } });
     }, [hasContextMenu]);
 
     const handleEditClick = useCallback(() => {
-        setContextMenuOpen(false);
+        setOverlay(prev => ({ ...prev, active: "none" }));
         if (onEdit) onEdit();
     }, [onEdit]);
 
     const handleDeleteClick = useCallback(() => {
-        setContextMenuOpen(false);
+        setOverlay(prev => ({ ...prev, active: "none" }));
         if (onDelete) onDelete();
     }, [onDelete]);
 
     const cursor = useMemo(() =>
-        readOnly ? "default" : (interaction.type === "drag" ? "grabbing" : onDrag ? "grab" : (onClick || onDoubleClick ? "pointer" : "default")),
-        [readOnly, interaction.type, onDrag, onClick, onDoubleClick]
+        readOnly ? "default" : (interaction.type === "drag" ? "grabbing" : onDrag ? "grab" : (onClick || onDoubleClick || hasPopover ? "pointer" : "default")),
+        [readOnly, interaction.type, onDrag, onClick, onDoubleClick, hasPopover]
     );
+
+    // Popover context for eventPopoverFn
+    const popoverContext = useMemo((): EventPopoverContext => ({
+        rowIndex: BigInt(rowIndex),
+        eventIndex: BigInt(eventIndex),
+        start: localSlots.start,
+        end: localSlots.end,
+        label: labelProps?.value ? some(labelProps.value) : none,
+        colorPalette: colorPalette ? some(variant(colorPalette, null)) : none,
+    }), [rowIndex, eventIndex, localSlots.start, localSlots.end, labelProps?.value, colorPalette]);
+
+    // Popover content (memoized to avoid recomputing on every render)
+    const popoverContent = useMemo(() => {
+        if (!eventPopoverFn || overlay.active !== "popover") return null;
+        try {
+            return eventPopoverFn(popoverContext);
+        } catch {
+            return null;
+        }
+    }, [eventPopoverFn, overlay.active, popoverContext]);
+
+    // Handle popover click trigger
+    const handlePopoverClick = useCallback((e: React.MouseEvent) => {
+        if (hasPopover && eventPopoverTrigger === "click" && !interaction.hasMoved) {
+            e.stopPropagation();
+            setOverlay(prev => ({ ...prev, active: prev.active === "popover" ? "none" : "popover" }));
+        }
+    }, [hasPopover, eventPopoverTrigger, interaction.hasMoved]);
+
+    // Combined mouse enter handler (hover state + popover + row dimming)
+    const handleCombinedMouseEnter = useCallback(() => {
+        setIsHovered(true);
+        if (onHoverStart) onHoverStart();
+        if (hasPopover && eventPopoverTrigger === "hover") {
+            setOverlay(prev => ({ ...prev, active: "popover" }));
+        }
+    }, [hasPopover, eventPopoverTrigger, onHoverStart]);
+
+    // Combined mouse leave handler (hover state + popover + row dimming)
+    const handleCombinedMouseLeave = useCallback(() => {
+        if (!interaction.type) setIsHovered(false);
+        if (onHoverEnd) onHoverEnd();
+        if (hasPopover && eventPopoverTrigger === "hover") {
+            setOverlay(prev => ({ ...prev, active: "none" }));
+        }
+    }, [hasPopover, eventPopoverTrigger, interaction.type, onHoverEnd]);
+
+    // Get anchor rect for popover positioning
+    const getPopoverAnchorRect = useCallback(() => {
+        if (eventRectRef.current) {
+            return eventRectRef.current.getBoundingClientRect();
+        }
+        return { x: 0, y: 0, width: 0, height: 0 };
+    }, []);
 
     return (
         <g>
             <rect
+                ref={eventRectRef}
                 x={currentX}
                 y={y}
                 width={eventWidth}
@@ -320,25 +436,26 @@ export const PlannerEvent = ({
                 opacity={baseOpacity}
                 rx={4}
                 ry={4}
+                onClick={handlePopoverClick}
                 onDoubleClick={handleDoubleClick}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
+                onMouseEnter={handleCombinedMouseEnter}
+                onMouseLeave={handleCombinedMouseLeave}
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
                 onContextMenu={handleContextMenu}
-                style={{ cursor, touchAction: "none" }}
+                style={{ cursor, touchAction: "none", transition: "opacity 150ms ease-in-out" }}
             />
 
-            {label && (
+            {/* Render label if present */}
+            {labelProps && (
                 <foreignObject x={currentX + 8} y={y} width={Math.max(eventWidth - 16, 0)} height={height} style={{ pointerEvents: "none" }}>
                     <Text
                         fontSize={typeof fontSize === "number" ? `${fontSize}px` : fontSize}
-                        color={textColor ?? "fg.default"}
+                        color={labelProps.color ?? "fg.default"}
                         opacity={baseOpacity}
-                        fontWeight={fontWeight}
-                        fontStyle={fontStyle}
-                        textAlign={textAlign}
+                        fontWeight={labelProps.fontWeight}
+                        fontStyle={labelProps.fontStyle}
                         whiteSpace="nowrap"
                         cursor={cursor}
                         userSelect="none"
@@ -347,13 +464,34 @@ export const PlannerEvent = ({
                         textOverflow="ellipsis"
                         display="flex"
                         alignItems="center"
-                        justifyContent={textAlign === "center" ? "center" : textAlign === "right" ? "flex-end" : "flex-start"}
+                        justifyContent={labelProps.align === "center" ? "center" : labelProps.align === "end" ? "flex-end" : "flex-start"}
                         height="100%"
                         m={0}
                         p={0}
+                        transition="opacity 150ms ease-in-out"
                     >
-                        {label}
+                        {labelProps.value}
                     </Text>
+                </foreignObject>
+            )}
+
+            {/* Render icon if present */}
+            {iconProps && (
+                <foreignObject x={currentX + 8} y={y} width={Math.max(eventWidth - 16, 0)} height={height} style={{ pointerEvents: "none" }}>
+                    <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent={iconProps.align === "center" ? "center" : iconProps.align === "end" ? "flex-end" : "flex-start"}
+                        height="100%"
+                        opacity={baseOpacity}
+                        transition="opacity 150ms ease-in-out"
+                    >
+                        <FontAwesomeIcon
+                            icon={[iconProps.prefix as IconPrefix, iconProps.name as IconName]}
+                            size={iconProps.size as any}
+                            color={iconProps.color ?? (iconProps.colorPalette ? `var(--chakra-colors-${iconProps.colorPalette}-500)` : "currentColor")}
+                        />
+                    </Box>
                 </foreignObject>
             )}
 
@@ -391,13 +529,13 @@ export const PlannerEvent = ({
             {/* Context menu for Edit/Delete */}
             {hasContextMenu && (
                 <Menu.Root
-                    open={contextMenuOpen}
-                    onOpenChange={(e) => setContextMenuOpen(e.open)}
+                    open={overlay.active === "contextMenu"}
+                    onOpenChange={(e) => setOverlay(prev => ({ ...prev, active: e.open ? "contextMenu" : "none" }))}
                     positioning={{
                         placement: "bottom-start",
                         getAnchorRect: () => ({
-                            x: contextMenuPosition.x,
-                            y: contextMenuPosition.y,
+                            x: overlay.contextMenuPosition.x,
+                            y: overlay.contextMenuPosition.y,
                             width: 0,
                             height: 0,
                         }),
@@ -422,6 +560,28 @@ export const PlannerEvent = ({
                         </Menu.Positioner>
                     </Portal>
                 </Menu.Root>
+            )}
+
+            {/* Event popover */}
+            {hasPopover && (
+                <Popover.Root
+                    open={overlay.active === "popover"}
+                    onOpenChange={(e) => setOverlay(prev => ({ ...prev, active: e.open ? "popover" : "none" }))}
+                    positioning={{
+                        placement: "top",
+                        getAnchorRect: getPopoverAnchorRect,
+                    }}
+                >
+                    <Portal>
+                        <Popover.Positioner>
+                            <Popover.Content>
+                                <Popover.Body>
+                                    {popoverContent && <EastChakraComponent value={popoverContent} />}
+                                </Popover.Body>
+                            </Popover.Content>
+                        </Popover.Positioner>
+                    </Portal>
+                </Popover.Root>
             )}
         </g>
     );

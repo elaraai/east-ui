@@ -9,7 +9,6 @@ import { Box, HStack, Text } from "@chakra-ui/react";
 export interface PlannerAxisProps {
     startSlot: number;
     endSlot: number;
-    width: number;
     height: number;
     slotWidth: number;
     /** Optional function to format slot labels */
@@ -25,13 +24,9 @@ export const getSlotPosition = (slot: number, startSlot: number, slotWidth: numb
     return slotIndex * slotWidth + slotWidth / 2; // Center of the slot
 };
 
-// Label width estimate for edge detection
-const LABEL_HALF_WIDTH = 30;
-
 export const PlannerAxis = ({
     startSlot,
     endSlot,
-    width,
     height,
     slotWidth,
     getSlotLabel,
@@ -42,20 +37,14 @@ export const PlannerAxis = ({
         const totalSlots = Math.floor(endSlot - startSlot) + 1;
         const result: { slot: number; x: number; index: number }[] = [];
 
-        // Calculate how many slots we can show labels for
-        // Show fewer labels if slots are very narrow
         for (let i = 0; i < totalSlots; i += 1) {
             const slot = startSlot + i;
             const x = getSlotPosition(slot, startSlot, slotWidth);
-
-            // Only include if the label won't be cut off at edges
-            if (x >= LABEL_HALF_WIDTH && x <= width - LABEL_HALF_WIDTH) {
-                result.push({ slot, x, index: i });
-            }
+            result.push({ slot, x, index: i });
         }
 
         return result;
-    }, [startSlot, endSlot, width, slotWidth]);
+    }, [startSlot, endSlot, slotWidth]);
 
     return (
         <HStack

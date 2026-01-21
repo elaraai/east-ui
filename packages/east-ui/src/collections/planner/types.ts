@@ -23,10 +23,20 @@ import {
     ColorSchemeType,
     type ColorSchemeLiteral,
     FontWeightType,
+    type FontWeightLiteral,
     FontStyleType,
+    type FontStyleLiteral,
     SizeType,
-    TextAlignType,
+    type SizeLiteral,
 } from "../../style.js";
+
+import {
+    IconSizeType,
+    type IconSizeLiteral,
+} from "../../display/icon/types.js";
+
+// Re-export Font Awesome types for convenience
+export type { IconName, IconPrefix } from "@fortawesome/fontawesome-common-types";
 
 // Import shared types from table
 import {
@@ -69,6 +79,143 @@ export type SlotModeType = typeof SlotModeType;
 export type SlotModeLiteral = "single" | "span";
 
 // ============================================================================
+// Event Popover Trigger Type
+// ============================================================================
+
+/**
+ * Trigger variant type for event popover - determines when the popover appears.
+ *
+ * @property click - Popover appears when event is clicked
+ * @property hover - Popover appears when hovering over event
+ */
+export const EventPopoverTriggerType = VariantType({
+    /** Popover appears when event is clicked */
+    click: NullType,
+    /** Popover appears when hovering over event */
+    hover: NullType,
+});
+
+export type EventPopoverTriggerType = typeof EventPopoverTriggerType;
+
+/**
+ * String literal type for event popover trigger values.
+ */
+export type EventPopoverTriggerLiteral = "click" | "hover";
+
+// ============================================================================
+// Content Align Type
+// ============================================================================
+
+/**
+ * Alignment for content within an event.
+ *
+ * @property start - Align to the start (left)
+ * @property center - Align to center
+ * @property end - Align to the end (right)
+ */
+export const ContentAlignType = VariantType({
+    /** Align to the start (left) */
+    start: NullType,
+    /** Align to center */
+    center: NullType,
+    /** Align to the end (right) */
+    end: NullType,
+});
+
+export type ContentAlignType = typeof ContentAlignType;
+
+/**
+ * String literal type for content align values.
+ */
+export type ContentAlignLiteral = "start" | "center" | "end";
+
+// ============================================================================
+// Event Label Type
+// ============================================================================
+
+/**
+ * Label configuration for Planner events.
+ *
+ * @property value - The label text (required)
+ * @property align - Position within the event (start, center, end)
+ * @property color - Text color (CSS color or Chakra token)
+ * @property fontWeight - Font weight
+ * @property fontStyle - Font style (normal, italic)
+ * @property fontSize - Font size
+ */
+export const EventLabelType = StructType({
+    value: StringType,
+    align: OptionType(ContentAlignType),
+    color: OptionType(StringType),
+    fontWeight: OptionType(FontWeightType),
+    fontStyle: OptionType(FontStyleType),
+    fontSize: OptionType(SizeType),
+});
+
+export type EventLabelType = typeof EventLabelType;
+
+/**
+ * TypeScript interface for event label input.
+ */
+export interface EventLabel {
+    /** The label text (required) */
+    value: SubtypeExprOrValue<StringType>;
+    /** Position within the event (start, center, end). Default: start */
+    align?: SubtypeExprOrValue<ContentAlignType> | ContentAlignLiteral;
+    /** Text color (CSS color or Chakra token) */
+    color?: SubtypeExprOrValue<StringType>;
+    /** Font weight */
+    fontWeight?: SubtypeExprOrValue<FontWeightType> | FontWeightLiteral;
+    /** Font style (normal, italic) */
+    fontStyle?: SubtypeExprOrValue<FontStyleType> | FontStyleLiteral;
+    /** Font size */
+    fontSize?: SubtypeExprOrValue<SizeType> | SizeLiteral;
+}
+
+// ============================================================================
+// Event Icon Type
+// ============================================================================
+
+/**
+ * Icon configuration for Planner events.
+ *
+ * @property prefix - Font Awesome prefix (fas, far, fab, etc.)
+ * @property name - Font Awesome icon name
+ * @property align - Position within the event (start, center, end)
+ * @property size - Icon size
+ * @property color - Icon color (CSS color or Chakra token)
+ * @property colorPalette - Color scheme for the icon
+ */
+export const EventIconType = StructType({
+    prefix: StringType,
+    name: StringType,
+    align: OptionType(ContentAlignType),
+    size: OptionType(IconSizeType),
+    color: OptionType(StringType),
+    colorPalette: OptionType(ColorSchemeType),
+});
+
+export type EventIconType = typeof EventIconType;
+
+/**
+ * TypeScript interface for event icon input.
+ */
+export interface EventIcon {
+    /** Font Awesome prefix (fas, far, fab, etc.) */
+    prefix: string;
+    /** Font Awesome icon name */
+    name: string;
+    /** Position within the event (start, center, end). Default: start */
+    align?: SubtypeExprOrValue<ContentAlignType> | ContentAlignLiteral;
+    /** Icon size */
+    size?: SubtypeExprOrValue<IconSizeType> | IconSizeLiteral;
+    /** Icon color (CSS color or Chakra token) */
+    color?: SubtypeExprOrValue<StringType>;
+    /** Color scheme for the icon */
+    colorPalette?: SubtypeExprOrValue<ColorSchemeType> | ColorSchemeLiteral;
+}
+
+// ============================================================================
 // Event Type
 // ============================================================================
 
@@ -82,31 +229,22 @@ export type SlotModeLiteral = "single" | "span";
  *
  * @property start - Start slot (or single slot if mode=single)
  * @property end - End slot (only used if mode=span)
- * @property label - Optional label to display on the event
- * @property colorPalette - Optional color scheme for the event
- * @property color - Optional text color (overrides colorPalette)
+ * @property label - Optional label configuration
+ * @property icon - Optional icon configuration
+ * @property colorPalette - Optional color scheme for the event background
  * @property background - Optional background/fill color (overrides colorPalette)
  * @property stroke - Optional stroke/border color (overrides colorPalette)
  * @property opacity - Optional opacity (0-1)
- * @property fontWeight - Optional font weight for label
- * @property fontStyle - Optional font style for label
- * @property fontSize - Optional font size for label
- * @property textAlign - Optional text alignment for label
  */
 export const PlannerEventType = StructType({
     start: FloatType,
     end: OptionType(FloatType),
-    label: OptionType(StringType),
+    label: OptionType(EventLabelType),
+    icon: OptionType(EventIconType),
     colorPalette: OptionType(ColorSchemeType),
-    // Text styling
-    color: OptionType(StringType),
     background: OptionType(StringType),
     stroke: OptionType(StringType),
     opacity: OptionType(FloatType),
-    fontWeight: OptionType(FontWeightType),
-    fontStyle: OptionType(FontStyleType),
-    fontSize: OptionType(SizeType),
-    textAlign: OptionType(TextAlignType),
 });
 
 /**
@@ -318,6 +456,7 @@ export interface PlannerBoundary {
  * @property slotMinWidth - Min width per slot (CSS value, default "60px")
  * @property colorPalette - Default color scheme for events
  * @property readOnly - When true, disables all event interactions (drag, resize, add, delete)
+ * @property eventPopoverTrigger - Trigger mode for event popover (click or hover)
  * @property slotLineStroke - Vertical grid line color
  * @property slotLineWidth - Vertical grid line width in pixels
  * @property slotLineDash - Vertical grid line dash pattern
@@ -354,6 +493,9 @@ export const PlannerStyleType = StructType({
     slotMinWidth: OptionType(StringType),
     colorPalette: OptionType(ColorSchemeType),
     readOnly: OptionType(BooleanType),
+
+    // Event popover (trigger only - popover function is in Planner struct)
+    eventPopoverTrigger: OptionType(EventPopoverTriggerType),
 
     // Slot line styling (vertical grid lines)
     slotLineStroke: OptionType(StringType),
@@ -419,6 +561,8 @@ export interface PlannerStyle {
     colorPalette?: SubtypeExprOrValue<ColorSchemeType> | ColorSchemeLiteral;
     /** When true, disables all event interactions (drag, resize, add, delete) */
     readOnly?: SubtypeExprOrValue<BooleanType>;
+    /** Trigger mode for event popover (click or hover) */
+    eventPopoverTrigger?: SubtypeExprOrValue<EventPopoverTriggerType> | EventPopoverTriggerLiteral;
     /** Vertical grid line color */
     slotLineStroke?: SubtypeExprOrValue<StringType>;
     /** Vertical grid line width in pixels */

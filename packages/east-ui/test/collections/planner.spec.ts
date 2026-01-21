@@ -38,11 +38,11 @@ describeEast("Planner", (test) => {
         const event = $.let(Planner.Event({
             start: 1.0,
             end: 3.0,
-            label: "Task A",
+            label: { value: "Task A" },
         }));
 
         $(Assert.equal(event.label.hasTag("some"), true));
-        $(Assert.equal(event.label.unwrap("some"), "Task A"));
+        $(Assert.equal(event.label.unwrap("some").value, "Task A"));
     });
 
     test("creates event with colorPalette", $ => {
@@ -60,13 +60,13 @@ describeEast("Planner", (test) => {
         const event = $.let(Planner.Event({
             start: 2.0,
             end: 6.0,
-            label: "Important Task",
+            label: { value: "Important Task" },
             colorPalette: "green",
         }));
 
         $(Assert.equal(event.start, 2.0));
         $(Assert.equal(event.end.unwrap("some"), 6.0));
-        $(Assert.equal(event.label.unwrap("some"), "Important Task"));
+        $(Assert.equal(event.label.unwrap("some").value, "Important Task"));
         $(Assert.equal(event.colorPalette.unwrap("some").hasTag("green"), true));
     });
 
@@ -299,9 +299,9 @@ describeEast("Planner", (test) => {
             ],
             ["name"],
             row => [
-                Planner.Event({ start: row.slot1, label: "Event 1" }),
-                Planner.Event({ start: row.slot2, label: "Event 2" }),
-                Planner.Event({ start: row.slot3, label: "Event 3" }),
+                Planner.Event({ start: row.slot1, label: { value: "Event 1" } }),
+                Planner.Event({ start: row.slot2, label: { value: "Event 2" } }),
+                Planner.Event({ start: row.slot3, label: { value: "Event 3" } }),
             ],
         ));
 

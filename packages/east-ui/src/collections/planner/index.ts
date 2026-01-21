@@ -14,6 +14,7 @@ import {
     StringType,
     FloatType,
     OptionType,
+    FunctionType,
     variant,
     type ValueTypeOf,
     type TypeOf,
@@ -31,12 +32,9 @@ import {
     FontWeightType,
     FontStyleType,
     SizeType,
-    TextAlignType,
-    type FontWeightLiteral,
-    type FontStyleLiteral,
-    type SizeLiteral,
-    type TextAlignLiteral,
+    type ColorSchemeLiteral,
 } from "../../style.js";
+import { IconSizeType } from "../../display/icon/types.js";
 import { UIComponentType } from "../../component.js";
 import {
     TableCellType,
@@ -57,6 +55,13 @@ import {
     EventDeleteEventType,
     PlannerEventType,
     PlannerBoundaryType,
+    EventPopoverTriggerType,
+    EventPopoverContextType,
+    ContentAlignType,
+    EventLabelType,
+    EventIconType,
+    type EventLabel,
+    type EventIcon,
 } from "./types.js";
 
 // Re-export types
@@ -73,6 +78,15 @@ export {
     PlannerEventType,
     PlannerBoundaryType,
     type PlannerBoundary,
+    EventPopoverTriggerType,
+    type EventPopoverTriggerLiteral,
+    EventPopoverContextType,
+    ContentAlignType,
+    EventLabelType,
+    EventIconType,
+    type EventLabel,
+    type EventIcon,
+    type ContentAlignLiteral,
 } from "./types.js";
 
 // ============================================================================
@@ -112,11 +126,13 @@ export type PlannerRowType = typeof PlannerRowType;
  * @property rows - Array of Planner rows
  * @property columns - Array of column definitions (same as Table)
  * @property style - Optional styling configuration
+ * @property eventPopover - Optional function to render popover content for events
  */
 export const PlannerRootType = StructType({
     rows: ArrayType(PlannerRowType),
     columns: ArrayType(TableColumnType),
     style: OptionType(PlannerStyleType),
+    eventPopover: OptionType(FunctionType([EventPopoverContextType], UIComponentType)),
 });
 
 /**
@@ -137,37 +153,30 @@ export type PlannerRootType = typeof PlannerRootType;
  *
  * @property start - Start slot (or single slot if mode=single)
  * @property end - End slot (only used if mode=span)
- * @property label - Optional label to display on the event
- * @property colorPalette - Optional color scheme for the event
- * @property color - Optional text color (overrides colorPalette)
+ * @property label - Optional label configuration
+ * @property icon - Optional icon configuration
+ * @property colorPalette - Optional color scheme for the event background
  * @property background - Optional background color (overrides colorPalette)
+ * @property stroke - Optional stroke/border color (overrides colorPalette)
  * @property opacity - Optional opacity (0-1)
- * @property fontWeight - Optional font weight for label
- * @property fontStyle - Optional font style for label
- * @property fontSize - Optional font size for label
- * @property textAlign - Optional text alignment for label
  */
 export interface EventInput {
+    /** Start slot (or single slot if mode=single) */
     start: SubtypeExprOrValue<FloatType>;
+    /** End slot (only used if mode=span) */
     end?: SubtypeExprOrValue<FloatType>;
-    label?: SubtypeExprOrValue<StringType>;
-    colorPalette?: SubtypeExprOrValue<ColorSchemeType> | string;
-    /** Text color (overrides colorPalette) */
-    color?: SubtypeExprOrValue<StringType>;
+    /** Optional label configuration */
+    label?: EventLabel;
+    /** Optional icon configuration */
+    icon?: EventIcon;
+    /** Color scheme for the event background */
+    colorPalette?: SubtypeExprOrValue<ColorSchemeType> | ColorSchemeLiteral;
     /** Background/fill color (overrides colorPalette) */
     background?: SubtypeExprOrValue<StringType>;
     /** Stroke/border color (overrides colorPalette) */
     stroke?: SubtypeExprOrValue<StringType>;
     /** Opacity (0-1) */
     opacity?: SubtypeExprOrValue<FloatType>;
-    /** Font weight for label */
-    fontWeight?: SubtypeExprOrValue<FontWeightType> | FontWeightLiteral;
-    /** Font style for label */
-    fontStyle?: SubtypeExprOrValue<FontStyleType> | FontStyleLiteral;
-    /** Font size for label */
-    fontSize?: SubtypeExprOrValue<SizeType> | SizeLiteral;
-    /** Text alignment for label */
-    textAlign?: SubtypeExprOrValue<TextAlignType> | TextAlignLiteral;
 }
 
 // ============================================================================
@@ -192,7 +201,7 @@ export interface EventInput {
  *         row => [Planner.Event({
  *             start: row.slot,
  *             end: row.slot.add(2n),
- *             label: "Task",
+ *             label: { value: "Task" },
  *             colorPalette: "blue",
  *         })]
  *     );
@@ -200,49 +209,90 @@ export interface EventInput {
  * ```
  */
 function createEvent(input: EventInput): ExprType<PlannerEventType> {
+    // Build event colorPalette
     const colorPaletteValue = input.colorPalette
         ? (typeof input.colorPalette === "string"
             ? East.value(variant(input.colorPalette as any, null), ColorSchemeType)
             : input.colorPalette)
         : undefined;
 
-    const fontWeightValue = input.fontWeight
-        ? (typeof input.fontWeight === "string"
-            ? East.value(variant(input.fontWeight as any, null), FontWeightType)
-            : input.fontWeight)
-        : undefined;
+    // Build label object if provided
+    let labelValue = undefined;
+    if (input.label) {
+        const labelAlignValue = input.label.align
+            ? (typeof input.label.align === "string"
+                ? East.value(variant(input.label.align, null), ContentAlignType)
+                : input.label.align)
+            : undefined;
 
-    const fontStyleValue = input.fontStyle
-        ? (typeof input.fontStyle === "string"
-            ? East.value(variant(input.fontStyle as any, null), FontStyleType)
-            : input.fontStyle)
-        : undefined;
+        const labelFontWeightValue = input.label.fontWeight
+            ? (typeof input.label.fontWeight === "string"
+                ? East.value(variant(input.label.fontWeight as any, null), FontWeightType)
+                : input.label.fontWeight)
+            : undefined;
 
-    const fontSizeValue = input.fontSize
-        ? (typeof input.fontSize === "string"
-            ? East.value(variant(input.fontSize as any, null), SizeType)
-            : input.fontSize)
-        : undefined;
+        const labelFontStyleValue = input.label.fontStyle
+            ? (typeof input.label.fontStyle === "string"
+                ? East.value(variant(input.label.fontStyle as any, null), FontStyleType)
+                : input.label.fontStyle)
+            : undefined;
 
-    const textAlignValue = input.textAlign
-        ? (typeof input.textAlign === "string"
-            ? East.value(variant(input.textAlign as any, null), TextAlignType)
-            : input.textAlign)
-        : undefined;
+        const labelFontSizeValue = input.label.fontSize
+            ? (typeof input.label.fontSize === "string"
+                ? East.value(variant(input.label.fontSize as any, null), SizeType)
+                : input.label.fontSize)
+            : undefined;
+
+        labelValue = East.value({
+            value: input.label.value,
+            align: labelAlignValue ? variant("some", labelAlignValue) : variant("none", null),
+            color: input.label.color ? variant("some", input.label.color) : variant("none", null),
+            fontWeight: labelFontWeightValue ? variant("some", labelFontWeightValue) : variant("none", null),
+            fontStyle: labelFontStyleValue ? variant("some", labelFontStyleValue) : variant("none", null),
+            fontSize: labelFontSizeValue ? variant("some", labelFontSizeValue) : variant("none", null),
+        }, EventLabelType);
+    }
+
+    // Build icon object if provided
+    let iconValue = undefined;
+    if (input.icon) {
+        const iconAlignValue = input.icon.align
+            ? (typeof input.icon.align === "string"
+                ? East.value(variant(input.icon.align, null), ContentAlignType)
+                : input.icon.align)
+            : undefined;
+
+        const iconSizeValue = input.icon.size
+            ? (typeof input.icon.size === "string"
+                ? East.value(variant(input.icon.size as any, null), IconSizeType)
+                : input.icon.size)
+            : undefined;
+
+        const iconColorPaletteValue = input.icon.colorPalette
+            ? (typeof input.icon.colorPalette === "string"
+                ? East.value(variant(input.icon.colorPalette as any, null), ColorSchemeType)
+                : input.icon.colorPalette)
+            : undefined;
+
+        iconValue = East.value({
+            prefix: input.icon.prefix,
+            name: input.icon.name,
+            align: iconAlignValue ? variant("some", iconAlignValue) : variant("none", null),
+            size: iconSizeValue ? variant("some", iconSizeValue) : variant("none", null),
+            color: input.icon.color ? variant("some", input.icon.color) : variant("none", null),
+            colorPalette: iconColorPaletteValue ? variant("some", iconColorPaletteValue) : variant("none", null),
+        }, EventIconType);
+    }
 
     return East.value({
         start: input.start,
         end: input.end ? variant("some", input.end) : variant("none", null),
-        label: input.label ? variant("some", input.label) : variant("none", null),
+        label: labelValue ? variant("some", labelValue) : variant("none", null),
+        icon: iconValue ? variant("some", iconValue) : variant("none", null),
         colorPalette: colorPaletteValue ? variant("some", colorPaletteValue) : variant("none", null),
-        color: input.color ? variant("some", input.color) : variant("none", null),
         background: input.background ? variant("some", input.background) : variant("none", null),
         stroke: input.stroke ? variant("some", input.stroke) : variant("none", null),
         opacity: input.opacity ? variant("some", input.opacity) : variant("none", null),
-        fontWeight: fontWeightValue ? variant("some", fontWeightValue) : variant("none", null),
-        fontStyle: fontStyleValue ? variant("some", fontStyleValue) : variant("none", null),
-        fontSize: fontSizeValue ? variant("some", fontSizeValue) : variant("none", null),
-        textAlign: textAlignValue ? variant("some", textAlignValue) : variant("none", null),
     }, PlannerEventType);
 }
 
@@ -317,7 +367,8 @@ function createPlanner<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
     data: T,
     columns: ColumnSpec<T>,
     events: (row: ExprType<RowElement<T>>) => SubtypeExprOrValue<ArrayType<PlannerEventType>>,
-    style?: PlannerStyle
+    style?: PlannerStyle,
+    eventPopover?: SubtypeExprOrValue<FunctionType<[EventPopoverContextType], UIComponentType>>
 ): ExprType<UIComponentType> {
     const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
     const field_types = Expr.type(data_expr).value.fields;
@@ -445,6 +496,12 @@ function createPlanner<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
             : style.colorPalette)
         : undefined;
 
+    const eventPopoverTriggerValue = style?.eventPopoverTrigger
+        ? (typeof style.eventPopoverTrigger === "string"
+            ? East.value(variant(style.eventPopoverTrigger, null), EventPopoverTriggerType)
+            : style.eventPopoverTrigger)
+        : undefined;
+
     const styleValue = style ? East.value({
         variant: variantValue ? some(variantValue) : none,
         size: sizeValue ? some(sizeValue) : none,
@@ -460,6 +517,7 @@ function createPlanner<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
         slotMinWidth: style.slotMinWidth ? some(style.slotMinWidth) : none,
         colorPalette: colorPaletteValue ? some(colorPaletteValue) : none,
         readOnly: style.readOnly !== undefined ? some(style.readOnly) : none,
+        eventPopoverTrigger: eventPopoverTriggerValue ? some(eventPopoverTriggerValue) : none,
         slotLineStroke: style.slotLineStroke ? some(style.slotLineStroke) : none,
         slotLineWidth: style.slotLineWidth !== undefined ? some(style.slotLineWidth) : none,
         slotLineDash: style.slotLineDash ? some(style.slotLineDash) : none,
@@ -485,10 +543,15 @@ function createPlanner<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
         onEventDelete: style.onEventDelete ? some(style.onEventDelete) : none,
     }, PlannerStyleType) : undefined;
 
+    const eventPopoverExpr = eventPopover ?
+      some(East.value(eventPopover, FunctionType([EventPopoverContextType], UIComponentType))) :
+      none;
+
     return East.value(variant("Planner", {
         rows: rows_mapped,
         columns: columns_mapped as ValueTypeOf<typeof PlannerRootType>["columns"],
         style: styleValue ? some(styleValue) : none,
+        eventPopover: eventPopoverExpr,
     }), UIComponentType);
 }
 
@@ -504,6 +567,9 @@ interface PlannerNamespace {
         Root: typeof PlannerRootType;
         Row: typeof PlannerRowType;
         Event: typeof PlannerEventType;
+        EventLabel: typeof EventLabelType;
+        EventIcon: typeof EventIconType;
+        ContentAlign: typeof ContentAlignType;
         Style: typeof PlannerStyleType;
         SlotMode: typeof SlotModeType;
         Boundary: typeof PlannerBoundaryType;
@@ -511,6 +577,8 @@ interface PlannerNamespace {
         DragEvent: typeof EventDragEventType;
         ResizeEvent: typeof EventResizeEventType;
         DeleteEvent: typeof EventDeleteEventType;
+        EventPopoverTrigger: typeof EventPopoverTriggerType;
+        EventPopoverContext: typeof EventPopoverContextType;
         Column: typeof TableColumnType;
         Cell: typeof TableCellType;
     };
@@ -591,10 +659,41 @@ export const Planner: PlannerNamespace = {
          *
          * @property start - Start slot
          * @property end - End slot (optional, for span mode)
-         * @property label - Optional label
+         * @property label - Optional label configuration
+         * @property icon - Optional icon configuration
          * @property colorPalette - Optional color scheme
          */
         Event: PlannerEventType,
+        /**
+         * Label configuration for Planner events.
+         *
+         * @property value - The label text (required)
+         * @property align - Position within the event (start, center, end)
+         * @property color - Text color
+         * @property fontWeight - Font weight
+         * @property fontStyle - Font style
+         * @property fontSize - Font size
+         */
+        EventLabel: EventLabelType,
+        /**
+         * Icon configuration for Planner events.
+         *
+         * @property prefix - Font Awesome prefix (fas, far, fab, etc.)
+         * @property name - Font Awesome icon name
+         * @property align - Position within the event (start, center, end)
+         * @property size - Icon size
+         * @property color - Icon color
+         * @property colorPalette - Color scheme for the icon
+         */
+        EventIcon: EventIconType,
+        /**
+         * Alignment for content within an event.
+         *
+         * @property start - Align to the start (left)
+         * @property center - Align to center
+         * @property end - Align to the end (right)
+         */
+        ContentAlign: ContentAlignType,
         /**
          * Style type for the Planner component.
          */
@@ -632,6 +731,24 @@ export const Planner: PlannerNamespace = {
          * Event data for event delete events.
          */
         DeleteEvent: EventDeleteEventType,
+        /**
+         * Trigger variant type for event popover.
+         *
+         * @property click - Popover appears when event is clicked
+         * @property hover - Popover appears when hovering over event
+         */
+        EventPopoverTrigger: EventPopoverTriggerType,
+        /**
+         * Context passed to the eventPopover function.
+         *
+         * @property rowIndex - Row index (0-based)
+         * @property eventIndex - Event index within the row
+         * @property start - Start slot of the event
+         * @property end - End slot of the event
+         * @property label - Event label (if any)
+         * @property colorPalette - Event color palette (if any)
+         */
+        EventPopoverContext: EventPopoverContextType,
         /**
          * East type for a table column definition.
          */
