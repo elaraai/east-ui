@@ -137,7 +137,8 @@ export type ContentAlignLiteral = "start" | "center" | "end";
  * Label configuration for Planner events.
  *
  * @property value - The label text (required)
- * @property align - Position within the event (start, center, end)
+ * @property align - Horizontal position within the event (start, center, end)
+ * @property verticalAlign - Vertical position within the event (start, center, end)
  * @property color - Text color (CSS color or Chakra token)
  * @property fontWeight - Font weight
  * @property fontStyle - Font style (normal, italic)
@@ -146,6 +147,7 @@ export type ContentAlignLiteral = "start" | "center" | "end";
 export const EventLabelType = StructType({
     value: StringType,
     align: OptionType(ContentAlignType),
+    verticalAlign: OptionType(ContentAlignType),
     color: OptionType(StringType),
     fontWeight: OptionType(FontWeightType),
     fontStyle: OptionType(FontStyleType),
@@ -160,8 +162,10 @@ export type EventLabelType = typeof EventLabelType;
 export interface EventLabel {
     /** The label text (required) */
     value: SubtypeExprOrValue<StringType>;
-    /** Position within the event (start, center, end). Default: start */
+    /** Horizontal position within the event (start, center, end). Default: start */
     align?: SubtypeExprOrValue<ContentAlignType> | ContentAlignLiteral;
+    /** Vertical position within the event (start, center, end). Default: center */
+    verticalAlign?: SubtypeExprOrValue<ContentAlignType> | ContentAlignLiteral;
     /** Text color (CSS color or Chakra token) */
     color?: SubtypeExprOrValue<StringType>;
     /** Font weight */

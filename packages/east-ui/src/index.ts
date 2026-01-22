@@ -32,7 +32,7 @@ export { Text, Code, Heading, Link, Highlight, Mark, List, CodeBlock } from "./t
 export { Box, Flex, Stack, Separator, Grid, Splitter } from "./layout/index.js";
 
 // Buttons
-export { Button, IconButton } from "./buttons/index.js";
+export { Button, IconButton, CopyButton } from "./buttons/index.js";
 
 // Forms
 export { Input, Checkbox, Switch, Select, Slider, Field, FileUpload, Textarea, TagsInput } from "./forms/index.js";

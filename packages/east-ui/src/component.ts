@@ -39,6 +39,7 @@ import { SplitterStyleType } from "./layout/splitter/types.js";
 // Buttons
 import { ButtonType } from "./buttons/button/types.js";
 import { IconButtonType } from "./buttons/icon-button/types.js";
+import { CopyButtonType } from "./buttons/copy-button/types.js";
 
 // Forms
 import { StringInputType, IntegerInputType, FloatInputType, DateTimeInputType } from "./forms/input/types.js";
@@ -156,6 +157,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
     // Buttons
     Button: ButtonType,
     IconButton: IconButtonType,
+    CopyButton: CopyButtonType,
 
     // Layout - Containers
     Box: StructType({

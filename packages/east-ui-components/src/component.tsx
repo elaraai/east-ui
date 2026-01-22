@@ -18,6 +18,7 @@ import { EastChakraList } from "./typography/list";
 import { EastChakraCodeBlock } from "./typography/code-block";
 import { EastChakraButton } from "./buttons/button";
 import { EastChakraIconButton } from "./buttons/icon-button";
+import { EastChakraCopyButton } from "./buttons/copy-button";
 import { EastChakraSparkline } from "./charts/sparkline";
 import { EastChakraAreaChart, EastChakraAreaRangeChart } from "./charts/area";
 import { EastChakraBarChart } from "./charts/bar";
@@ -102,6 +103,7 @@ export const EastChakraComponent = memo(function EastChakraComponent({ value }: 
             // Buttons
             Button: (v) => <EastChakraButton value={v} />,
             IconButton: (v) => <EastChakraIconButton value={v} />,
+            CopyButton: (v) => <EastChakraCopyButton value={v} />,
 
             // Layout
             Box: (v) => <EastChakraBox value={v} />,

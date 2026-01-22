@@ -5,3 +5,4 @@
 
 export { Button } from "./button/index.js";
 export { IconButton } from "./icon-button/index.js";
+export { CopyButton } from "./copy-button/index.js";

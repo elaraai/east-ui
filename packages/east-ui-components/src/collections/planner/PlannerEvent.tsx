@@ -140,13 +140,14 @@ export const PlannerEvent = ({
     // Derived from props
     const colorPalette = useMemo(() => getSomeorUndefined(value.colorPalette)?.type ?? "blue", [value.colorPalette]);
 
-    // Extract label config (nested object with value, align, color, etc.)
+    // Extract label config (nested object with value, align, verticalAlign, color, etc.)
     const labelProps = useMemo(() => {
         const config = getSomeorUndefined(value.label);
         if (!config) return null;
         return {
             value: config.value,
             align: getSomeorUndefined(config.align)?.type ?? "start",
+            verticalAlign: getSomeorUndefined(config.verticalAlign)?.type ?? "center",
             color: getSomeorUndefined(config.color),
             fontWeight: getSomeorUndefined(config.fontWeight)?.type,
             fontStyle: getSomeorUndefined(config.fontStyle)?.type,
@@ -450,28 +451,31 @@ export const PlannerEvent = ({
             {/* Render label if present */}
             {labelProps && (
                 <foreignObject x={currentX + 8} y={y} width={Math.max(eventWidth - 16, 0)} height={height} style={{ pointerEvents: "none" }}>
-                    <Text
-                        fontSize={typeof fontSize === "number" ? `${fontSize}px` : fontSize}
-                        color={labelProps.color ?? "fg.default"}
-                        opacity={baseOpacity}
-                        fontWeight={labelProps.fontWeight}
-                        fontStyle={labelProps.fontStyle}
-                        whiteSpace="nowrap"
-                        cursor={cursor}
-                        userSelect="none"
-                        lineHeight="1"
-                        overflow="hidden"
-                        textOverflow="ellipsis"
+                    <Box
                         display="flex"
-                        alignItems="center"
+                        alignItems={labelProps.verticalAlign === "start" ? "flex-start" : labelProps.verticalAlign === "end" ? "flex-end" : "center"}
                         justifyContent={labelProps.align === "center" ? "center" : labelProps.align === "end" ? "flex-end" : "flex-start"}
                         height="100%"
-                        m={0}
-                        p={0}
+                        opacity={baseOpacity}
                         transition="opacity 150ms ease-in-out"
                     >
-                        {labelProps.value}
-                    </Text>
+                        <Text
+                            fontSize={typeof fontSize === "number" ? `${fontSize}px` : fontSize}
+                            color={labelProps.color ?? "fg.default"}
+                            fontWeight={labelProps.fontWeight}
+                            fontStyle={labelProps.fontStyle}
+                            whiteSpace="nowrap"
+                            cursor={cursor}
+                            userSelect="none"
+                            lineHeight="1"
+                            overflow="hidden"
+                            textOverflow="ellipsis"
+                            m={0}
+                            p={0}
+                        >
+                            {labelProps.value}
+                        </Text>
+                    </Box>
                 </foreignObject>
             )}
 

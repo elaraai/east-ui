@@ -30,6 +30,9 @@ export {
     EastChakraIconButton,
     type IconButtonValue,
     type EastChakraIconButtonProps,
+    EastChakraCopyButton,
+    type CopyButtonValue,
+    type EastChakraCopyButtonProps,
 } from "./buttons/index.js";
 
 // Layout

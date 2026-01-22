@@ -1,5 +1,5 @@
 import { East, some } from "@elaraai/east";
-import { Button, IconButton, UIComponentType, Stack, Grid, Accordion } from "@elaraai/east-ui";
+import { Button, IconButton, CopyButton, UIComponentType, Stack, Grid, Accordion } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
 /**
@@ -249,6 +249,96 @@ export default East.function(
             )
         );
 
+        // Basic copy button (icon only)
+        const copyBasic = $.let(
+            ShowcaseCard(
+                "Basic Copy Button",
+                "Icon-only button that copies text to clipboard",
+                CopyButton.Root("Hello, World!"),
+                some(`CopyButton.Root("Hello, World!")`)
+            )
+        );
+
+        // Copy button with label
+        const copyWithLabel = $.let(
+            ShowcaseCard(
+                "Copy Button with Label",
+                "Copy button with descriptive text",
+                CopyButton.Root("sk-1234567890abcdef", { label: "Copy API Key" }),
+                some(`CopyButton.Root("sk-1234567890abcdef", { label: "Copy API Key" })`)
+            )
+        );
+
+        // Copy button variants
+        const copyVariants = $.let(
+            ShowcaseCard(
+                "Copy Button Variants",
+                "Different button variants",
+                Stack.HStack([
+                    CopyButton.Root("solid text", { label: "Solid", variant: "solid", colorPalette: "blue" }),
+                    CopyButton.Root("outline text", { label: "Outline", variant: "outline", colorPalette: "blue" }),
+                    CopyButton.Root("ghost text", { label: "Ghost", variant: "ghost", colorPalette: "blue" }),
+                    CopyButton.Root("subtle text", { label: "Subtle", variant: "subtle", colorPalette: "blue" }),
+                ], { gap: "3", align: "center" }),
+                some(`
+                    Stack.HStack([
+                        CopyButton.Root("solid text", { label: "Solid", variant: "solid", colorPalette: "blue" }),
+                        CopyButton.Root("outline text", { label: "Outline", variant: "outline", colorPalette: "blue" }),
+                        CopyButton.Root("ghost text", { label: "Ghost", variant: "ghost", colorPalette: "blue" }),
+                        CopyButton.Root("subtle text", { label: "Subtle", variant: "subtle", colorPalette: "blue" }),
+                    ], { gap: "3", align: "center" })
+                `)
+            )
+        );
+
+        // Copy button sizes
+        const copySizes = $.let(
+            ShowcaseCard(
+                "Copy Button Sizes",
+                "Available sizes: xs, sm, md, lg",
+                Stack.HStack([
+                    CopyButton.Root("xs", { variant: "outline", colorPalette: "gray", size: "xs" }),
+                    CopyButton.Root("sm", { variant: "outline", colorPalette: "gray", size: "sm" }),
+                    CopyButton.Root("md", { variant: "outline", colorPalette: "gray", size: "md" }),
+                    CopyButton.Root("lg", { variant: "outline", colorPalette: "gray", size: "lg" }),
+                ], { gap: "3", align: "center" }),
+                some(`
+                    Stack.HStack([
+                        CopyButton.Root("xs", { variant: "outline", colorPalette: "gray", size: "xs" }),
+                        CopyButton.Root("sm", { variant: "outline", colorPalette: "gray", size: "sm" }),
+                        CopyButton.Root("md", { variant: "outline", colorPalette: "gray", size: "md" }),
+                        CopyButton.Root("lg", { variant: "outline", colorPalette: "gray", size: "lg" }),
+                    ], { gap: "3", align: "center" })
+                `)
+            )
+        );
+
+        // Copy button use cases
+        const copyUseCases = $.let(
+            ShowcaseCard(
+                "Common Use Cases",
+                "Typical copy button applications",
+                Stack.VStack([
+                    Stack.HStack([
+                        CopyButton.Root("https://api.example.com/v1", { label: "Copy URL", variant: "outline", colorPalette: "blue" }),
+                    ], { gap: "2" }),
+                    Stack.HStack([
+                        CopyButton.Root("npm install @elaraai/east-ui", { label: "Copy Install Command", variant: "subtle", colorPalette: "green" }),
+                    ], { gap: "2" }),
+                    Stack.HStack([
+                        CopyButton.Root("{ \"key\": \"value\" }", { label: "Copy JSON", variant: "ghost", colorPalette: "purple" }),
+                    ], { gap: "2" }),
+                ], { gap: "3", align: "stretch" }),
+                some(`
+                    Stack.VStack([
+                        CopyButton.Root("https://api.example.com/v1", { label: "Copy URL", variant: "outline", colorPalette: "blue" }),
+                        CopyButton.Root("npm install @elaraai/east-ui", { label: "Copy Install Command", variant: "subtle", colorPalette: "green" }),
+                        CopyButton.Root("{ \\"key\\": \\"value\\" }", { label: "Copy JSON", variant: "ghost", colorPalette: "purple" }),
+                    ], { gap: "3", align: "stretch" })
+                `)
+            )
+        );
+
         return Accordion.Root([
             Accordion.Item("button", "Button", [
                 Grid.Root([
@@ -271,6 +361,15 @@ export default East.function(
                     Grid.Item(iconSizes, { colSpan: "2" }),
                     Grid.Item(iconUseCases, { colSpan: "2" }),
                     Grid.Item(iconStates),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("copy-button", "Copy Button", [
+                Grid.Root([
+                    Grid.Item(copyBasic),
+                    Grid.Item(copyWithLabel),
+                    Grid.Item(copyVariants, { colSpan: "2" }),
+                    Grid.Item(copySizes, { colSpan: "2" }),
+                    Grid.Item(copyUseCases, { colSpan: "2" }),
                 ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
             ]),
         ], { multiple: true, collapsible: true });

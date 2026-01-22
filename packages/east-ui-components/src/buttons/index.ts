@@ -19,3 +19,9 @@ export {
     type IconButtonValue,
     type EastChakraIconButtonProps,
 } from "./icon-button/index.js";
+
+export {
+    EastChakraCopyButton,
+    type CopyButtonValue,
+    type EastChakraCopyButtonProps,
+} from "./copy-button/index.js";

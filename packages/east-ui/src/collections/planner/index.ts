@@ -225,6 +225,12 @@ function createEvent(input: EventInput): ExprType<PlannerEventType> {
                 : input.label.align)
             : undefined;
 
+        const labelVerticalAlignValue = input.label.verticalAlign
+            ? (typeof input.label.verticalAlign === "string"
+                ? East.value(variant(input.label.verticalAlign, null), ContentAlignType)
+                : input.label.verticalAlign)
+            : undefined;
+
         const labelFontWeightValue = input.label.fontWeight
             ? (typeof input.label.fontWeight === "string"
                 ? East.value(variant(input.label.fontWeight as any, null), FontWeightType)
@@ -246,6 +252,7 @@ function createEvent(input: EventInput): ExprType<PlannerEventType> {
         labelValue = East.value({
             value: input.label.value,
             align: labelAlignValue ? variant("some", labelAlignValue) : variant("none", null),
+            verticalAlign: labelVerticalAlignValue ? variant("some", labelVerticalAlignValue) : variant("none", null),
             color: input.label.color ? variant("some", input.label.color) : variant("none", null),
             fontWeight: labelFontWeightValue ? variant("some", labelFontWeightValue) : variant("none", null),
             fontStyle: labelFontStyleValue ? variant("some", labelFontStyleValue) : variant("none", null),

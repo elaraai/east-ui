@@ -3,7 +3,7 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East, some, FloatType, StringType, NullType } from "@elaraai/east";
+import { East, some, FloatType, StringType, NullType, variant } from "@elaraai/east";
 import { Planner, UIComponentType, Stack, Badge, Text } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -870,6 +870,56 @@ export default East.function(
             )
         );
 
+        // Label vertical alignment
+        const labelAlignment = $.let(
+            ShowcaseCard(
+                "Label Alignment",
+                "Labels can be positioned horizontally (start, center, end) and vertically (start, center, end)",
+                Planner.Root(
+                    [
+                        { position: "Top Left", hAlign: variant("start", null), vAlign: variant("start", null), color: variant("blue", null) },
+                        { position: "Top Center", hAlign: variant("center", null), vAlign: variant("start", null), color: variant("green", null) },
+                        { position: "Top Right", hAlign: variant("end", null), vAlign: variant("start", null), color: variant("purple", null) },
+                        { position: "Center Left", hAlign: variant("start", null), vAlign: variant("center", null), color: variant("teal", null) },
+                        { position: "Center", hAlign: variant("center", null), vAlign: variant("center", null), color: variant("orange", null) },
+                        { position: "Center Right", hAlign: variant("end", null), vAlign: variant("center", null), color: variant("cyan", null) },
+                        { position: "Bottom Left", hAlign: variant("start", null), vAlign: variant("end", null), color: variant("red", null) },
+                        { position: "Bottom Center", hAlign: variant("center", null), vAlign: variant("end", null), color: variant("pink", null) },
+                        { position: "Bottom Right", hAlign: variant("end", null), vAlign: variant("end", null), color: variant("gray", null) },
+                    ],
+                    ["position"],
+                    row => [
+                        Planner.Event({
+                            start: 0.0,
+                            end: 4.0,
+                            label: { value: row.position, align: row.hAlign, verticalAlign: row.vAlign },
+                            colorPalette: row.color,
+                        }),
+                    ],
+                    { maxSlot: 5.0 }
+                ),
+                some(`
+                    Planner.Root(
+                        [
+                            { position: "Top Left", hAlign: variant("start", null), vAlign: variant("start", null), color: variant("blue", null) },
+                            { position: "Center", hAlign: variant("center", null), vAlign: variant("center", null), color: variant("orange", null) },
+                            { position: "Bottom Right", hAlign: variant("end", null), vAlign: variant("end", null), color: variant("gray", null) },
+                            // ... more rows
+                        ],
+                        ["position"],
+                        row => [
+                            Planner.Event({
+                                start: 0.0, end: 4.0,
+                                label: { value: row.position, align: row.hAlign, verticalAlign: row.vAlign },
+                                colorPalette: row.color,
+                            }),
+                        ],
+                        { maxSlot: 5.0 }
+                    )
+                `)
+            )
+        );
+
         return Stack.VStack([
             basic,
             withLabels,
@@ -889,6 +939,7 @@ export default East.function(
             eventStyling,
             overlappingEvents,
             withIcons,
+            labelAlignment,
         ], { gap: "6", align: "stretch" });
     }
 );
