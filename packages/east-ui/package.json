@@ -72,7 +72,7 @@
     "node": ">=22.0.0"
   },
   "devDependencies": {
-    "@elaraai/east-node-std": "^0.0.1-beta.21",
+    "@elaraai/east-node-std": "^0.0.1-beta.22",
     "@fortawesome/fontawesome-common-types": "^7.1.0",
     "@types/node": "^22.18.1",
     "@typescript-eslint/eslint-plugin": "^8.42.0",
