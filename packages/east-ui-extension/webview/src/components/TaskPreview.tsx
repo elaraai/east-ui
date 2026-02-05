@@ -7,26 +7,19 @@ import { memo, useMemo, useState, useEffect } from 'react';
 import {
     Box,
     Text,
-    Spinner,
-    VStack,
     Flex,
     SegmentGroup,
-    Splitter,
-    CodeBlock,
-    IconButton,
-    Tabs,
     useTabs,
-    Center,
 } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getShikiHighlighter } from '../shiki';
-import { faCode, faColumns, faTerminal, faCopy, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCode, faTerminal } from '@fortawesome/free-solid-svg-icons';
+import { VirtualizedLogViewer } from './VirtualizedLogViewer';
+import { EastValueViewer } from './EastValueViewer';
 import {
     decodeBeast2,
     decodeBeast2For,
     isTypeValueEqual,
     toEastTypeValue,
-    toJSONFor,
     ValueTypeOf,
 } from '@elaraai/east';
 import {
@@ -41,7 +34,7 @@ import { useE3Context } from '../context/E3Context';
 import { useWorkspaceStatus } from '../hooks/useE3Data';
 import { useTaskOutput } from '../hooks/useTaskOutput';
 import { useTaskLogs } from '../hooks/useTaskLogs';
-import { ErrorDisplay } from './ErrorDisplay';
+import { StatusDisplay } from './StatusDisplay';
 import { InputPreview } from './InputPreview';
 import { UIComponentType } from '@elaraai/east-ui';
 import type { TaskStatusInfo } from '@elaraai/e3-api-client';
@@ -49,34 +42,7 @@ import type { TaskStatusInfo } from '@elaraai/e3-api-client';
 // Combined platform implementations for decoding Beast2 with Reactive components
 const platformImplementations = [...StateImpl, ...DatasetImpl, ...OverlayImpl];
 
-// Hook to load shiki and track ready state
-function useShikiReady() {
-    const [ready, setReady] = useState(false);
-    console.log('[East] useShikiReady: Hook called, ready:', ready);
-
-    useEffect(() => {
-        console.log('[East] useShikiReady: useEffect running');
-        let cancelled = false;
-        getShikiHighlighter()
-            .then(() => {
-                console.log('[East] useShikiReady: Promise resolved, cancelled:', cancelled);
-                if (!cancelled) {
-                    setReady(true);
-                }
-            })
-            .catch(err => {
-                console.error('[East] useShikiReady: Error:', err);
-            });
-        return () => {
-            console.log('[East] useShikiReady: Cleanup');
-            cancelled = true;
-        };
-    }, []);
-
-    return ready;
-}
-
-type ViewMode = 'function' | 'both' | 'logs';
+type ViewMode = 'output' | 'logs';
 
 interface TaskPreviewContentProps {
     apiUrl: string;
@@ -84,23 +50,6 @@ interface TaskPreviewContentProps {
     task: string;
     taskInfo: TaskStatusInfo | null;
     outputHash: string | null;
-}
-
-
-// Combined view state
-interface ViewState {
-    mode: ViewMode | null;
-    prevMode: ViewMode | null;
-    sizes: [number, number] | null;
-}
-
-// Helper to get sizes for a mode
-function getSizesForMode(mode: ViewMode): [number, number] {
-    switch (mode) {
-        case 'function': return [100, 0];
-        case 'logs': return [0, 100];
-        default: return [60, 40];
-    }
 }
 
 /**
@@ -156,62 +105,39 @@ const TaskPreviewContent = memo(function TaskPreviewContent({
         defaultValue: 'stdout',
     });
 
-
-    const [viewState, setViewState] = useState<ViewState>({
-        mode: null,
-        prevMode: null,
-        sizes: null,
-    });
+    // View mode state
+    const [viewMode, setViewMode] = useState<ViewMode | null>(null);
 
     // Set initial view mode once data loads
     useEffect(() => {
         if (isLoading && stdout?.data === undefined && stderr?.data === undefined) return;
-        setViewState(prev => {
-            if (prev.mode !== null) return prev;
-            const mode: ViewMode = ir === null ? 'logs' : 'function';
-            const sizes = getSizesForMode(mode);
-            return { mode, prevMode: mode, sizes };
+        setViewMode(prev => {
+            if (prev !== null) return prev;
+            // Default to logs if no UI component, otherwise output
+            return ir === null ? 'logs' : 'output';
         });
     }, [isLoading, stdout?.data, stderr?.data, ir, taskInfo?.status.type]);
 
-
-    // Handler for view mode change
-    const handleViewModeChange = (mode: ViewMode) => {
-        setViewState(prev => ({
-            ...prev,
-            mode,
-            prevMode: prev.mode,
-            sizes: getSizesForMode(mode),
-        }));
-    };
-
-    // Function panel content
-    const functionPanel = useMemo(() => {
+    // Output panel content
+    const outputPanel = useMemo(() => {
         // Task not up-to-date - show status message
         if (taskInfo?.status.type !== 'up-to-date') {
             return (
-                <Box height="100%" display="flex" alignItems="center" justifyContent="center">
-                    <VStack gap={2}>
-                        <Text color="gray.500">
-                            Task is {taskInfo?.status.type ?? 'unknown'}
-                        </Text>
-                        <Text color="gray.400" fontSize="sm">
-                            Run the task to see output
-                        </Text>
-                    </VStack>
-                </Box>
+                <StatusDisplay
+                    variant="info"
+                    title={`Task is ${taskInfo?.status.type ?? 'unknown'}`}
+                    message="Run the task to see output"
+                />
             );
         }
 
         // Loading - show spinner
         if (isLoading) {
             return (
-                <Box height="100%" display="flex" alignItems="center" justifyContent="center">
-                    <VStack gap={2}>
-                        <Spinner size="md" />
-                        <Text color="gray.500" fontSize="sm">Loading component...</Text>
-                    </VStack>
-                </Box>
+                <StatusDisplay
+                    variant="loading"
+                    title="Loading output..."
+                />
             );
         }
 
@@ -225,156 +151,77 @@ const TaskPreviewContent = memo(function TaskPreviewContent({
         }
 
         // Not a UIComponent - output exists but couldn't decode as UIComponent
-        // Use printFor to show the raw value as a string
+        // Render using the type-aware EastValueViewer
         if (output && ir === null) {
+            // Check output size - if too large, show warning instead of rendering
+            const MAX_RENDER_SIZE = 512 * 1024; // 512KB
+            const outputSize = output instanceof Uint8Array ? output.length : 0;
+
+            if (outputSize > MAX_RENDER_SIZE) {
+                return (
+                    <StatusDisplay
+                        variant="warning"
+                        title="Output too large to display"
+                        message={`The task output is ${(outputSize / 1024 / 1024).toFixed(2)} MB, which exceeds the ${(MAX_RENDER_SIZE / 1024).toFixed(0)} KB display limit. Consider using a smaller dataset or accessing the output programmatically.`}
+                    />
+                );
+            }
+
             try {
                 const decoded = decodeBeast2(output);
-                const toJSON = toJSONFor(decoded.type);
-                const printed = JSON.stringify(toJSON(decoded.value), null, 2);
                 return (
                     <Box height="100%" overflow="auto" p="4">
-                        <CodeBlock.Root code={printed} language="text">
-                            <CodeBlock.Header>
-                                <Text fontSize="xs" color="gray.500">Raw Output</Text>
-                            </CodeBlock.Header>
-                            <CodeBlock.Content>
-                                <CodeBlock.Code>
-                                    <CodeBlock.CodeText />
-                                </CodeBlock.Code>
-                            </CodeBlock.Content>
-                        </CodeBlock.Root>
+                        <Text fontSize="xs" color="gray.500" mb={2}>Raw Output ({(outputSize / 1024).toFixed(1)} KB)</Text>
+                        <EastValueViewer type={decoded.type} value={decoded.value} />
                     </Box>
                 );
             } catch (e) {
                 const errorMessage = e instanceof Error ? e.message : String(e);
-                return (
-                    <Box height="100%" overflow="auto" p="4">
-                        <CodeBlock.Root code={errorMessage} language="text">
-                            <CodeBlock.Header>
-                                <Text fontSize="xs">Decode Error</Text>
-                                <CodeBlock.CopyTrigger asChild>
-                                    <IconButton variant="ghost" size="xs">
-                                        <CodeBlock.CopyIndicator copied={<FontAwesomeIcon icon={faCheck} />}>
-                                            <FontAwesomeIcon icon={faCopy} />
-                                        </CodeBlock.CopyIndicator>
-                                    </IconButton>
-                                </CodeBlock.CopyTrigger>
-                            </CodeBlock.Header>
-                            <CodeBlock.Content>
-                                <CodeBlock.Code>
-                                    <CodeBlock.CodeText />
-                                </CodeBlock.Code>
-                            </CodeBlock.Content>
-                        </CodeBlock.Root>
-                    </Box>
-                );
+                return <StatusDisplay variant="error" title="Failed to render output" details={errorMessage} />;
             }
         }
 
         // No output available
         return (
-            <Box height="100%" display="flex" alignItems="center" justifyContent="center">
-                <Text color="gray.500">
-                    No output available for task "{task}"
-                </Text>
-            </Box>
+            <StatusDisplay
+                variant="info"
+                title={`No output available for task "${task}"`}
+            />
         );
     }, [ir, task, isLoading, output, taskInfo?.status.type]);
 
     // Get active tab content
     const activeLogContent = useMemo(() => tabs.value === 'stderr' ? stderrContent : stdoutContent, [tabs.value, stderrContent, stdoutContent]);
 
-    // Track highlighter ready state
-    const shikiReady = useShikiReady();
-    console.log('[East] TaskPreview: shikiReady:', shikiReady, 'contentLen:', activeLogContent.length);
-
-    // Logs panel content - wait for Shiki to be ready
+    // Logs panel content - using virtualized viewer for performance
     const logsPanel = useMemo(() => {
-        if (!shikiReady) {
-            return (
-                <Box height="100%" display="flex" alignItems="center" justifyContent="center">
-                    <VStack gap={2}>
-                        <Spinner size="md" />
-                        <Text color="gray.500" fontSize="sm">Loading syntax highlighter...</Text>
-                    </VStack>
-                </Box>
-            );
-        }
-
         return (
-            <Box position="relative" height="100%" width="100%">
-                <Box position="absolute" inset="0" overflow="hidden">
-                    <Tabs.RootProvider value={tabs} size="sm" variant="line" height={"100%"}>
-                        <Box
-                            height="100%"
-                            display="flex"
-                            flexDirection="column"
-                            p="4"
-                        >
-                            <CodeBlock.Root
-                                code={activeLogContent}
-                                language="bash"
-                                flex="1"
-                                minHeight="0"
-                                display="flex"
-                                flexDirection="column"
-                            >
-                                <CodeBlock.Header flexShrink={0}>
-                                    <Tabs.List>
-                                        <Tabs.Trigger value="stdout">stdout</Tabs.Trigger>
-                                        <Tabs.Trigger value="stderr">stderr</Tabs.Trigger>
-                                    </Tabs.List>
-                                    <CodeBlock.CopyTrigger asChild>
-                                        <IconButton variant="ghost" size="xs">
-                                            <CodeBlock.CopyIndicator copied={<FontAwesomeIcon icon={faCheck} />}>
-                                                <FontAwesomeIcon icon={faCopy} />
-                                            </CodeBlock.CopyIndicator>
-                                        </IconButton>
-                                    </CodeBlock.CopyTrigger>
-                                </CodeBlock.Header>
-                                <CodeBlock.Content
-                                    flex="1"
-                                    minHeight="0"
-                                    overflow="auto"
-                                >
-                                    <CodeBlock.Code>
-                                        <CodeBlock.CodeText />
-                                    </CodeBlock.Code>
-                                </CodeBlock.Content>
-                            </CodeBlock.Root>
-                        </Box>
-                    </Tabs.RootProvider>
-                </Box>
-            </Box>
+            <VirtualizedLogViewer
+                content={activeLogContent}
+                tabs={tabs}
+            />
         );
-    }, [activeLogContent, tabs, shikiReady]);
+    }, [activeLogContent, tabs]);
 
-    // Loading - show while we don't have panel sizes yet
-    if (viewState.sizes === null) {
+    // Loading - show while we don't have view mode yet
+    if (viewMode === null) {
         return (
-            <Box
-                flex={1}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-            >
-                <VStack gap={2}>
-                    <Spinner size="lg" />
-                    <Center color="gray.500"><Text>Loading task output...</Text></Center>
-                </VStack>
-            </Box>
+            <StatusDisplay
+                variant="loading"
+                title="Loading task..."
+            />
         );
     }
 
     // Error
     if (error) {
-        return <ErrorDisplay message={error instanceof Error ? error.message : String(error)} />;
+        return <StatusDisplay variant="error" title="Failed to load task output" details={error instanceof Error ? error.message : String(error)} />;
     }
 
-    // Render the split view
+    // Render the view
     return (
         <EastStoreProvider store={store}>
-            <Box flex={1} display="flex" flexDirection="column" overflow="hidden">
+            <Box height="100%" display="flex" flexDirection="column" overflow="hidden">
                 {/* Toolbar with view toggle */}
                 <Flex
                     px={4}
@@ -384,25 +231,20 @@ const TaskPreviewContent = memo(function TaskPreviewContent({
                     bg="white"
                     align="center"
                     justify="space-between"
+                    flexShrink={0}
                 >
                     <Text fontSize="sm" fontWeight="medium" color="gray.700">
                         {task}
                     </Text>
                     <SegmentGroup.Root
                         size="xs"
-                        value={viewState.mode}
-                        onValueChange={(details) => handleViewModeChange(details.value as ViewMode)}
+                        value={viewMode}
+                        onValueChange={(details) => setViewMode(details.value as ViewMode)}
                     >
                         <SegmentGroup.Indicator />
-                        <SegmentGroup.Item value="function" title="Function">
+                        <SegmentGroup.Item value="output" title="Output">
                             <SegmentGroup.ItemText>
                                 <FontAwesomeIcon icon={faCode} />
-                            </SegmentGroup.ItemText>
-                            <SegmentGroup.ItemHiddenInput />
-                        </SegmentGroup.Item>
-                        <SegmentGroup.Item value="both" title="Both">
-                            <SegmentGroup.ItemText>
-                                <FontAwesomeIcon icon={faColumns} />
                             </SegmentGroup.ItemText>
                             <SegmentGroup.ItemHiddenInput />
                         </SegmentGroup.Item>
@@ -417,46 +259,12 @@ const TaskPreviewContent = memo(function TaskPreviewContent({
 
                 {/* Panel content */}
                 <Box flex={1} overflow="hidden" minHeight={0}>
-                    <Splitter.Root
-                        defaultSize={viewState.sizes!}
-                        panels={[
-                            { id: 'function', minSize: 0 },
-                            { id: 'logs', minSize: 0 },
-                        ]}
-                        height="100%"
-                    >
-                        <Splitter.Context>
-                            {(splitter) => {
-                                // Only update sizes when mode actually changes
-                                if (viewState.prevMode !== viewState.mode) {
-                                    splitter.setSizes(viewState.sizes!);
-                                }
-
-                                return (
-                                    <>
-                                        <Splitter.Panel id="function" height="100%">
-                                            {functionPanel}
-                                        </Splitter.Panel>
-
-                                        <Splitter.ResizeTrigger
-                                            id="function:logs"
-                                            disabled={viewState.mode !== 'both'}
-                                            display={viewState.mode === 'both' ? 'flex' : 'none'}
-                                        />
-
-                                        <Splitter.Panel id="logs" height="100%">
-                                            {logsPanel}
-                                        </Splitter.Panel>
-                                    </>
-                                );
-                            }}
-                        </Splitter.Context>
-                    </Splitter.Root>
+                    {viewMode === 'output' ? outputPanel : logsPanel}
                 </Box>
             </Box>
         </EastStoreProvider>
     );
-}, (prev, next) => prev.task === next.task && prev.workspace === next.workspace && prev.outputHash === next.outputHash);
+}, (prev, next) => prev.task === next.task && prev.workspace === next.workspace && prev.outputHash === next.outputHash && prev.taskInfo?.status.type === next.taskInfo?.status.type);
 
 /**
  * Outer component that handles context and passes props to memoized inner component.
@@ -490,22 +298,11 @@ export function TaskPreview() {
     // No task selected
     if (!selectedWorkspace || !selectedTask) {
         return (
-            <Box
-                flex={1}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                bg="gray.50"
-            >
-                <VStack gap={2}>
-                    <Text color="gray.500" fontSize="lg">
-                        Select a task to preview
-                    </Text>
-                    <Text color="gray.400" fontSize="sm">
-                        Choose a workspace and task from the tree on the left
-                    </Text>
-                </VStack>
-            </Box>
+            <StatusDisplay
+                variant="info"
+                title="Select a task to preview"
+                message="Choose a workspace and task from the tree on the left"
+            />
         );
     }
 

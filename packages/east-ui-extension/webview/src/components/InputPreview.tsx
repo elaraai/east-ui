@@ -7,20 +7,13 @@ import { memo, useMemo } from 'react';
 import {
     Box,
     Text,
-    Spinner,
-    VStack,
     Flex,
-    CodeBlock,
-    IconButton,
 } from '@chakra-ui/react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCopy, faCheck } from '@fortawesome/free-solid-svg-icons';
 import {
     decodeBeast2,
     decodeBeast2For,
     isTypeValueEqual,
     toEastTypeValue,
-    toJSONFor,
     ValueTypeOf,
 } from '@elaraai/east';
 import {
@@ -34,7 +27,8 @@ import {
 import { useE3Context } from '../context/E3Context';
 import { useWorkspaceStatus } from '../hooks/useE3Data';
 import { useInputData } from '../hooks/useInputData';
-import { ErrorDisplay } from './ErrorDisplay';
+import { StatusDisplay } from './StatusDisplay';
+import { EastValueViewer } from './EastValueViewer';
 import { UIComponentType } from '@elaraai/east-ui';
 import type { DatasetStatusInfo } from '@elaraai/e3-api-client';
 
@@ -94,28 +88,21 @@ const InputPreviewContent = memo(function InputPreviewContent({
         // Input not up-to-date - show status message
         if (inputInfo?.status.type !== 'up-to-date') {
             return (
-                <Box height="100%" display="flex" alignItems="center" justifyContent="center">
-                    <VStack gap={2}>
-                        <Text color="gray.500">
-                            Input is {inputInfo?.status.type ?? 'unknown'}
-                        </Text>
-                        <Text color="gray.400" fontSize="sm">
-                            Set the input value to see output
-                        </Text>
-                    </VStack>
-                </Box>
+                <StatusDisplay
+                    variant="info"
+                    title={`Input is ${inputInfo?.status.type ?? 'unknown'}`}
+                    message="Set the input value to see output"
+                />
             );
         }
 
         // Loading - show spinner
         if (isLoading) {
             return (
-                <Box height="100%" display="flex" alignItems="center" justifyContent="center">
-                    <VStack gap={2}>
-                        <Spinner size="md" />
-                        <Text color="gray.500" fontSize="sm">Loading input...</Text>
-                    </VStack>
-                </Box>
+                <StatusDisplay
+                    variant="loading"
+                    title="Loading input..."
+                />
             );
         }
 
@@ -129,65 +116,48 @@ const InputPreviewContent = memo(function InputPreviewContent({
         }
 
         // Not a UIComponent - output exists but couldn't decode as UIComponent
-        // Use printFor to show the raw value as a string
+        // Render using the type-aware EastValueViewer
         if (output && ir === null) {
+            // Check output size - if too large, show warning instead of rendering
+            const MAX_RENDER_SIZE = 512 * 1024; // 512KB
+            const outputSize = output instanceof Uint8Array ? output.length : 0;
+
+            if (outputSize > MAX_RENDER_SIZE) {
+                return (
+                    <StatusDisplay
+                        variant="warning"
+                        title="Input too large to display"
+                        message={`The input data is ${(outputSize / 1024 / 1024).toFixed(2)} MB, which exceeds the ${(MAX_RENDER_SIZE / 1024).toFixed(0)} KB display limit. Consider using a smaller dataset or accessing the data programmatically.`}
+                    />
+                );
+            }
+
             try {
                 const decoded = decodeBeast2(output);
-                const toJSON = toJSONFor(decoded.type);
-                const printed = JSON.stringify(toJSON(decoded.value), null, 2);
                 return (
                     <Box height="100%" overflow="auto" p="4">
-                        <CodeBlock.Root code={printed} language="text">
-                            <CodeBlock.Header>
-                                <Text fontSize="xs" color="gray.500">Raw Data</Text>
-                            </CodeBlock.Header>
-                            <CodeBlock.Content>
-                                <CodeBlock.Code>
-                                    <CodeBlock.CodeText />
-                                </CodeBlock.Code>
-                            </CodeBlock.Content>
-                        </CodeBlock.Root>
+                        <Text fontSize="xs" color="gray.500" mb={2}>Raw Data ({(outputSize / 1024).toFixed(1)} KB)</Text>
+                        <EastValueViewer type={decoded.type} value={decoded.value} />
                     </Box>
                 );
             } catch (e) {
                 const errorMessage = e instanceof Error ? e.message : String(e);
-                return (
-                    <Box height="100%" overflow="auto" p="4">
-                        <CodeBlock.Root code={errorMessage} language="text">
-                            <CodeBlock.Header>
-                                <Text fontSize="xs">Decode Error</Text>
-                                <CodeBlock.CopyTrigger asChild>
-                                    <IconButton variant="ghost" size="xs">
-                                        <CodeBlock.CopyIndicator copied={<FontAwesomeIcon icon={faCheck} />}>
-                                            <FontAwesomeIcon icon={faCopy} />
-                                        </CodeBlock.CopyIndicator>
-                                    </IconButton>
-                                </CodeBlock.CopyTrigger>
-                            </CodeBlock.Header>
-                            <CodeBlock.Content>
-                                <CodeBlock.Code>
-                                    <CodeBlock.CodeText />
-                                </CodeBlock.Code>
-                            </CodeBlock.Content>
-                        </CodeBlock.Root>
-                    </Box>
-                );
+                return <StatusDisplay variant="error" title="Failed to render data" details={errorMessage} />;
             }
         }
 
         // No output available
         return (
-            <Box height="100%" display="flex" alignItems="center" justifyContent="center">
-                <Text color="gray.500">
-                    No data available for input "{displayName}"
-                </Text>
-            </Box>
+            <StatusDisplay
+                variant="info"
+                title={`No data available for input "${displayName}"`}
+            />
         );
     }, [ir, displayName, isLoading, output, inputInfo?.status.type]);
 
     // Error
     if (error) {
-        return <ErrorDisplay message={error instanceof Error ? error.message : String(error)} />;
+        return <StatusDisplay variant="error" title="Failed to load input" details={error instanceof Error ? error.message : String(error)} />;
     }
 
     // Render

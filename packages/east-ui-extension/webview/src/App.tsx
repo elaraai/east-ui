@@ -3,15 +3,14 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { ChakraProvider, defaultSystem, Box, Flex, CodeBlock } from '@chakra-ui/react';
+import { ChakraProvider, defaultSystem, Box, Flex } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { OverlayManagerProvider } from '@elaraai/east-ui-components';
 import { E3Provider, useE3Context } from './context/E3Context';
 import { Toolbar } from './components/Toolbar';
 import { WorkspaceTree } from './components/WorkspaceTree';
 import { TaskPreview } from './components/TaskPreview';
-import { ErrorDisplay } from './components/ErrorDisplay';
-import { shikiAdapter } from './shiki';
+import { StatusDisplay } from './components/StatusDisplay';
 
 declare global {
     interface Window {
@@ -40,6 +39,7 @@ function AppContent() {
                 {sidebarVisible && (
                     <Box
                         width="250px"
+                        flexShrink={0}
                         borderRight="1px solid"
                         borderColor="gray.200"
                         bg="white"
@@ -50,7 +50,9 @@ function AppContent() {
                 )}
 
                 {/* Main content area */}
-                <TaskPreview />
+                <Box flex={1} minWidth={0} height="100%" overflow="hidden">
+                    <TaskPreview />
+                </Box>
             </Flex>
         </Flex>
     );
@@ -64,7 +66,7 @@ export function App() {
     if (!apiUrl || !repoPath) {
         return (
             <ChakraProvider value={defaultSystem}>
-                <ErrorDisplay message="Missing configuration: API URL or repository path not provided" />
+                <StatusDisplay variant="error" title="Configuration Error" details="Missing configuration: API URL or repository path not provided" />
             </ChakraProvider>
         );
     }
@@ -73,11 +75,9 @@ export function App() {
         <QueryClientProvider client={queryClient}>
             <ChakraProvider value={defaultSystem}>
                 <OverlayManagerProvider>
-                    <CodeBlock.AdapterProvider value={shikiAdapter}>
-                        <E3Provider apiUrl={apiUrl} repoPath={repoPath}>
-                            <AppContent />
-                        </E3Provider>
-                    </CodeBlock.AdapterProvider>
+                    <E3Provider apiUrl={apiUrl} repoPath={repoPath}>
+                        <AppContent />
+                    </E3Provider>
                 </OverlayManagerProvider>
             </ChakraProvider>
         </QueryClientProvider>
