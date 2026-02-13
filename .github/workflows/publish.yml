@@ -127,14 +127,6 @@ jobs:
           fi
           echo "new_version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
-      # Update workspace dependencies before publish
-      - name: Update east-ui-components workspace dependency
-        if: ${{ inputs.publish_east_ui_components && inputs.publish_east_ui }}
-        run: |
-          EAST_UI_VERSION=$(node -p "require('./packages/east-ui/package.json').version")
-          cd packages/east-ui-components
-          npm pkg set "peerDependencies.@elaraai/east-ui=^${EAST_UI_VERSION}"
-
       # Commit all version bumps
       - name: Commit version bumps
         run: |
@@ -166,6 +158,25 @@ jobs:
 
       - name: Push changes and tags
         run: git push origin HEAD --tags
+
+      # Rewrite workspace "*" deps to "beta" for publishing only (not committed)
+      - name: Rewrite workspace deps for publish
+        run: |
+          for pkg in packages/*/package.json; do
+            node -e "
+              const fs = require('fs');
+              const pkg = JSON.parse(fs.readFileSync('$pkg', 'utf8'));
+              for (const field of ['dependencies', 'peerDependencies', 'devDependencies']) {
+                if (!pkg[field]) continue;
+                for (const [name, version] of Object.entries(pkg[field])) {
+                  if (name.startsWith('@elaraai/east-ui') && version === '*') {
+                    pkg[field][name] = 'beta';
+                  }
+                }
+              }
+              fs.writeFileSync('$pkg', JSON.stringify(pkg, null, 2) + '\n');
+            "
+          done
 
       # Publish npm packages in dependency order
       - name: Publish @elaraai/east-ui
