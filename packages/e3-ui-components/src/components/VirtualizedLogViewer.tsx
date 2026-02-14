@@ -5,7 +5,7 @@
 
 import { useRef, useMemo, useEffect, useState, useCallback } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { Box, Flex, Text, IconButton, Tabs, UseTabsReturn, Input, Badge } from '@chakra-ui/react';
+import { Box, Flex, Text, IconButton, Tabs, type UseTabsReturn, Input, Badge } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy, faCheck, faChevronUp, faChevronDown, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 
@@ -15,7 +15,7 @@ interface Match {
     end: number;
 }
 
-interface VirtualizedLogViewerProps {
+export interface VirtualizedLogViewerProps {
     content: string;
     tabs: UseTabsReturn;
 }
@@ -157,22 +157,26 @@ export function VirtualizedLogViewer({ content, tabs }: VirtualizedLogViewerProp
         }
     }, [matches, scrollToMatch]);
 
-    const handlePrevMatch = () => {
+    const handlePrevMatch = useCallback(() => {
         if (matches.length === 0) return;
-        const newIndex = currentMatchIndex === 0 ? matches.length - 1 : currentMatchIndex - 1;
-        setCurrentMatchIndex(newIndex);
-        scrollToMatch(newIndex);
-    };
+        setCurrentMatchIndex(prev => {
+            const newIndex = prev === 0 ? matches.length - 1 : prev - 1;
+            scrollToMatch(newIndex);
+            return newIndex;
+        });
+    }, [matches.length, scrollToMatch]);
 
-    const handleNextMatch = () => {
+    const handleNextMatch = useCallback(() => {
         if (matches.length === 0) return;
-        const newIndex = currentMatchIndex === matches.length - 1 ? 0 : currentMatchIndex + 1;
-        setCurrentMatchIndex(newIndex);
-        scrollToMatch(newIndex);
-    };
+        setCurrentMatchIndex(prev => {
+            const newIndex = prev === matches.length - 1 ? 0 : prev + 1;
+            scrollToMatch(newIndex);
+            return newIndex;
+        });
+    }, [matches.length, scrollToMatch]);
 
     // Handle keyboard shortcuts
-    const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    const handleSearchKeyDown = useCallback((e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
             if (e.shiftKey) {
                 handlePrevMatch();
@@ -183,7 +187,7 @@ export function VirtualizedLogViewer({ content, tabs }: VirtualizedLogViewerProp
         } else if (e.key === 'Escape') {
             setSearchQuery('');
         }
-    };
+    }, [handlePrevMatch, handleNextMatch]);
 
     // Check if scrolled to bottom (within threshold)
     const checkIsAtBottom = useCallback(() => {
@@ -222,15 +226,15 @@ export function VirtualizedLogViewer({ content, tabs }: VirtualizedLogViewerProp
         prevLinesLength.current = lines.length;
     }, [lines.length, virtualizer, searchQuery, isAtBottom]);
 
-    const handleCopy = async () => {
+    const handleCopy = useCallback(async () => {
         try {
             await navigator.clipboard.writeText(content);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
-        } catch (err) {
-            console.error('Failed to copy:', err);
+        } catch {
+            // Failed to copy
         }
-    };
+    }, [content]);
 
     return (
         <Box
@@ -337,7 +341,7 @@ export function VirtualizedLogViewer({ content, tabs }: VirtualizedLogViewerProp
                 >
                     {virtualizer.getVirtualItems().map((virtualItem) => {
                         const lineIndex = virtualItem.index;
-                        const lineText = lines[lineIndex];
+                        const lineText = lines[lineIndex] ?? '';
                         const lineMatches = matchesByLine.get(lineIndex) || [];
 
                         return (

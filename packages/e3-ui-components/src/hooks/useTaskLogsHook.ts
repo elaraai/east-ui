@@ -47,8 +47,7 @@ async function fetchAllLogs(
             totalSize,
             complete: true,
         };
-    } catch (err) {
-        console.error('[useTaskLogs] Error fetching logs:', err);
+    } catch {
         // Return empty result on error
         return {
             data: '',

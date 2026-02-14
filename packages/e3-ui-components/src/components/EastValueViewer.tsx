@@ -6,7 +6,7 @@
 import { Box, Text, Badge } from '@chakra-ui/react';
 import type { EastTypeValue } from '@elaraai/east';
 
-interface EastValueViewerProps {
+export interface EastValueViewerProps {
     type: EastTypeValue;
     value: unknown;
 }

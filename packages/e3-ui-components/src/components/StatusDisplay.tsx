@@ -7,7 +7,7 @@ import { Box, Text, VStack, Spinner, Code } from '@chakra-ui/react';
 
 type StatusVariant = 'error' | 'warning' | 'info' | 'loading';
 
-interface StatusDisplayProps {
+export interface StatusDisplayProps {
     variant: StatusVariant;
     title: string;
     message?: string;
@@ -54,7 +54,6 @@ const variantStyles: Record<StatusVariant, {
 
 /**
  * Reusable component for displaying status messages (errors, warnings, info, loading).
- * Use this instead of ad-hoc Box/VStack combinations for consistent styling.
  */
 export function StatusDisplay({ variant, title, message, details }: StatusDisplayProps) {
     const styles = variantStyles[variant];

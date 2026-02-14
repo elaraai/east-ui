@@ -10,7 +10,7 @@ import { E3Provider, useE3Context } from './context/E3Context';
 import { Toolbar } from './components/Toolbar';
 import { WorkspaceTree } from './components/WorkspaceTree';
 import { TaskPreview } from './components/TaskPreview';
-import { StatusDisplay } from './components/StatusDisplay';
+import { StatusDisplay } from '@elaraai/e3-ui-components';
 
 declare global {
     interface Window {

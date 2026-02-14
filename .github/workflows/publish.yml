@@ -26,6 +26,11 @@ on:
         required: true
         default: true
         type: boolean
+      publish_e3_ui_components:
+        description: 'Publish @elaraai/e3-ui-components'
+        required: true
+        default: true
+        type: boolean
       publish_vscode:
         description: 'Publish VSCode extension'
         required: true
@@ -113,6 +118,18 @@ jobs:
           fi
           echo "new_version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
+      - name: Bump e3-ui-components version
+        if: ${{ inputs.publish_e3_ui_components }}
+        id: version_e3_components
+        working-directory: packages/e3-ui-components
+        run: |
+          if [[ "${{ inputs.release_type }}" == pre* ]]; then
+            npm version ${{ inputs.release_type }} --preid=beta --no-git-tag-version
+          else
+            npm version ${{ inputs.release_type }} --no-git-tag-version
+          fi
+          echo "new_version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
       - name: Bump east-ui-extension version
         if: ${{ inputs.publish_vscode }}
         id: version_extension
@@ -138,6 +155,9 @@ jobs:
           if [[ "${{ inputs.publish_east_ui_components }}" == "true" ]]; then
             PACKAGES="${PACKAGES} east-ui-components@${{ steps.version_components.outputs.new_version }}"
           fi
+          if [[ "${{ inputs.publish_e3_ui_components }}" == "true" ]]; then
+            PACKAGES="${PACKAGES} e3-ui-components@${{ steps.version_e3_components.outputs.new_version }}"
+          fi
           if [[ "${{ inputs.publish_vscode }}" == "true" ]]; then
             PACKAGES="${PACKAGES} east-ui-extension@${{ steps.version_extension.outputs.new_version }}"
           fi
@@ -151,6 +171,9 @@ jobs:
           fi
           if [[ "${{ inputs.publish_east_ui_components }}" == "true" ]]; then
             git tag "east-ui-components-${{ steps.version_components.outputs.new_version }}"
+          fi
+          if [[ "${{ inputs.publish_e3_ui_components }}" == "true" ]]; then
+            git tag "e3-ui-components-${{ steps.version_e3_components.outputs.new_version }}"
           fi
           if [[ "${{ inputs.publish_vscode }}" == "true" ]]; then
             git tag "east-ui-extension-${{ steps.version_extension.outputs.new_version }}"
@@ -169,7 +192,7 @@ jobs:
               for (const field of ['dependencies', 'peerDependencies', 'devDependencies']) {
                 if (!pkg[field]) continue;
                 for (const [name, version] of Object.entries(pkg[field])) {
-                  if (name.startsWith('@elaraai/east-ui') && version === '*') {
+                  if ((name.startsWith('@elaraai/east-ui') || name === '@elaraai/e3-ui-components') && version === '*') {
                     pkg[field][name] = 'beta';
                   }
                 }
@@ -188,6 +211,11 @@ jobs:
         if: ${{ inputs.publish_east_ui_components }}
         run: npm publish --access public --provenance --tag ${{ steps.npm_tag.outputs.tag }}
         working-directory: packages/east-ui-components
+
+      - name: Publish @elaraai/e3-ui-components
+        if: ${{ inputs.publish_e3_ui_components }}
+        run: npm publish --access public --provenance --tag ${{ steps.npm_tag.outputs.tag }}
+        working-directory: packages/e3-ui-components
 
       # VSCode Extension
       - name: Build VSCode extension
@@ -218,6 +246,15 @@ jobs:
         with:
           tag_name: east-ui-components-${{ steps.version_components.outputs.new_version }}
           name: "@elaraai/east-ui-components ${{ steps.version_components.outputs.new_version }}"
+          generate_release_notes: true
+          prerelease: ${{ steps.npm_tag.outputs.prerelease == 'true' }}
+
+      - name: Create GitHub Release for e3-ui-components
+        if: ${{ inputs.publish_e3_ui_components }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: e3-ui-components-${{ steps.version_e3_components.outputs.new_version }}
+          name: "@elaraai/e3-ui-components ${{ steps.version_e3_components.outputs.new_version }}"
           generate_release_notes: true
           prerelease: ${{ steps.npm_tag.outputs.prerelease == 'true' }}
 

@@ -8,7 +8,6 @@ import { datasetGet } from '@elaraai/e3-api-client';
 import type { TaskStatusInfo } from '@elaraai/e3-api-client';
 import { variant } from '@elaraai/east';
 
-
 export function useTaskOutput(
     apiUrl: string,
     workspace: string | null,
