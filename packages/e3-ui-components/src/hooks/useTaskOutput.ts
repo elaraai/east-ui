@@ -5,23 +5,25 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { datasetGet } from '@elaraai/e3-api-client';
-import type { TaskStatusInfo } from '@elaraai/e3-api-client';
+import type { TaskStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
 import { variant } from '@elaraai/east';
 
 export function useTaskOutput(
     apiUrl: string,
+    repo: string,
     workspace: string | null,
     task: TaskStatusInfo | null,
-    outputHash: string | null = null
+    outputHash: string | null = null,
+    requestOptions?: RequestOptions
 ) {
     const isUpToDate = task?.status.type === 'up-to-date';
 
     return useQuery({
         // Include outputHash in key - when hash changes, data changed
-        queryKey: ['taskOutput', apiUrl, workspace, task?.name, outputHash],
+        queryKey: ['taskOutput', apiUrl, repo, workspace, task?.name, outputHash],
         queryFn: () => {
             const pathParts = task?.output?.split('.')?.map((value) => variant('field', value)) ?? [];
-            return datasetGet(apiUrl, 'default', workspace!, pathParts, { token: null });
+            return datasetGet(apiUrl, repo, workspace!, pathParts, requestOptions ?? { token: null });
         },
         enabled: !!apiUrl && !!workspace && !!task && isUpToDate,
     });

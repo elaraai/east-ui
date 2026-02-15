@@ -39,6 +39,7 @@ export function InputPreview() {
         <InputPreviewInner
             key={`${workspace}:${path}`}
             apiUrl={apiUrl}
+            repo="default"
             workspace={workspace}
             path={path}
             inputInfo={inputInfo}
