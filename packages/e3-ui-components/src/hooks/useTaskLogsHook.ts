@@ -5,7 +5,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { taskLogs } from '@elaraai/e3-api-client';
-import type { TaskStatusInfo } from '@elaraai/e3-api-client';
+import type { TaskStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
 
 // Beast2 decoder has stack overflow with large strings, so fetch in chunks
 const CHUNK_SIZE = 64 * 1024; // 64KB per chunk
@@ -13,9 +13,11 @@ const MAX_TOTAL_SIZE = 10 * 1024 * 1024; // 10MB max total
 
 async function fetchAllLogs(
     apiUrl: string,
+    repo: string,
     workspace: string,
     taskName: string,
-    stream: 'stdout' | 'stderr'
+    stream: 'stdout' | 'stderr',
+    requestOptions?: RequestOptions
 ): Promise<{ data: string; offset: bigint; size: bigint; totalSize: bigint; complete: boolean }> {
     try {
         let allData = '';
@@ -23,11 +25,11 @@ async function fetchAllLogs(
         let totalSize = 0n;
 
         while (true) {
-            const chunk = await taskLogs(apiUrl, 'default', workspace, taskName, {
+            const chunk = await taskLogs(apiUrl, repo, workspace, taskName, {
                 stream,
                 offset,
                 limit: CHUNK_SIZE,
-            }, { token: null });
+            }, requestOptions ?? { token: null });
 
             allData += chunk.data;
             totalSize = chunk.totalSize;
@@ -61,17 +63,19 @@ async function fetchAllLogs(
 
 export function useTaskLogs(
     apiUrl: string,
+    repo: string,
     workspace: string | null,
     task: TaskStatusInfo | null,
-    stream: 'stdout' | 'stderr' = 'stdout'
+    stream: 'stdout' | 'stderr' = 'stdout',
+    requestOptions?: RequestOptions
 ) {
     // Only poll while task is actively running
     const isTaskRunning = task?.status.type === 'in-progress' || task?.status.type === 'stale-running';
 
     return useQuery({
         // Include task status in query key so we refetch when status changes
-        queryKey: ['taskLogs', apiUrl, workspace, task?.name, task?.status.type, stream],
-        queryFn: () => fetchAllLogs(apiUrl, workspace!, task!.name, stream),
+        queryKey: ['taskLogs', apiUrl, repo, workspace, task?.name, task?.status.type, stream],
+        queryFn: () => fetchAllLogs(apiUrl, repo, workspace!, task!.name, stream, requestOptions),
         enabled: !!apiUrl && !!workspace && !!task,
         // Only refetch every second while task is running, otherwise stop polling
         refetchInterval: isTaskRunning ? 1000 : false,

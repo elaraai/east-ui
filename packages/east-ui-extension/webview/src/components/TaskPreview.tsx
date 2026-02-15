@@ -57,6 +57,7 @@ export function TaskPreview() {
         <TaskPreviewInner
             key={`${selectedWorkspace}:${selectedTask}`}
             apiUrl={apiUrl}
+            repo="default"
             workspace={selectedWorkspace}
             task={selectedTask}
             taskInfo={taskInfo}

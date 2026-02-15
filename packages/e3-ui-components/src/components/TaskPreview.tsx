@@ -34,7 +34,7 @@ import { useTaskOutput } from '../hooks/useTaskOutput.js';
 import { useTaskLogs as useTaskLogsHook } from '../hooks/useTaskLogsHook.js';
 import { StatusDisplay } from './StatusDisplay.js';
 import { UIComponentType } from '@elaraai/east-ui';
-import type { TaskStatusInfo } from '@elaraai/e3-api-client';
+import type { TaskStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
 
 // Combined platform implementations for decoding Beast2 with Reactive components
 const platformImplementations = [...StateImpl, ...DatasetImpl, ...OverlayImpl];
@@ -43,10 +43,12 @@ type ViewMode = 'output' | 'logs';
 
 export interface TaskPreviewProps {
     apiUrl: string;
+    repo: string;
     workspace: string;
     task: string;
     taskInfo: TaskStatusInfo | null;
     outputHash: string | null;
+    requestOptions?: RequestOptions;
 }
 
 /**
@@ -56,17 +58,19 @@ export interface TaskPreviewProps {
  */
 export const TaskPreview = memo(function TaskPreview({
     apiUrl,
+    repo,
     workspace,
     task,
     taskInfo,
     outputHash,
+    requestOptions,
 }: TaskPreviewProps) {
     // Fetch task output - pass outputHash so query refetches when data changes
-    const { data: output, isLoading, error } = useTaskOutput(apiUrl, workspace, taskInfo, outputHash);
+    const { data: output, isLoading, error } = useTaskOutput(apiUrl, repo, workspace, taskInfo, outputHash, requestOptions);
 
     // Fetch task logs (stdout and stderr)
-    const { data: stdout } = useTaskLogsHook(apiUrl, workspace, taskInfo, 'stdout');
-    const { data: stderr } = useTaskLogsHook(apiUrl, workspace, taskInfo, 'stderr');
+    const { data: stdout } = useTaskLogsHook(apiUrl, repo, workspace, taskInfo, 'stdout', requestOptions);
+    const { data: stderr } = useTaskLogsHook(apiUrl, repo, workspace, taskInfo, 'stderr', requestOptions);
 
     // Decode the output as IR
     const ir = useMemo(() => {
@@ -259,4 +263,4 @@ export const TaskPreview = memo(function TaskPreview({
             </Box>
         </EastStoreProvider>
     );
-}, (prev, next) => prev.task === next.task && prev.workspace === next.workspace && prev.outputHash === next.outputHash && prev.taskInfo?.status.type === next.taskInfo?.status.type);
+}, (prev, next) => prev.task === next.task && prev.repo === next.repo && prev.workspace === next.workspace && prev.outputHash === next.outputHash && prev.taskInfo?.status.type === next.taskInfo?.status.type);

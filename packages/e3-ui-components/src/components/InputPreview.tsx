@@ -28,16 +28,18 @@ import { useInputData } from '../hooks/useInputData.js';
 import { StatusDisplay } from './StatusDisplay.js';
 import { EastValueViewer } from './EastValueViewer.js';
 import { UIComponentType } from '@elaraai/east-ui';
-import type { DatasetStatusInfo } from '@elaraai/e3-api-client';
+import type { DatasetStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
 
 // Combined platform implementations for decoding Beast2 with Reactive components
 const platformImplementations = [...StateImpl, ...DatasetImpl, ...OverlayImpl];
 
 export interface InputPreviewProps {
     apiUrl: string;
+    repo: string;
     workspace: string;
     path: string;
     inputInfo: DatasetStatusInfo | null;
+    requestOptions?: RequestOptions;
 }
 
 /**
@@ -47,12 +49,14 @@ export interface InputPreviewProps {
  */
 export const InputPreview = memo(function InputPreview({
     apiUrl,
+    repo,
     workspace,
     path,
     inputInfo,
+    requestOptions,
 }: InputPreviewProps) {
     // Fetch input data
-    const { data: output, isLoading, error } = useInputData(apiUrl, workspace, inputInfo);
+    const { data: output, isLoading, error } = useInputData(apiUrl, repo, workspace, inputInfo, requestOptions);
 
     // Decode the output as IR
     const ir = useMemo(() => {
