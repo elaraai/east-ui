@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import {
     Box,
     Text,
@@ -16,7 +16,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDatabase, faCog } from '@fortawesome/free-solid-svg-icons';
 import { useE3Context, getSelectedWorkspace } from '../context/E3Context';
-import { useWorkspaces, useWorkspaceStatus } from '../hooks/useE3Data';
+import { useWorkspaceList, useWorkspaceStatus } from '@elaraai/e3-ui-components';
 import type { WorkspaceInfo, TaskStatusInfo, DatasetStatusInfo } from '@elaraai/e3-api-client';
 
 function getTaskStatusColor(status: TaskStatusInfo['status']['type']): string {
@@ -83,7 +83,12 @@ function WorkspaceTreeContent({ workspaces }: WorkspaceTreeContentProps) {
     const selectedWorkspace = getSelectedWorkspace(selection);
 
     // Fetch status for selected workspace
-    const { data: status, isLoading: statusLoading } = useWorkspaceStatus(apiUrl, selectedWorkspace);
+    const { data: status, isLoading: statusLoading } = useWorkspaceStatus(apiUrl, 'default', selectedWorkspace, undefined, {
+        refetchInterval: 1000,
+        staleTime: 0,
+        gcTime: 0,
+        structuralSharing: false,
+    });
 
     // Build tree nodes
     const nodes = useMemo(() => {
@@ -142,7 +147,7 @@ function WorkspaceTreeContent({ workspaces }: WorkspaceTreeContentProps) {
     }), [nodes]);
 
     // Handle selection
-    const handleSelectionChange = (details: { selectedValue: string[] }) => {
+    const handleSelectionChange = useCallback((details: { selectedValue: string[] }) => {
         const selected = details.selectedValue[0];
         if (!selected) return;
 
@@ -164,10 +169,10 @@ function WorkspaceTreeContent({ workspaces }: WorkspaceTreeContentProps) {
                 setSelection({ type: 'workspace', workspace: selected });
             }
         }
-    };
+    }, [selectedWorkspace, setSelection]);
 
     // Handle expand/collapse
-    const handleExpandedChange = (details: { expandedValue: string[] }) => {
+    const handleExpandedChange = useCallback((details: { expandedValue: string[] }) => {
         const expanded = details.expandedValue;
         // Set the first expanded workspace as selected (to load its tasks)
         if (expanded.length > 0) {
@@ -176,7 +181,9 @@ function WorkspaceTreeContent({ workspaces }: WorkspaceTreeContentProps) {
                 setSelection({ type: 'workspace', workspace: lastExpanded });
             }
         }
-    };
+    }, [setSelection]);
+
+    const expandedValue = useMemo(() => selectedWorkspace ? [selectedWorkspace] : [], [selectedWorkspace]);
 
     return (
         <TreeView.Root
@@ -185,7 +192,7 @@ function WorkspaceTreeContent({ workspaces }: WorkspaceTreeContentProps) {
             animateContent
             onSelectionChange={handleSelectionChange}
             onExpandedChange={handleExpandedChange}
-            expandedValue={selectedWorkspace ? [selectedWorkspace] : []}
+            expandedValue={expandedValue}
         >
             <TreeView.Tree>
                 {collection.rootNode.children.map((node, index) => (
@@ -311,7 +318,9 @@ function TreeNodeRenderer({ node, indexPath, isLoadingTasks }: TreeNodeRendererP
 
 export function WorkspaceTree() {
     const { apiUrl } = useE3Context();
-    const { data: workspaces, isLoading, error } = useWorkspaces(apiUrl);
+    const { data: workspaces, isLoading, error } = useWorkspaceList(apiUrl, 'default', undefined, {
+        refetchInterval: 5000,
+    });
 
     if (isLoading) {
         return (

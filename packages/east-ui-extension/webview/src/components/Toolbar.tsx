@@ -3,6 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
+import { useMemo } from 'react';
 import { Flex, Text, Badge, IconButton } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
@@ -13,10 +14,10 @@ export function Toolbar() {
     const { repoPath, selection, toggleSidebar } = useE3Context();
 
     // Get just the repo name from the full path
-    const repoName = repoPath.split('/').pop() ?? repoPath;
+    const repoName = useMemo(() => repoPath.split('/').pop() ?? repoPath, [repoPath]);
 
     // Get display text for current selection
-    const selectionText = (() => {
+    const selectionText = useMemo(() => {
         switch (selection.type) {
             case 'none':
                 return null;
@@ -27,7 +28,7 @@ export function Toolbar() {
             case 'input':
                 return `${selection.workspace} / ${selection.path.replace(/^\.inputs\./, '')}`;
         }
-    })();
+    }, [selection]);
 
     return (
         <Flex

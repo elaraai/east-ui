@@ -35,7 +35,7 @@ export default defineConfig({
         },
     },
     optimizeDeps: {
-        include: ['sorted-btree', '@elaraai/east', '@elaraai/east-ui', '@elaraai/east-ui-components', 'react-dom/client', '@chakra-ui/react'],
+        include: ['sorted-btree', '@elaraai/east', '@elaraai/east-ui', '@elaraai/east-ui-components', '@elaraai/e3-ui-components', 'react-dom/client', '@chakra-ui/react'],
     },
     // Ensure we can reference assets properly in webview
     base: './',
