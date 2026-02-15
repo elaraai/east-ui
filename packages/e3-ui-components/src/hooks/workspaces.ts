@@ -7,6 +7,7 @@ import { useQuery, useMutation, type UseMutationResult, type UseQueryResult } fr
 import type { QueryOverrides } from './types.js';
 import { workspaceList, workspaceCreate, workspaceGet, workspaceStatus, workspaceRemove, workspaceDeploy, workspaceExport } from '@elaraai/e3-api-client';
 import type { RequestOptions, WorkspaceInfo, WorkspaceStatusResult } from '@elaraai/e3-api-client';
+import type { WorkspaceState } from '@elaraai/e3-types';
 
 export function useWorkspaceList(url: string, repo: string, requestOptions?: RequestOptions, queryOptions?: QueryOverrides): UseQueryResult<WorkspaceInfo[], Error> {
     return useQuery({
@@ -23,7 +24,7 @@ export function useWorkspaceCreate(url: string, repo: string, requestOptions?: R
     });
 }
 
-export function useWorkspaceGet(url: string, repo: string, name: string | null, requestOptions?: RequestOptions, queryOptions?: QueryOverrides) {
+export function useWorkspaceGet(url: string, repo: string, name: string | null, requestOptions?: RequestOptions, queryOptions?: QueryOverrides): UseQueryResult<WorkspaceState, Error> {
     return useQuery({
         queryKey: ['workspaceGet', url, repo, name],
         queryFn: () => workspaceGet(url, repo, name!, requestOptions ?? { token: null }),
