@@ -1,6 +1,6 @@
 {
   "name": "@elaraai/e3-ui-components",
-  "version": "0.0.1-beta.5",
+  "version": "0.0.1-beta.6",
   "description": "React Query hooks and preview components for the e3 API",
   "type": "module",
   "main": "./dist/index.cjs",
