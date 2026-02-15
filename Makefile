@@ -1,8 +1,12 @@
-.PHONY: install build test lint dev clean extension extension-install version-prerelease version-patch version-minor version-major
+.PHONY: install update build test lint dev clean extension extension-install version-prerelease version-patch version-minor version-major
 
 # Install all workspace dependencies
 install:
 	. ${NVM_DIR}/nvm.sh && nvm use && npm ci
+
+# Update @elaraai dependencies
+update:
+	. ${NVM_DIR}/nvm.sh && nvm use && npm update --scope=@elaraai
 
 # Build all packages (in dependency order)
 build:

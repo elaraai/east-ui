@@ -4,6 +4,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
+import type { QueryOverrides } from './types.js';
 import { datasetGet } from '@elaraai/e3-api-client';
 import type { TaskStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
 import { variant } from '@elaraai/east';
@@ -14,7 +15,8 @@ export function useTaskOutput(
     workspace: string | null,
     task: TaskStatusInfo | null,
     outputHash: string | null = null,
-    requestOptions?: RequestOptions
+    requestOptions?: RequestOptions,
+    queryOptions?: QueryOverrides
 ) {
     const isUpToDate = task?.status.type === 'up-to-date';
 
@@ -25,6 +27,7 @@ export function useTaskOutput(
             const pathParts = task?.output?.split('.')?.map((value) => variant('field', value)) ?? [];
             return datasetGet(apiUrl, repo, workspace!, pathParts, requestOptions ?? { token: null });
         },
-        enabled: !!apiUrl && !!workspace && !!task && isUpToDate,
+        enabled: !!workspace && !!task && isUpToDate,
+        ...queryOptions,
     });
 }

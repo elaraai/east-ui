@@ -4,6 +4,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
+import type { QueryOverrides } from './types.js';
 import { datasetGet } from '@elaraai/e3-api-client';
 import type { DatasetStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
 import { variant } from '@elaraai/east';
@@ -13,7 +14,8 @@ export function useInputData(
     repo: string,
     workspace: string | null,
     inputInfo: DatasetStatusInfo | null,
-    requestOptions?: RequestOptions
+    requestOptions?: RequestOptions,
+    queryOptions?: QueryOverrides
 ) {
     const isUpToDate = inputInfo?.status.type === 'up-to-date';
 
@@ -29,6 +31,7 @@ export function useInputData(
                 ?.map((value) => variant('field', value)) ?? [];
             return datasetGet(apiUrl, repo, workspace!, pathParts, requestOptions ?? { token: null });
         },
-        enabled: !!apiUrl && !!workspace && !!inputInfo && isUpToDate,
+        enabled: !!workspace && !!inputInfo && isUpToDate,
+        ...queryOptions,
     });
 }

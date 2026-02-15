@@ -4,6 +4,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
+import type { QueryOverrides } from './types.js';
 import { taskLogs } from '@elaraai/e3-api-client';
 import type { TaskStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
 
@@ -67,7 +68,8 @@ export function useTaskLogs(
     workspace: string | null,
     task: TaskStatusInfo | null,
     stream: 'stdout' | 'stderr' = 'stdout',
-    requestOptions?: RequestOptions
+    requestOptions?: RequestOptions,
+    queryOptions?: QueryOverrides
 ) {
     // Only poll while task is actively running
     const isTaskRunning = task?.status.type === 'in-progress' || task?.status.type === 'stale-running';
@@ -76,8 +78,9 @@ export function useTaskLogs(
         // Include task status in query key so we refetch when status changes
         queryKey: ['taskLogs', apiUrl, repo, workspace, task?.name, task?.status.type, stream],
         queryFn: () => fetchAllLogs(apiUrl, repo, workspace!, task!.name, stream, requestOptions),
-        enabled: !!apiUrl && !!workspace && !!task,
+        enabled: !!workspace && !!task,
         // Only refetch every second while task is running, otherwise stop polling
         refetchInterval: isTaskRunning ? 1000 : false,
+        ...queryOptions,
     });
 }
