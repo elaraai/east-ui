@@ -13,7 +13,7 @@ export function usePackageList(url: string, repo: string, requestOptions?: Reque
     return useQuery({
         queryKey: ['packageList', url, repo],
         queryFn: () => packageList(url, repo, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo,
+        enabled: !!repo,
         ...queryOptions,
     });
 }
@@ -22,7 +22,7 @@ export function usePackageGet(url: string, repo: string, name: string, version: 
     return useQuery({
         queryKey: ['packageGet', url, repo, name, version],
         queryFn: () => packageGet(url, repo, name, version, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo && !!name && !!version,
+        enabled: !!repo && !!name && !!version,
         ...queryOptions,
     });
 }
@@ -37,7 +37,7 @@ export function usePackageExport(url: string, repo: string, name: string, versio
     return useQuery({
         queryKey: ['packageExport', url, repo, name, version],
         queryFn: () => packageExport(url, repo, name, version, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo && !!name && !!version,
+        enabled: !!repo && !!name && !!version,
         ...queryOptions,
     });
 }

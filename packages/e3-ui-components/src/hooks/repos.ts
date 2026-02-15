@@ -12,7 +12,7 @@ export function useRepoList(url: string, requestOptions?: RequestOptions, queryO
     return useQuery({
         queryKey: ['repoList', url],
         queryFn: () => repoList(url, requestOptions ?? { token: null }),
-        enabled: !!url,
+        enabled: true,
         ...queryOptions,
     });
 }
@@ -21,7 +21,7 @@ export function useRepoStatus(url: string, repo: string, requestOptions?: Reques
     return useQuery({
         queryKey: ['repoStatus', url, repo],
         queryFn: () => repoStatus(url, repo, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo,
+        enabled: !!repo,
         ...queryOptions,
     });
 }
@@ -42,7 +42,7 @@ export function useRepoGcStatus(url: string, repo: string, executionId: string, 
     return useQuery({
         queryKey: ['repoGcStatus', url, repo, executionId],
         queryFn: () => repoGcStatus(url, repo, executionId, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo && !!executionId,
+        enabled: !!repo && !!executionId,
         ...queryOptions,
     });
 }

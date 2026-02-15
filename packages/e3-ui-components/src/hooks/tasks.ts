@@ -12,7 +12,7 @@ export function useTaskList(url: string, repo: string, workspace: string | null,
     return useQuery({
         queryKey: ['taskList', url, repo, workspace],
         queryFn: () => taskList(url, repo, workspace!, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo && !!workspace,
+        enabled: !!repo && !!workspace,
         ...queryOptions,
     });
 }
@@ -21,7 +21,7 @@ export function useTaskGet(url: string, repo: string, workspace: string | null, 
     return useQuery({
         queryKey: ['taskGet', url, repo, workspace, name],
         queryFn: () => taskGet(url, repo, workspace!, name!, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo && !!workspace && !!name,
+        enabled: !!repo && !!workspace && !!name,
         ...queryOptions,
     });
 }
@@ -30,7 +30,7 @@ export function useTaskExecutionList(url: string, repo: string, workspace: strin
     return useQuery({
         queryKey: ['taskExecutionList', url, repo, workspace, taskName],
         queryFn: () => taskExecutionList(url, repo, workspace!, taskName!, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo && !!workspace && !!taskName,
+        enabled: !!repo && !!workspace && !!taskName,
         ...queryOptions,
     });
 }

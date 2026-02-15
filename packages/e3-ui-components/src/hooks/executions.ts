@@ -26,7 +26,7 @@ export function useDataflowGraph(url: string, repo: string, workspace: string | 
     return useQuery({
         queryKey: ['dataflowGraph', url, repo, workspace],
         queryFn: () => dataflowGraph(url, repo, workspace!, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo && !!workspace,
+        enabled: !!repo && !!workspace,
         ...queryOptions,
     });
 }
@@ -35,7 +35,7 @@ export function useDataflowExecution(url: string, repo: string, workspace: strin
     return useQuery({
         queryKey: ['dataflowExecution', url, repo, workspace, stateOptions],
         queryFn: () => dataflowExecutePoll(url, repo, workspace!, stateOptions, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo && !!workspace,
+        enabled: !!repo && !!workspace,
         ...queryOptions,
     });
 }
@@ -50,7 +50,7 @@ export function useTaskLogs(url: string, repo: string, workspace: string | null,
     return useQuery({
         queryKey: ['taskLogs', url, repo, workspace, task, logOptions],
         queryFn: () => taskLogs(url, repo, workspace!, task!, logOptions, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo && !!workspace && !!task,
+        enabled: !!repo && !!workspace && !!task,
         ...queryOptions,
     });
 }

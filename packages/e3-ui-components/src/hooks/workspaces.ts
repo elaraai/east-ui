@@ -13,7 +13,7 @@ export function useWorkspaceList(url: string, repo: string, requestOptions?: Req
     return useQuery({
         queryKey: ['workspaceList', url, repo],
         queryFn: () => workspaceList(url, repo, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo,
+        enabled: !!repo,
         ...queryOptions,
     });
 }
@@ -28,7 +28,7 @@ export function useWorkspaceGet(url: string, repo: string, name: string | null, 
     return useQuery({
         queryKey: ['workspaceGet', url, repo, name],
         queryFn: () => workspaceGet(url, repo, name!, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo && !!name,
+        enabled: !!repo && !!name,
         ...queryOptions,
     });
 }
@@ -37,7 +37,7 @@ export function useWorkspaceStatus(url: string, repo: string, name: string | nul
     return useQuery({
         queryKey: ['workspaceStatus', url, repo, name],
         queryFn: () => workspaceStatus(url, repo, name!, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo && !!name,
+        enabled: !!repo && !!name,
         ...queryOptions,
     });
 }
@@ -58,7 +58,7 @@ export function useWorkspaceExport(url: string, repo: string, name: string | nul
     return useQuery({
         queryKey: ['workspaceExport', url, repo, name],
         queryFn: () => workspaceExport(url, repo, name!, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo && !!name,
+        enabled: !!repo && !!name,
         ...queryOptions,
     });
 }

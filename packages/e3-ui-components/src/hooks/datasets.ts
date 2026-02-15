@@ -13,7 +13,7 @@ export function useDatasetList(url: string, repo: string, workspace: string | nu
     return useQuery({
         queryKey: ['datasetList', url, repo, workspace],
         queryFn: () => datasetList(url, repo, workspace!, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo && !!workspace,
+        enabled: !!repo && !!workspace,
         ...queryOptions,
     });
 }
@@ -22,7 +22,7 @@ export function useDatasetListAt(url: string, repo: string, workspace: string | 
     return useQuery({
         queryKey: ['datasetListAt', url, repo, workspace, path],
         queryFn: () => datasetListAt(url, repo, workspace!, path, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo && !!workspace,
+        enabled: !!repo && !!workspace,
         ...queryOptions,
     });
 }
@@ -31,7 +31,7 @@ export function useDatasetListRecursive(url: string, repo: string, workspace: st
     return useQuery({
         queryKey: ['datasetListRecursive', url, repo, workspace, path],
         queryFn: () => datasetListRecursive(url, repo, workspace!, path, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo && !!workspace,
+        enabled: !!repo && !!workspace,
         ...queryOptions,
     });
 }
@@ -40,7 +40,7 @@ export function useDatasetGet(url: string, repo: string, workspace: string | nul
     return useQuery({
         queryKey: ['datasetGet', url, repo, workspace, path],
         queryFn: () => datasetGet(url, repo, workspace!, path, requestOptions ?? { token: null }),
-        enabled: !!url && !!repo && !!workspace,
+        enabled: !!repo && !!workspace,
         ...queryOptions,
     });
 }
