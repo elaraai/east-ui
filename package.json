@@ -8,7 +8,7 @@
     "packages/east-ui-extension/webview"
   ],
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
+    "build": "npm run build -w @elaraai/east-ui -w @elaraai/east-ui-components -w @elaraai/e3-ui-components -w east-ui-preview -w @elaraai/east-ui-showcase -w east-ui-preview-webview",
     "test": "npm run test --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "dev": "npm run dev --workspace=@elaraai/east-ui-showcase",
