@@ -3,10 +3,14 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
+// Utilities
+export { formatApiError, formatError } from './errors.js';
+
 // Hooks
 export * from './hooks/index.js';
 
 // Components
+export { ErrorBoundary, type ErrorBoundaryProps } from './components/ErrorBoundary.js';
 export { InputPreview, type InputPreviewProps } from './components/InputPreview.js';
 export { TaskPreview, type TaskPreviewProps } from './components/TaskPreview.js';
 export { StatusDisplay, type StatusDisplayProps } from './components/StatusDisplay.js';

@@ -203,6 +203,34 @@ export function toChartSeries(value: ChartSeriesValue, seriesIndex: number = 0):
 }
 
 // ============================================================================
+// Axis Type Inference
+// ============================================================================
+
+/**
+ * Infer the Recharts axis type from the East type of a data field.
+ * Peeks at the first non-null value for the given dataKey.
+ */
+export function inferAxisType(
+    rawData: Map<string, ValueTypeOf<typeof LiteralValueType>>[],
+    dataKey: string | undefined,
+): 'number' | 'category' | undefined {
+    if (dataKey === undefined) {
+        console.log('[inferAxisType] dataKey is undefined, returning undefined');
+        return undefined;
+    }
+    console.log(`[inferAxisType] dataKey="${dataKey}", rawData.length=${rawData.length}`);
+    for (const row of rawData) {
+        const val = row.get(dataKey);
+        if (val === undefined) continue;
+        const result = (val.type === 'Integer' || val.type === 'Float') ? 'number' : 'category';
+        console.log(`[inferAxisType] first non-null value for "${dataKey}": type="${val.type}" → axis="${result}"`, val);
+        return result;
+    }
+    console.log(`[inferAxisType] no values found for "${dataKey}", returning undefined`);
+    return undefined;
+}
+
+// ============================================================================
 // Axis Conversion
 // ============================================================================
 
@@ -212,11 +240,13 @@ export function toChartSeries(value: ChartSeriesValue, seriesIndex: number = 0):
  *
  * @param value - The East ChartAxis value
  * @param chart - The Chakra chart instance (for key() function)
+ * @param axisType - Optional Recharts axis type inferred from data
  * @returns Partial XAxisProps
  */
 export function toRechartsXAxis(
     value: ChartAxisValue,
-    chart: UseChartReturn<Record<string, unknown>>
+    chart: UseChartReturn<Record<string, unknown>>,
+    axisType?: 'number' | 'category',
 ): Partial<XAxisProps> {
     const props: Partial<XAxisProps> = {};
 
@@ -249,6 +279,10 @@ export function toRechartsXAxis(
     const axisId = getSomeorUndefined(value.axisId);
     if (axisId !== undefined) props.xAxisId = axisId;
 
+    if (axisType !== undefined) props.type = axisType;
+
+    console.log(`[toRechartsXAxis] axisType=${axisType}, props.type=${props.type}, props.dataKey=${props.dataKey}`);
+
     return props;
 }
 
@@ -258,11 +292,13 @@ export function toRechartsXAxis(
  *
  * @param value - The East ChartAxis value
  * @param chart - The Chakra chart instance (for key() function)
+ * @param axisType - Optional Recharts axis type inferred from data
  * @returns Partial YAxisProps
  */
 export function toRechartsYAxis(
     value: ChartAxisValue,
-    chart: UseChartReturn<Record<string, unknown>>
+    chart: UseChartReturn<Record<string, unknown>>,
+    axisType?: 'number' | 'category',
 ): Partial<YAxisProps> {
     const props: Partial<YAxisProps> = {};
 
@@ -296,6 +332,8 @@ export function toRechartsYAxis(
 
     const axisId = getSomeorUndefined(value.axisId);
     if (axisId !== undefined) props.yAxisId = axisId;
+
+    if (axisType !== undefined) props.type = axisType;
 
     return props;
 }

@@ -28,6 +28,7 @@ import { Chart as EastChart } from "@elaraai/east-ui";
 import { getSomeorUndefined } from "../../utils";
 import {
     prepareChartData,
+    inferAxisType,
     toRechartsXAxis,
     toRechartsYAxis,
     getAxisTickFormat,
@@ -210,10 +211,19 @@ export interface EastChakraComposedChartProps {
  * in a single visualization. Each series specifies its chart type.
  */
 export const EastChakraComposedChart = memo(function EastChakraComposedChart({ value }: EastChakraComposedChartProps) {
+    console.log('[ComposedChart] render', {
+        dataLength: value.data.length,
+        hasDataSeries: getSomeorUndefined(value.dataSeries) !== undefined,
+        dataSeriesKeys: getSomeorUndefined(value.dataSeries) ? Array.from(getSomeorUndefined(value.dataSeries)!.keys()) : [],
+        xAxis: getSomeorUndefined(value.xAxis),
+    });
+
     // Extract xAxis dataKey for data conversion and brush
     const xAxisDataKey = useMemo(() => {
         const xAxis = getSomeorUndefined(value.xAxis);
-        return xAxis ? getSomeorUndefined(xAxis.dataKey) : undefined;
+        const dk = xAxis ? getSomeorUndefined(xAxis.dataKey) : undefined;
+        console.log('[ComposedChart] xAxisDataKey =', dk);
+        return dk;
     }, [value.xAxis]);
 
     // Convert series to composed format with chart type info
@@ -286,21 +296,29 @@ export const EastChakraComposedChart = memo(function EastChakraComposedChart({ v
 
     // X-axis configuration
     const xAxis = useMemo(() => {
+        console.log('[ComposedChart] xAxis memo running, value.data.length =', value.data.length, 'xAxisDataKey =', xAxisDataKey);
         const axisValue = getSomeorUndefined(value.xAxis);
-        if (!axisValue) return { props: {}, tickFormatter: undefined };
-        const props = toRechartsXAxis(axisValue, chart);
+        if (!axisValue) {
+            console.log('[ComposedChart] no axisValue, returning empty');
+            return { props: {}, tickFormatter: undefined };
+        }
+        const axisType = inferAxisType(value.data, xAxisDataKey);
+        console.log('[ComposedChart] inferAxisType result =', axisType);
+        const props = toRechartsXAxis(axisValue, chart, axisType);
         const tickFormat = getAxisTickFormat(axisValue);
         return { props, tickFormatter: createTickFormatter(tickFormat, chart) };
-    }, [value.xAxis, chart]);
+    }, [value.xAxis, value.data, xAxisDataKey, chart]);
 
     // Y-axis configuration (primary, left)
     const yAxis = useMemo(() => {
         const axisValue = getSomeorUndefined(value.yAxis);
         if (!axisValue) return { props: {}, tickFormatter: undefined, show: true };
-        const props = toRechartsYAxis(axisValue, chart);
+        const yAxisDataKey = getSomeorUndefined(axisValue.dataKey);
+        const axisType = inferAxisType(value.data, yAxisDataKey);
+        const props = toRechartsYAxis(axisValue, chart, axisType);
         const tickFormat = getAxisTickFormat(axisValue);
         return { props, tickFormatter: createTickFormatter(tickFormat, chart), show: true };
-    }, [value.yAxis, chart]);
+    }, [value.yAxis, value.data, chart]);
 
     // Y-axis2 configuration (secondary, right)
     const yAxis2 = useMemo(() => {

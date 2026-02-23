@@ -8,8 +8,6 @@ import {
     type ExprType,
     StringType,
     NullType,
-    OptionType,
-    StructType,
     VariantType,
     East,
     variant,
@@ -67,33 +65,6 @@ export type StatIndicatorLiteral = "up" | "down";
 export function StatIndicator(direction: "up" | "down"): ExprType<StatIndicatorType> {
     return East.value(variant(direction, null), StatIndicatorType);
 }
-
-// ============================================================================
-// Stat Type
-// ============================================================================
-
-/**
- * Type for Stat component data.
- *
- * @remarks
- * Stat displays a key metric with optional label, help text, and trend indicator.
- *
- * @property label - The stat label/title
- * @property value - The main stat value
- * @property helpText - Optional help text or trend description
- * @property indicator - Optional trend indicator (up/down)
- */
-export const StatType = StructType({
-    label: StringType,
-    value: StringType,
-    helpText: OptionType(StringType),
-    indicator: OptionType(StatIndicatorType),
-});
-
-/**
- * Type representing the Stat structure.
- */
-export type StatType = typeof StatType;
 
 // ============================================================================
 // Stat Style

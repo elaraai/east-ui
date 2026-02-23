@@ -4,7 +4,7 @@
  */
 
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
-import { DataList } from "../../src/index.js";
+import { DataList, Text } from "../../src/index.js";
 
 describeEast("DataList", (test) => {
     // =========================================================================
@@ -12,30 +12,30 @@ describeEast("DataList", (test) => {
     // =========================================================================
 
     test("creates item with string label and value", $ => {
-        const item = $.let(DataList.Item("Status", "Active"));
+        const item = $.let(DataList.Item("Status", Text.Root("Active")));
 
         $(Assert.equal(item.label, "Status"));
-        $(Assert.equal(item.value, "Active"));
+        $(Assert.equal(item.value.unwrap().unwrap("Text").value, "Active"));
     });
 
     test("creates item with expression label and value", $ => {
         const item = $.let(DataList.Item(
             "Name",
-            "John Doe"
+            Text.Root("John Doe")
         ));
 
         $(Assert.equal(item.label, "Name"));
-        $(Assert.equal(item.value, "John Doe"));
+        $(Assert.equal(item.value.unwrap().unwrap("Text").value, "John Doe"));
     });
 
     test("creates item with mixed string and expression", $ => {
         const item = $.let(DataList.Item(
             "Role",
-            "Administrator"
+            Text.Root("Administrator")
         ));
 
         $(Assert.equal(item.label, "Role"));
-        $(Assert.equal(item.value, "Administrator"));
+        $(Assert.equal(item.value.unwrap().unwrap("Text").value, "Administrator"));
     });
 
     // =========================================================================
@@ -44,8 +44,8 @@ describeEast("DataList", (test) => {
 
     test("creates data list with items", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Name", "Alice"),
-            DataList.Item("Email", "alice@example.com"),
+            DataList.Item("Name", Text.Root("Alice")),
+            DataList.Item("Email", Text.Root("alice@example.com")),
         ]));
 
         $(Assert.equal(list.unwrap().unwrap("DataList").orientation.hasTag("none"), true));
@@ -55,7 +55,7 @@ describeEast("DataList", (test) => {
 
     test("creates data list with single item", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Status", "Active"),
+            DataList.Item("Status", Text.Root("Active")),
         ]));
 
         $(Assert.equal(list.unwrap().unwrap("DataList").orientation.hasTag("none"), true));
@@ -74,7 +74,7 @@ describeEast("DataList", (test) => {
 
     test("creates horizontal data list", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Name", "Bob"),
+            DataList.Item("Name", Text.Root("Bob")),
         ], {
             orientation: "horizontal",
         }));
@@ -85,7 +85,7 @@ describeEast("DataList", (test) => {
 
     test("creates vertical data list", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Status", "Active"),
+            DataList.Item("Status", Text.Root("Active")),
         ], {
             orientation: "vertical",
         }));
@@ -99,7 +99,7 @@ describeEast("DataList", (test) => {
 
     test("creates data list with sm size", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Label", "Value"),
+            DataList.Item("Label", Text.Root("Value")),
         ], {
             size: "sm",
         }));
@@ -109,7 +109,7 @@ describeEast("DataList", (test) => {
 
     test("creates data list with md size", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Label", "Value"),
+            DataList.Item("Label", Text.Root("Value")),
         ], {
             size: "md",
         }));
@@ -119,7 +119,7 @@ describeEast("DataList", (test) => {
 
     test("creates data list with lg size", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Label", "Value"),
+            DataList.Item("Label", Text.Root("Value")),
         ], {
             size: "lg",
         }));
@@ -133,7 +133,7 @@ describeEast("DataList", (test) => {
 
     test("creates data list with subtle variant", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Label", "Value"),
+            DataList.Item("Label", Text.Root("Value")),
         ], {
             variant: "subtle",
         }));
@@ -144,7 +144,7 @@ describeEast("DataList", (test) => {
 
     test("creates data list with bold variant", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Label", "Value"),
+            DataList.Item("Label", Text.Root("Value")),
         ], {
             variant: "bold",
         }));
@@ -154,7 +154,7 @@ describeEast("DataList", (test) => {
 
     test("creates data list with DataListVariant helper", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Label", "Value"),
+            DataList.Item("Label", Text.Root("Value")),
         ], {
             variant: "bold",
         }));
@@ -168,8 +168,8 @@ describeEast("DataList", (test) => {
 
     test("creates data list with all options", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Name", "Alice"),
-            DataList.Item("Role", "Admin"),
+            DataList.Item("Name", Text.Root("Alice")),
+            DataList.Item("Role", Text.Root("Admin")),
         ], {
             orientation: "horizontal",
             size: "md",
@@ -183,10 +183,10 @@ describeEast("DataList", (test) => {
 
     test("creates user details data list", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Username", "alice_smith"),
-            DataList.Item("Email", "alice@example.com"),
-            DataList.Item("Status", "Active"),
-            DataList.Item("Role", "Administrator"),
+            DataList.Item("Username", Text.Root("alice_smith")),
+            DataList.Item("Email", Text.Root("alice@example.com")),
+            DataList.Item("Status", Text.Root("Active")),
+            DataList.Item("Role", Text.Root("Administrator")),
         ], {
             orientation: "vertical",
             variant: "subtle",
@@ -198,9 +198,9 @@ describeEast("DataList", (test) => {
 
     test("creates product info data list", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("SKU", "PRD-12345"),
-            DataList.Item("Price", "$99.99"),
-            DataList.Item("Stock", "In Stock"),
+            DataList.Item("SKU", Text.Root("PRD-12345")),
+            DataList.Item("Price", Text.Root("$99.99")),
+            DataList.Item("Stock", Text.Root("In Stock")),
         ], {
             size: "sm",
         }));
@@ -210,10 +210,10 @@ describeEast("DataList", (test) => {
 
     test("creates order summary data list", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Order ID", "#ORD-2024-001"),
-            DataList.Item("Date", "Dec 15, 2024"),
-            DataList.Item("Total", "$245.00"),
-            DataList.Item("Status", "Shipped"),
+            DataList.Item("Order ID", Text.Root("#ORD-2024-001")),
+            DataList.Item("Date", Text.Root("Dec 15, 2024")),
+            DataList.Item("Total", Text.Root("$245.00")),
+            DataList.Item("Status", Text.Root("Shipped")),
         ], {
             orientation: "horizontal",
             size: "lg",
@@ -227,9 +227,9 @@ describeEast("DataList", (test) => {
 
     test("creates metadata data list", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Created", "Jan 1, 2024"),
-            DataList.Item("Modified", "Dec 20, 2024"),
-            DataList.Item("Version", "1.2.3"),
+            DataList.Item("Created", Text.Root("Jan 1, 2024")),
+            DataList.Item("Modified", Text.Root("Dec 20, 2024")),
+            DataList.Item("Version", Text.Root("1.2.3")),
         ]));
 
         $(Assert.equal(list.unwrap().unwrap("DataList").orientation.hasTag("none"), true));

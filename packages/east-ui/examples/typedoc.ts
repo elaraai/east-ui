@@ -141,7 +141,7 @@ iconStyledExample.toIR().compile([])();
 // File: src/display/stat/index.ts
 // Export: Stat.Root
 const statRootExample = East.function([], UIComponentType, $ => {
-    return Stat.Root("Growth", "+23.36%", {
+    return Stat.Root("Growth", Text.Root("+23.36%"), {
         helpText: "From last week",
         indicator: "up",
     });
@@ -596,9 +596,9 @@ actionBarRootExample.toIR().compile([])();
 // Export: DataList.Root, DataList.Item
 const dataListRootExample = East.function([], UIComponentType, $ => {
     return DataList.Root([
-        DataList.Item("Name", "John Doe"),
-        DataList.Item("Email", "john@example.com"),
-        DataList.Item("Role", "Administrator"),
+        DataList.Item("Name", Text.Root("John Doe")),
+        DataList.Item("Email", Text.Root("john@example.com")),
+        DataList.Item("Role", Text.Root("Administrator")),
     ], {
         orientation: "horizontal",
     });

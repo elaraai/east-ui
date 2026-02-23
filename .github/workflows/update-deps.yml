@@ -33,29 +33,13 @@ jobs:
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Install dependencies
+        run: make install
+
       - name: Update @elaraai dependencies
         id: update
         run: |
-          BEFORE=$(node -p "JSON.stringify({
-            east: require('./package-lock.json').packages['node_modules/@elaraai/east']?.version ?? 'N/A',
-            std: require('./package-lock.json').packages['node_modules/@elaraai/east-node-std']?.version ?? 'N/A',
-            e3Server: require('./package-lock.json').packages['node_modules/@elaraai/e3-api-server']?.version ?? 'N/A',
-            e3Client: require('./package-lock.json').packages['node_modules/@elaraai/e3-api-client']?.version ?? 'N/A',
-            e3Types: require('./package-lock.json').packages['node_modules/@elaraai/e3-types']?.version ?? 'N/A'
-          })")
-
-          npm update @elaraai/east @elaraai/east-node-std @elaraai/e3-api-server @elaraai/e3-api-client @elaraai/e3-types
-
-          AFTER=$(node -p "JSON.stringify({
-            east: require('./package-lock.json').packages['node_modules/@elaraai/east']?.version ?? 'N/A',
-            std: require('./package-lock.json').packages['node_modules/@elaraai/east-node-std']?.version ?? 'N/A',
-            e3Server: require('./package-lock.json').packages['node_modules/@elaraai/e3-api-server']?.version ?? 'N/A',
-            e3Client: require('./package-lock.json').packages['node_modules/@elaraai/e3-api-client']?.version ?? 'N/A',
-            e3Types: require('./package-lock.json').packages['node_modules/@elaraai/e3-types']?.version ?? 'N/A'
-          })")
-
-          echo "before=${BEFORE}" >> $GITHUB_OUTPUT
-          echo "after=${AFTER}" >> $GITHUB_OUTPUT
+          make update
 
           if git diff --quiet package-lock.json; then
             echo "has_updates=false" >> $GITHUB_OUTPUT
@@ -74,18 +58,18 @@ jobs:
 
       - name: Build
         if: steps.update.outputs.has_updates == 'true'
-        run: npm run build
+        run: make build
 
       - name: Run linter
         if: steps.update.outputs.has_updates == 'true'
         id: lint
-        run: npm run lint
+        run: make lint
         continue-on-error: true
 
       - name: Run tests
         if: steps.update.outputs.has_updates == 'true'
         id: test
-        run: npm test
+        run: make test
         continue-on-error: true
 
       - name: Determine test status

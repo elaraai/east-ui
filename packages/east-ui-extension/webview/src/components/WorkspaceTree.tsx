@@ -16,7 +16,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDatabase, faCog } from '@fortawesome/free-solid-svg-icons';
 import { useE3Context, getSelectedWorkspace } from '../context/E3Context';
-import { useWorkspaceList, useWorkspaceStatus } from '@elaraai/e3-ui-components';
+import { useWorkspaceList, useWorkspaceStatus, formatApiError } from '@elaraai/e3-ui-components';
 import type { WorkspaceInfo, TaskStatusInfo, DatasetStatusInfo } from '@elaraai/e3-api-client';
 
 function getTaskStatusColor(status: TaskStatusInfo['status']['type']): string {
@@ -337,8 +337,13 @@ export function WorkspaceTree() {
         return (
             <Box p={4}>
                 <Text color="red.500" fontSize="sm">
-                    Error: {error instanceof Error ? error.message : String(error)}
+                    {formatApiError(error).message}
                 </Text>
+                {formatApiError(error).details && (
+                    <Text color="red.400" fontSize="xs" mt={1}>
+                        {formatApiError(error).details}
+                    </Text>
+                )}
             </Box>
         );
     }

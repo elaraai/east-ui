@@ -8,7 +8,7 @@ import {
     Button,
     UIComponentType,
     Stack,
-    Grid, Stat, State,
+    Grid, Stat, State, Text,
 } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -54,7 +54,7 @@ export default East.function(
                 "Click buttons to increment/decrement. Tests basic state read/write.",
                 Stack.VStack([
                     Stack.HStack([
-                          Stat.Root("Counter Value", East.str`${counterValue}`),
+                          Stat.Root("Counter Value", Text.Root(East.str`${counterValue}`)),
                     ], { width: "100%" }),
                     Stack.HStack([
                         Button.Root("- Decrement", {

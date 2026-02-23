@@ -1,32 +1,37 @@
 .PHONY: install update build test lint dev clean extension extension-install version-prerelease version-patch version-minor version-major
 
+# Use nvm locally, skip in CI where node is already on PATH
+ifdef NVM_DIR
+NVM := . ${NVM_DIR}/nvm.sh && nvm use &&
+endif
+
 # Install all workspace dependencies
 install:
-	. ${NVM_DIR}/nvm.sh && nvm use && npm ci
+	$(NVM) npm ci
 
-# Update @elaraai dependencies
+# Update @elaraai dependencies (including transitive)
 update:
-	. ${NVM_DIR}/nvm.sh && nvm use && npm update --scope=@elaraai
+	$(NVM) npm update @elaraai/east @elaraai/east-node-std @elaraai/e3-api-client @elaraai/e3-api-server @elaraai/e3-types @elaraai/e3-core @elaraai/e3
 
 # Build all packages (in dependency order)
 build:
-	. ${NVM_DIR}/nvm.sh && nvm use && npm run build
+	$(NVM) npm run build
 
 # Run tests for all packages
 test:
-	. ${NVM_DIR}/nvm.sh && nvm use && npm run test
+	$(NVM) npm run test
 
 # Run linting for all packages
 lint:
-	. ${NVM_DIR}/nvm.sh && nvm use && npm run lint
+	$(NVM) npm run lint
 
 # Run the showcase dev server
 dev:
-	rm -rf ./packages/east-ui-showcase/node_modules/.vite && . ${NVM_DIR}/nvm.sh && nvm use && npm run dev
+	rm -rf ./packages/east-ui-showcase/node_modules/.vite && $(NVM) npm run dev
 
 # Build and package the VSCode extension
 extension:
-	. ${NVM_DIR}/nvm.sh && nvm use && cd packages/east-ui-extension && npm run build && npm run package
+	$(NVM) cd packages/east-ui-extension && npm run build && npm run package
 
 # Package and install the VSCode extension
 extension-install: extension
@@ -39,16 +44,16 @@ clean:
 
 # Bump all package versions
 version-prerelease:
-	. ${NVM_DIR}/nvm.sh && nvm use && npm run version:all:prerelease
+	$(NVM) npm run version:all:prerelease
 
 version-patch:
-	. ${NVM_DIR}/nvm.sh && nvm use && npm run version:all:patch
+	$(NVM) npm run version:all:patch
 
 version-minor:
-	. ${NVM_DIR}/nvm.sh && nvm use && npm run version:all:minor
+	$(NVM) npm run version:all:minor
 
 version-major:
-	. ${NVM_DIR}/nvm.sh && nvm use && npm run version:all:major
+	$(NVM) npm run version:all:major
 
 # Link local east package for development/testing
 # Usage: make link-local-east EAST_PATH=../east

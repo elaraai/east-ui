@@ -29,6 +29,7 @@ import { ListType } from "./typography/list/types.js";
 import { CodeBlockType } from "./typography/code-block/types.js";
 
 // Layout
+import { OrientationType } from "./style.js";
 import { BoxStyleType } from "./layout/box/types.js";
 import { FlexStyleType } from "./layout/flex/types.js";
 import { StackStyleType } from "./layout/stack/types.js";
@@ -61,11 +62,11 @@ import { BadgeType } from "./display/badge/types.js";
 import { TagType } from "./display/tag/types.js";
 import { AvatarType } from "./display/avatar/types.js";
 import { CardStyleType } from "./container/card/types.js";
-import { StatType } from "./display/stat/types.js";
+import { StatIndicatorType } from "./display/stat/types.js";
 import { IconType } from "./display/icon/types.js";
 
 // Collections
-import { DataListRootType } from "./collections/data-list/index.js";
+import { DataListVariantType, DataListSizeType } from "./collections/data-list/types.js";
 import { TableColumnType, TableStyleType } from "./collections/table/types.js";
 import { GanttEventType, GanttStyleType } from "./collections/gantt/types.js";
 import { PlannerStyleType, PlannerEventType, EventPopoverContextType } from "./collections/planner/types.js";
@@ -226,7 +227,12 @@ export const UIComponentType = RecursiveType(node => VariantType({
     Badge: BadgeType,
     Tag: TagType,
     Avatar: AvatarType,
-    Stat: StatType,
+    Stat: StructType({
+        label: StringType,
+        value: node,
+        helpText: OptionType(StringType),
+        indicator: OptionType(StatIndicatorType),
+    }),
     Icon: IconType,
 
     // Container
@@ -236,7 +242,15 @@ export const UIComponentType = RecursiveType(node => VariantType({
         footer: OptionType(node),
         style: OptionType(CardStyleType),
     }),
-    DataList: DataListRootType,
+    DataList: StructType({
+        items: ArrayType(StructType({
+            label: StringType,
+            value: node,
+        })),
+        orientation: OptionType(OrientationType),
+        size: OptionType(DataListSizeType),
+        variant: OptionType(DataListVariantType),
+    }),
 
     // Charts
     Sparkline: SparklineType,

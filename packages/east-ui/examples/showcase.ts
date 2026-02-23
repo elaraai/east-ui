@@ -113,7 +113,7 @@ const example = East.function(
             Grid.Root([
                 Grid.Item(
                     Card.Root([
-                        Stat.Root("Total Revenue", East.str`$${East.print(totalRevenue.divide(1000.0))}K`, {
+                        Stat.Root("Total Revenue", Text.Root(East.str`$${East.print(totalRevenue.divide(1000.0))}K`), {
                             helpText: "+12.5% vs last week",
                             indicator: "up",
                         }),
@@ -128,7 +128,7 @@ const example = East.function(
                 ),
                 Grid.Item(
                     Card.Root([
-                        Stat.Root("Active Orders", "6", {
+                        Stat.Root("Active Orders", Text.Root("6"), {
                             helpText: "2 pending",
                         }),
                     ], { variant: "outline" }),
@@ -136,7 +136,7 @@ const example = East.function(
                 ),
                 Grid.Item(
                     Card.Root([
-                        Stat.Root("Fulfillment Rate", East.str`${East.print(avgFulfillment)}%`, {
+                        Stat.Root("Fulfillment Rate", Text.Root(East.str`${East.print(avgFulfillment)}%`), {
                             helpText: "On-time delivery",
                             indicator: East.greater(avgFulfillment, 75.0).ifElse(
                                 $ => Stat.Indicator("up"),

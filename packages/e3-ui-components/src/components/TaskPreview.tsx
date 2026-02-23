@@ -153,24 +153,29 @@ export const TaskPreview = memo(function TaskPreview({
         // Render using the type-aware EastValueViewer
         if (output && ir === null) {
             // Check output size - if too large, show warning instead of rendering
-            const MAX_RENDER_SIZE = 512 * 1024; // 512KB
-            const outputSize = output instanceof Uint8Array ? output.length : 0;
+            // const MAX_RENDER_SIZE = 512 * 1024 * 10; // 512KB
+            // const outputSize = output instanceof Uint8Array ? output.length : 0;
 
-            if (outputSize > MAX_RENDER_SIZE) {
-                return (
-                    <StatusDisplay
-                        variant="warning"
-                        title="Output too large to display"
-                        message={`The task output is ${(outputSize / 1024 / 1024).toFixed(2)} MB, which exceeds the ${(MAX_RENDER_SIZE / 1024).toFixed(0)} KB display limit. Consider using a smaller dataset or accessing the output programmatically.`}
-                    />
-                );
-            }
+            // if (outputSize > MAX_RENDER_SIZE) {
+            //     return (
+            //         <StatusDisplay
+            //             variant="warning"
+            //             title="Output too large to display"
+            //             message={`The task output is ${(outputSize / 1024 / 1024).toFixed(2)} MB, which exceeds the ${(MAX_RENDER_SIZE / 1024).toFixed(0)} KB display limit. Consider using a smaller dataset or accessing the output programmatically.`}
+            //         />
+            //     );
+            // }
 
             try {
                 const decoded = decodeBeast2(output);
+                // return (
+                //     <Box height="100%" overflow="auto" p="4">
+                //         <Text fontSize="xs" color="gray.500" mb={2}>Raw Output ({(outputSize / 1024).toFixed(1)} KB)</Text>
+                //         <EastValueViewer type={decoded.type} value={decoded.value} />
+                //     </Box>
+                // );
                 return (
                     <Box height="100%" overflow="auto" p="4">
-                        <Text fontSize="xs" color="gray.500" mb={2}>Raw Output ({(outputSize / 1024).toFixed(1)} KB)</Text>
                         <EastValueViewer type={decoded.type} value={decoded.value} />
                     </Box>
                 );
