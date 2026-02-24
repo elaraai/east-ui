@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { match, type ValueTypeOf, type LiteralValueType } from "@elaraai/east";
+import { match, compareFor, LiteralValueType, type ValueTypeOf } from "@elaraai/east";
 import { tokenizeDateTimeFormat, formatDateTime } from "@elaraai/east/internal";
 import type {
     ChartAxisType,
@@ -31,6 +31,9 @@ import type {
     ReferenceAreaProps,
 } from "recharts";
 import { getSomeorUndefined } from "../utils";
+
+/** Compare two East LiteralValues (handles all types: Integer, Float, String, DateTime, etc.) */
+const compareLiteral = compareFor(LiteralValueType);
 
 /** Recharts label position type */
 type LabelPosition = "top" | "left" | "right" | "bottom" | "inside" | "outside" | "insideLeft" | "insideRight" | "insideTop" | "insideBottom" | "insideTopLeft" | "insideBottomLeft" | "insideTopRight" | "insideBottomRight" | "end" | "center";
@@ -203,6 +206,43 @@ export function toChartSeries(value: ChartSeriesValue, seriesIndex: number = 0):
 }
 
 // ============================================================================
+// Axis Type Inference
+// ============================================================================
+
+/**
+ * Infer the Recharts axis type from the East type of a data field.
+ * Peeks at the first non-null value for the given dataKey.
+ * Falls back to checking dataSeries when rawData is empty (multi-series mode).
+ */
+export function inferAxisType(
+    rawData: Map<string, ValueTypeOf<typeof LiteralValueType>>[],
+    dataKey: string | undefined,
+    dataSeries?: Map<string, Map<string, ValueTypeOf<typeof LiteralValueType>>[]>,
+): 'number' | 'category' | undefined {
+    if (dataKey === undefined) return undefined;
+
+    // Check rawData first
+    for (const row of rawData) {
+        const val = row.get(dataKey);
+        if (val === undefined) continue;
+        return (val.type === 'Integer' || val.type === 'Float') ? 'number' : 'category';
+    }
+
+    // Fall back to dataSeries (for multi-series mode where rawData is empty)
+    if (dataSeries) {
+        for (const [, seriesData] of dataSeries) {
+            for (const row of seriesData) {
+                const val = row.get(dataKey);
+                if (val === undefined) continue;
+                return (val.type === 'Integer' || val.type === 'Float') ? 'number' : 'category';
+            }
+        }
+    }
+
+    return undefined;
+}
+
+// ============================================================================
 // Axis Conversion
 // ============================================================================
 
@@ -212,11 +252,13 @@ export function toChartSeries(value: ChartSeriesValue, seriesIndex: number = 0):
  *
  * @param value - The East ChartAxis value
  * @param chart - The Chakra chart instance (for key() function)
+ * @param axisType - Optional Recharts axis type inferred from data
  * @returns Partial XAxisProps
  */
 export function toRechartsXAxis(
     value: ChartAxisValue,
-    chart: UseChartReturn<Record<string, unknown>>
+    chart: UseChartReturn<Record<string, unknown>>,
+    axisType?: 'number' | 'category',
 ): Partial<XAxisProps> {
     const props: Partial<XAxisProps> = {};
 
@@ -249,6 +291,8 @@ export function toRechartsXAxis(
     const axisId = getSomeorUndefined(value.axisId);
     if (axisId !== undefined) props.xAxisId = axisId;
 
+    if (axisType !== undefined) props.type = axisType;
+
     return props;
 }
 
@@ -258,11 +302,13 @@ export function toRechartsXAxis(
  *
  * @param value - The East ChartAxis value
  * @param chart - The Chakra chart instance (for key() function)
+ * @param axisType - Optional Recharts axis type inferred from data
  * @returns Partial YAxisProps
  */
 export function toRechartsYAxis(
     value: ChartAxisValue,
-    chart: UseChartReturn<Record<string, unknown>>
+    chart: UseChartReturn<Record<string, unknown>>,
+    axisType?: 'number' | 'category',
 ): Partial<YAxisProps> {
     const props: Partial<YAxisProps> = {};
 
@@ -296,6 +342,8 @@ export function toRechartsYAxis(
 
     const axisId = getSomeorUndefined(value.axisId);
     if (axisId !== undefined) props.yAxisId = axisId;
+
+    if (axisType !== undefined) props.type = axisType;
 
     return props;
 }
@@ -762,8 +810,8 @@ export function convertMultiSeriesData(
     defaultValueKey: string,
     seriesConfigs?: Map<string, SeriesFieldConfig>
 ): Record<string, unknown>[] {
-    // Collect all unique x-axis values
-    const xAxisValues = new Set<unknown>();
+    // Map converted x value → raw East value (for sorting) and series y values
+    const xAxisRaw = new Map<unknown, ValueTypeOf<typeof LiteralValueType>>();
     const seriesData = new Map<string, Map<unknown, unknown>>();
 
     dataSeries.forEach((dataPoints, seriesName) => {
@@ -775,10 +823,9 @@ export function convertMultiSeriesData(
             if (xValue === undefined) return;
 
             const xConverted = convertLiteralValue(xValue);
-            xAxisValues.add(xConverted);
+            xAxisRaw.set(xConverted, xValue);
 
             if (config?.type === 'range') {
-                // Range: combine low/high into [low, high] array
                 const lowValue = point.get(config.lowKey);
                 const highValue = point.get(config.highKey);
                 if (lowValue !== undefined && highValue !== undefined) {
@@ -788,7 +835,6 @@ export function convertMultiSeriesData(
                     ]);
                 }
             } else {
-                // Value: extract single field (use config key or default)
                 const valueKey = config?.type === 'value' ? config.key : defaultValueKey;
                 const yValue = point.get(valueKey);
                 if (yValue !== undefined) {
@@ -799,17 +845,19 @@ export function convertMultiSeriesData(
         seriesData.set(seriesName, seriesMap);
     });
 
-    // Build merged array
-    const result: Record<string, unknown>[] = [];
-    xAxisValues.forEach(xValue => {
+    // Sort x values using East's compareFor on the raw LiteralValues
+    const sortedX = [...xAxisRaw.entries()]
+        .sort(([, a], [, b]) => compareLiteral(a, b))
+        .map(([converted]) => converted);
+
+    // Build merged array in sorted order
+    return sortedX.map(xValue => {
         const row: Record<string, unknown> = { [xAxisKey]: xValue };
         seriesData.forEach((seriesMap, seriesName) => {
             row[seriesName] = seriesMap.get(xValue) ?? null;
         });
-        result.push(row);
+        return row;
     });
-
-    return result;
 }
 
 /**
@@ -862,8 +910,8 @@ export function convertMultiSeriesRangeData(
     lowKey: string,
     highKey: string
 ): Record<string, unknown>[] {
-    // Collect all unique x-axis values
-    const xAxisValues = new Set<unknown>();
+    // Map converted x value → raw East value (for sorting)
+    const xAxisRaw = new Map<unknown, ValueTypeOf<typeof LiteralValueType>>();
     const seriesData = new Map<string, Map<unknown, [unknown, unknown]>>();
 
     dataSeries.forEach((dataPoints, seriesName) => {
@@ -874,7 +922,7 @@ export function convertMultiSeriesRangeData(
             const highValue = point.get(highKey);
             if (xValue !== undefined) {
                 const xConverted = convertLiteralValue(xValue);
-                xAxisValues.add(xConverted);
+                xAxisRaw.set(xConverted, xValue);
                 if (lowValue !== undefined && highValue !== undefined) {
                     seriesMap.set(xConverted, [
                         convertLiteralValue(lowValue),
@@ -886,17 +934,19 @@ export function convertMultiSeriesRangeData(
         seriesData.set(seriesName, seriesMap);
     });
 
-    // Build merged array
-    const result: Record<string, unknown>[] = [];
-    xAxisValues.forEach(xValue => {
+    // Sort x values using East's compareFor on the raw LiteralValues
+    const sortedX = [...xAxisRaw.entries()]
+        .sort(([, a], [, b]) => compareLiteral(a, b))
+        .map(([converted]) => converted);
+
+    // Build merged array in sorted order
+    return sortedX.map(xValue => {
         const row: Record<string, unknown> = { [xAxisKey]: xValue };
         seriesData.forEach((seriesMap, seriesName) => {
             row[seriesName] = seriesMap.get(xValue) ?? null;
         });
-        result.push(row);
+        return row;
     });
-
-    return result;
 }
 
 // ============================================================================
@@ -983,7 +1033,8 @@ export function prepareChartData(config: PrepareChartDataConfig): PreparedChartD
         const explicitColor = seriesConfig ? getSomeorUndefined(seriesConfig.color) : undefined;
 
         // Transform pivot data to wide format
-        const xAxisValues = new Map<unknown, Record<string, unknown>>();
+        const xAxisRows = new Map<unknown, Record<string, unknown>>();
+        const xAxisRaw = new Map<unknown, ValueTypeOf<typeof LiteralValueType>>();
         const pivotValues = new Set<string>();
 
         for (const row of rawData) {
@@ -995,16 +1046,20 @@ export function prepareChartData(config: PrepareChartDataConfig): PreparedChartD
             const xConverted = convertLiteralValue(xValue);
             const pivotConverted = String(convertLiteralValue(pivotValue));
             pivotValues.add(pivotConverted);
+            xAxisRaw.set(xConverted, xValue);
 
-            let xRow = xAxisValues.get(xConverted);
+            let xRow = xAxisRows.get(xConverted);
             if (!xRow) {
                 xRow = { [xAxisKey]: xConverted };
-                xAxisValues.set(xConverted, xRow);
+                xAxisRows.set(xConverted, xRow);
             }
             xRow[pivotConverted] = yValue !== undefined ? convertLiteralValue(yValue) : null;
         }
 
-        data = Array.from(xAxisValues.values());
+        // Sort by x-axis value using East's compareFor
+        data = [...xAxisRaw.entries()]
+            .sort(([, a], [, b]) => compareLiteral(a, b))
+            .map(([converted]) => xAxisRows.get(converted)!);
         const pivotValuesArray = Array.from(pivotValues);
 
         // Get base layerIndex from series config (or default to 0)
@@ -1028,7 +1083,8 @@ export function prepareChartData(config: PrepareChartDataConfig): PreparedChartD
     // Mode 2: Multi-series + Pivot
     // ========================================================================
     else if (dataSeries && pivotKey && xAxisKey && valueKey) {
-        const xAxisValues = new Map<unknown, Record<string, unknown>>();
+        const xAxisRows = new Map<unknown, Record<string, unknown>>();
+        const xAxisRaw = new Map<unknown, ValueTypeOf<typeof LiteralValueType>>();
         series = [];
 
         let seriesIdx = 0;
@@ -1049,11 +1105,12 @@ export function prepareChartData(config: PrepareChartDataConfig): PreparedChartD
                 const pivotConverted = String(convertLiteralValue(pivotValue));
                 const compositeName = `${seriesName}_${pivotConverted}`;
                 pivotValuesForSeries.add(pivotConverted);
+                xAxisRaw.set(xConverted, xValue);
 
-                let xRow = xAxisValues.get(xConverted);
+                let xRow = xAxisRows.get(xConverted);
                 if (!xRow) {
                     xRow = { [xAxisKey]: xConverted };
-                    xAxisValues.set(xConverted, xRow);
+                    xAxisRows.set(xConverted, xRow);
                 }
                 xRow[compositeName] = yValue !== undefined ? convertLiteralValue(yValue) : null;
             }
@@ -1078,7 +1135,10 @@ export function prepareChartData(config: PrepareChartDataConfig): PreparedChartD
             seriesIdx++;
         }
 
-        data = Array.from(xAxisValues.values());
+        // Sort by x-axis value using East's compareFor
+        data = [...xAxisRaw.entries()]
+            .sort(([, a], [, b]) => compareLiteral(a, b))
+            .map(([converted]) => xAxisRows.get(converted)!);
     }
 
     // ========================================================================

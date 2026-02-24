@@ -12,7 +12,7 @@
  */
 
 import { East } from "@elaraai/east";
-import { Avatar, Badge, Icon, Stat, Tag, UIComponentType } from "../src/index.js";
+import { Avatar, Badge, Icon, Stat, Tag, Text, UIComponentType } from "../src/index.js";
 
 // ============================================================================
 // AVATAR
@@ -98,7 +98,7 @@ iconStyledExample.toIR().compile([])();
 // File: src/display/stat/index.ts
 // Export: createStat (private function)
 const statExample = East.function([], UIComponentType, $ => {
-    return Stat.Root("Growth", "+23.36%", {
+    return Stat.Root("Growth", Text.Root("+23.36%"), {
         helpText: "From last week",
         indicator: "up",
     });
@@ -108,7 +108,7 @@ statExample.toIR().compile([])();
 // File: src/display/stat/index.ts
 // Export: Stat.Root
 const statRootExample = East.function([], UIComponentType, $ => {
-    return Stat.Root("Growth", "+23.36%", {
+    return Stat.Root("Growth", Text.Root("+23.36%"), {
         helpText: "From last week",
         indicator: "up",
     });
@@ -118,7 +118,7 @@ statRootExample.toIR().compile([])();
 // File: src/display/stat/index.ts
 // Export: Stat.Indicator
 const statIndicatorExample = East.function([], UIComponentType, $ => {
-    return Stat.Root("Revenue", "$45,231", {
+    return Stat.Root("Revenue", Text.Root("$45,231"), {
         helpText: "+20.1%",
         indicator: Stat.Indicator("up"),
     });
@@ -128,7 +128,7 @@ statIndicatorExample.toIR().compile([])();
 // File: src/display/stat/types.ts
 // Export: StatIndicator
 const statIndicatorTypesExample = East.function([], UIComponentType, $ => {
-    return Stat.Root("Revenue", "$45,231", {
+    return Stat.Root("Revenue", Text.Root("$45,231"), {
         helpText: "+20.1%",
         indicator: Stat.Indicator("up"),
     });

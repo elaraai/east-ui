@@ -27,9 +27,9 @@ describeEast("Reactive.Root - Valid Cases", (test) => {
                 // Use State.has to check, then read
                 $.if(State.has("counter"), $ => {
                     const count = $.let(State.read([IntegerType], "counter"));
-                    $.return(Stat.Root("Counter", East.str`${count}`));
+                    $.return(Stat.Root("Counter", Text.Root(East.str`${count}`)));
                 });
-                return Stat.Root("Counter", "0");
+                return Stat.Root("Counter", Text.Root("0"));
             })));
 
         $(Assert.equal(reactive.unwrap().getTag(), "ReactiveComponent"));
@@ -97,7 +97,7 @@ describeEast("Reactive.Root - Valid Cases", (test) => {
                 $(State.write([IntegerType], "counter", 42n));
                 const count = $.let(State.read([IntegerType], "counter"));
                 // TITLE is module-level, not a capture
-                return Stat.Root(TITLE, East.str`${count}`);
+                return Stat.Root(TITLE, Text.Root(East.str`${count}`));
             }))
         );
 
@@ -260,7 +260,7 @@ describeEast("Reactive.Root - Capture Cases", (test) => {
                     $(State.write([IntegerType], "counter", 0n));
                     const count = $.let(State.read([IntegerType], "counter"));
                     // Captures `offset` in arithmetic expression
-                    return Stat.Root("Adjusted", East.str`${count.add(offset)}`);
+                    return Stat.Root("Adjusted", Text.Root(East.str`${count.add(offset)}`));
                 }));
         });
     });

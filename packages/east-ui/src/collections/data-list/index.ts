@@ -38,11 +38,11 @@ export {
  * Each item in a DataList has a label and value pair.
  *
  * @property label - The term/label for this item
- * @property value - The definition/value for this item
+ * @property value - The definition/value for this item (any UI component)
  */
 export const DataListItemType = StructType({
     label: StringType,
-    value: StringType,
+    value: UIComponentType,
 });
 
 /**
@@ -103,19 +103,15 @@ export type DataListRootType = typeof DataListRootType;
  */
 function DataListItem(
     label: ExprType<StringType> | string,
-    value: ExprType<StringType> | string
+    value: SubtypeExprOrValue<UIComponentType>
 ): ExprType<DataListItemType> {
     const labelExpr = typeof label === "string"
         ? East.value(label, StringType)
         : label;
 
-    const valueExpr = typeof value === "string"
-        ? East.value(value, StringType)
-        : value;
-
     return East.value({
         label: labelExpr,
-        value: valueExpr,
+        value: value,
     }, DataListItemType);
 }
 

@@ -38,9 +38,9 @@ describeEast("UIComponentType - Nested Components", (test) => {
                     // Stats row: HStack with multiple stats
                     Stack.HStack(
                         [
-                            Stat.Root("Revenue", "$45,231", { indicator: "up" }),
-                            Stat.Root("Users", "1,234"),
-                            Stat.Root("Orders", "156", { indicator: "down" }),
+                            Stat.Root("Revenue", Text.Root("$45,231"), { indicator: "up" }),
+                            Stat.Root("Users", Text.Root("1,234")),
+                            Stat.Root("Orders", Text.Root("156"), { indicator: "down" }),
                         ],
                         { gap: "6" }
                     ),

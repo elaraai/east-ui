@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { DataList } from "@elaraai/east-ui";
+import { EastChakraComponent } from "../../component";
 import { getSomeorUndefined } from "../../utils";
 
 // Pre-define equality functions at module level
@@ -48,7 +49,7 @@ export const EastChakraDataList = memo(function EastChakraDataList({ value }: Ea
             {value.items.map((item, index) => (
                 <ChakraDataList.Item key={index}>
                     <ChakraDataList.ItemLabel>{item.label}</ChakraDataList.ItemLabel>
-                    <ChakraDataList.ItemValue>{item.value}</ChakraDataList.ItemValue>
+                    <ChakraDataList.ItemValue><EastChakraComponent value={item.value} /></ChakraDataList.ItemValue>
                 </ChakraDataList.Item>
             ))}
         </ChakraDataList.Root>

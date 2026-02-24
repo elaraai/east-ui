@@ -15,6 +15,9 @@ import {
     Icon,
     Accordion,
     Style,
+    Text,
+    HoverCard,
+    Highlight,
 } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -349,15 +352,15 @@ export default East.function(
                 "Stat",
                 "Key metrics display",
                 Stack.HStack([
-                    Stat.Root("Revenue", "$45,231"),
-                    Stat.Root("Users", "1,234"),
-                    Stat.Root("Orders", "567"),
+                    Stat.Root("Revenue", Text.Root("$45,231")),
+                    Stat.Root("Users", Text.Root("1,234")),
+                    Stat.Root("Orders", Text.Root("567")),
                 ], { gap: "8" }),
                 some(`
                     Stack.HStack([
-                        Stat.Root("Revenue", "$45,231"),
-                        Stat.Root("Users", "1,234"),
-                        Stat.Root("Orders", "567"),
+                        Stat.Root("Revenue", Text.Root("$45,231")),
+                        Stat.Root("Users", Text.Root("1,234")),
+                        Stat.Root("Orders", Text.Root("567")),
                     ], { gap: "8" })
                 `)
             )
@@ -369,13 +372,13 @@ export default East.function(
                 "Stat with Help Text",
                 "Additional context",
                 Stack.HStack([
-                    Stat.Root("Total Sales", "$12,345", { helpText: "Last 30 days" }),
-                    Stat.Root("New Users", "89", { helpText: "This week" }),
+                    Stat.Root("Total Sales", Text.Root("$12,345"), { helpText: "Last 30 days" }),
+                    Stat.Root("New Users", Text.Root("89"), { helpText: "This week" }),
                 ], { gap: "8" }),
                 some(`
                     Stack.HStack([
-                        Stat.Root("Total Sales", "$12,345", { helpText: "Last 30 days" }),
-                        Stat.Root("New Users", "89", { helpText: "This week" }),
+                        Stat.Root("Total Sales", Text.Root("$12,345"), { helpText: "Last 30 days" }),
+                        Stat.Root("New Users", Text.Root("89"), { helpText: "This week" }),
                     ], { gap: "8" })
                 `)
             )
@@ -387,13 +390,49 @@ export default East.function(
                 "Stat with Indicators",
                 "Trend direction",
                 Stack.HStack([
-                    Stat.Root("Growth", "+23.36%", { helpText: "vs last month", indicator: "up" }),
-                    Stat.Root("Bounce Rate", "-12.5%", { helpText: "vs yesterday", indicator: "down" }),
+                    Stat.Root("Growth", Text.Root("+23.36%"), { helpText: "vs last month", indicator: "up" }),
+                    Stat.Root("Bounce Rate", Text.Root("-12.5%"), { helpText: "vs yesterday", indicator: "down" }),
                 ], { gap: "8" }),
                 some(`
                     Stack.HStack([
-                        Stat.Root("Growth", "+23.36%", { helpText: "vs last month", indicator: "up" }),
-                        Stat.Root("Bounce Rate", "-12.5%", { helpText: "vs yesterday", indicator: "down" }),
+                        Stat.Root("Growth", Text.Root("+23.36%"), { helpText: "vs last month", indicator: "up" }),
+                        Stat.Root("Bounce Rate", Text.Root("-12.5%"), { helpText: "vs yesterday", indicator: "down" }),
+                    ], { gap: "8" })
+                `)
+            )
+        );
+
+        // Stat - Rich values
+        const statRichValues = $.let(
+            ShowcaseCard(
+                "Stat with Rich Values",
+                "Values can be any UI component — badges, hover cards, highlighted text",
+                Stack.HStack([
+                    Stat.Root("Status", Badge.Root("Operational", { variant: "solid", colorPalette: "green" })),
+                    Stat.Root("Owner", HoverCard.Root(
+                        Text.Root("@jane", { color: "blue.500" }),
+                        [
+                            Stack.VStack([
+                                Text.Root("Jane Smith", { fontWeight: "bold" }),
+                                Text.Root("Senior Engineer — Platform Team", { fontSize: "sm" }),
+                            ], { gap: "1" }),
+                        ],
+                    )),
+                    Stat.Root("Query", Highlight.Root("SELECT * FROM users", ["SELECT", "FROM"])),
+                ], { gap: "8" }),
+                some(`
+                    Stack.HStack([
+                        Stat.Root("Status", Badge.Root("Operational", { variant: "solid", colorPalette: "green" })),
+                        Stat.Root("Owner", HoverCard.Root(
+                            Text.Root("@jane", { color: "blue.500" }),
+                            [
+                                Stack.VStack([
+                                    Text.Root("Jane Smith", { fontWeight: "bold" }),
+                                    Text.Root("Senior Engineer — Platform Team", { fontSize: "sm" }),
+                                ], { gap: "1" }),
+                            ],
+                        )),
+                        Stat.Root("Query", Highlight.Root("SELECT * FROM users", ["SELECT", "FROM"])),
                     ], { gap: "8" })
                 `)
             )
@@ -479,6 +518,7 @@ export default East.function(
                     Grid.Item(statBasic),
                     Grid.Item(statHelpText),
                     Grid.Item(statIndicators, { colSpan: "2" }),
+                    Grid.Item(statRichValues, { colSpan: "2" }),
                 ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
             ]),
             Accordion.Item("icon", "Icon", [

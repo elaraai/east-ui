@@ -28,6 +28,7 @@ import { Chart as EastChart } from "@elaraai/east-ui";
 import { getSomeorUndefined } from "../../utils";
 import {
     prepareChartData,
+    inferAxisType,
     toRechartsXAxis,
     toRechartsYAxis,
     getAxisTickFormat,
@@ -288,19 +289,22 @@ export const EastChakraComposedChart = memo(function EastChakraComposedChart({ v
     const xAxis = useMemo(() => {
         const axisValue = getSomeorUndefined(value.xAxis);
         if (!axisValue) return { props: {}, tickFormatter: undefined };
-        const props = toRechartsXAxis(axisValue, chart);
+        const axisType = inferAxisType(value.data, xAxisDataKey, getSomeorUndefined(value.dataSeries));
+        const props = toRechartsXAxis(axisValue, chart, axisType);
         const tickFormat = getAxisTickFormat(axisValue);
         return { props, tickFormatter: createTickFormatter(tickFormat, chart) };
-    }, [value.xAxis, chart]);
+    }, [value.xAxis, value.data, value.dataSeries, xAxisDataKey, chart]);
 
     // Y-axis configuration (primary, left)
     const yAxis = useMemo(() => {
         const axisValue = getSomeorUndefined(value.yAxis);
         if (!axisValue) return { props: {}, tickFormatter: undefined, show: true };
-        const props = toRechartsYAxis(axisValue, chart);
+        const yAxisDataKey = getSomeorUndefined(axisValue.dataKey);
+        const axisType = inferAxisType(value.data, yAxisDataKey, getSomeorUndefined(value.dataSeries));
+        const props = toRechartsYAxis(axisValue, chart, axisType);
         const tickFormat = getAxisTickFormat(axisValue);
         return { props, tickFormatter: createTickFormatter(tickFormat, chart), show: true };
-    }, [value.yAxis, chart]);
+    }, [value.yAxis, value.data, value.dataSeries, chart]);
 
     // Y-axis2 configuration (secondary, right)
     const yAxis2 = useMemo(() => {

@@ -29,6 +29,8 @@ import { StatusDisplay } from './StatusDisplay.js';
 import { EastValueViewer } from './EastValueViewer.js';
 import { UIComponentType } from '@elaraai/east-ui';
 import type { DatasetStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
+import { formatApiError, formatError } from '../errors.js';
+import { ErrorBoundary } from './ErrorBoundary.js';
 
 // Combined platform implementations for decoding Beast2 with Reactive components
 const platformImplementations = [...StateImpl, ...DatasetImpl, ...OverlayImpl];
@@ -58,28 +60,26 @@ export const InputPreview = memo(function InputPreview({
     // Fetch input data
     const { data: output, isLoading, error } = useInputData(apiUrl, repo, workspace, inputInfo, requestOptions);
 
-    // Decode the output as IR
-    const ir = useMemo(() => {
-        if (!output) return null;
+    // Decode the output, checking if it's a UIComponentType
+    const decode = useMemo((): { type: 'none' } | { type: 'ui'; value: ValueTypeOf<UIComponentType> } | { type: 'ui-error'; error: Error } | { type: 'other' } => {
+        if (!output) return { type: 'none' };
         try {
-            // First check the type without platform (to see if it's UIComponentType)
             const { type } = decodeBeast2(output);
-            if (isTypeValueEqual(type, toEastTypeValue(UIComponentType))) {
-                // Decode with platform implementations for Reactive components
+            if (!isTypeValueEqual(type, toEastTypeValue(UIComponentType))) return { type: 'other' };
+            try {
                 const decoder = decodeBeast2For(UIComponentType, { platform: platformImplementations });
-                const value = decoder(output);
-                return value as ValueTypeOf<UIComponentType>;
-            } else {
-                return null;
+                return { type: 'ui', value: decoder(output) as ValueTypeOf<UIComponentType> };
+            } catch (e) {
+                return { type: 'ui-error', error: e instanceof Error ? e : new Error(String(e)) };
             }
         } catch {
-            return null;
+            return { type: 'other' };
         }
     }, [output]);
 
-    // Create store - recreate when IR changes
+    // Create store - recreate when decode changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const store = useMemo(() => createEastStore(), [ir]);
+    const store = useMemo(() => createEastStore(), [decode]);
 
     // Get display name from path
     const displayName = path.replace(/^\.inputs\./, '');
@@ -108,17 +108,24 @@ export const InputPreview = memo(function InputPreview({
         }
 
         // UIComponent loaded - render it
-        if (ir !== null) {
+        if (decode.type === 'ui') {
             return (
-                <Box height="100%" overflow="auto" p="4">
-                    <EastChakraComponent value={ir} />
-                </Box>
+                <ErrorBoundary>
+                    <Box height="100%" overflow="auto" p="4">
+                        <EastChakraComponent value={decode.value} />
+                    </Box>
+                </ErrorBoundary>
             );
+        }
+
+        // UIComponent type but decode failed - show the error
+        if (decode.type === 'ui-error') {
+            return <StatusDisplay variant="error" title="Failed to render data" details={formatError(decode.error)} />;
         }
 
         // Not a UIComponent - output exists but couldn't decode as UIComponent
         // Render using the type-aware EastValueViewer
-        if (output && ir === null) {
+        if (output && decode.type === 'other') {
             // Check output size - if too large, show warning instead of rendering
             const MAX_RENDER_SIZE = 512 * 1024; // 512KB
             const outputSize = output instanceof Uint8Array ? output.length : 0;
@@ -154,11 +161,12 @@ export const InputPreview = memo(function InputPreview({
                 title={`No data available for input "${displayName}"`}
             />
         );
-    }, [ir, displayName, isLoading, output, inputInfo?.status.type]);
+    }, [decode, displayName, isLoading, output, inputInfo?.status.type]);
 
     // Error
     if (error) {
-        return <StatusDisplay variant="error" title="Failed to load input" details={error instanceof Error ? error.message : String(error)} />;
+        const { message, details } = formatApiError(error);
+        return <StatusDisplay variant="error" title="Failed to load input" message={message} details={details ?? ""} />;
     }
 
     // Render

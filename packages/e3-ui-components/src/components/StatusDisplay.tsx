@@ -3,7 +3,9 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { Box, Text, VStack, Spinner, Code } from '@chakra-ui/react';
+import { Box, Text, VStack, Spinner, Code, Clipboard, IconButton } from '@chakra-ui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy, faCheck } from '@fortawesome/free-solid-svg-icons';
 
 type StatusVariant = 'error' | 'warning' | 'info' | 'loading';
 
@@ -80,18 +82,31 @@ export function StatusDisplay({ variant, title, message, details }: StatusDispla
                         </Text>
                     )}
                     {details && (
-                        <Code
-                            display="block"
-                            whiteSpace="pre-wrap"
-                            p={4}
-                            bg={styles.detailsBg}
-                            color={styles.detailsColor}
-                            borderRadius="md"
-                            fontSize="sm"
-                            mt={2}
-                        >
-                            {details}
-                        </Code>
+                        <Box position="relative" mt={2} width="100%">
+                            <Code
+                                display="block"
+                                whiteSpace="pre-wrap"
+                                p={4}
+                                pr={10}
+                                bg={styles.detailsBg}
+                                color={styles.detailsColor}
+                                borderRadius="md"
+                                fontSize="sm"
+                                overflow="auto"
+                                maxHeight="300px"
+                            >
+                                {details}
+                            </Code>
+                            <Clipboard.Root value={details} position="absolute" top={1} right={1}>
+                                <Clipboard.Trigger asChild>
+                                    <IconButton size="xs" variant="ghost" aria-label="Copy error details">
+                                        <Clipboard.Indicator copied={<FontAwesomeIcon icon={faCheck} />}>
+                                            <FontAwesomeIcon icon={faCopy} />
+                                        </Clipboard.Indicator>
+                                    </IconButton>
+                                </Clipboard.Trigger>
+                            </Clipboard.Root>
+                        </Box>
                     )}
                 </VStack>
             </Box>
@@ -110,17 +125,31 @@ export function StatusDisplay({ variant, title, message, details }: StatusDispla
                 </Text>
             )}
             {details && (
-                <Code
-                    display="block"
-                    whiteSpace="pre-wrap"
-                    p={4}
-                    bg={styles.detailsBg}
-                    color={styles.detailsColor}
-                    borderRadius="md"
-                    fontSize="sm"
-                >
-                    {details}
-                </Code>
+                <Box position="relative">
+                    <Code
+                        display="block"
+                        whiteSpace="pre-wrap"
+                        p={4}
+                        pr={10}
+                        bg={styles.detailsBg}
+                        color={styles.detailsColor}
+                        borderRadius="md"
+                        fontSize="sm"
+                        overflow="auto"
+                        maxHeight="300px"
+                    >
+                        {details}
+                    </Code>
+                    <Clipboard.Root value={details} position="absolute" top={1} right={1}>
+                        <Clipboard.Trigger asChild>
+                            <IconButton size="xs" variant="ghost" aria-label="Copy error details">
+                                <Clipboard.Indicator copied={<FontAwesomeIcon icon={faCheck} />}>
+                                    <FontAwesomeIcon icon={faCopy} />
+                                </Clipboard.Indicator>
+                            </IconButton>
+                        </Clipboard.Trigger>
+                    </Clipboard.Root>
+                </Box>
             )}
         </Box>
     );

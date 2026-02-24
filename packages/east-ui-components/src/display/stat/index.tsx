@@ -7,6 +7,7 @@ import { memo, useMemo } from "react";
 import { Stat as ChakraStat } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Stat } from "@elaraai/east-ui";
+import { EastChakraComponent } from "../../component";
 import { getSomeorUndefined } from "../../utils";
 
 // Pre-define equality function at module level
@@ -28,7 +29,7 @@ export const EastChakraStat = memo(function EastChakraStat({ value }: EastChakra
     return (
         <ChakraStat.Root>
             <ChakraStat.Label>{value.label}</ChakraStat.Label>
-            <ChakraStat.ValueText>{value.value}</ChakraStat.ValueText>
+            <ChakraStat.ValueText><EastChakraComponent value={value.value} /></ChakraStat.ValueText>
             {helpText && (
                 <ChakraStat.HelpText>
                     {indicator && <ChakraStat.UpIndicator />}

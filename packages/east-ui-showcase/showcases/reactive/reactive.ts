@@ -82,7 +82,7 @@ export default East.function(
                 "Reads state once at render. Click buttons - value stays frozen at initial value.",
                 Stack.VStack([
                     Badge.Root("Does NOT use Reactive.Root", { colorPalette: "red", variant: "solid" }),
-                    Stat.Root("Frozen Value", East.print(staticValue)),
+                    Stat.Root("Frozen Value", Text.Root(East.print(staticValue))),
                     Stack.HStack([
                         Button.Root("-", { variant: "outline", colorPalette: "gray", onClick: decrementCounter }),
                         Button.Root("+", { variant: "outline", colorPalette: "gray", onClick: incrementCounter }),
@@ -91,7 +91,7 @@ export default East.function(
                 some(`
                     Stack.VStack([
                         Badge.Root("Does NOT use Reactive.Root", { colorPalette: "red", variant: "solid" }),
-                        Stat.Root("Frozen Value", East.print(staticValue)),
+                        Stat.Root("Frozen Value", Text.Root(East.print(staticValue))),
                         Stack.HStack([
                             Button.Root("-", { variant: "outline", colorPalette: "gray", onClick: decrementCounter }),
                             Button.Root("+", { variant: "outline", colorPalette: "gray", onClick: incrementCounter }),
@@ -113,7 +113,7 @@ export default East.function(
                     const liveValue = $.let(State.read([IntegerType], "reactive_counter"));
                     return Stack.VStack([
                         Badge.Root("Uses Reactive.Root", { colorPalette: "green", variant: "solid" }),
-                        Stat.Root("Live Value", East.print(liveValue)),
+                        Stat.Root("Live Value", Text.Root(East.print(liveValue))),
                         Stack.HStack([
                             Button.Root("-", { variant: "solid", colorPalette: "red", onClick: decrementCounter }),
                             Button.Root("+", { variant: "solid", colorPalette: "blue", onClick: incrementCounter }),
@@ -125,7 +125,7 @@ export default East.function(
                         const liveValue = $.let(State.read([IntegerType], "reactive_counter"));
                         return Stack.VStack([
                             Badge.Root("Uses Reactive.Root", { colorPalette: "green", variant: "solid" }),
-                            Stat.Root("Live Value", East.print(liveValue)),
+                            Stat.Root("Live Value", Text.Root(East.print(liveValue))),
                             Stack.HStack([
                                 Button.Root("-", { variant: "solid", colorPalette: "red", onClick: decrementCounter }),
                                 Button.Root("+", { variant: "solid", colorPalette: "blue", onClick: incrementCounter }),
@@ -166,7 +166,7 @@ export default East.function(
                                 yAxis: { domain: [0.0, 300.0] },
                             }
                         ),
-                        Stat.Root("Revenue", East.Float.printCurrency(revenueValue)),
+                        Stat.Root("Revenue", Text.Root(East.Float.printCurrency(revenueValue))),
                         Stack.HStack([
                             Button.Root("Crash -30%", { variant: "solid", colorPalette: "red", onClick: crashRevenue }),
                             Button.Root("Reset", { variant: "outline", colorPalette: "gray", onClick: resetRevenue }),
@@ -197,7 +197,7 @@ export default East.function(
                                     yAxis: { domain: [0.0, 300.0] },
                                 }
                             ),
-                            Stat.Root("Revenue", East.Float.printCurrency(revenueValue)),
+                            Stat.Root("Revenue", Text.Root(East.Float.printCurrency(revenueValue))),
                             Stack.HStack([
                                 Button.Root("Crash -30%", { variant: "solid", colorPalette: "red", onClick: crashRevenue }),
                                 Button.Root("Reset", { variant: "outline", colorPalette: "gray", onClick: resetRevenue }),
@@ -236,7 +236,7 @@ export default East.function(
                                 },
                             );
                             return Stack.HStack([
-                                Stat.Root("Live Value", East.print(adjusted)),
+                                Stat.Root("Live Value", Text.Root(East.print(adjusted))),
                                 Switch.Root(factor, { onChange })
                             ], { gap: "4", align: "center" });
                         })),
@@ -266,7 +266,7 @@ export default East.function(
                                     },
                                 );
                                 return Stack.HStack([
-                                    Stat.Root("Live Value", East.print(adjusted)),
+                                    Stat.Root("Live Value", Text.Root(East.print(adjusted))),
                                     Switch.Root(factor, { onChange })
                                 ], { gap: "4", align: "center" });
                             })),

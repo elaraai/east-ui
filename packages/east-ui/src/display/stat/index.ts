@@ -8,11 +8,37 @@ import {
     type SubtypeExprOrValue,
     East,
     StringType,
+    OptionType,
+    StructType,
     variant,
 } from "@elaraai/east";
 
 import { UIComponentType } from "../../component.js";
-import { StatType, StatIndicatorType, StatIndicator, type StatStyle } from "./types.js";
+import { StatIndicatorType, StatIndicator, type StatStyle } from "./types.js";
+
+// ============================================================================
+// Local Stat Type (uses UIComponentType for value)
+// ============================================================================
+
+/**
+ * Type for Stat component data.
+ *
+ * @remarks
+ * Stat displays a key metric with optional label, help text, and trend indicator.
+ * Defined locally because `value` references `UIComponentType`.
+ *
+ * @property label - The stat label/title
+ * @property value - The main stat value (any UI component)
+ * @property helpText - Optional help text or trend description
+ * @property indicator - Optional trend indicator (up/down)
+ */
+const StatType = StructType({
+    label: StringType,
+    value: UIComponentType,
+    helpText: OptionType(StringType),
+    indicator: OptionType(StatIndicatorType),
+});
+type StatType = typeof StatType;
 
 // Re-export types (only TypeScript interfaces, not East types - those go through Stat.Types)
 export { type StatStyle, type StatIndicatorLiteral } from "./types.js";
@@ -48,7 +74,7 @@ export { type StatStyle, type StatIndicatorLiteral } from "./types.js";
  */
 function createStat(
     label: SubtypeExprOrValue<StringType>,
-    value: SubtypeExprOrValue<StringType>,
+    value: SubtypeExprOrValue<UIComponentType>,
     style?: StatStyle
 ): ExprType<UIComponentType> {
     const toStringOption = (val: SubtypeExprOrValue<StringType> | undefined) => {
