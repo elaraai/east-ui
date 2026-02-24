@@ -664,6 +664,96 @@ export default East.function(
             )
         );
 
+        // Integer x-axis (proportional spacing, gaps visible)
+        const integerXAxis = $.let(
+            ShowcaseCard(
+                "Integer X-Axis",
+                "Numeric integer x-axis — gaps at hours 1-2, 13-17 show proportional spacing",
+                Box.Root([
+                    Chart.Scatter(
+                        [
+                            { hour: 0n, temp: 8, humidity: 85 },
+                            { hour: 3n, temp: 6, humidity: 90 },
+                            { hour: 6n, temp: 7, humidity: 88 },
+                            { hour: 9n, temp: 15, humidity: 65 },
+                            { hour: 12n, temp: 22, humidity: 45 },
+                            { hour: 18n, temp: 18, humidity: 55 },
+                            { hour: 24n, temp: 10, humidity: 80 },
+                        ],
+                        {
+                            temp: { color: "teal.solid" },
+                            humidity: { color: "purple.solid" },
+                        },
+                        {
+                            xAxis: { dataKey: "hour", label: "Hour" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Chart.Scatter(
+                        [
+                            { hour: 0n, temp: 8, humidity: 85 },
+                            { hour: 3n, temp: 6, humidity: 90 },
+                            { hour: 6n, temp: 7, humidity: 88 },
+                            { hour: 9n, temp: 15, humidity: 65 },
+                            { hour: 12n, temp: 22, humidity: 45 },
+                            { hour: 18n, temp: 18, humidity: 55 },
+                            { hour: 24n, temp: 10, humidity: 80 },
+                        ],
+                        { temp: { color: "teal.solid" }, humidity: { color: "purple.solid" } },
+                        { xAxis: { dataKey: "hour", label: "Hour" }, grid: { show: true }, tooltip: { show: true }, legend: { show: true } }
+                    )
+                `)
+            )
+        );
+
+        // Float x-axis (non-uniform spacing)
+        const floatXAxis = $.let(
+            ShowcaseCard(
+                "Float X-Axis",
+                "Continuous float x-axis — non-uniform dose spacing shows proportional gaps",
+                Box.Root([
+                    Chart.Scatter(
+                        [
+                            { dose: 0.1, response: 2, control: 1 },
+                            { dose: 0.25, response: 8, control: 3 },
+                            { dose: 0.5, response: 25, control: 5 },
+                            { dose: 1.0, response: 50, control: 8 },
+                            { dose: 2.5, response: 80, control: 10 },
+                            { dose: 5.0, response: 95, control: 12 },
+                        ],
+                        {
+                            response: { color: "blue.solid" },
+                            control: { color: "orange.solid" },
+                        },
+                        {
+                            xAxis: { dataKey: "dose", label: "Dose (mg)" },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Chart.Scatter(
+                        [
+                            { dose: 0.1, response: 2, control: 1 },
+                            { dose: 0.25, response: 8, control: 3 },
+                            { dose: 0.5, response: 25, control: 5 },
+                            { dose: 1.0, response: 50, control: 8 },
+                            { dose: 2.5, response: 80, control: 10 },
+                            { dose: 5.0, response: 95, control: 12 },
+                        ],
+                        { response: { color: "blue.solid" }, control: { color: "orange.solid" } },
+                        { xAxis: { dataKey: "dose", label: "Dose (mg)" }, grid: { show: true }, tooltip: { show: true }, legend: { show: true } }
+                    )
+                `)
+            )
+        );
+
         // ScatterMulti with pivot but no pivotColors
         const multiPivotWithoutColors = $.let(
             ShowcaseCard(
@@ -737,6 +827,8 @@ export default East.function(
                 Grid.Item(pivotWithColors),
                 Grid.Item(pivotWithoutColors),
                 Grid.Item(multiPivotWithColors),
+                Grid.Item(integerXAxis),
+                Grid.Item(floatXAxis),
                 Grid.Item(multiPivotWithoutColors),
             ],
             {

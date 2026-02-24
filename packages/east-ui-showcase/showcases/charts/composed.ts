@@ -813,6 +813,156 @@ export default East.function(
             )
         );
 
+        // Integer x-axis (proportional spacing, gaps visible)
+        const integerXAxis = $.let(
+            ShowcaseCard(
+                "Integer X-Axis",
+                "Numeric integer x-axis — gaps at hours 1-2, 13-17 show proportional spacing",
+                Box.Root([
+                    Chart.Composed(
+                        [
+                            { hour: 0n, temp: 8n, humidity: 85n },
+                            { hour: 3n, temp: 6n, humidity: 90n },
+                            { hour: 6n, temp: 7n, humidity: 88n },
+                            { hour: 9n, temp: 15n, humidity: 65n },
+                            { hour: 12n, temp: 22n, humidity: 45n },
+                            { hour: 18n, temp: 18n, humidity: 55n },
+                            { hour: 24n, temp: 10n, humidity: 80n },
+                        ],
+                        {
+                            xAxis: { dataKey: "hour", label: "Hour" },
+                            series: {
+                                temp: { type: "bar", color: "teal.solid" },
+                                humidity: { type: "line", color: "purple.solid", showDots: true },
+                            },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "250px", width: "100%" }),
+                some(`
+                    Chart.Composed(
+                        [
+                            { hour: 0n, temp: 8n, humidity: 85n },
+                            { hour: 3n, temp: 6n, humidity: 90n },
+                            { hour: 6n, temp: 7n, humidity: 88n },
+                            { hour: 9n, temp: 15n, humidity: 65n },
+                            { hour: 12n, temp: 22n, humidity: 45n },
+                            { hour: 18n, temp: 18n, humidity: 55n },
+                            { hour: 24n, temp: 10n, humidity: 80n },
+                        ],
+                        {
+                            xAxis: { dataKey: "hour", label: "Hour" },
+                            series: {
+                                temp: { type: "bar", color: "teal.solid" },
+                                humidity: { type: "line", color: "purple.solid", showDots: true },
+                            },
+                            grid: { show: true }, tooltip: { show: true }, legend: { show: true },
+                        }
+                    )
+                `)
+            )
+        );
+
+        // Float x-axis (non-uniform spacing)
+        const floatXAxis = $.let(
+            ShowcaseCard(
+                "Float X-Axis",
+                "Continuous float x-axis — non-uniform dose spacing shows proportional gaps",
+                Box.Root([
+                    Chart.Composed(
+                        [
+                            { dose: 0.1, response: 2, control: 1 },
+                            { dose: 0.25, response: 8, control: 3 },
+                            { dose: 0.5, response: 25, control: 5 },
+                            { dose: 1.0, response: 50, control: 8 },
+                            { dose: 2.5, response: 80, control: 10 },
+                            { dose: 5.0, response: 95, control: 12 },
+                        ],
+                        {
+                            xAxis: { dataKey: "dose", label: "Dose (mg)" },
+                            series: {
+                                response: { type: "area", color: "blue.solid", fillOpacity: 0.3 },
+                                control: { type: "line", color: "orange.solid", showDots: true },
+                            },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "250px", width: "100%" }),
+                some(`
+                    Chart.Composed(
+                        [
+                            { dose: 0.1, response: 2, control: 1 },
+                            { dose: 0.25, response: 8, control: 3 },
+                            { dose: 0.5, response: 25, control: 5 },
+                            { dose: 1.0, response: 50, control: 8 },
+                            { dose: 2.5, response: 80, control: 10 },
+                            { dose: 5.0, response: 95, control: 12 },
+                        ],
+                        {
+                            xAxis: { dataKey: "dose", label: "Dose (mg)" },
+                            series: {
+                                response: { type: "area", color: "blue.solid", fillOpacity: 0.3 },
+                                control: { type: "line", color: "orange.solid", showDots: true },
+                            },
+                            grid: { show: true }, tooltip: { show: true }, legend: { show: true },
+                        }
+                    )
+                `)
+            )
+        );
+
+        // String x-axis (equal spacing)
+        const stringXAxis = $.let(
+            ShowcaseCard(
+                "String X-Axis",
+                "Categorical string x-axis — all categories equally spaced",
+                Box.Root([
+                    Chart.Composed(
+                        [
+                            { region: "North", sales: 120, target: 100 },
+                            { region: "South", sales: 200, target: 180 },
+                            { region: "East", sales: 150, target: 160 },
+                            { region: "West", sales: 180, target: 170 },
+                            { region: "Central", sales: 95, target: 110 },
+                        ],
+                        {
+                            xAxis: { dataKey: "region" },
+                            series: {
+                                sales: { type: "bar", color: "green.solid" },
+                                target: { type: "line", color: "red.solid", showDots: true },
+                            },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                        }
+                    ),
+                ], { height: "250px", width: "100%" }),
+                some(`
+                    Chart.Composed(
+                        [
+                            { region: "North", sales: 120, target: 100 },
+                            { region: "South", sales: 200, target: 180 },
+                            { region: "East", sales: 150, target: 160 },
+                            { region: "West", sales: 180, target: 170 },
+                            { region: "Central", sales: 95, target: 110 },
+                        ],
+                        {
+                            xAxis: { dataKey: "region" },
+                            series: {
+                                sales: { type: "bar", color: "green.solid" },
+                                target: { type: "line", color: "red.solid", showDots: true },
+                            },
+                            grid: { show: true }, tooltip: { show: true }, legend: { show: true },
+                        }
+                    )
+                `)
+            )
+        );
+
         // Axis formatting with date and currency
         const axisFormatting = $.let(
             ShowcaseCard(
@@ -896,6 +1046,9 @@ export default East.function(
                 Grid.Item(multiPivotWithColors),
                 Grid.Item(multiPivotWithoutColors),
                 Grid.Item(multiDualAxisWithAreaRange),
+                Grid.Item(integerXAxis),
+                Grid.Item(floatXAxis),
+                Grid.Item(stringXAxis),
                 Grid.Item(axisFormatting),
             ],
             {
