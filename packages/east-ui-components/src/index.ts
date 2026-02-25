@@ -176,6 +176,12 @@ export {
     type SelectRootValue,
     type SelectItemValue,
     type EastChakraSelectProps,
+    // Combobox
+    EastChakraCombobox,
+    toChakraCombobox,
+    type ComboboxRootValue,
+    type ComboboxItemValue,
+    type EastChakraComboboxProps,
     // Slider
     EastChakraSlider,
     toChakraSlider,

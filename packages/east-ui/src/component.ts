@@ -48,6 +48,7 @@ import { CheckboxType } from "./forms/checkbox/types.js";
 import { FieldType } from "./forms/field/types.js";
 import { SwitchType } from "./forms/switch/types.js";
 import { SelectRootType } from "./forms/select/types.js";
+import { ComboboxRootType } from "./forms/combobox/types.js";
 import { SliderType } from "./forms/slider/types.js";
 import { FileUploadType } from "./forms/file-upload/types.js";
 import { TextareaType } from "./forms/textarea/types.js";
@@ -213,6 +214,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
     Checkbox: CheckboxType,
     Switch: SwitchType,
     Select: SelectRootType,
+    Combobox: ComboboxRootType,
     Slider: SliderType,
     FileUpload: FileUploadType,
     Field: FieldType,

@@ -598,6 +598,7 @@ export const EastChakraComposedChart = memo(function EastChakraComposedChart({ v
                 {layout.brush &&
                     <Brush
                         {...layout.brush}
+                        {...(xAxis.tickFormatter && { tickFormatter: xAxis.tickFormatter })}
                         travellerWidth={10}
                         traveller={(props) => <rect
                             x={props.x}

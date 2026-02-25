@@ -35,7 +35,7 @@ export { Box, Flex, Stack, Separator, Grid, Splitter } from "./layout/index.js";
 export { Button, IconButton, CopyButton } from "./buttons/index.js";
 
 // Forms
-export { Input, Checkbox, Switch, Select, Slider, Field, FileUpload, Textarea, TagsInput } from "./forms/index.js";
+export { Input, Checkbox, Switch, Select, Combobox, Slider, Field, FileUpload, Textarea, TagsInput } from "./forms/index.js";
 
 // Feedback
 export { Progress, Alert } from "./feedback/index.js";

@@ -939,6 +939,123 @@ export default East.function(
             )
         );
 
+        // Stacked pivot with sparse data (some x-values missing certain pivot keys)
+        const stackedPivotSparse = $.let(
+            ShowcaseCard(
+                "Stacked Pivot (Sparse)",
+                "Stacked pivot where not all x-values have every pivot key — missing values filled with null",
+                Box.Root([
+                    Chart.Area(
+                        [
+                            { quarter: "Q1", region: "North", revenue: 100 },
+                            { quarter: "Q1", region: "South", revenue: 80 },
+                            { quarter: "Q1", region: "East", revenue: 60 },
+                            { quarter: "Q2", region: "North", revenue: 120 },
+                            { quarter: "Q2", region: "South", revenue: 90 },
+                            // East missing in Q2
+                            { quarter: "Q3", region: "North", revenue: 140 },
+                            // South missing in Q3
+                            { quarter: "Q3", region: "East", revenue: 75 },
+                            { quarter: "Q4", region: "South", revenue: 110 },
+                            { quarter: "Q4", region: "East", revenue: 85 },
+                            // North missing in Q4
+                        ],
+                        {
+                            revenue: { color: "blue.500" },
+                        },
+                        {
+                            xAxis: { dataKey: "quarter" },
+                            pivotKey: "region",
+                            valueKey: "revenue",
+                            stacked: true,
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            legend: { show: true },
+                            fillOpacity: 0.4,
+                        }
+                    ),
+                ], { height: "220px", width: "100%" }),
+                some(`
+                    Chart.Area(
+                        [
+                            { quarter: "Q1", region: "North", revenue: 100 },
+                            { quarter: "Q1", region: "South", revenue: 80 },
+                            { quarter: "Q1", region: "East", revenue: 60 },
+                            { quarter: "Q2", region: "North", revenue: 120 },
+                            { quarter: "Q2", region: "South", revenue: 90 },
+                            // East missing in Q2
+                            { quarter: "Q3", region: "North", revenue: 140 },
+                            // South missing in Q3
+                            { quarter: "Q3", region: "East", revenue: 75 },
+                            { quarter: "Q4", region: "South", revenue: 110 },
+                            { quarter: "Q4", region: "East", revenue: 85 },
+                            // North missing in Q4
+                        ],
+                        { revenue: { color: "blue.500" } },
+                        {
+                            xAxis: { dataKey: "quarter" },
+                            pivotKey: "region",
+                            valueKey: "revenue",
+                            stacked: true,
+                        }
+                    )
+                `)
+            )
+        );
+
+        // Brush with date formatting
+        const brushDateFormatting = $.let(
+            ShowcaseCard(
+                "Brush with Date Format",
+                "Brush handle values use the same date formatter as the x-axis",
+                Box.Root([
+                    Chart.Area(
+                        [
+                            { date: new Date("2024-01-15"), revenue: 12500 },
+                            { date: new Date("2024-02-15"), revenue: 15800 },
+                            { date: new Date("2024-03-15"), revenue: 18200 },
+                            { date: new Date("2024-04-15"), revenue: 16500 },
+                            { date: new Date("2024-05-15"), revenue: 21000 },
+                            { date: new Date("2024-06-15"), revenue: 24300 },
+                            { date: new Date("2024-07-15"), revenue: 19800 },
+                            { date: new Date("2024-08-15"), revenue: 22100 },
+                            { date: new Date("2024-09-15"), revenue: 26500 },
+                            { date: new Date("2024-10-15"), revenue: 23400 },
+                            { date: new Date("2024-11-15"), revenue: 28900 },
+                            { date: new Date("2024-12-15"), revenue: 31200 },
+                        ],
+                        { revenue: { color: "teal.solid" } },
+                        {
+                            xAxis: {
+                                dataKey: "date",
+                                tickFormat: Chart.TickFormat.Date({ format: "DD MMM" }),
+                            },
+                            yAxis: {
+                                tickFormat: Chart.TickFormat.Currency({ currency: "USD", compact: "short" }),
+                            },
+                            grid: { show: true },
+                            tooltip: { show: true },
+                            brush: { dataKey: "date", height: 30n },
+                            fillOpacity: 0.3,
+                        }
+                    ),
+                ], { height: "300px", width: "100%" }),
+                some(`
+                    Chart.Area(
+                        [...data],
+                        { revenue: { color: "teal.solid" } },
+                        {
+                            xAxis: {
+                                dataKey: "date",
+                                tickFormat: Chart.TickFormat.Date({ format: "DD MMM" }),
+                            },
+                            brush: { dataKey: "date", height: 30n },
+                        }
+                    )
+                `)
+            )
+        );
+
         // Integer x-axis (proportional spacing, gaps visible)
         const integerXAxis = $.let(
             ShowcaseCard(
@@ -1154,6 +1271,8 @@ export default East.function(
                 Grid.Item(pivotWithoutColors),
                 Grid.Item(multiPivotWithColors),
                 Grid.Item(multiPivotWithoutColors),
+                Grid.Item(stackedPivotSparse),
+                Grid.Item(brushDateFormatting),
                 Grid.Item(integerXAxis),
                 Grid.Item(floatXAxis),
                 Grid.Item(stringXAxis),

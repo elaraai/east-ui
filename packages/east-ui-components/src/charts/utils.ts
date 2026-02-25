@@ -1056,11 +1056,20 @@ export function prepareChartData(config: PrepareChartDataConfig): PreparedChartD
             xRow[pivotConverted] = yValue !== undefined ? convertLiteralValue(yValue) : null;
         }
 
+        // Fill missing pivot values with null so Recharts stacking works correctly
+        const pivotValuesArray = Array.from(pivotValues);
+        for (const xRow of xAxisRows.values()) {
+            for (const pv of pivotValuesArray) {
+                if (!(pv in xRow)) {
+                    xRow[pv] = null;
+                }
+            }
+        }
+
         // Sort by x-axis value using East's compareFor
         data = [...xAxisRaw.entries()]
             .sort(([, a], [, b]) => compareLiteral(a, b))
             .map(([converted]) => xAxisRows.get(converted)!);
-        const pivotValuesArray = Array.from(pivotValues);
 
         // Get base layerIndex from series config (or default to 0)
         const baseLayerIndex = seriesConfig ? getSomeorUndefined(seriesConfig.layerIndex) : undefined;
@@ -1133,6 +1142,16 @@ export function prepareChartData(config: PrepareChartDataConfig): PreparedChartD
                     : seriesIdx * 100 + pivotIndex);
             }
             seriesIdx++;
+        }
+
+        // Fill missing composite series values with null so Recharts stacking works correctly
+        const allCompositeNames = series.map(s => s.name);
+        for (const xRow of xAxisRows.values()) {
+            for (const name of allCompositeNames) {
+                if (!(name in xRow)) {
+                    xRow[name] = null;
+                }
+            }
         }
 
         // Sort by x-axis value using East's compareFor
