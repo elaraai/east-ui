@@ -12,6 +12,7 @@ import {
     Checkbox,
     Switch,
     Select,
+    Combobox,
     Slider,
     Textarea,
     TagsInput,
@@ -176,6 +177,156 @@ export default East.function(
                         Select.Item("ca", "Canada"),
                         Select.Item("au", "Australia"),
                     ], { placeholder: "Select a country" })
+                `)
+            )
+        );
+
+        // Combobox - Basic
+        const comboboxBasic = $.let(
+            ShowcaseCard(
+                "Combobox",
+                "Searchable dropdown with type-to-filter",
+                Combobox.Root("", [
+                    Combobox.Item("us", "United States"),
+                    Combobox.Item("uk", "United Kingdom"),
+                    Combobox.Item("ca", "Canada"),
+                    Combobox.Item("au", "Australia"),
+                    Combobox.Item("de", "Germany"),
+                    Combobox.Item("fr", "France"),
+                    Combobox.Item("jp", "Japan"),
+                ], { placeholder: "Search countries..." }),
+                some(`
+                    Combobox.Root("", [
+                        Combobox.Item("us", "United States"),
+                        Combobox.Item("uk", "United Kingdom"),
+                        Combobox.Item("ca", "Canada"),
+                        ...
+                    ], { placeholder: "Search countries..." })
+                `)
+            )
+        );
+
+        // Combobox - With initial value
+        const comboboxWithValue = $.let(
+            ShowcaseCard(
+                "Combobox with Value",
+                "Pre-selected initial value",
+                Combobox.Root("ca", [
+                    Combobox.Item("us", "United States"),
+                    Combobox.Item("uk", "United Kingdom"),
+                    Combobox.Item("ca", "Canada"),
+                    Combobox.Item("au", "Australia"),
+                ], { placeholder: "Search countries..." }),
+                some(`
+                    Combobox.Root("ca", [
+                        Combobox.Item("us", "United States"),
+                        Combobox.Item("uk", "United Kingdom"),
+                        Combobox.Item("ca", "Canada"),
+                        Combobox.Item("au", "Australia"),
+                    ], { placeholder: "Search countries..." })
+                `)
+            )
+        );
+
+        // Combobox Sizes
+        const comboboxSizes = $.let(
+            ShowcaseCard(
+                "Combobox Sizes",
+                "Available sizes: xs, sm, md, lg",
+                Stack.VStack([
+                    Combobox.Root("", [
+                        Combobox.Item("a", "Option A"),
+                        Combobox.Item("b", "Option B"),
+                    ], { placeholder: "Extra Small", size: "xs" }),
+                    Combobox.Root("", [
+                        Combobox.Item("a", "Option A"),
+                        Combobox.Item("b", "Option B"),
+                    ], { placeholder: "Small", size: "sm" }),
+                    Combobox.Root("", [
+                        Combobox.Item("a", "Option A"),
+                        Combobox.Item("b", "Option B"),
+                    ], { placeholder: "Medium (default)", size: "md" }),
+                    Combobox.Root("", [
+                        Combobox.Item("a", "Option A"),
+                        Combobox.Item("b", "Option B"),
+                    ], { placeholder: "Large", size: "lg" }),
+                ], { gap: "2", align: "stretch", width: "100%" }),
+                some(`
+                    Combobox.Root("", items, { size: "xs" })
+                    Combobox.Root("", items, { size: "sm" })
+                    Combobox.Root("", items, { size: "md" })
+                    Combobox.Root("", items, { size: "lg" })
+                `)
+            )
+        );
+
+        // Combobox Disabled
+        const comboboxDisabled = $.let(
+            ShowcaseCard(
+                "Combobox Disabled",
+                "Disabled combobox and disabled items",
+                Stack.VStack([
+                    Combobox.Root("", [
+                        Combobox.Item("a", "Option A"),
+                        Combobox.Item("b", "Option B"),
+                    ], { placeholder: "Disabled combobox", disabled: true }),
+                    Combobox.Root("", [
+                        Combobox.Item("free", "Free Plan"),
+                        Combobox.Item("pro", "Pro Plan"),
+                        Combobox.Item("enterprise", "Enterprise Plan", { disabled: true }),
+                    ], { placeholder: "Item disabled" }),
+                ], { gap: "4", align: "stretch", width: "100%" }),
+                some(`
+                    Combobox.Root("", items, { disabled: true })
+                    Combobox.Root("", [
+                        Combobox.Item("free", "Free Plan"),
+                        Combobox.Item("enterprise", "Enterprise", { disabled: true }),
+                    ])
+                `)
+            )
+        );
+
+        // Combobox Allow Custom Value
+        const comboboxCustomValue = $.let(
+            ShowcaseCard(
+                "Combobox Custom Value",
+                "Accept values not in the list",
+                Combobox.Root("", [
+                    Combobox.Item("react", "React"),
+                    Combobox.Item("vue", "Vue"),
+                    Combobox.Item("angular", "Angular"),
+                    Combobox.Item("svelte", "Svelte"),
+                ], { placeholder: "Type or pick a framework...", allowCustomValue: true }),
+                some(`
+                    Combobox.Root("", [
+                        Combobox.Item("react", "React"),
+                        Combobox.Item("vue", "Vue"),
+                        Combobox.Item("angular", "Angular"),
+                        Combobox.Item("svelte", "Svelte"),
+                    ], { allowCustomValue: true })
+                `)
+            )
+        );
+
+        // Combobox Multiple
+        const comboboxMultiple = $.let(
+            ShowcaseCard(
+                "Combobox Multiple",
+                "Select multiple values from the list",
+                Combobox.Root("", [
+                    Combobox.Item("red", "Red"),
+                    Combobox.Item("green", "Green"),
+                    Combobox.Item("blue", "Blue"),
+                    Combobox.Item("yellow", "Yellow"),
+                    Combobox.Item("purple", "Purple"),
+                ], { placeholder: "Search colors...", multiple: true }),
+                some(`
+                    Combobox.Root("", [
+                        Combobox.Item("red", "Red"),
+                        Combobox.Item("green", "Green"),
+                        Combobox.Item("blue", "Blue"),
+                        ...
+                    ], { multiple: true })
                 `)
             )
         );
@@ -362,6 +513,12 @@ export default East.function(
         });
         $.if(State.has("form_select").not(), $ => {
             $(State.write([StringType], "form_select", ""));
+        });
+        $.if(State.has("form_combobox").not(), $ => {
+            $(State.write([StringType], "form_combobox", ""));
+        });
+        $.if(State.has("form_combobox_multi").not(), $ => {
+            $(State.write([ArrayType(StringType)], "form_combobox_multi", []));
         });
         $.if(State.has("form_slider").not(), $ => {
             $(State.write([FloatType], "form_slider", 50.0));
@@ -658,6 +815,99 @@ export default East.function(
             )
         );
 
+        // Interactive Combobox (Single Select)
+        const interactiveCombobox = $.let(
+            ShowcaseCard(
+                "Interactive Combobox",
+                "Single select - type to search, pick one",
+                Reactive.Root(East.function([], UIComponentType, $ => {
+                    const selected = $.let(State.read([StringType], "form_combobox"));
+                    const onChange = East.function([StringType], NullType, ($, newValue) => {
+                        $(State.write([StringType], "form_combobox", newValue));
+                    });
+
+                    return Stack.VStack([
+                        Combobox.Root(selected, [
+                            Combobox.Item("apple", "Apple"),
+                            Combobox.Item("banana", "Banana"),
+                            Combobox.Item("cherry", "Cherry"),
+                            Combobox.Item("date", "Date"),
+                            Combobox.Item("elderberry", "Elderberry"),
+                            Combobox.Item("fig", "Fig"),
+                            Combobox.Item("grape", "Grape"),
+                        ], { placeholder: "Search fruits...", onChange }),
+                        Text.Root(East.str`Selected: ${East.greater(selected.length(), 0n).ifElse(
+                            _$ => selected,
+                            _$ => "(none)"
+                        )}`),
+                    ], { gap: "3", align: "stretch" });
+                })),
+                some(`
+                    Reactive.Root(East.function([], UIComponentType, $ => {
+                        const selected = $.let(State.read([StringType], "form_combobox"));
+                        const onChange = East.function([StringType], NullType, ($, newValue) => {
+                            $(State.write([StringType], "form_combobox", newValue));
+                        });
+
+                        return Stack.VStack([
+                            Combobox.Root(selected, [
+                                Combobox.Item("apple", "Apple"),
+                                Combobox.Item("banana", "Banana"),
+                                ...
+                            ], { placeholder: "Search fruits...", onChange }),
+                            Text.Root(East.str\`Selected: \${...}\`),
+                        ], { gap: "3", align: "stretch" });
+                    })
+                `)
+            )
+        );
+
+        // Interactive Combobox (Multi Select)
+        const interactiveComboboxMulti = $.let(
+            ShowcaseCard(
+                "Interactive Combobox Multi",
+                "Multi select - type to search, pick many",
+                Reactive.Root(East.function([], UIComponentType, $ => {
+                    const selected = $.let(State.read([ArrayType(StringType)], "form_combobox_multi"));
+                    const onChangeMultiple = East.function([ArrayType(StringType)], NullType, ($, newValue) => {
+                        $(State.write([ArrayType(StringType)], "form_combobox_multi", newValue));
+                    });
+
+                    return Stack.VStack([
+                        Combobox.Root("", [
+                            Combobox.Item("react", "React"),
+                            Combobox.Item("vue", "Vue"),
+                            Combobox.Item("angular", "Angular"),
+                            Combobox.Item("svelte", "Svelte"),
+                            Combobox.Item("solid", "Solid"),
+                            Combobox.Item("ember", "Ember"),
+                        ], { placeholder: "Search frameworks...", multiple: true, onChangeMultiple }),
+                        Text.Root(East.str`Selected: ${East.greater(selected.length(), 0n).ifElse(
+                            _$ => selected.stringJoin(", "),
+                            _$ => "(none)"
+                        )}`),
+                    ], { gap: "3", align: "stretch" });
+                })),
+                some(`
+                    Reactive.Root(East.function([], UIComponentType, $ => {
+                        const selected = $.let(State.read([ArrayType(StringType)], "form_combobox_multi"));
+                        const onChangeMultiple = East.function([ArrayType(StringType)], NullType, ($, newValue) => {
+                            $(State.write([ArrayType(StringType)], "form_combobox_multi", newValue));
+                        });
+
+                        return Stack.VStack([
+                            Combobox.Root("", [
+                                Combobox.Item("react", "React"),
+                                Combobox.Item("vue", "Vue"),
+                                ...
+                            ], { placeholder: "Search frameworks...", multiple: true, onChangeMultiple }),
+                            Text.Root(East.str\`Selected: \${...}\`),
+                        ], { gap: "3", align: "stretch" });
+                    })
+                `)
+            )
+        );
+
         // Interactive Textarea
         const interactiveTextarea = $.let(
             ShowcaseCard(
@@ -900,6 +1150,18 @@ export default East.function(
                 Grid.Root([
                     Grid.Item(selectShowcase),
                     Grid.Item(slider),
+                ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
+            ]),
+            Accordion.Item("combobox", "Combobox", [
+                Grid.Root([
+                    Grid.Item(comboboxBasic),
+                    Grid.Item(comboboxWithValue),
+                    Grid.Item(comboboxSizes),
+                    Grid.Item(comboboxDisabled),
+                    Grid.Item(comboboxCustomValue),
+                    Grid.Item(comboboxMultiple),
+                    Grid.Item(interactiveCombobox),
+                    Grid.Item(interactiveComboboxMulti),
                 ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
             ]),
             Accordion.Item("text", "Text Input", [

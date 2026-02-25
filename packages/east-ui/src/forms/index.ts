@@ -38,6 +38,14 @@ export {
 } from "./select/index.js";
 
 export {
+    Combobox,
+    ComboboxRootType,
+    ComboboxItemType,
+    type ComboboxStyle,
+    type ComboboxItemStyle,
+} from "./combobox/index.js";
+
+export {
     Slider,
     SliderType,
     SliderVariant,

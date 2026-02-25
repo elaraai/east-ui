@@ -49,6 +49,15 @@ export {
     type EastChakraSelectProps,
 } from "./select/index.js";
 
+// Combobox
+export {
+    EastChakraCombobox,
+    toChakraCombobox,
+    type ComboboxRootValue,
+    type ComboboxItemValue,
+    type EastChakraComboboxProps,
+} from "./combobox/index.js";
+
 // Slider
 export {
     EastChakraSlider,

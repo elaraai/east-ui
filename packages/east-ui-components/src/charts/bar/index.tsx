@@ -196,6 +196,7 @@ export const EastChakraBarChart = memo(function EastChakraBarChart({ value }: Ea
                 {layout.brush &&
                     <Brush
                         {...layout.brush}
+                        {...(xAxis.tickFormatter && { tickFormatter: xAxis.tickFormatter })}
                         travellerWidth={10}
                         traveller={(props) => <rect
                             x={props.x}
