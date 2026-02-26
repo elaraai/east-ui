@@ -1148,7 +1148,7 @@ export function prepareChartData(config: PrepareChartDataConfig): PreparedChartD
         const allCompositeNames = series.map(s => s.name);
         for (const xRow of xAxisRows.values()) {
             for (const name of allCompositeNames) {
-                if (!(name in xRow)) {
+                if (name !== undefined && xRow?.[name] === undefined) {
                     xRow[name] = null;
                 }
             }

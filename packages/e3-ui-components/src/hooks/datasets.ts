@@ -5,8 +5,8 @@
 
 import { useQuery, useMutation, type UseQueryResult } from '@tanstack/react-query';
 import type { QueryOverrides } from './types.js';
-import { datasetList, datasetListAt, datasetListRecursive, datasetGet, datasetSet } from '@elaraai/e3-api-client';
-import type { RequestOptions, DatasetListItem } from '@elaraai/e3-api-client';
+import { datasetList, datasetListAt, datasetListRecursive, datasetListRecursivePaths, datasetListWithStatus, datasetGet, datasetGetStatus, datasetSet } from '@elaraai/e3-api-client';
+import type { RequestOptions, ListEntry, DatasetStatusDetail } from '@elaraai/e3-api-client';
 import type { TreePath } from '@elaraai/e3-types';
 
 export function useDatasetList(url: string, repo: string, workspace: string | null, requestOptions?: RequestOptions, queryOptions?: QueryOverrides) {
@@ -27,10 +27,37 @@ export function useDatasetListAt(url: string, repo: string, workspace: string | 
     });
 }
 
-export function useDatasetListRecursive(url: string, repo: string, workspace: string | null, path: TreePath, requestOptions?: RequestOptions, queryOptions?: QueryOverrides): UseQueryResult<DatasetListItem[], Error> {
+export function useDatasetListRecursive(url: string, repo: string, workspace: string | null, path: TreePath, requestOptions?: RequestOptions, queryOptions?: QueryOverrides): UseQueryResult<ListEntry[], Error> {
     return useQuery({
         queryKey: ['datasetListRecursive', url, repo, workspace, path],
         queryFn: () => datasetListRecursive(url, repo, workspace!, path, requestOptions ?? { token: null }),
+        enabled: !!repo && !!workspace,
+        ...queryOptions,
+    });
+}
+
+export function useDatasetListRecursivePaths(url: string, repo: string, workspace: string | null, path: TreePath, requestOptions?: RequestOptions, queryOptions?: QueryOverrides) {
+    return useQuery({
+        queryKey: ['datasetListRecursivePaths', url, repo, workspace, path],
+        queryFn: () => datasetListRecursivePaths(url, repo, workspace!, path, requestOptions ?? { token: null }),
+        enabled: !!repo && !!workspace,
+        ...queryOptions,
+    });
+}
+
+export function useDatasetListWithStatus(url: string, repo: string, workspace: string | null, path: TreePath, requestOptions?: RequestOptions, queryOptions?: QueryOverrides): UseQueryResult<ListEntry[], Error> {
+    return useQuery({
+        queryKey: ['datasetListWithStatus', url, repo, workspace, path],
+        queryFn: () => datasetListWithStatus(url, repo, workspace!, path, requestOptions ?? { token: null }),
+        enabled: !!repo && !!workspace,
+        ...queryOptions,
+    });
+}
+
+export function useDatasetGetStatus(url: string, repo: string, workspace: string | null, path: TreePath, requestOptions?: RequestOptions, queryOptions?: QueryOverrides): UseQueryResult<DatasetStatusDetail, Error> {
+    return useQuery({
+        queryKey: ['datasetGetStatus', url, repo, workspace, path],
+        queryFn: () => datasetGetStatus(url, repo, workspace!, path, requestOptions ?? { token: null }),
         enabled: !!repo && !!workspace,
         ...queryOptions,
     });
