@@ -30,7 +30,7 @@ import {
     DatasetImpl,
     OverlayImpl,
 } from '@elaraai/east-ui-components';
-import { useTaskOutput } from '../hooks/useTaskOutput.js';
+import { useTaskOutputPreview } from '../hooks/useTaskOutputPreview.js';
 import { useTaskLogs as useTaskLogsHook } from '../hooks/useTaskLogsHook.js';
 import { StatusDisplay } from './StatusDisplay.js';
 import { UIComponentType } from '@elaraai/east-ui';
@@ -65,8 +65,14 @@ export const TaskPreview = memo(function TaskPreview({
     outputHash,
     requestOptions,
 }: TaskPreviewProps) {
-    // Fetch task output - pass outputHash so query refetches when data changes
-    const { data: output, isLoading, error } = useTaskOutput(apiUrl, repo, workspace, taskInfo, outputHash, requestOptions);
+    // Fetch task output with size-gated preview - pass outputHash so query refetches when data changes
+    const { data: preview, isLoading, error } = useTaskOutputPreview(apiUrl, repo, workspace, taskInfo, outputHash, requestOptions);
+
+    // Extract raw bytes (if loaded)
+    const output = useMemo(() =>
+        preview?.value.type === 'some' ? preview.value.value : undefined,
+        [preview]
+    );
 
     // Fetch task logs (stdout and stderr)
     const { data: stdout } = useTaskLogsHook(apiUrl, repo, workspace, taskInfo, 'stdout', requestOptions);
@@ -140,6 +146,27 @@ export const TaskPreview = memo(function TaskPreview({
             );
         }
 
+        if (!preview) {
+            return (
+                <StatusDisplay
+                    variant="info"
+                    title={`No output available for task "${task}"`}
+                />
+            );
+        }
+
+        // Oversized — value not fetched
+        if (preview.value.type === 'none') {
+            const sizeBytes = Number(preview.size.type === 'some' ? preview.size.value : 0);
+            return (
+                <StatusDisplay
+                    variant="warning"
+                    title="Output too large to display"
+                    message={`The task output is ${(sizeBytes / 1024 / 1024).toFixed(2)} MB, which exceeds the 10 MB display limit.`}
+                />
+            );
+        }
+
         // UIComponent loaded - render it
         if (ir !== null) {
             return (
@@ -192,7 +219,7 @@ export const TaskPreview = memo(function TaskPreview({
                 title={`No output available for task "${task}"`}
             />
         );
-    }, [ir, task, isLoading, output, taskInfo?.status.type]);
+    }, [preview, ir, task, isLoading, output, taskInfo?.status.type]);
 
     // Get active tab content
     const activeLogContent = useMemo(() => tabs.value === 'stderr' ? stderrContent : stdoutContent, [tabs.value, stderrContent, stdoutContent]);

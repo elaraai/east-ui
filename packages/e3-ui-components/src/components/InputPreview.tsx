@@ -24,7 +24,7 @@ import {
     DatasetImpl,
     OverlayImpl,
 } from '@elaraai/east-ui-components';
-import { useInputData } from '../hooks/useInputData.js';
+import { useInputDataPreview } from '../hooks/useInputDataPreview.js';
 import { StatusDisplay } from './StatusDisplay.js';
 import { EastValueViewer } from './EastValueViewer.js';
 import { UIComponentType } from '@elaraai/east-ui';
@@ -57,8 +57,14 @@ export const InputPreview = memo(function InputPreview({
     inputInfo,
     requestOptions,
 }: InputPreviewProps) {
-    // Fetch input data
-    const { data: output, isLoading, error } = useInputData(apiUrl, repo, workspace, inputInfo, requestOptions);
+    // Fetch input data with size-gated preview
+    const { data: preview, isLoading, error } = useInputDataPreview(apiUrl, repo, workspace, inputInfo, requestOptions);
+
+    // Extract raw bytes (if loaded)
+    const output = useMemo(() =>
+        preview?.value.type === 'some' ? preview.value.value : undefined,
+        [preview]
+    );
 
     // Decode the output, checking if it's a UIComponentType
     const decode = useMemo((): { type: 'none' } | { type: 'ui'; value: ValueTypeOf<UIComponentType> } | { type: 'ui-error'; error: Error } | { type: 'other' } => {
@@ -103,6 +109,27 @@ export const InputPreview = memo(function InputPreview({
                 <StatusDisplay
                     variant="loading"
                     title="Loading input..."
+                />
+            );
+        }
+
+        if (!preview) {
+            return (
+                <StatusDisplay
+                    variant="info"
+                    title={`No data available for input "${displayName}"`}
+                />
+            );
+        }
+
+        // Oversized — value not fetched
+        if (preview.value.type === 'none') {
+            const sizeBytes = Number(preview.size.type === 'some' ? preview.size.value : 0);
+            return (
+                <StatusDisplay
+                    variant="warning"
+                    title="Input too large to display"
+                    message={`The input data is ${(sizeBytes / 1024 / 1024).toFixed(2)} MB, which exceeds the 10 MB display limit.`}
                 />
             );
         }
@@ -161,7 +188,7 @@ export const InputPreview = memo(function InputPreview({
                 title={`No data available for input "${displayName}"`}
             />
         );
-    }, [decode, displayName, isLoading, output, inputInfo?.status.type]);
+    }, [preview, decode, displayName, isLoading, output, inputInfo?.status.type]);
 
     // Error
     if (error) {

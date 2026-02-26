@@ -477,6 +477,8 @@ export const EastChakraTable = memo(function EastChakraTable({
                                                             color: "fg.default"
                                                         }}
                                                         position="relative"
+                                                        px="0"
+                                                        minW="auto"
                                                     >
                                                         <FontAwesomeIcon icon={icon} style={{ width: '12px', height: '12px' }} />
                                                         {isSorted && sortIndex && (
