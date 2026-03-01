@@ -138,11 +138,8 @@ export type TableRootType = typeof TableRootType;
 
 /**
  * Base column configuration properties shared by all column types.
- *
- * @typeParam FieldType - The East type of the field being rendered
- * @typeParam RowType - The East struct type of the entire row
  */
-interface TableColumnConfigBase<_FieldType extends EastType = EastType, _RowType extends StructType = StructType> {
+interface TableColumnConfigBase {
     /** Column header text (defaults to column key if not provided) */
     header?: SubtypeExprOrValue<StringType>;
     /** Optional East render function called at render time with cell context */
@@ -167,7 +164,7 @@ type CellType = NullType | BooleanType | IntegerType | FloatType | StringType | 
  * Column configuration for primitive fields (value function is optional).
  */
 interface TableColumnConfigPrimitive<FieldType extends PrimitiveEastType = PrimitiveEastType, RowType extends StructType = StructType>
-    extends TableColumnConfigBase<FieldType, RowType> {
+    extends TableColumnConfigBase {
     /** Optional function to extract a sortable/filterable value from the field */
     value?: (value: ExprType<FieldType>, row: ExprType<RowType>) => SubtypeExprOrValue<CellType>;
 }
@@ -176,7 +173,7 @@ interface TableColumnConfigPrimitive<FieldType extends PrimitiveEastType = Primi
  * Column configuration for complex fields (value function is required).
  */
 interface TableColumnConfigComplex<FieldType extends EastType = EastType, RowType extends StructType = StructType>
-    extends TableColumnConfigBase<FieldType, RowType> {
+    extends TableColumnConfigBase {
     /** Required function to extract a sortable/filterable value from complex fields */
     value: (value: ExprType<FieldType>, row: ExprType<RowType>) => SubtypeExprOrValue<CellType>;
 }
