@@ -16,7 +16,7 @@ import {
     type TypeOf,
     some,
     none,
-    type ValueTypeOf,
+
     FunctionType,
     NullType,
     toEastTypeValue,
@@ -29,6 +29,7 @@ import {
     DateTimeType,
     BlobType,
     isTypeValueEqual,
+    EastTypeType,
 } from "@elaraai/east";
 
 import {
@@ -38,10 +39,10 @@ import {
 import {
     TableVariantType,
     TableStyleType,
-    TableColumnType,
     TableSizeType,
     type TableStyle,
     type PrimitiveEastType,
+    TableCellRenderContextType,
     TableCellClickEventType,
     TableRowClickEventType,
     TableRowSelectionEventType,
@@ -51,16 +52,40 @@ import {
 import { UIComponentType } from "../../component.js";
 import { Text } from "../../typography/index.js";
 
-
 // Re-export style types
 export {
     TableVariantType,
     TableStyleType,
-    TableColumnType,
     TableSizeType,
+    TableCellRenderContextType,
     type TableSizeLiteral,
     type TableStyle,
 } from "./types.js";
+
+/**
+ * East type for a table column definition.
+ *
+ * @property key - The column key (field name)
+ * @property dataType - The original field type
+ * @property valueType - The type after value function
+ * @property header - Optional header text
+ * @property width - Optional fixed width (CSS value)
+ * @property minWidth - Optional minimum width (CSS value)
+ * @property maxWidth - Optional maximum width (CSS value)
+ * @property render - Optional East render function
+ */
+export const TableColumnType = StructType({
+    key: StringType,
+    dataType: EastTypeType,
+    valueType: EastTypeType,
+    header: OptionType(StringType),
+    width: OptionType(StringType),
+    minWidth: OptionType(StringType),
+    maxWidth: OptionType(StringType),
+    render: OptionType(FunctionType([TableCellRenderContextType], UIComponentType)),
+});
+
+export type TableColumnType = typeof TableColumnType;
 
 /**
  * East type for a table cell.
@@ -73,10 +98,10 @@ export {
  */
 export const TableCellType: StructType<{
     value: LiteralValueType,
-    content: UIComponentType,
+    content: OptionType<UIComponentType>,
 }> = StructType({
     value: LiteralValueType,
-    content: UIComponentType,
+    content: OptionType(UIComponentType),
 });
 
 
@@ -113,15 +138,12 @@ export type TableRootType = typeof TableRootType;
 
 /**
  * Base column configuration properties shared by all column types.
- *
- * @typeParam FieldType - The East type of the field being rendered
- * @typeParam RowType - The East struct type of the entire row
  */
-interface TableColumnConfigBase<FieldType extends EastType = EastType, RowType extends StructType = StructType> {
+interface TableColumnConfigBase {
     /** Column header text (defaults to column key if not provided) */
     header?: SubtypeExprOrValue<StringType>;
-    /** Optional render function - defaults to Text.Root (with auto string conversion for non-strings) */
-    render?: (value: ExprType<FieldType>, row: ExprType<RowType>) => ExprType<UIComponentType>;
+    /** Optional East render function called at render time with cell context */
+    render?: SubtypeExprOrValue<FunctionType<[TableCellRenderContextType], UIComponentType>>;
     /** Optional cell click handler */
     onCellClick?: SubtypeExprOrValue<FunctionType<[TableCellClickEventType], NullType>>,
     /** Optional cell double-click handler */
@@ -142,7 +164,7 @@ type CellType = NullType | BooleanType | IntegerType | FloatType | StringType | 
  * Column configuration for primitive fields (value function is optional).
  */
 interface TableColumnConfigPrimitive<FieldType extends PrimitiveEastType = PrimitiveEastType, RowType extends StructType = StructType>
-    extends TableColumnConfigBase<FieldType, RowType> {
+    extends TableColumnConfigBase {
     /** Optional function to extract a sortable/filterable value from the field */
     value?: (value: ExprType<FieldType>, row: ExprType<RowType>) => SubtypeExprOrValue<CellType>;
 }
@@ -151,7 +173,7 @@ interface TableColumnConfigPrimitive<FieldType extends PrimitiveEastType = Primi
  * Column configuration for complex fields (value function is required).
  */
 interface TableColumnConfigComplex<FieldType extends EastType = EastType, RowType extends StructType = StructType>
-    extends TableColumnConfigBase<FieldType, RowType> {
+    extends TableColumnConfigBase {
     /** Required function to extract a sortable/filterable value from complex fields */
     value: (value: ExprType<FieldType>, row: ExprType<RowType>) => SubtypeExprOrValue<CellType>;
 }
@@ -266,7 +288,7 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
     const rows_mapped = data_expr.map(($, datum) => {
         const cells = $.let(new Map(), DictType(StringType, StructType({
             value: LiteralValueType,
-            content: UIComponentType,
+            content: OptionType(UIComponentType),
         })));
         for (const [col_key, col_config] of Object.entries(columns_obj)) {
             const field_value = (datum as any)[col_key];
@@ -311,25 +333,29 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
                 (col_config as any).valueType = valueType;
             }
 
+            // When render is defined, cell content is none (renderer calls the render fn).
+            // When render is not defined, cell content is some(Text.Root(...)) as default.
+            const content = col_config.render
+                ? none
+                : some(East.value(
+                    Text.Root(East.str`${field_value}`, {
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                    }),
+                    UIComponentType
+                ));
+
             $(cells.insert(col_key, {
                 value: cellValue,
-                content: East.value(
-                    col_config.render ?
-                        col_config.render(field_value, datum as any) :
-                        Text.Root(East.str`${field_value}`, {
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                        }),
-                    UIComponentType
-                ),
+                content,
             }));
         }
         return cells
     });
 
     // Create columns array from the columns config
-    const columns_mapped: ValueTypeOf<ArrayType<typeof TableColumnType>> = []
+    const columns_mapped: SubtypeExprOrValue<ArrayType<typeof TableColumnType>> = []
 
     for (const [key, config] of Object.entries(columns_obj)) {
         columns_mapped.push({
@@ -340,8 +366,13 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
             width: config?.width !== undefined ? some(config.width) : none as any,
             minWidth: config?.minWidth !== undefined ? some(config.minWidth) : none as any,
             maxWidth: config?.maxWidth !== undefined ? some(config.maxWidth) : none as any,
+            render: config?.render
+                ? some(East.value(config.render, FunctionType([TableCellRenderContextType], UIComponentType)))
+                : none as any,
         });
     }
+
+    const columns_expr = East.value(columns_mapped, ArrayType(TableColumnType));
     // Build the style object
     const variantValue = style?.variant
         ? (typeof style.variant === "string"
@@ -363,7 +394,7 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
 
     return East.value(variant("Table", {
         rows: rows_mapped,
-        columns: columns_mapped as ValueTypeOf<typeof TableRootType>["columns"],
+        columns: columns_expr,
         style: style ? some(East.value({
             variant: variantValue ? some(variantValue) : none,
             size: sizeValue ? some(sizeValue) : none,
@@ -532,5 +563,13 @@ export const Table = {
          * Sort direction type (asc or desc).
          */
         SortDirection: TableSortDirectionType,
+        /**
+         * Context type passed to column render functions.
+         *
+         * @property rowIndex - The row index (0-based)
+         * @property columnKey - The column key
+         * @property cellValue - The cell value as a LiteralValueType
+         */
+        CellRenderContext: TableCellRenderContextType,
     },
 } as const;

@@ -5,6 +5,7 @@
 
 import {
     type SubtypeExprOrValue,
+    FloatType,
     OptionType,
     StringType,
     StructType,
@@ -12,6 +13,10 @@ import {
     NullType,
     BooleanType,
 } from "@elaraai/east";
+
+import { OverflowType, TextDecorationType } from "../../style.js";
+import type { OverflowLiteral, TextDecorationLiteral } from "../../style.js";
+import { PaddingType, MarginType } from "../../layout/style.js";
 
 // ============================================================================
 // Link Variant Type
@@ -50,6 +55,21 @@ export const LinkType = StructType({
     external: OptionType(BooleanType),
     variant: OptionType(LinkVariantType),
     colorPalette: OptionType(StringType),
+    textDecoration: OptionType(TextDecorationType),
+    overflow: OptionType(OverflowType),
+    overflowX: OptionType(OverflowType),
+    overflowY: OptionType(OverflowType),
+    width: OptionType(StringType),
+    height: OptionType(StringType),
+    minWidth: OptionType(StringType),
+    minHeight: OptionType(StringType),
+    maxWidth: OptionType(StringType),
+    maxHeight: OptionType(StringType),
+    padding: OptionType(PaddingType),
+    margin: OptionType(MarginType),
+    lineHeight: OptionType(StringType),
+    letterSpacing: OptionType(StringType),
+    opacity: OptionType(FloatType),
 });
 
 export type LinkType = typeof LinkType;
@@ -68,4 +88,34 @@ export type LinkStyle = {
     variant?: SubtypeExprOrValue<LinkVariantType> | LinkVariantLiteral;
     /** Color palette (e.g., "blue", "teal") */
     colorPalette?: SubtypeExprOrValue<StringType>;
+    /** Text decoration */
+    textDecoration?: SubtypeExprOrValue<TextDecorationType> | TextDecorationLiteral;
+    /** Overflow behavior */
+    overflow?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Horizontal overflow behavior */
+    overflowX?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Vertical overflow behavior */
+    overflowY?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Width */
+    width?: SubtypeExprOrValue<StringType>;
+    /** Height */
+    height?: SubtypeExprOrValue<StringType>;
+    /** Min width */
+    minWidth?: SubtypeExprOrValue<StringType>;
+    /** Min height */
+    minHeight?: SubtypeExprOrValue<StringType>;
+    /** Max width */
+    maxWidth?: SubtypeExprOrValue<StringType>;
+    /** Max height */
+    maxHeight?: SubtypeExprOrValue<StringType>;
+    /** Padding configuration */
+    padding?: SubtypeExprOrValue<PaddingType> | string;
+    /** Margin configuration */
+    margin?: SubtypeExprOrValue<MarginType> | string;
+    /** Line height */
+    lineHeight?: SubtypeExprOrValue<StringType>;
+    /** Letter spacing */
+    letterSpacing?: SubtypeExprOrValue<StringType>;
+    /** CSS opacity (0-1) */
+    opacity?: SubtypeExprOrValue<FloatType>;
 };

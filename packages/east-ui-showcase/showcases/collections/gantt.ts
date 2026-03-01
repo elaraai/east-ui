@@ -268,12 +268,24 @@ export default East.function(
                         tags: {
                             header: "Tags",
                             value: (tags) => tags.size(),
-                            render: (tags) => Text.Root(East.str`${tags.size()} tags`),
+                            render: East.function(
+                                [Table.Types.CellRenderContext],
+                                UIComponentType,
+                                ($, ctx) => Text.Root(
+                                    ctx.cellValue.match({ Integer: (_$, v) => East.str`${v} tags` }, _$ => "")
+                                )
+                            ),
                         },
                         info: {
                             header: "Team",
                             value: (info) => info.size,
-                            render: (info) => Text.Root(East.str`${info.team} (${info.size})`),
+                            render: East.function(
+                                [Table.Types.CellRenderContext],
+                                UIComponentType,
+                                ($, ctx) => Text.Root(
+                                    ctx.cellValue.match({ Integer: (_$, v) => East.str`Team size: ${v}` }, _$ => "")
+                                )
+                            ),
                         },
                     },
                     row => [Gantt.Task({ start: row.start, end: row.end, colorPalette: "purple" })],
@@ -291,12 +303,24 @@ export default East.function(
                             tags: {
                                 header: "Tags",
                                 value: (tags) => tags.size(),
-                                render: (tags) => Text.Root(East.str\`\${tags.size()} tags\`),
+                                render: East.function(
+                                    [Table.Types.CellRenderContext],
+                                    UIComponentType,
+                                    ($, ctx) => Text.Root(
+                                        ctx.cellValue.match({ Integer: ($, v) => East.str\`\${v} tags\` }, $ => "")
+                                    )
+                                ),
                             },
                             info: {
                                 header: "Team",
                                 value: (info) => info.size,
-                                render: (info) => Text.Root(East.str\`\${info.team} (\${info.size})\`),
+                                render: East.function(
+                                    [Table.Types.CellRenderContext],
+                                    UIComponentType,
+                                    ($, ctx) => Text.Root(
+                                        ctx.cellValue.match({ Integer: ($, v) => East.str\`Team size: \${v}\` }, $ => "")
+                                    )
+                                ),
                             },
                         },
                         row => [Gantt.Task({ start: row.start, end: row.end, colorPalette: "purple" })],
@@ -306,31 +330,42 @@ export default East.function(
             )
         );
 
-        // Column render with row access
+        // Column render with row access (closing over data)
+        const ganttRowData = $.let(East.value([
+            { task: "Backend API", owner: "Alice", priority: "high", start: new Date("2024-01-01"), end: new Date("2024-02-15") },
+            { task: "Frontend UI", owner: "Bob", priority: "medium", start: new Date("2024-01-15"), end: new Date("2024-03-01") },
+            { task: "Integration", owner: "Charlie", priority: "high", start: new Date("2024-02-01"), end: new Date("2024-03-15") },
+            { task: "Documentation", owner: "Diana", priority: "low", start: new Date("2024-02-15"), end: new Date("2024-04-01") },
+        ]));
         const columnRenderWithRow = $.let(
             ShowcaseCard(
                 "Column Render with Row Access",
-                "Render function accesses other row fields for conditional styling",
+                "Render function closes over data to access other row fields",
                 Gantt.Root(
-                    [
-                        { task: "Backend API", owner: "Alice", priority: "high", start: new Date("2024-01-01"), end: new Date("2024-02-15") },
-                        { task: "Frontend UI", owner: "Bob", priority: "medium", start: new Date("2024-01-15"), end: new Date("2024-03-01") },
-                        { task: "Integration", owner: "Charlie", priority: "high", start: new Date("2024-02-01"), end: new Date("2024-03-15") },
-                        { task: "Documentation", owner: "Diana", priority: "low", start: new Date("2024-02-15"), end: new Date("2024-04-01") },
-                    ],
+                    ganttRowData,
                     {
                         task: {
                             header: "Task",
-                            render: (value, row) => Text.Root(
-                                East.str`${value} (${row.owner})`,
+                            render: East.function(
+                                [Table.Types.CellRenderContext],
+                                UIComponentType,
+                                ($, ctx) => {
+                                    const row = $.let(ganttRowData.get(ctx.rowIndex));
+                                    return Text.Root(East.str`${row.task} (${row.owner})`);
+                                }
                             ),
                         },
                         priority: {
                             header: "Priority",
-                            render: (value, row) => Badge.Root(
-                                East.str`${value} ${row.owner}`,
-                                {
-                                    variant: "solid",
+                            render: East.function(
+                                [Table.Types.CellRenderContext],
+                                UIComponentType,
+                                ($, ctx) => {
+                                    const row = $.let(ganttRowData.get(ctx.rowIndex));
+                                    return Badge.Root(
+                                        East.str`${row.priority} (${row.owner})`,
+                                        { variant: "solid" }
+                                    );
                                 }
                             ),
                         },
@@ -339,28 +374,20 @@ export default East.function(
                     { variant: "line", striped: true }
                 ),
                 some(`
+                    const data = [...];
                     Gantt.Root(
-                        [
-                            { task: "Backend API", owner: "Alice", priority: "high", start: new Date("2024-01-01"), end: new Date("2024-02-15") },
-                            { task: "Frontend UI", owner: "Bob", priority: "medium", start: new Date("2024-01-15"), end: new Date("2024-03-01") },
-                            { task: "Integration", owner: "Charlie", priority: "high", start: new Date("2024-02-01"), end: new Date("2024-03-15") },
-                            { task: "Documentation", owner: "Diana", priority: "low", start: new Date("2024-02-15"), end: new Date("2024-04-01") },
-                        ],
+                        data,
                         {
                             task: {
                                 header: "Task",
-                                render: (value, row) => Text.Root(
-                                    East.str\`\${value} (\${row.owner})\`,
+                                render: East.function(
+                                    [Table.Types.CellRenderContext],
+                                    UIComponentType,
+                                    ($, ctx) => {
+                                        const row = $.let(East.value(data).index(ctx.rowIndex));
+                                        return Text.Root(East.str\`\${row.task} (\${row.owner})\`);
+                                    }
                                 ),
-                            },
-                            priority: {
-                                header: "Priority",
-                                render: (value, row) => Badge.Root(value, {
-                                    colorPalette: row.priority.equal("high").ifElse("red",
-                                        row.priority.equal("medium").ifElse("yellow", "green")
-                                    ),
-                                    variant: "solid",
-                                }),
                             },
                         },
                         row => [Gantt.Task({ start: row.start, end: row.end })],

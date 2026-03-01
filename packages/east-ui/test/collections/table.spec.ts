@@ -4,7 +4,7 @@
  */
 
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
-import { Table, Badge, Text, Stack } from "../../src/index.js";
+import { Table, Badge, Text, Stack, UIComponentType } from "../../src/index.js";
 import { East } from "@elaraai/east";
 
 describeEast("Table", (test) => {
@@ -102,7 +102,7 @@ describeEast("Table", (test) => {
             ],
             {
                 item: { header: "Item" },
-                price: { header: "Price", render: (value) => Text.Root(value, { textAlign: "right" }) },
+                price: { header: "Price", render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => Text.Root(ctx.cellValue.match({ String: (_$, v) => v }, _$ => ""), { textAlign: "right" })) },
             }
         ));
 
@@ -121,7 +121,7 @@ describeEast("Table", (test) => {
             ],
             {
                 name: { header: "Name" },
-                status: { header: "Status", render: value => Badge.Root(value, { variant: "solid" }) },
+                status: { header: "Status", render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => Badge.Root(ctx.cellValue.match({ String: (_$, v) => v }, _$ => ""), { variant: "solid" })) },
             }
         ));
 
@@ -189,19 +189,20 @@ describeEast("Table", (test) => {
     // =========================================================================
 
     test("render function receives row parameter to access other fields", $ => {
+        const data = $.let(East.value([
+            { name: "Alice", status: "Active", role: "Admin" },
+            { name: "Bob", status: "Inactive", role: "User" },
+        ]));
         const table = $.let(Table.Root(
-            [
-                { name: "Alice", status: "Active", role: "Admin" },
-                { name: "Bob", status: "Inactive", role: "User" },
-            ],
+            data,
             {
                 name: { header: "Name" },
                 status: {
                     header: "Status",
-                    render: (value, row) => Badge.Root(
-                        East.str`${value} (${row.role})`,
-                        { variant: "solid" }
-                    ),
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => {
+                        const row = $.let(data.get(ctx.rowIndex));
+                        return Badge.Root(East.str`${row.status} (${row.role})`, { variant: "solid" });
+                    }),
                 },
             }
         ));
@@ -220,8 +221,8 @@ describeEast("Table", (test) => {
                 product: { header: "Product" },
                 price: {
                     header: "Price",
-                    render: (value) => Text.Root(
-                        East.str`$${value}`,
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) =>
+                        Text.Root(ctx.cellValue.match({ Integer: (_$, v) => East.str`$${v}` }, _$ => ""))
                     ),
                 },
             }
@@ -231,14 +232,18 @@ describeEast("Table", (test) => {
     });
 
     test("render function accesses multiple row fields", $ => {
+        const data = $.let(East.value([
+            { firstName: "Alice", lastName: "Smith", department: "Engineering" },
+        ]));
         const table = $.let(Table.Root(
-            [
-                { firstName: "Alice", lastName: "Smith", department: "Engineering" },
-            ],
+            data,
             {
                 firstName: {
                     header: "Full Name",
-                    render: (value, row) => Text.Root(East.str`${value} ${row.lastName}`),
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => {
+                        const row = $.let(data.get(ctx.rowIndex));
+                        return Text.Root(East.str`${row.firstName} ${row.lastName}`);
+                    }),
                 },
                 department: { header: "Department" },
             }
@@ -260,7 +265,7 @@ describeEast("Table", (test) => {
             {
                 name: { header: "Name" },
                 email: { header: "Email" },
-                role: { header: "Role", render: value => Badge.Root(value, { colorPalette: "blue" }) },
+                role: { header: "Role", render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => Badge.Root(ctx.cellValue.match({ String: (_$, v) => v }, _$ => ""), { colorPalette: "blue" })) },
             },
             { variant: "line", striped: true }
         ));
@@ -275,18 +280,22 @@ describeEast("Table", (test) => {
 
     test("creates table with array field using value function", $ => {
         // Array fields require a value function to extract a sortable value
+        const data = $.let(East.value([
+            { name: "Alice", tags: ["admin", "active"] },
+            { name: "Bob", tags: ["user"] },
+        ]));
         const table = $.let(Table.Root(
-            [
-                { name: "Alice", tags: ["admin", "active"] },
-                { name: "Bob", tags: ["user"] },
-            ],
+            data,
             {
                 name: { header: "Name" },
                 tags: {
                     header: "Tags",
                     // Extract array length as sortable integer value
                     value: (tags) => tags.size(),
-                    render: (tags) => Stack.HStack(tags.map(($, tag) => Badge.Root(tag, { variant: "subtle" }))),
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => {
+                        const row = $.let(data.get(ctx.rowIndex));
+                        return Stack.HStack(row.tags.map(($, tag) => Badge.Root(tag, { variant: "subtle" })));
+                    }),
                 },
             }
         ));
@@ -297,18 +306,22 @@ describeEast("Table", (test) => {
 
     test("creates table with struct field using value function", $ => {
         // Struct fields require a value function to extract a sortable value
+        const data = $.let(East.value([
+            { name: "Project A", metadata: { priority: 1n, owner: "Alice" } },
+            { name: "Project B", metadata: { priority: 3n, owner: "Bob" } },
+        ]));
         const table = $.let(Table.Root(
-            [
-                { name: "Project A", metadata: { priority: 1n, owner: "Alice" } },
-                { name: "Project B", metadata: { priority: 3n, owner: "Bob" } },
-            ],
+            data,
             {
                 name: { header: "Name" },
                 metadata: {
                     header: "Priority",
                     // Extract priority as sortable integer value (plain expression, not wrapped in variant)
                     value: (meta) => meta.priority,
-                    render: (meta) => Text.Root(East.str`Priority: ${meta.priority}`),
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => {
+                        const row = $.let(data.get(ctx.rowIndex));
+                        return Text.Root(East.str`Priority: ${row.metadata.priority}`);
+                    }),
                 },
             }
         ));
@@ -319,18 +332,22 @@ describeEast("Table", (test) => {
 
     test("creates table with array field extracting string value", $ => {
         // Extract first tag as string value for sorting
+        const data = $.let(East.value([
+            { name: "Alice", skills: ["TypeScript", "React", "Node"] },
+            { name: "Bob", skills: ["Python", "Django"] },
+        ]));
         const table = $.let(Table.Root(
-            [
-                { name: "Alice", skills: ["TypeScript", "React", "Node"] },
-                { name: "Bob", skills: ["Python", "Django"] },
-            ],
+            data,
             {
                 name: { header: "Name" },
                 skills: {
                     header: "Primary Skill",
                     // Extract first skill as sortable string value (plain expression)
                     value: (skills) => skills.get(0n),
-                    render: (skills) => Badge.Root(skills.get(0n), { variant: "subtle" }),
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => {
+                        const row = $.let(data.get(ctx.rowIndex));
+                        return Badge.Root(row.skills.get(0n), { variant: "subtle" });
+                    }),
                 },
             }
         ));
@@ -340,11 +357,12 @@ describeEast("Table", (test) => {
 
     test("creates table mixing primitive and complex columns", $ => {
         // Mix of primitive fields (no value function needed) and complex fields (value function required)
+        const data = $.let(East.value([
+            { id: 1n, name: "Alice", contact: { email: "alice@example.com", phone: "555-1234" } },
+            { id: 2n, name: "Bob", contact: { email: "bob@example.com", phone: "555-5678" } },
+        ]));
         const table = $.let(Table.Root(
-            [
-                { id: 1n, name: "Alice", contact: { email: "alice@example.com", phone: "555-1234" } },
-                { id: 2n, name: "Bob", contact: { email: "bob@example.com", phone: "555-5678" } },
-            ],
+            data,
             {
                 id: { header: "ID" },  // Primitive - no value function needed
                 name: { header: "Name" },  // Primitive - no value function needed
@@ -352,7 +370,10 @@ describeEast("Table", (test) => {
                     header: "Contact",
                     // Extract email as sortable string value (plain expression)
                     value: (contact) => contact.email,
-                    render: (contact) => Text.Root(contact.email),
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => {
+                        const row = $.let(data.get(ctx.rowIndex));
+                        return Text.Root(row.contact.email);
+                    }),
                 },
             }
         ));

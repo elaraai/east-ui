@@ -156,6 +156,129 @@ export default East.function(
             )
         );
 
+        // Text decoration
+        const decoration = $.let(
+            ShowcaseCard(
+                "Text Decoration",
+                "Underline, line-through, and overline",
+                Stack.HStack([
+                    Text.Root("Underline", { textDecoration: "underline" }),
+                    Text.Root("Line-through", { textDecoration: "line-through" }),
+                    Text.Root("Overline", { textDecoration: "overline" }),
+                ], { gap: "4" }),
+                some(`
+                    Stack.HStack([
+                        Text.Root("Underline", { textDecoration: "underline" }),
+                        Text.Root("Line-through", { textDecoration: "line-through" }),
+                        Text.Root("Overline", { textDecoration: "overline" }),
+                    ], { gap: "4" })
+                `)
+            )
+        );
+
+        // Line height & letter spacing
+        const spacing = $.let(
+            ShowcaseCard(
+                "Line Height & Letter Spacing",
+                "Fine-tune text spacing",
+                Stack.VStack([
+                    Text.Root("Tight letter spacing", { letterSpacing: "tighter" }),
+                    Text.Root("Wide letter spacing", { letterSpacing: "wider" }),
+                    Text.Root("Tall line height - wraps to show multi-line effect when the text is long enough", { lineHeight: "tall", maxWidth: "250px" }),
+                    Text.Root("Short line height - compact multi-line text when the content wraps", { lineHeight: "short", maxWidth: "250px" }),
+                ], { gap: "2", align: "flex-start" }),
+                some(`
+                    Text.Root("Tight", { letterSpacing: "tighter" })
+                    Text.Root("Wide", { letterSpacing: "wider" })
+                    Text.Root("Tall line", { lineHeight: "tall" })
+                `)
+            )
+        );
+
+        // Opacity
+        const opacity = $.let(
+            ShowcaseCard(
+                "Opacity",
+                "Text with varying opacity",
+                Stack.HStack([
+                    Text.Root("100%", { color: "blue.600", fontWeight: "bold" }),
+                    Text.Root("75%", { color: "blue.600", fontWeight: "bold", opacity: 0.75 }),
+                    Text.Root("50%", { color: "blue.600", fontWeight: "bold", opacity: 0.5 }),
+                    Text.Root("25%", { color: "blue.600", fontWeight: "bold", opacity: 0.25 }),
+                ], { gap: "4" }),
+                some(`
+                    Text.Root("75%", { color: "blue.600", opacity: 0.75 })
+                `)
+            )
+        );
+
+        // Padding & Margin
+        const paddingMargin = $.let(
+            ShowcaseCard(
+                "Padding & Margin",
+                "Text with padding and margin",
+                Stack.VStack([
+                    Text.Root("Padding: 4", {
+                        padding: "4",
+                        background: "blue.50",
+                        borderWidth: "thin",
+                        borderStyle: "solid",
+                        borderColor: "blue.200",
+                    }),
+                    Text.Root("Padding: 2, Margin: 4", {
+                        padding: "2",
+                        margin: "4",
+                        background: "green.50",
+                        borderWidth: "thin",
+                        borderStyle: "solid",
+                        borderColor: "green.200",
+                    }),
+                ], { gap: "2", align: "flex-start" }),
+                some(`
+                    Text.Root("Padding: 4", {
+                        padding: "4",
+                        background: "blue.50",
+                        borderWidth: "thin",
+                        borderStyle: "solid",
+                        borderColor: "blue.200",
+                    })
+                `)
+            )
+        );
+
+        // Dimensions & overflow
+        const overflow = $.let(
+            ShowcaseCard(
+                "Dimensions & Overflow",
+                "Text with constrained size and overflow",
+                Stack.VStack([
+                    Text.Root("This text is constrained to 200px width and will clip overflow content.", {
+                        width: "200px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        background: "orange.50",
+                        padding: "2",
+                    }),
+                    Text.Root("Fixed width and height box", {
+                        width: "150px",
+                        height: "40px",
+                        background: "purple.50",
+                        padding: "2",
+                        overflow: "hidden",
+                    }),
+                ], { gap: "2", align: "flex-start" }),
+                some(`
+                    Text.Root("Clipped text...", {
+                        width: "200px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                    })
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -168,6 +291,11 @@ export default East.function(
                 Grid.Item(bordered),
                 Grid.Item(colors, { colSpan: "2" }),
                 Grid.Item(combined),
+                Grid.Item(decoration, { colSpan: "2" }),
+                Grid.Item(spacing),
+                Grid.Item(opacity),
+                Grid.Item(paddingMargin),
+                Grid.Item(overflow),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

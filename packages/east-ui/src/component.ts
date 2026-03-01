@@ -16,6 +16,7 @@ import {
     DictType,
     FunctionType,
     LiteralValueType,
+    EastTypeType,
 } from "@elaraai/east";
 
 // Typography
@@ -68,7 +69,7 @@ import { IconType } from "./display/icon/types.js";
 
 // Collections
 import { DataListVariantType, DataListSizeType } from "./collections/data-list/types.js";
-import { TableColumnType, TableStyleType } from "./collections/table/types.js";
+import { TableStyleType, TableCellRenderContextType } from "./collections/table/types.js";
 import { GanttEventType, GanttStyleType } from "./collections/gantt/types.js";
 import { PlannerStyleType, PlannerEventType, EventPopoverContextType } from "./collections/planner/types.js";
 // import { TreeViewStyleType } from "./collections/tree-view/types.js";
@@ -291,9 +292,18 @@ export const UIComponentType = RecursiveType(node => VariantType({
     Table: StructType({
         rows: ArrayType(DictType(StringType, StructType({
             value: LiteralValueType,
-            content: node,
+            content: OptionType(node),
         }))),
-        columns: ArrayType(TableColumnType),
+        columns: ArrayType(StructType({
+            key: StringType,
+            dataType: EastTypeType,
+            valueType: EastTypeType,
+            header: OptionType(StringType),
+            width: OptionType(StringType),
+            minWidth: OptionType(StringType),
+            maxWidth: OptionType(StringType),
+            render: OptionType(FunctionType([TableCellRenderContextType], node)),
+        })),
         style: OptionType(TableStyleType),
     }),
 
@@ -301,11 +311,20 @@ export const UIComponentType = RecursiveType(node => VariantType({
         rows: ArrayType(StructType({
             cells: DictType(StringType, StructType({
                 value: LiteralValueType,
-                content: node,
+                content: OptionType(node),
             })),
             events: ArrayType(GanttEventType),
         })),
-        columns: ArrayType(TableColumnType),
+        columns: ArrayType(StructType({
+            key: StringType,
+            dataType: EastTypeType,
+            valueType: EastTypeType,
+            header: OptionType(StringType),
+            width: OptionType(StringType),
+            minWidth: OptionType(StringType),
+            maxWidth: OptionType(StringType),
+            render: OptionType(FunctionType([TableCellRenderContextType], node)),
+        })),
         style: OptionType(GanttStyleType),
     }),
 
@@ -313,11 +332,20 @@ export const UIComponentType = RecursiveType(node => VariantType({
         rows: ArrayType(StructType({
             cells: DictType(StringType, StructType({
                 value: LiteralValueType,
-                content: node,
+                content: OptionType(node),
             })),
             events: ArrayType(PlannerEventType),
         })),
-        columns: ArrayType(TableColumnType),
+        columns: ArrayType(StructType({
+            key: StringType,
+            dataType: EastTypeType,
+            valueType: EastTypeType,
+            header: OptionType(StringType),
+            width: OptionType(StringType),
+            minWidth: OptionType(StringType),
+            maxWidth: OptionType(StringType),
+            render: OptionType(FunctionType([TableCellRenderContextType], node)),
+        })),
         style: OptionType(PlannerStyleType),
         eventPopover: OptionType(FunctionType([EventPopoverContextType], node)),
     }),

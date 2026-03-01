@@ -5,6 +5,7 @@
 
 import {
     type SubtypeExprOrValue,
+    FloatType,
     NullType,
     OptionType,
     StructType,
@@ -12,8 +13,9 @@ import {
     VariantType,
 } from "@elaraai/east";
 
-
-import { ColorSchemeType, type ColorSchemeLiteral } from "../../style.js";
+import { ColorSchemeType, OverflowType } from "../../style.js";
+import type { ColorSchemeLiteral, OverflowLiteral } from "../../style.js";
+import { PaddingType, MarginType } from "../../layout/style.js";
 
 // Re-export Font Awesome types for convenience
 export type { IconName, IconPrefix } from "@fortawesome/fontawesome-common-types";
@@ -119,6 +121,19 @@ export const IconStyleType = StructType({
     variant: OptionType(IconVariantType),
     color: OptionType(StringType),
     colorPalette: OptionType(ColorSchemeType),
+    opacity: OptionType(FloatType),
+    borderRadius: OptionType(StringType),
+    overflow: OptionType(OverflowType),
+    overflowX: OptionType(OverflowType),
+    overflowY: OptionType(OverflowType),
+    width: OptionType(StringType),
+    height: OptionType(StringType),
+    minWidth: OptionType(StringType),
+    minHeight: OptionType(StringType),
+    maxWidth: OptionType(StringType),
+    maxHeight: OptionType(StringType),
+    padding: OptionType(PaddingType),
+    margin: OptionType(MarginType),
 });
 
 /**
@@ -143,6 +158,32 @@ export interface IconStyle {
     color?: SubtypeExprOrValue<StringType>;
     /** Color scheme for the icon */
     colorPalette?: SubtypeExprOrValue<ColorSchemeType> | ColorSchemeLiteral;
+    /** CSS opacity (0-1) */
+    opacity?: SubtypeExprOrValue<FloatType>;
+    /** Border radius */
+    borderRadius?: SubtypeExprOrValue<StringType>;
+    /** Overflow behavior */
+    overflow?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Horizontal overflow */
+    overflowX?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Vertical overflow */
+    overflowY?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Width */
+    width?: SubtypeExprOrValue<StringType>;
+    /** Height */
+    height?: SubtypeExprOrValue<StringType>;
+    /** Min width */
+    minWidth?: SubtypeExprOrValue<StringType>;
+    /** Min height */
+    minHeight?: SubtypeExprOrValue<StringType>;
+    /** Max width */
+    maxWidth?: SubtypeExprOrValue<StringType>;
+    /** Max height */
+    maxHeight?: SubtypeExprOrValue<StringType>;
+    /** Padding configuration */
+    padding?: SubtypeExprOrValue<PaddingType> | string;
+    /** Margin configuration */
+    margin?: SubtypeExprOrValue<MarginType> | string;
 }
 
 // ============================================================================

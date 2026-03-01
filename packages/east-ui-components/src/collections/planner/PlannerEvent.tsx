@@ -579,7 +579,7 @@ export const PlannerEvent = ({
                     <Portal>
                         <Popover.Positioner>
                             <Popover.Content>
-                                <Popover.Body>
+                                <Popover.Body p="1">
                                     {popoverContent && <EastChakraComponent value={popoverContent} />}
                                 </Popover.Body>
                             </Popover.Content>

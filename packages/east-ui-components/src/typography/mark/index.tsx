@@ -20,9 +20,33 @@ export type MarkValue = ValueTypeOf<typeof Mark.Types.Mark>;
  * Pure function - easy to test independently.
  */
 export function toChakraMark(value: MarkValue): MarkProps {
+    const padding = getSomeorUndefined(value.padding);
+    const margin = getSomeorUndefined(value.margin);
+
     return {
         variant: getSomeorUndefined(value.variant)?.type,
         colorPalette: getSomeorUndefined(value.colorPalette),
+        textDecoration: getSomeorUndefined(value.textDecoration)?.type,
+        overflow: getSomeorUndefined(value.overflow)?.type,
+        overflowX: getSomeorUndefined(value.overflowX)?.type,
+        overflowY: getSomeorUndefined(value.overflowY)?.type,
+        width: getSomeorUndefined(value.width),
+        height: getSomeorUndefined(value.height),
+        minWidth: getSomeorUndefined(value.minWidth),
+        minHeight: getSomeorUndefined(value.minHeight),
+        maxWidth: getSomeorUndefined(value.maxWidth),
+        maxHeight: getSomeorUndefined(value.maxHeight),
+        pt: padding ? getSomeorUndefined(padding.top) : undefined,
+        pr: padding ? getSomeorUndefined(padding.right) : undefined,
+        pb: padding ? getSomeorUndefined(padding.bottom) : undefined,
+        pl: padding ? getSomeorUndefined(padding.left) : undefined,
+        mt: margin ? getSomeorUndefined(margin.top) : undefined,
+        mr: margin ? getSomeorUndefined(margin.right) : undefined,
+        mb: margin ? getSomeorUndefined(margin.bottom) : undefined,
+        ml: margin ? getSomeorUndefined(margin.left) : undefined,
+        lineHeight: getSomeorUndefined(value.lineHeight),
+        letterSpacing: getSomeorUndefined(value.letterSpacing),
+        opacity: getSomeorUndefined(value.opacity),
     };
 }
 

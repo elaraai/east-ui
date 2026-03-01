@@ -917,6 +917,55 @@ export function WhiteSpace(whiteSpace: "normal" | "nowrap" | "pre" | "pre-wrap" 
 }
 
 // ============================================================================
+// Text Decoration
+// ============================================================================
+
+/**
+ * Text decoration variant type for controlling text decoration.
+ *
+ * @remarks
+ * Create instances using the {@link TextDecoration} function.
+ *
+ * @property none - No decoration
+ * @property underline - Underline text
+ * @property line-through - Strikethrough text
+ * @property overline - Line above text
+ */
+export const TextDecorationType = VariantType({
+    none: NullType,
+    underline: NullType,
+    "line-through": NullType,
+    overline: NullType,
+});
+
+/**
+ * Type representing text decoration variant values.
+ */
+export type TextDecorationType = typeof TextDecorationType;
+
+/**
+ * String literal type for text decoration values.
+ */
+export type TextDecorationLiteral = "none" | "underline" | "line-through" | "overline";
+
+/**
+ * Creates a text decoration variant expression.
+ *
+ * @param textDecoration - The text decoration value
+ * @returns An East expression representing the text decoration
+ *
+ * @example
+ * ```ts
+ * import { Style } from "@elaraai/east-ui";
+ *
+ * Style.TextDecoration("underline");
+ * ```
+ */
+export function TextDecoration(textDecoration: "none" | "underline" | "line-through" | "overline"): ExprType<TextDecorationType> {
+    return East.value(variant(textDecoration, null), TextDecorationType);
+}
+
+// ============================================================================
 // Overflow
 // ============================================================================
 
@@ -1015,6 +1064,7 @@ export const Style = {
     VerticalAlign,
     FlexWrap,
     Display,
+    TextDecoration,
     TextOverflow,
     WhiteSpace,
     Overflow,
@@ -1035,6 +1085,7 @@ export const Style = {
         VerticalAlign: VerticalAlignType,
         FlexWrap: FlexWrapType,
         Display: DisplayType,
+        TextDecoration: TextDecorationType,
         TextOverflow: TextOverflowType,
         WhiteSpace: WhiteSpaceType,
         Overflow: OverflowType,

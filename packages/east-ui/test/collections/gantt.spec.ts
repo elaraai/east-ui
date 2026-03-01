@@ -5,7 +5,7 @@
 
 import { East } from "@elaraai/east";
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
-import { Gantt, Text, Badge } from "../../src/index.js";
+import { Gantt, Text, Badge, Table, UIComponentType } from "../../src/index.js";
 
 describeEast("Gantt", (test) => {
     // =========================================================================
@@ -246,15 +246,19 @@ describeEast("Gantt", (test) => {
     // =========================================================================
 
     test("column render function receives row parameter to access other fields", $ => {
+        const data = $.let(East.value([
+            { name: "Design", owner: "Alice", start: new Date("2024-01-01"), end: new Date("2024-01-15") },
+            { name: "Development", owner: "Bob", start: new Date("2024-01-10"), end: new Date("2024-02-01") },
+        ]));
         const gantt = $.let(Gantt.Root(
-            [
-                { name: "Design", owner: "Alice", start: new Date("2024-01-01"), end: new Date("2024-01-15") },
-                { name: "Development", owner: "Bob", start: new Date("2024-01-10"), end: new Date("2024-02-01") },
-            ],
+            data,
             {
                 name: {
                     header: "Task",
-                    render: (value, row) => Text.Root(East.str`${value} (${row.owner})`),
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => {
+                        const row = $.let(data.get(ctx.rowIndex));
+                        return Text.Root(East.str`${row.name} (${row.owner})`);
+                    }),
                 },
             },
             row => [Gantt.Task({ start: row.start, end: row.end })]
@@ -274,8 +278,8 @@ describeEast("Gantt", (test) => {
                 task: { header: "Task" },
                 priority: {
                     header: "Priority",
-                    render: (value) => Badge.Root(
-                        value,
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) =>
+                        Badge.Root(ctx.cellValue.match({ String: (_$, v) => v }, _$ => ""))
                     ),
                 },
             },
@@ -287,14 +291,18 @@ describeEast("Gantt", (test) => {
     });
 
     test("column render function accesses multiple row fields", $ => {
+        const data = $.let(East.value([
+            { firstName: "Alice", lastName: "Smith", dept: "Eng", start: new Date("2024-01-01"), end: new Date("2024-02-01") },
+        ]));
         const gantt = $.let(Gantt.Root(
-            [
-                { firstName: "Alice", lastName: "Smith", dept: "Eng", start: new Date("2024-01-01"), end: new Date("2024-02-01") },
-            ],
+            data,
             {
                 firstName: {
                     header: "Full Name",
-                    render: (value, row) => Text.Root(East.str`${value} ${row.lastName}`),
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => {
+                        const row = $.let(data.get(ctx.rowIndex));
+                        return Text.Root(East.str`${row.firstName} ${row.lastName}`);
+                    }),
                 },
                 dept: { header: "Department" },
             },
@@ -310,18 +318,21 @@ describeEast("Gantt", (test) => {
     // =========================================================================
 
     test("creates gantt with array field using value function", $ => {
+        const data = $.let(East.value([
+            { name: "Design", tags: ["ui", "frontend"], start: new Date("2024-01-01"), end: new Date("2024-01-15") },
+            { name: "Backend", tags: ["api", "db"], start: new Date("2024-01-10"), end: new Date("2024-02-01") },
+        ]));
         const gantt = $.let(Gantt.Root(
-            [
-                { name: "Design", tags: ["ui", "frontend"], start: new Date("2024-01-01"), end: new Date("2024-01-15") },
-                { name: "Backend", tags: ["api", "db"], start: new Date("2024-01-10"), end: new Date("2024-02-01") },
-            ],
+            data,
             {
                 name: { header: "Task" },
                 tags: {
                     header: "Tags",
-                    // Extract array length as sortable integer value
                     value: (tags) => tags.size(),
-                    render: (tags) => Text.Root(East.str`${tags.size()} tags`),
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => {
+                        const row = $.let(data.get(ctx.rowIndex));
+                        return Text.Root(East.str`${row.tags.size()} tags`);
+                    }),
                 },
             },
             row => [Gantt.Task({ start: row.start, end: row.end })]
@@ -332,18 +343,21 @@ describeEast("Gantt", (test) => {
     });
 
     test("creates gantt with struct field using value function", $ => {
+        const data = $.let(East.value([
+            { name: "Sprint 1", metadata: { priority: 1n, status: "active" }, start: new Date("2024-01-01"), end: new Date("2024-01-14") },
+            { name: "Sprint 2", metadata: { priority: 3n, status: "pending" }, start: new Date("2024-01-15"), end: new Date("2024-01-28") },
+        ]));
         const gantt = $.let(Gantt.Root(
-            [
-                { name: "Sprint 1", metadata: { priority: 1n, status: "active" }, start: new Date("2024-01-01"), end: new Date("2024-01-14") },
-                { name: "Sprint 2", metadata: { priority: 3n, status: "pending" }, start: new Date("2024-01-15"), end: new Date("2024-01-28") },
-            ],
+            data,
             {
                 name: { header: "Sprint" },
                 metadata: {
                     header: "Priority",
-                    // Extract priority as sortable integer value
                     value: (meta) => meta.priority,
-                    render: (meta) => Text.Root(East.str`Priority: ${meta.priority}`),
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => {
+                        const row = $.let(data.get(ctx.rowIndex));
+                        return Text.Root(East.str`Priority: ${row.metadata.priority}`);
+                    }),
                 },
             },
             row => [Gantt.Task({ start: row.start, end: row.end })]
@@ -354,19 +368,22 @@ describeEast("Gantt", (test) => {
     });
 
     test("creates gantt mixing primitive and complex columns", $ => {
+        const data = $.let(East.value([
+            { id: 1n, name: "Project A", team: { lead: "Alice", size: 5n }, start: new Date("2024-01-01"), end: new Date("2024-02-01") },
+            { id: 2n, name: "Project B", team: { lead: "Bob", size: 3n }, start: new Date("2024-02-01"), end: new Date("2024-03-01") },
+        ]));
         const gantt = $.let(Gantt.Root(
-            [
-                { id: 1n, name: "Project A", team: { lead: "Alice", size: 5n }, start: new Date("2024-01-01"), end: new Date("2024-02-01") },
-                { id: 2n, name: "Project B", team: { lead: "Bob", size: 3n }, start: new Date("2024-02-01"), end: new Date("2024-03-01") },
-            ],
+            data,
             {
-                id: { header: "ID" },  // Primitive - no value function needed
-                name: { header: "Project" },  // Primitive - no value function needed
+                id: { header: "ID" },
+                name: { header: "Project" },
                 team: {
                     header: "Team Lead",
-                    // Extract lead name as sortable string value
                     value: (team) => team.lead,
-                    render: (team) => Text.Root(team.lead),
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => {
+                        const row = $.let(data.get(ctx.rowIndex));
+                        return Text.Root(row.team.lead);
+                    }),
                 },
             },
             row => [Gantt.Task({ start: row.start, end: row.end })]

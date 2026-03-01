@@ -5,13 +5,15 @@
 
 import {
     type SubtypeExprOrValue,
+    FloatType,
     StringType,
     OptionType,
     StructType,
 } from "@elaraai/east";
 
-import { ColorSchemeType, StyleVariantType, SizeType } from "../../style.js";
-import type { ColorSchemeLiteral, StyleVariantLiteral, SizeLiteral } from "../../style.js";
+import { ColorSchemeType, OverflowType, StyleVariantType, SizeType } from "../../style.js";
+import type { ColorSchemeLiteral, OverflowLiteral, StyleVariantLiteral, SizeLiteral } from "../../style.js";
+import { PaddingType, MarginType } from "../../layout/style.js";
 
 // ============================================================================
 // Avatar Type
@@ -35,6 +37,19 @@ export const AvatarType = StructType({
     size: OptionType(SizeType),
     variant: OptionType(StyleVariantType),
     colorPalette: OptionType(ColorSchemeType),
+    opacity: OptionType(FloatType),
+    borderRadius: OptionType(StringType),
+    overflow: OptionType(OverflowType),
+    overflowX: OptionType(OverflowType),
+    overflowY: OptionType(OverflowType),
+    width: OptionType(StringType),
+    height: OptionType(StringType),
+    minWidth: OptionType(StringType),
+    minHeight: OptionType(StringType),
+    maxWidth: OptionType(StringType),
+    maxHeight: OptionType(StringType),
+    padding: OptionType(PaddingType),
+    margin: OptionType(MarginType),
 });
 
 /**
@@ -66,4 +81,30 @@ export interface AvatarStyle {
     variant?: SubtypeExprOrValue<StyleVariantType> | StyleVariantLiteral;
     /** Color scheme for fallback avatar */
     colorPalette?: SubtypeExprOrValue<ColorSchemeType> | ColorSchemeLiteral;
+    /** CSS opacity (0-1) */
+    opacity?: SubtypeExprOrValue<FloatType>;
+    /** Border radius */
+    borderRadius?: SubtypeExprOrValue<StringType>;
+    /** Overflow behavior */
+    overflow?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Horizontal overflow */
+    overflowX?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Vertical overflow */
+    overflowY?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Width */
+    width?: SubtypeExprOrValue<StringType>;
+    /** Height */
+    height?: SubtypeExprOrValue<StringType>;
+    /** Min width */
+    minWidth?: SubtypeExprOrValue<StringType>;
+    /** Min height */
+    minHeight?: SubtypeExprOrValue<StringType>;
+    /** Max width */
+    maxWidth?: SubtypeExprOrValue<StringType>;
+    /** Max height */
+    maxHeight?: SubtypeExprOrValue<StringType>;
+    /** Padding configuration */
+    padding?: SubtypeExprOrValue<PaddingType> | string;
+    /** Margin configuration */
+    margin?: SubtypeExprOrValue<MarginType> | string;
 }

@@ -10,7 +10,7 @@ import { datasetGetStatus, datasetGet } from '@elaraai/e3-api-client';
 import type { TaskStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
 import { variant } from '@elaraai/east';
 
-const MAX_DOWNLOAD_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_DOWNLOAD_SIZE = 50 * 1024 * 1024; // 50MB
 
 export function useTaskOutputPreview(
     apiUrl: string,
@@ -21,7 +21,7 @@ export function useTaskOutputPreview(
     requestOptions?: RequestOptions,
     queryOptions?: QueryOverrides
 ) {
-    const isUpToDate = task?.status.type === 'up-to-date';
+    const isUpToDate = useMemo(() => task?.status.type === 'up-to-date', [task?.status.type]);
     const pathParts = useMemo(() =>
         task?.output?.split('.').map((v) => variant('field', v)) ?? [],
         [task?.output]
@@ -35,8 +35,8 @@ export function useTaskOutputPreview(
         ...queryOptions,
     });
 
-    const size = status.data?.size?.type === 'some' ? status.data.size.value : null;
-    const isOversized = size !== null && size > MAX_DOWNLOAD_SIZE;
+    const size = useMemo(() => status.data?.size?.type === 'some' ? status.data.size.value : null, [status.data]);
+    const isOversized = useMemo(() => size !== null && size > MAX_DOWNLOAD_SIZE, [size]);
 
     // Step 2: full data — only when status loaded and not oversized
     const data = useQuery({

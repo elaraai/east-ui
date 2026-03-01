@@ -21,11 +21,32 @@ export type ListValue = ValueTypeOf<typeof List.Types.List>;
  */
 export function toChakraList(value: ListValue): ListRootProps {
     const variant = getSomeorUndefined(value.variant)?.type;
+    const padding = getSomeorUndefined(value.padding);
+    const margin = getSomeorUndefined(value.margin);
+
     return {
         as: variant === "ordered" ? "ol" : "ul",
         gap: getSomeorUndefined(value.gap),
         colorPalette: getSomeorUndefined(value.colorPalette),
         ps: "5", // Padding-start for bullet/number markers
+        overflow: getSomeorUndefined(value.overflow)?.type,
+        overflowX: getSomeorUndefined(value.overflowX)?.type,
+        overflowY: getSomeorUndefined(value.overflowY)?.type,
+        width: getSomeorUndefined(value.width),
+        height: getSomeorUndefined(value.height),
+        minWidth: getSomeorUndefined(value.minWidth),
+        minHeight: getSomeorUndefined(value.minHeight),
+        maxWidth: getSomeorUndefined(value.maxWidth),
+        maxHeight: getSomeorUndefined(value.maxHeight),
+        pt: padding ? getSomeorUndefined(padding.top) : undefined,
+        pr: padding ? getSomeorUndefined(padding.right) : undefined,
+        pb: padding ? getSomeorUndefined(padding.bottom) : undefined,
+        pl: padding ? getSomeorUndefined(padding.left) : undefined,
+        mt: margin ? getSomeorUndefined(margin.top) : undefined,
+        mr: margin ? getSomeorUndefined(margin.right) : undefined,
+        mb: margin ? getSomeorUndefined(margin.bottom) : undefined,
+        ml: margin ? getSomeorUndefined(margin.left) : undefined,
+        opacity: getSomeorUndefined(value.opacity),
     };
 }
 

@@ -16,7 +16,7 @@ import {
     OptionType,
     FunctionType,
     variant,
-    type ValueTypeOf,
+
     type TypeOf,
     some,
     none,
@@ -40,6 +40,7 @@ import {
     TableCellType,
     TableColumnType,
     type TableColumnConfig,
+    TableCellRenderContextType,
 } from "../table/index.js";
 import { Text } from "../../typography/index.js";
 
@@ -400,7 +401,7 @@ function createPlanner<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
         // Build cells dict (same as Table)
         const cells = $.let(new Map(), DictType(StringType, StructType({
             value: LiteralValueType,
-            content: UIComponentType
+            content: OptionType(UIComponentType)
         })));
 
         for (const [col_key, col_config] of Object.entries(columns_obj)) {
@@ -440,18 +441,20 @@ function createPlanner<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
                 (col_config as any).valueType = valueType;
             }
 
+            const content = col_config.render
+                ? none
+                : some(East.value(
+                    Text.Root(East.str`${field_value}`, {
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                    }),
+                    UIComponentType
+                ));
+
             $(cells.insert(col_key, {
                 value: cellValue,
-                content: East.value(
-                    col_config.render ?
-                        col_config.render(field_value, datum as any) :
-                        Text.Root(East.str`${field_value}`, {
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                        }),
-                    UIComponentType
-                ),
+                content,
             }));
         }
 
@@ -465,7 +468,7 @@ function createPlanner<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
     });
 
     // Create columns array from the columns config
-    const columns_mapped: ValueTypeOf<ArrayType<typeof TableColumnType>> = [];
+    const columns_mapped: SubtypeExprOrValue<ArrayType<typeof TableColumnType>> = [];
     for (const [key, config] of Object.entries(columns_obj)) {
         columns_mapped.push({
             key: key,
@@ -475,8 +478,13 @@ function createPlanner<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
             width: config?.width !== undefined ? some(config.width) : none as any,
             minWidth: config?.minWidth !== undefined ? some(config.minWidth) : none as any,
             maxWidth: config?.maxWidth !== undefined ? some(config.maxWidth) : none as any,
+            render: config?.render
+                ? some(East.value(config.render, FunctionType([TableCellRenderContextType], UIComponentType)))
+                : none as any,
         });
     }
+
+    const columns_expr = East.value(columns_mapped, ArrayType(TableColumnType));
 
     // Build style value
     const variantValue = style?.variant
@@ -556,7 +564,7 @@ function createPlanner<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
 
     return East.value(variant("Planner", {
         rows: rows_mapped,
-        columns: columns_mapped as ValueTypeOf<typeof PlannerRootType>["columns"],
+        columns: columns_expr,
         style: styleValue ? some(styleValue) : none,
         eventPopover: eventPopoverExpr,
     }), UIComponentType);

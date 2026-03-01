@@ -5,6 +5,7 @@
 
 import {
     type SubtypeExprOrValue,
+    FloatType,
     OptionType,
     StringType,
     StructType,
@@ -14,6 +15,10 @@ import {
     VariantType,
     NullType,
 } from "@elaraai/east";
+
+import { OverflowType } from "../../style.js";
+import type { OverflowLiteral } from "../../style.js";
+import { PaddingType, MarginType } from "../../layout/style.js";
 
 // ============================================================================
 // Language Type
@@ -102,6 +107,17 @@ export const CodeBlockType = StructType({
     showCopyButton: OptionType(BooleanType),
     wordWrap: OptionType(BooleanType),
     title: OptionType(StringType),
+    overflow: OptionType(OverflowType),
+    overflowX: OptionType(OverflowType),
+    overflowY: OptionType(OverflowType),
+    width: OptionType(StringType),
+    height: OptionType(StringType),
+    minWidth: OptionType(StringType),
+    minHeight: OptionType(StringType),
+    maxWidth: OptionType(StringType),
+    padding: OptionType(PaddingType),
+    margin: OptionType(MarginType),
+    opacity: OptionType(FloatType),
 });
 
 export type CodeBlockType = typeof CodeBlockType;
@@ -128,4 +144,26 @@ export type CodeBlockStyle = {
     wordWrap?: SubtypeExprOrValue<BooleanType> | boolean;
     /** Optional title displayed in the header (e.g., filename) */
     title?: SubtypeExprOrValue<StringType>;
+    /** Overflow behavior */
+    overflow?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Horizontal overflow */
+    overflowX?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Vertical overflow */
+    overflowY?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Width */
+    width?: SubtypeExprOrValue<StringType>;
+    /** Height */
+    height?: SubtypeExprOrValue<StringType>;
+    /** Min width */
+    minWidth?: SubtypeExprOrValue<StringType>;
+    /** Min height */
+    minHeight?: SubtypeExprOrValue<StringType>;
+    /** Max width */
+    maxWidth?: SubtypeExprOrValue<StringType>;
+    /** Padding configuration */
+    padding?: SubtypeExprOrValue<PaddingType> | string;
+    /** Margin configuration */
+    margin?: SubtypeExprOrValue<MarginType> | string;
+    /** CSS opacity (0-1) */
+    opacity?: SubtypeExprOrValue<FloatType>;
 };

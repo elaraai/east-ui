@@ -55,7 +55,7 @@ export const EastChakraPopover = memo(function EastChakraPopover({ value }: East
                 <ChakraPopover.Positioner>
                     <ChakraPopover.Content>
                         {hasArrow && <ChakraPopover.Arrow />}
-                        <ChakraPopover.Body>
+                        <ChakraPopover.Body p="1">
                             {title && <ChakraPopover.Title fontWeight="medium">{title}</ChakraPopover.Title>}
                             {description && <ChakraPopover.Description>{description}</ChakraPopover.Description>}
                             {value.body.map((child, index) => (

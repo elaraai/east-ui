@@ -50,7 +50,7 @@ export const EastChakraToggleTip = memo(function EastChakraToggleTip({ value }: 
             </ChakraPopover.Trigger>
             <Portal>
                 <ChakraPopover.Positioner>
-                    <ChakraPopover.Content padding="2" width="auto">
+                    <ChakraPopover.Content p="1" width="auto">
                         {hasArrow && <ChakraPopover.Arrow />}
                         {value.content}
                     </ChakraPopover.Content>

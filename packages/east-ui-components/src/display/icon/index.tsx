@@ -4,6 +4,7 @@
  */
 
 import { memo, useMemo } from "react";
+import { Box as ChakraBox, type BoxProps } from "@chakra-ui/react";
 import { FontAwesomeIcon, type FontAwesomeIconProps } from "@fortawesome/react-fontawesome";
 import { library, type IconName, type IconPrefix } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
@@ -51,6 +52,72 @@ export function toFontAwesomeIcon(value: IconValue): FontAwesomeIconProps {
     };
 }
 
+/**
+ * Extracts wrapper style props from an East UI Icon value for the containing Box.
+ * Pure function - easy to test independently.
+ */
+export function toIconWrapperProps(value: IconValue): BoxProps | undefined {
+    const style = getSomeorUndefined(value.style);
+    if (!style) return undefined;
+
+    const padding = getSomeorUndefined(style.padding);
+    const margin = getSomeorUndefined(style.margin);
+
+    const opacity = getSomeorUndefined(style.opacity);
+    const borderRadius = getSomeorUndefined(style.borderRadius);
+    const overflow = getSomeorUndefined(style.overflow)?.type;
+    const overflowX = getSomeorUndefined(style.overflowX)?.type;
+    const overflowY = getSomeorUndefined(style.overflowY)?.type;
+    const width = getSomeorUndefined(style.width);
+    const height = getSomeorUndefined(style.height);
+    const minWidth = getSomeorUndefined(style.minWidth);
+    const minHeight = getSomeorUndefined(style.minHeight);
+    const maxWidth = getSomeorUndefined(style.maxWidth);
+    const maxHeight = getSomeorUndefined(style.maxHeight);
+
+    // Only create wrapper props if at least one style property is set
+    if (
+        opacity === undefined &&
+        borderRadius === undefined &&
+        overflow === undefined &&
+        overflowX === undefined &&
+        overflowY === undefined &&
+        width === undefined &&
+        height === undefined &&
+        minWidth === undefined &&
+        minHeight === undefined &&
+        maxWidth === undefined &&
+        maxHeight === undefined &&
+        !padding &&
+        !margin
+    ) {
+        return undefined;
+    }
+
+    return {
+        display: "inline-block",
+        opacity,
+        borderRadius,
+        overflow,
+        overflowX,
+        overflowY,
+        width,
+        height,
+        minWidth,
+        minHeight,
+        maxWidth,
+        maxHeight,
+        pt: padding ? getSomeorUndefined(padding.top) : undefined,
+        pr: padding ? getSomeorUndefined(padding.right) : undefined,
+        pb: padding ? getSomeorUndefined(padding.bottom) : undefined,
+        pl: padding ? getSomeorUndefined(padding.left) : undefined,
+        mt: margin ? getSomeorUndefined(margin.top) : undefined,
+        mr: margin ? getSomeorUndefined(margin.right) : undefined,
+        mb: margin ? getSomeorUndefined(margin.bottom) : undefined,
+        ml: margin ? getSomeorUndefined(margin.left) : undefined,
+    };
+}
+
 export interface EastChakraIconProps {
     value: IconValue;
 }
@@ -60,6 +127,15 @@ export interface EastChakraIconProps {
  */
 export const EastChakraIcon = memo(function EastChakraIcon({ value }: EastChakraIconProps) {
     const props = useMemo(() => toFontAwesomeIcon(value), [value]);
+    const wrapperProps = useMemo(() => toIconWrapperProps(value), [value]);
+
+    if (wrapperProps) {
+        return (
+            <ChakraBox {...wrapperProps}>
+                <FontAwesomeIcon {...props} />
+            </ChakraBox>
+        );
+    }
 
     return <FontAwesomeIcon {...props} />;
 }, (prev, next) => iconEqual(prev.value, next.value));
