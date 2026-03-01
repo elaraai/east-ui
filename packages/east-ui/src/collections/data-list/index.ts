@@ -79,43 +79,6 @@ export const DataListRootType = StructType({
 export type DataListRootType = typeof DataListRootType;
 
 // ============================================================================
-// DataList Item Function
-// ============================================================================
-
-/**
- * Creates a DataList item with label and value.
- *
- * @param label - The term/label for this item
- * @param value - The definition/value for this item
- * @returns An East expression representing the data list item
- *
- * @example
- * ```ts
- * import { East } from "@elaraai/east";
- * import { DataList, UIComponentType } from "@elaraai/east-ui";
- *
- * const example = East.function([], UIComponentType, $ => {
- *     return DataList.Root([
- *         DataList.Item("Status", "Active"),
- *     ]);
- * });
- * ```
- */
-function DataListItem(
-    label: ExprType<StringType> | string,
-    value: SubtypeExprOrValue<UIComponentType>
-): ExprType<DataListItemType> {
-    const labelExpr = typeof label === "string"
-        ? East.value(label, StringType)
-        : label;
-
-    return East.value({
-        label: labelExpr,
-        value: value,
-    }, DataListItemType);
-}
-
-// ============================================================================
 // DataList Root Function
 // ============================================================================
 
@@ -133,13 +96,13 @@ function DataListItem(
  * @example
  * ```ts
  * import { East } from "@elaraai/east";
- * import { DataList, UIComponentType } from "@elaraai/east-ui";
+ * import { DataList, Text, UIComponentType } from "@elaraai/east-ui";
  *
  * const example = East.function([], UIComponentType, $ => {
  *     return DataList.Root([
- *         DataList.Item("Status", "Active"),
- *         DataList.Item("Created", "Jan 1, 2024"),
- *         DataList.Item("Updated", "Dec 15, 2024"),
+ *         { label: "Status", value: Text.Root("Active") },
+ *         { label: "Created", value: Text.Root("Jan 1, 2024") },
+ *         { label: "Updated", value: Text.Root("Dec 15, 2024") },
  *     ], {
  *         orientation: "horizontal",
  *         variant: "bold",
@@ -185,8 +148,8 @@ function DataListRoot(
  * DataList compound component for displaying label-value pairs.
  *
  * @remarks
- * Use `DataList.Root` to create the container and `DataList.Item` for each
- * label-value pair.
+ * Use `DataList.Root` to create the container. Pass items as
+ * `{ label, value }` struct literals.
  */
 export const DataList = {
     /**
@@ -203,13 +166,13 @@ export const DataList = {
      * @example
      * ```ts
      * import { East } from "@elaraai/east";
-     * import { DataList, UIComponentType } from "@elaraai/east-ui";
+     * import { DataList, Text, UIComponentType } from "@elaraai/east-ui";
      *
      * const example = East.function([], UIComponentType, $ => {
      *     return DataList.Root([
-     *         DataList.Item("Name", "John Doe"),
-     *         DataList.Item("Email", "john@example.com"),
-     *         DataList.Item("Role", "Administrator"),
+     *         { label: "Name", value: Text.Root("John Doe") },
+     *         { label: "Email", value: Text.Root("john@example.com") },
+     *         { label: "Role", value: Text.Root("Administrator") },
      *     ], {
      *         orientation: "horizontal",
      *     });
@@ -217,31 +180,6 @@ export const DataList = {
      * ```
      */
     Root: DataListRoot,
-    /**
-     * Creates a DataList item with label and value.
-     *
-     * @param label - The term/label for this item
-     * @param value - The definition/value for this item
-     * @returns An East expression representing the data list item
-     *
-     * @remarks
-     * Each DataList item represents a single label-value pair.
-     * Items are typically created as an array passed to DataList.Root.
-     *
-     * @example
-     * ```ts
-     * import { East } from "@elaraai/east";
-     * import { DataList, UIComponentType } from "@elaraai/east-ui";
-     *
-     * const example = East.function([], UIComponentType, $ => {
-     *     return DataList.Root([
-     *         DataList.Item("Status", "Active"),
-     *         DataList.Item("Count", "42"),
-     *     ]);
-     * });
-     * ```
-     */
-    Item: DataListItem,
     Types: {
         /**
          * Type for DataList component data.

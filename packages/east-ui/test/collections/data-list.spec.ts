@@ -4,48 +4,18 @@
  */
 
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
+import { East, OptionType, StringType, variant } from "@elaraai/east";
 import { DataList, Text } from "../../src/index.js";
 
 describeEast("DataList", (test) => {
-    // =========================================================================
-    // DataList.Item
-    // =========================================================================
-
-    test("creates item with string label and value", $ => {
-        const item = $.let(DataList.Item("Status", Text.Root("Active")));
-
-        $(Assert.equal(item.label, "Status"));
-        $(Assert.equal(item.value.unwrap().unwrap("Text").value, "Active"));
-    });
-
-    test("creates item with expression label and value", $ => {
-        const item = $.let(DataList.Item(
-            "Name",
-            Text.Root("John Doe")
-        ));
-
-        $(Assert.equal(item.label, "Name"));
-        $(Assert.equal(item.value.unwrap().unwrap("Text").value, "John Doe"));
-    });
-
-    test("creates item with mixed string and expression", $ => {
-        const item = $.let(DataList.Item(
-            "Role",
-            Text.Root("Administrator")
-        ));
-
-        $(Assert.equal(item.label, "Role"));
-        $(Assert.equal(item.value.unwrap().unwrap("Text").value, "Administrator"));
-    });
-
     // =========================================================================
     // DataList.Root - Basic Creation
     // =========================================================================
 
     test("creates data list with items", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Name", Text.Root("Alice")),
-            DataList.Item("Email", Text.Root("alice@example.com")),
+            { label: "Name", value: Text.Root("Alice") },
+            { label: "Email", value: Text.Root("alice@example.com") },
         ]));
 
         $(Assert.equal(list.unwrap().unwrap("DataList").orientation.hasTag("none"), true));
@@ -55,7 +25,7 @@ describeEast("DataList", (test) => {
 
     test("creates data list with single item", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Status", Text.Root("Active")),
+            { label: "Status", value: Text.Root("Active") },
         ]));
 
         $(Assert.equal(list.unwrap().unwrap("DataList").orientation.hasTag("none"), true));
@@ -74,7 +44,7 @@ describeEast("DataList", (test) => {
 
     test("creates horizontal data list", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Name", Text.Root("Bob")),
+            { label: "Name", value: Text.Root("Bob") },
         ], {
             orientation: "horizontal",
         }));
@@ -85,7 +55,7 @@ describeEast("DataList", (test) => {
 
     test("creates vertical data list", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Status", Text.Root("Active")),
+            { label: "Status", value: Text.Root("Active") },
         ], {
             orientation: "vertical",
         }));
@@ -99,7 +69,7 @@ describeEast("DataList", (test) => {
 
     test("creates data list with sm size", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Label", Text.Root("Value")),
+            { label: "Label", value: Text.Root("Value") },
         ], {
             size: "sm",
         }));
@@ -109,7 +79,7 @@ describeEast("DataList", (test) => {
 
     test("creates data list with md size", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Label", Text.Root("Value")),
+            { label: "Label", value: Text.Root("Value") },
         ], {
             size: "md",
         }));
@@ -119,7 +89,7 @@ describeEast("DataList", (test) => {
 
     test("creates data list with lg size", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Label", Text.Root("Value")),
+            { label: "Label", value: Text.Root("Value") },
         ], {
             size: "lg",
         }));
@@ -133,7 +103,7 @@ describeEast("DataList", (test) => {
 
     test("creates data list with subtle variant", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Label", Text.Root("Value")),
+            { label: "Label", value: Text.Root("Value") },
         ], {
             variant: "subtle",
         }));
@@ -144,7 +114,7 @@ describeEast("DataList", (test) => {
 
     test("creates data list with bold variant", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Label", Text.Root("Value")),
+            { label: "Label", value: Text.Root("Value") },
         ], {
             variant: "bold",
         }));
@@ -154,7 +124,7 @@ describeEast("DataList", (test) => {
 
     test("creates data list with DataListVariant helper", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Label", Text.Root("Value")),
+            { label: "Label", value: Text.Root("Value") },
         ], {
             variant: "bold",
         }));
@@ -168,8 +138,8 @@ describeEast("DataList", (test) => {
 
     test("creates data list with all options", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Name", Text.Root("Alice")),
-            DataList.Item("Role", Text.Root("Admin")),
+            { label: "Name", value: Text.Root("Alice") },
+            { label: "Role", value: Text.Root("Admin") },
         ], {
             orientation: "horizontal",
             size: "md",
@@ -183,10 +153,10 @@ describeEast("DataList", (test) => {
 
     test("creates user details data list", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Username", Text.Root("alice_smith")),
-            DataList.Item("Email", Text.Root("alice@example.com")),
-            DataList.Item("Status", Text.Root("Active")),
-            DataList.Item("Role", Text.Root("Administrator")),
+            { label: "Username", value: Text.Root("alice_smith") },
+            { label: "Email", value: Text.Root("alice@example.com") },
+            { label: "Status", value: Text.Root("Active") },
+            { label: "Role", value: Text.Root("Administrator") },
         ], {
             orientation: "vertical",
             variant: "subtle",
@@ -198,9 +168,9 @@ describeEast("DataList", (test) => {
 
     test("creates product info data list", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("SKU", Text.Root("PRD-12345")),
-            DataList.Item("Price", Text.Root("$99.99")),
-            DataList.Item("Stock", Text.Root("In Stock")),
+            { label: "SKU", value: Text.Root("PRD-12345") },
+            { label: "Price", value: Text.Root("$99.99") },
+            { label: "Stock", value: Text.Root("In Stock") },
         ], {
             size: "sm",
         }));
@@ -210,10 +180,10 @@ describeEast("DataList", (test) => {
 
     test("creates order summary data list", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Order ID", Text.Root("#ORD-2024-001")),
-            DataList.Item("Date", Text.Root("Dec 15, 2024")),
-            DataList.Item("Total", Text.Root("$245.00")),
-            DataList.Item("Status", Text.Root("Shipped")),
+            { label: "Order ID", value: Text.Root("#ORD-2024-001") },
+            { label: "Date", value: Text.Root("Dec 15, 2024") },
+            { label: "Total", value: Text.Root("$245.00") },
+            { label: "Status", value: Text.Root("Shipped") },
         ], {
             orientation: "horizontal",
             size: "lg",
@@ -227,13 +197,56 @@ describeEast("DataList", (test) => {
 
     test("creates metadata data list", $ => {
         const list = $.let(DataList.Root([
-            DataList.Item("Created", Text.Root("Jan 1, 2024")),
-            DataList.Item("Modified", Text.Root("Dec 20, 2024")),
-            DataList.Item("Version", Text.Root("1.2.3")),
+            { label: "Created", value: Text.Root("Jan 1, 2024") },
+            { label: "Modified", value: Text.Root("Dec 20, 2024") },
+            { label: "Version", value: Text.Root("1.2.3") },
         ]));
 
         $(Assert.equal(list.unwrap().unwrap("DataList").orientation.hasTag("none"), true));
         $(Assert.equal(list.unwrap().unwrap("DataList").size.hasTag("none"), true));
         $(Assert.equal(list.unwrap().unwrap("DataList").variant.hasTag("none"), true));
     });
+    // =========================================================================
+    // DataList.Root - Match with different item counts
+    // =========================================================================
+
+    test("handles match branches with different item counts as items arg", $ => {
+        const opt = $.let(East.value(variant("some", "predicted"), OptionType(StringType)));
+
+        const list = $.let(DataList.Root(
+            opt.match({
+                some: ($, pred) => East.value([
+                    { label: "Flag", value: Text.Root("A") },
+                    { label: "Predicted", value: Text.Root(pred) },
+                    { label: "Range", value: Text.Root("1-5") },
+                ]),
+                none: (_$) => East.value([
+                    { label: "Flag", value: Text.Root("A") },
+                ]),
+            }),
+            { size: "sm", orientation: "horizontal" }
+        ));
+
+        $(Assert.equal(list.unwrap().unwrap("DataList").size.unwrap("some").hasTag("sm"), true));
+    });
+
+    test("handles match branches returning whole DataList components", $ => {
+        const opt = $.let(East.value(variant("some", "predicted"), OptionType(StringType)));
+
+        const list = $.let(
+            opt.match({
+                some: ($, pred) => DataList.Root([
+                    { label: "Flag", value: Text.Root("A") },
+                    { label: "Predicted", value: Text.Root(pred) },
+                    { label: "Range", value: Text.Root("1-5") },
+                ], { size: "sm", orientation: "horizontal" }),
+                none: (_$) => DataList.Root([
+                    { label: "Flag", value: Text.Root("A") },
+                ], { size: "sm", orientation: "horizontal" }),
+            })
+        );
+
+        $(Assert.equal(list.unwrap().unwrap("DataList").size.unwrap("some").hasTag("sm"), true));
+    });
+
 }, {   platformFns: TestImpl,});

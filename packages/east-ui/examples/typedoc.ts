@@ -593,12 +593,12 @@ actionBarRootExample.toIR().compile([])();
 // ============================================================================
 
 // File: src/collections/data-list/index.ts
-// Export: DataList.Root, DataList.Item
+// Export: DataList.Root
 const dataListRootExample = East.function([], UIComponentType, $ => {
     return DataList.Root([
-        DataList.Item("Name", Text.Root("John Doe")),
-        DataList.Item("Email", Text.Root("john@example.com")),
-        DataList.Item("Role", Text.Root("Administrator")),
+        { label: "Name", value: Text.Root("John Doe") },
+        { label: "Email", value: Text.Root("john@example.com") },
+        { label: "Role", value: Text.Root("Administrator") },
     ], {
         orientation: "horizontal",
     });
