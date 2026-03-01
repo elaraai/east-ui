@@ -8,7 +8,7 @@
  *
  * Format: Each example has a comment indicating:
  *   - File path
- *   - Export property (e.g., DataList.Root, DataList.Item, Gantt.Root, Table.Root, TreeView.Root)
+ *   - Export property (e.g., DataList.Root, Gantt.Root, Table.Root, TreeView.Root)
  */
 
 import { East, variant } from "@elaraai/east";
@@ -22,7 +22,7 @@ import { DataList, Gantt, Table, Text, TreeView, UIComponentType } from "../src/
 // Export: DataListItem (private function)
 const dataListItemExample = East.function([], UIComponentType, $ => {
     return DataList.Root([
-        DataList.Item("Status", Text.Root("Active")),
+        { label: "Status", value: Text.Root("Active") },
     ]);
 });
 dataListItemExample.toIR().compile([])();
@@ -31,9 +31,9 @@ dataListItemExample.toIR().compile([])();
 // Export: DataListRoot (private function)
 const dataListRootExample = East.function([], UIComponentType, $ => {
     return DataList.Root([
-        DataList.Item("Status", Text.Root("Active")),
-        DataList.Item("Created", Text.Root("Jan 1, 2024")),
-        DataList.Item("Updated", Text.Root("Dec 15, 2024")),
+        { label: "Status", value: Text.Root("Active") },
+        { label: "Created", value: Text.Root("Jan 1, 2024") },
+        { label: "Updated", value: Text.Root("Dec 15, 2024") },
     ], {
         orientation: "horizontal",
         variant: "bold",
@@ -45,30 +45,20 @@ dataListRootExample.toIR().compile([])();
 // Export: DataList.Root
 const dataListDotRootExample = East.function([], UIComponentType, $ => {
     return DataList.Root([
-        DataList.Item("Name", Text.Root("John Doe")),
-        DataList.Item("Email", Text.Root("john@example.com")),
-        DataList.Item("Role", Text.Root("Administrator")),
+        { label: "Name", value: Text.Root("John Doe") },
+        { label: "Email", value: Text.Root("john@example.com") },
+        { label: "Role", value: Text.Root("Administrator") },
     ], {
         orientation: "horizontal",
     });
 });
 dataListDotRootExample.toIR().compile([])();
 
-// File: src/collections/data-list/index.ts
-// Export: DataList.Item
-const dataListDotItemExample = East.function([], UIComponentType, $ => {
-    return DataList.Root([
-        DataList.Item("Status", Text.Root("Active")),
-        DataList.Item("Count", Text.Root("42")),
-    ]);
-});
-dataListDotItemExample.toIR().compile([])();
-
 // File: src/collections/data-list/types.ts
 // Export: DataListVariant
 const dataListVariantExample = East.function([], UIComponentType, $ => {
     return DataList.Root([
-        DataList.Item("Status", Text.Root("Active")),
+        { label: "Status", value: Text.Root("Active") },
     ], {
         variant: variant('bold', null),
     });

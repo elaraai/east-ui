@@ -51,11 +51,11 @@ export type DataListVariantLiteral = "subtle" | "bold";
  * @example
  * ```ts
  * import { East } from "@elaraai/east";
- * import { DataList, DataListVariant, UIComponentType } from "@elaraai/east-ui";
+ * import { DataList, DataListVariant, Text, UIComponentType } from "@elaraai/east-ui";
  *
  * const example = East.function([], UIComponentType, $ => {
  *     return DataList.Root([
- *         DataList.Item("Status", "Active"),
+ *         { label: "Status", value: Text.Root("Active") },
  *     ], {
  *         variant: DataListVariant("bold"),
  *     });

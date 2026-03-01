@@ -410,7 +410,6 @@ All components export a namespace object with:
 Additional factory functions may be added for compound components:
 - `Stack.HStack` / `Stack.VStack` - Direction-specific stack variants
 - `Grid.Item` - Grid item factory
-- `DataList.Item` - Data list item factory
 
 #### Usage Pattern
 

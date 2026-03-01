@@ -20,15 +20,15 @@ export default East.function(
                 "Basic DataList",
                 "Default vertical data list",
                 DataList.Root([
-                    DataList.Item("Status", Text.Root("Active")),
-                    DataList.Item("User", Text.Root("john.doe@example.com")),
-                    DataList.Item("Created", Text.Root("2024-01-15")),
+                    { label: "Status", value: Text.Root("Active") },
+                    { label: "User", value: Text.Root("john.doe@example.com") },
+                    { label: "Created", value: Text.Root("2024-01-15") },
                 ]),
                 some(`
                     DataList.Root([
-                        DataList.Item("Status", Text.Root("Active")),
-                        DataList.Item("User", Text.Root("john.doe@example.com")),
-                        DataList.Item("Created", Text.Root("2024-01-15")),
+                        { label: "Status", value: Text.Root("Active") },
+                        { label: "User", value: Text.Root("john.doe@example.com") },
+                        { label: "Created", value: Text.Root("2024-01-15") },
                     ])
                 `)
             )
@@ -40,15 +40,15 @@ export default East.function(
                 "Horizontal Orientation",
                 "Data list with horizontal layout",
                 DataList.Root([
-                    DataList.Item("Price", Text.Root("$99.00")),
-                    DataList.Item("Quantity", Text.Root("5")),
-                    DataList.Item("Total", Text.Root("$495.00")),
+                    { label: "Price", value: Text.Root("$99.00") },
+                    { label: "Quantity", value: Text.Root("5") },
+                    { label: "Total", value: Text.Root("$495.00") },
                 ], { orientation: "horizontal" }),
                 some(`
                     DataList.Root([
-                        DataList.Item("Price", Text.Root("$99.00")),
-                        DataList.Item("Quantity", Text.Root("5")),
-                        DataList.Item("Total", Text.Root("$495.00")),
+                        { label: "Price", value: Text.Root("$99.00") },
+                        { label: "Quantity", value: Text.Root("5") },
+                        { label: "Total", value: Text.Root("$495.00") },
                     ], { orientation: "horizontal" })
                 `)
             )
@@ -60,15 +60,15 @@ export default East.function(
                 "Bold Variant",
                 "Data list with bold styling",
                 DataList.Root([
-                    DataList.Item("CPU", Text.Root("Intel i9-14900K")),
-                    DataList.Item("RAM", Text.Root("64GB DDR5")),
-                    DataList.Item("Storage", Text.Root("2TB NVMe SSD")),
+                    { label: "CPU", value: Text.Root("Intel i9-14900K") },
+                    { label: "RAM", value: Text.Root("64GB DDR5") },
+                    { label: "Storage", value: Text.Root("2TB NVMe SSD") },
                 ], { variant: "bold" }),
                 some(`
                     DataList.Root([
-                        DataList.Item("CPU", Text.Root("Intel i9-14900K")),
-                        DataList.Item("RAM", Text.Root("64GB DDR5")),
-                        DataList.Item("Storage", Text.Root("2TB NVMe SSD")),
+                        { label: "CPU", value: Text.Root("Intel i9-14900K") },
+                        { label: "RAM", value: Text.Root("64GB DDR5") },
+                        { label: "Storage", value: Text.Root("2TB NVMe SSD") },
                     ], { variant: "bold" })
                 `)
             )
@@ -80,15 +80,15 @@ export default East.function(
                 "Small Size",
                 "Compact data list",
                 DataList.Root([
-                    DataList.Item("ID", Text.Root("#12345")),
-                    DataList.Item("Type", Text.Root("Premium")),
-                    DataList.Item("Status", Text.Root("Verified")),
+                    { label: "ID", value: Text.Root("#12345") },
+                    { label: "Type", value: Text.Root("Premium") },
+                    { label: "Status", value: Text.Root("Verified") },
                 ], { size: "sm" }),
                 some(`
                     DataList.Root([
-                        DataList.Item("ID", Text.Root("#12345")),
-                        DataList.Item("Type", Text.Root("Premium")),
-                        DataList.Item("Status", Text.Root("Verified")),
+                        { label: "ID", value: Text.Root("#12345") },
+                        { label: "Type", value: Text.Root("Premium") },
+                        { label: "Status", value: Text.Root("Verified") },
                     ], { size: "sm" })
                 `)
             )
@@ -100,15 +100,15 @@ export default East.function(
                 "Large Size",
                 "Larger data list for emphasis",
                 DataList.Root([
-                    DataList.Item("Revenue", Text.Root("$1,234,567")),
-                    DataList.Item("Growth", Text.Root("+15.2%")),
-                    DataList.Item("Customers", Text.Root("10,432")),
+                    { label: "Revenue", value: Text.Root("$1,234,567") },
+                    { label: "Growth", value: Text.Root("+15.2%") },
+                    { label: "Customers", value: Text.Root("10,432") },
                 ], { size: "lg" }),
                 some(`
                     DataList.Root([
-                        DataList.Item("Revenue", Text.Root("$1,234,567")),
-                        DataList.Item("Growth", Text.Root("+15.2%")),
-                        DataList.Item("Customers", Text.Root("10,432")),
+                        { label: "Revenue", value: Text.Root("$1,234,567") },
+                        { label: "Growth", value: Text.Root("+15.2%") },
+                        { label: "Customers", value: Text.Root("10,432") },
                     ], { size: "lg" })
                 `)
             )
@@ -120,19 +120,19 @@ export default East.function(
                 "User Profile",
                 "Real-world data list example",
                 DataList.Root([
-                    DataList.Item("Full Name", Text.Root("Jane Smith")),
-                    DataList.Item("Email", Text.Root("jane.smith@company.com")),
-                    DataList.Item("Department", Text.Root("Engineering")),
-                    DataList.Item("Role", Text.Root("Senior Developer")),
-                    DataList.Item("Location", Text.Root("San Francisco, CA")),
+                    { label: "Full Name", value: Text.Root("Jane Smith") },
+                    { label: "Email", value: Text.Root("jane.smith@company.com") },
+                    { label: "Department", value: Text.Root("Engineering") },
+                    { label: "Role", value: Text.Root("Senior Developer") },
+                    { label: "Location", value: Text.Root("San Francisco, CA") },
                 ]),
                 some(`
                     DataList.Root([
-                        DataList.Item("Full Name", Text.Root("Jane Smith")),
-                        DataList.Item("Email", Text.Root("jane.smith@company.com")),
-                        DataList.Item("Department", Text.Root("Engineering")),
-                        DataList.Item("Role", Text.Root("Senior Developer")),
-                        DataList.Item("Location", Text.Root("San Francisco, CA")),
+                        { label: "Full Name", value: Text.Root("Jane Smith") },
+                        { label: "Email", value: Text.Root("jane.smith@company.com") },
+                        { label: "Department", value: Text.Root("Engineering") },
+                        { label: "Role", value: Text.Root("Senior Developer") },
+                        { label: "Location", value: Text.Root("San Francisco, CA") },
                     ])
                 `)
             )
@@ -144,8 +144,8 @@ export default East.function(
                 "Rich Values",
                 "Values can be any UI component — badges, hover cards, highlighted text",
                 DataList.Root([
-                    DataList.Item("Status", Badge.Root("Active", { variant: "solid", colorPalette: "green" })),
-                    DataList.Item("Assigned To", HoverCard.Root(
+                    { label: "Status", value: Badge.Root("Active", { variant: "solid", colorPalette: "green" }) },
+                    { label: "Assigned To", value: HoverCard.Root(
                         Text.Root("@alice", { color: "blue.500" }),
                         [
                             Stack.VStack([
@@ -153,14 +153,14 @@ export default East.function(
                                 Text.Root("Lead Designer — UX Team", { fontSize: "sm" }),
                             ], { gap: "1" }),
                         ],
-                    )),
-                    DataList.Item("Filter", Highlight.Root("name LIKE '%smith%'", ["LIKE"])),
-                    DataList.Item("Priority", Badge.Root("Urgent", { variant: "subtle", colorPalette: "red" })),
+                    ) },
+                    { label: "Filter", value: Highlight.Root("name LIKE '%smith%'", ["LIKE"]) },
+                    { label: "Priority", value: Badge.Root("Urgent", { variant: "subtle", colorPalette: "red" }) },
                 ]),
                 some(`
                     DataList.Root([
-                        DataList.Item("Status", Badge.Root("Active", { variant: "solid", colorPalette: "green" })),
-                        DataList.Item("Assigned To", HoverCard.Root(
+                        { label: "Status", value: Badge.Root("Active", { variant: "solid", colorPalette: "green" }) },
+                        { label: "Assigned To", value: HoverCard.Root(
                             Text.Root("@alice", { color: "blue.500" }),
                             [
                                 Stack.VStack([
@@ -168,9 +168,9 @@ export default East.function(
                                     Text.Root("Lead Designer — UX Team", { fontSize: "sm" }),
                                 ], { gap: "1" }),
                             ],
-                        )),
-                        DataList.Item("Filter", Highlight.Root("name LIKE '%smith%'", ["LIKE"])),
-                        DataList.Item("Priority", Badge.Root("Urgent", { variant: "subtle", colorPalette: "red" })),
+                        ) },
+                        { label: "Filter", value: Highlight.Root("name LIKE '%smith%'", ["LIKE"]) },
+                        { label: "Priority", value: Badge.Root("Urgent", { variant: "subtle", colorPalette: "red" }) },
                     ])
                 `)
             )

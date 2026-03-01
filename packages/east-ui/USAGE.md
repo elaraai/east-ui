@@ -849,8 +849,8 @@ import { DataList, UIComponentType } from "@elaraai/east-ui";
 
 const example = East.function([], UIComponentType, $ => {
     return DataList.Root([
-        DataList.Item("Name", "Alice"),
-        DataList.Item("Email", "alice@example.com"),
+        { label: "Name", value: Text.Root("Alice") },
+        { label: "Email", value: Text.Root("alice@example.com") },
     ], { orientation: "horizontal" });
 });
 ```
@@ -858,7 +858,6 @@ const example = East.function([], UIComponentType, $ => {
 | Signature | Description | Example |
 |-----------|-------------|---------|
 | `DataList.Root(items: DataListItem[], style?: DataListStyle): ExprType<UIComponentType>` | Create data list | `DataList.Root([...])` |
-| `DataList.Item(label: string, value: SubtypeExprOrValue<StringType>): DataListItem` | Create data list item | `DataList.Item("Name", "Alice")` |
 
 ---
 
