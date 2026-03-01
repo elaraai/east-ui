@@ -29,7 +29,7 @@ import {
     type ColumnDef,
 } from "@tanstack/react-table";
 import { compareFor, equalFor, printFor, variant, type ValueTypeOf } from "@elaraai/east";
-import { Planner } from "@elaraai/east-ui";
+import { Planner, Table, type UIComponentType } from "@elaraai/east-ui";
 import { getSomeorUndefined } from "../../utils";
 import { EastChakraComponent } from "../../component";
 import { RowStateManager, type RowKey, type RowState } from "../../utils/RowStateManager";
@@ -58,6 +58,12 @@ export type PlannerCellValue = ValueTypeOf<typeof Planner.Types.Cell>;
 /** East Planner Row value type */
 export type PlannerRowValue = ValueTypeOf<typeof Planner.Types.Row>;
 
+/** Cell Render Context value type */
+type TableCellRenderContextValue = ValueTypeOf<typeof Table.Types.CellRenderContext>;
+
+/** Column render function type */
+type ColumnRenderFn = (ctx: TableCellRenderContextValue) => ValueTypeOf<UIComponentType>;
+
 // Re-export PlannerEventValue from PlannerEventRow
 export type { PlannerEventValue } from "./PlannerEventRow";
 
@@ -77,6 +83,7 @@ declare module "@tanstack/react-table" {
         width?: string | undefined;
         minWidth?: string | undefined;
         maxWidth?: string | undefined;
+        renderFn?: ColumnRenderFn | undefined;
     }
 }
 
@@ -259,7 +266,7 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
         return result;
     }, [slotRange]);
 
-    const slotGridWidth = slots.length * slotMinWidth;
+    const slotGridWidth = useMemo(() => slots.length * slotMinWidth, [slots, slotMinWidth]);
 
     // Get slot label function
     const slotLabelFn = useMemo(() => style ? getSomeorUndefined(style.slotLabel) : undefined, [style]);
@@ -291,6 +298,7 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
             const width = getSomeorUndefined(col.width);
             const minWidth = getSomeorUndefined(col.minWidth);
             const maxWidth = getSomeorUndefined(col.maxWidth);
+            const renderFn = getSomeorUndefined(col.render) as ColumnRenderFn | undefined;
 
             return columnHelper.accessor(
                 (row) => row.cells.get(col.key),
@@ -309,17 +317,13 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
                     minSize: parseSize(minWidth, 80),
                     size: parseSize(width, 150),
                     maxSize: parseSize(maxWidth, 400),
-                    cell: (info) => {
-                        const cellValue = info.getValue();
-                        if (!cellValue) return null;
-                        return <EastChakraComponent value={cellValue.content} />;
-                    },
                     meta: {
                         print: print as (value: unknown) => string,
                         columnKey: col.key,
                         width,
                         minWidth,
                         maxWidth,
+                        renderFn,
                     },
                 }
             );
@@ -967,7 +971,12 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
                                                     );
                                                 }
 
-                                                if (cellValue.content != null) {
+                                                if (meta?.renderFn) {
+                                                    const rendered = meta.renderFn({
+                                                        rowIndex,
+                                                        columnKey,
+                                                        cellValue: cellValue.value,
+                                                    });
                                                     return (
                                                         <ChakraTable.Cell
                                                             key={cell.id}
@@ -975,9 +984,21 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
                                                             onClick={cellClickHandler}
                                                             onDoubleClick={cellDoubleClickHandler}
                                                         >
-                                                            <EastChakraComponent
-                                                                value={cellValue.content}
-                                                            />
+                                                            <EastChakraComponent value={rendered} />
+                                                        </ChakraTable.Cell>
+                                                    );
+                                                }
+
+                                                const cellContent = getSomeorUndefined(cellValue.content);
+                                                if (cellContent != null) {
+                                                    return (
+                                                        <ChakraTable.Cell
+                                                            key={cell.id}
+                                                            style={cellStyle}
+                                                            onClick={cellClickHandler}
+                                                            onDoubleClick={cellDoubleClickHandler}
+                                                        >
+                                                            <EastChakraComponent value={cellContent} />
                                                         </ChakraTable.Cell>
                                                     );
                                                 }

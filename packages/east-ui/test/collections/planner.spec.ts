@@ -5,7 +5,7 @@
 
 import { East, FloatType, StringType } from "@elaraai/east";
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
-import { Planner, Text, Badge } from "../../src/index.js";
+import { Planner, Text, Badge, Table, UIComponentType } from "../../src/index.js";
 
 describeEast("Planner", (test) => {
     // =========================================================================
@@ -362,15 +362,19 @@ describeEast("Planner", (test) => {
     // =========================================================================
 
     test("column render function receives row parameter to access other fields", $ => {
+        const data = $.let(East.value([
+            { name: "Alice", role: "Developer", start: 1.0, end: 3.0 },
+            { name: "Bob", role: "Designer", start: 2.0, end: 5.0 },
+        ]));
         const planner = $.let(Planner.Root(
-            [
-                { name: "Alice", role: "Developer", start: 1.0, end: 3.0 },
-                { name: "Bob", role: "Designer", start: 2.0, end: 5.0 },
-            ],
+            data,
             {
                 name: {
                     header: "Name",
-                    render: (value, row) => Text.Root(East.str`${value} (${row.role})`),
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => {
+                        const row = $.let(data.get(ctx.rowIndex));
+                        return Text.Root(East.str`${row.name} (${row.role})`);
+                    }),
                 },
             },
             row => [Planner.Event({ start: row.start, end: row.end })],
@@ -391,8 +395,8 @@ describeEast("Planner", (test) => {
                 task: { header: "Task" },
                 priority: {
                     header: "Priority",
-                    render: (value) => Badge.Root(
-                        value,
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) =>
+                        Badge.Root(ctx.cellValue.match({ String: ($, v) => v }, $ => ""))
                     ),
                 },
             },
@@ -405,14 +409,18 @@ describeEast("Planner", (test) => {
     });
 
     test("column render function accesses multiple row fields", $ => {
+        const data = $.let(East.value([
+            { firstName: "Alice", lastName: "Smith", department: "Eng", start: 1.0, end: 5.0 },
+        ]));
         const planner = $.let(Planner.Root(
-            [
-                { firstName: "Alice", lastName: "Smith", department: "Eng", start: 1.0, end: 5.0 },
-            ],
+            data,
             {
                 firstName: {
                     header: "Full Name",
-                    render: (value, row) => Text.Root(East.str`${value} ${row.lastName}`),
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => {
+                        const row = $.let(data.get(ctx.rowIndex));
+                        return Text.Root(East.str`${row.firstName} ${row.lastName}`);
+                    }),
                 },
                 department: { header: "Department" },
             },
@@ -428,18 +436,21 @@ describeEast("Planner", (test) => {
     // =========================================================================
 
     test("creates planner with array field using value function", $ => {
+        const data = $.let(East.value([
+            { name: "Alice", skills: ["TypeScript", "React"], start: 1.0, end: 3.0 },
+            { name: "Bob", skills: ["Python", "Django", "FastAPI"], start: 2.0, end: 5.0 },
+        ]));
         const planner = $.let(Planner.Root(
-            [
-                { name: "Alice", skills: ["TypeScript", "React"], start: 1.0, end: 3.0 },
-                { name: "Bob", skills: ["Python", "Django", "FastAPI"], start: 2.0, end: 5.0 },
-            ],
+            data,
             {
                 name: { header: "Name" },
                 skills: {
                     header: "Skills",
-                    // Extract array length as sortable integer value
                     value: (skills) => skills.size(),
-                    render: (skills) => Text.Root(East.str`${skills.size()} skills`),
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => {
+                        const row = $.let(data.get(ctx.rowIndex));
+                        return Text.Root(East.str`${row.skills.size()} skills`);
+                    }),
                 },
             },
             row => [Planner.Event({ start: row.start, end: row.end })],
@@ -450,18 +461,21 @@ describeEast("Planner", (test) => {
     });
 
     test("creates planner with struct field using value function", $ => {
+        const data = $.let(East.value([
+            { name: "Task A", info: { priority: 1n, category: "urgent" }, start: 1.0, end: 3.0 },
+            { name: "Task B", info: { priority: 3n, category: "normal" }, start: 2.0, end: 4.0 },
+        ]));
         const planner = $.let(Planner.Root(
-            [
-                { name: "Task A", info: { priority: 1n, category: "urgent" }, start: 1.0, end: 3.0 },
-                { name: "Task B", info: { priority: 3n, category: "normal" }, start: 2.0, end: 4.0 },
-            ],
+            data,
             {
                 name: { header: "Task" },
                 info: {
                     header: "Priority",
-                    // Extract priority as sortable integer value
                     value: (info) => info.priority,
-                    render: (info) => Text.Root(East.str`P${info.priority}`),
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => {
+                        const row = $.let(data.get(ctx.rowIndex));
+                        return Text.Root(East.str`P${row.info.priority}`);
+                    }),
                 },
             },
             row => [Planner.Event({ start: row.start, end: row.end })],
@@ -472,19 +486,22 @@ describeEast("Planner", (test) => {
     });
 
     test("creates planner mixing primitive and complex columns", $ => {
+        const data = $.let(East.value([
+            { id: 1n, name: "Alice", contact: { email: "alice@example.com", phone: "555-1234" }, start: 1.0, end: 3.0 },
+            { id: 2n, name: "Bob", contact: { email: "bob@example.com", phone: "555-5678" }, start: 2.0, end: 5.0 },
+        ]));
         const planner = $.let(Planner.Root(
-            [
-                { id: 1n, name: "Alice", contact: { email: "alice@example.com", phone: "555-1234" }, start: 1.0, end: 3.0 },
-                { id: 2n, name: "Bob", contact: { email: "bob@example.com", phone: "555-5678" }, start: 2.0, end: 5.0 },
-            ],
+            data,
             {
-                id: { header: "ID" },  // Primitive - no value function needed
-                name: { header: "Name" },  // Primitive - no value function needed
+                id: { header: "ID" },
+                name: { header: "Name" },
                 contact: {
                     header: "Email",
-                    // Extract email as sortable string value
                     value: (contact) => contact.email,
-                    render: (contact) => Text.Root(contact.email),
+                    render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => {
+                        const row = $.let(data.get(ctx.rowIndex));
+                        return Text.Root(row.contact.email);
+                    }),
                 },
             },
             row => [Planner.Event({ start: row.start, end: row.end })],

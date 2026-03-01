@@ -13,7 +13,8 @@ import {
     none,
 } from "@elaraai/east";
 
-import { ColorSchemeType, StyleVariantType } from "../../style.js";
+import { BorderStyleType, BorderWidthType, ColorSchemeType, StyleVariantType, OverflowType } from "../../style.js";
+import { PaddingType, MarginType } from "../../layout/style.js";
 import { UIComponentType } from "../../component.js";
 import { TagType, TagSizeType, type TagStyle } from "./types.js";
 
@@ -70,6 +71,58 @@ function createTag(
             : style.size)
         : undefined;
 
+    const borderWidthValue = style?.borderWidth
+        ? (typeof style.borderWidth === "string"
+            ? East.value(variant(style.borderWidth, null), BorderWidthType)
+            : style.borderWidth)
+        : undefined;
+
+    const borderStyleValue = style?.borderStyle
+        ? (typeof style.borderStyle === "string"
+            ? East.value(variant(style.borderStyle, null), BorderStyleType)
+            : style.borderStyle)
+        : undefined;
+
+    const overflowValue = style?.overflow
+        ? (typeof style.overflow === "string"
+            ? East.value(variant(style.overflow, null), OverflowType)
+            : style.overflow)
+        : undefined;
+
+    const overflowXValue = style?.overflowX
+        ? (typeof style.overflowX === "string"
+            ? East.value(variant(style.overflowX, null), OverflowType)
+            : style.overflowX)
+        : undefined;
+
+    const overflowYValue = style?.overflowY
+        ? (typeof style.overflowY === "string"
+            ? East.value(variant(style.overflowY, null), OverflowType)
+            : style.overflowY)
+        : undefined;
+
+    const paddingValue = style?.padding
+        ? (typeof style.padding === "string"
+            ? East.value({
+                top: some(style.padding),
+                right: some(style.padding),
+                bottom: some(style.padding),
+                left: some(style.padding)
+            }, PaddingType)
+            : style.padding)
+        : undefined;
+
+    const marginValue = style?.margin
+        ? (typeof style.margin === "string"
+            ? East.value({
+                top: some(style.margin),
+                right: some(style.margin),
+                bottom: some(style.margin),
+                left: some(style.margin)
+            }, MarginType)
+            : style.margin)
+        : undefined;
+
     return East.value(variant("Tag", {
         label: label,
         variant: variantValue ? some(variantValue) : none,
@@ -80,6 +133,21 @@ function createTag(
         opacity: style?.opacity !== undefined ? some(style.opacity) : none,
         color: style?.color ? some(style.color) : none,
         background: style?.background ? some(style.background) : none,
+        borderRadius: style?.borderRadius ? some(style.borderRadius) : none,
+        borderWidth: borderWidthValue ? some(borderWidthValue) : none,
+        borderStyle: borderStyleValue ? some(borderStyleValue) : none,
+        borderColor: style?.borderColor ? some(style.borderColor) : none,
+        overflow: overflowValue ? some(overflowValue) : none,
+        overflowX: overflowXValue ? some(overflowXValue) : none,
+        overflowY: overflowYValue ? some(overflowYValue) : none,
+        width: style?.width ? some(style.width) : none,
+        height: style?.height ? some(style.height) : none,
+        minWidth: style?.minWidth ? some(style.minWidth) : none,
+        minHeight: style?.minHeight ? some(style.minHeight) : none,
+        maxWidth: style?.maxWidth ? some(style.maxWidth) : none,
+        maxHeight: style?.maxHeight ? some(style.maxHeight) : none,
+        padding: paddingValue ? some(paddingValue) : none,
+        margin: marginValue ? some(marginValue) : none,
     }), UIComponentType);
 }
 

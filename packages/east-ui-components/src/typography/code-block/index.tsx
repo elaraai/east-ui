@@ -56,6 +56,23 @@ export interface CodeBlockProps {
     maxHeight?: string | undefined;
     showCopyButton?: boolean | undefined;
     title?: string | undefined;
+    overflow?: string | undefined;
+    overflowX?: string | undefined;
+    overflowY?: string | undefined;
+    width?: string | undefined;
+    height?: string | undefined;
+    minWidth?: string | undefined;
+    minHeight?: string | undefined;
+    maxWidth?: string | undefined;
+    pt?: string | undefined;
+    pr?: string | undefined;
+    pb?: string | undefined;
+    pl?: string | undefined;
+    mt?: string | undefined;
+    mr?: string | undefined;
+    mb?: string | undefined;
+    ml?: string | undefined;
+    opacity?: number | undefined;
 }
 
 /**
@@ -71,6 +88,9 @@ export function toCodeBlockProps(value: CodeBlockValue): CodeBlockProps {
     const highlightLinesBigint = getSomeorUndefined(value.highlightLines);
     const highlightLines = highlightLinesBigint?.map(n => Number(n));
 
+    const padding = getSomeorUndefined(value.padding);
+    const margin = getSomeorUndefined(value.margin);
+
     return {
         language,
         showLineNumbers: getSomeorUndefined(value.showLineNumbers),
@@ -78,6 +98,23 @@ export function toCodeBlockProps(value: CodeBlockValue): CodeBlockProps {
         maxHeight: getSomeorUndefined(value.maxHeight),
         showCopyButton: getSomeorUndefined(value.showCopyButton),
         title: getSomeorUndefined(value.title),
+        overflow: getSomeorUndefined(value.overflow)?.type,
+        overflowX: getSomeorUndefined(value.overflowX)?.type,
+        overflowY: getSomeorUndefined(value.overflowY)?.type,
+        width: getSomeorUndefined(value.width),
+        height: getSomeorUndefined(value.height),
+        minWidth: getSomeorUndefined(value.minWidth),
+        minHeight: getSomeorUndefined(value.minHeight),
+        maxWidth: getSomeorUndefined(value.maxWidth),
+        pt: padding ? getSomeorUndefined(padding.top) : undefined,
+        pr: padding ? getSomeorUndefined(padding.right) : undefined,
+        pb: padding ? getSomeorUndefined(padding.bottom) : undefined,
+        pl: padding ? getSomeorUndefined(padding.left) : undefined,
+        mt: margin ? getSomeorUndefined(margin.top) : undefined,
+        mr: margin ? getSomeorUndefined(margin.right) : undefined,
+        mb: margin ? getSomeorUndefined(margin.bottom) : undefined,
+        ml: margin ? getSomeorUndefined(margin.left) : undefined,
+        opacity: getSomeorUndefined(value.opacity),
     };
 }
 
@@ -112,7 +149,26 @@ export const EastChakraCodeBlock = memo(function EastChakraCodeBlock({ value }: 
 
     return (
         <ChakraCodeBlock.AdapterProvider value={shikiAdapter}>
-            <Box maxHeight={props.maxHeight} overflow="auto">
+            <Box
+                    maxHeight={props.maxHeight}
+                    overflow={props.overflow ?? "auto"}
+                    overflowX={props.overflowX}
+                    overflowY={props.overflowY}
+                    width={props.width}
+                    height={props.height}
+                    minWidth={props.minWidth}
+                    minHeight={props.minHeight}
+                    maxWidth={props.maxWidth}
+                    pt={props.pt}
+                    pr={props.pr}
+                    pb={props.pb}
+                    pl={props.pl}
+                    mt={props.mt}
+                    mr={props.mr}
+                    mb={props.mb}
+                    ml={props.ml}
+                    opacity={props.opacity}
+                >
                 <ChakraCodeBlock.Root
                     code={value.code}
                     language={props.language}

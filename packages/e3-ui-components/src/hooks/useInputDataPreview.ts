@@ -20,8 +20,8 @@ export function useInputDataPreview(
     requestOptions?: RequestOptions,
     queryOptions?: QueryOverrides
 ) {
-    const isUpToDate = inputInfo?.status.type === 'up-to-date';
-    const hash = inputInfo?.hash?.type === 'some' ? inputInfo.hash.value : null;
+    const isUpToDate = useMemo(() => inputInfo?.status.type === 'up-to-date', [inputInfo?.status.type]);
+    const hash = useMemo(() => inputInfo?.hash?.type === 'some' ? inputInfo.hash.value : null, [inputInfo?.hash]);
     const pathParts = useMemo(() =>
         inputInfo?.path?.split('.').filter(Boolean).map((v) => variant('field', v)) ?? [],
         [inputInfo?.path]
@@ -35,8 +35,8 @@ export function useInputDataPreview(
         ...queryOptions,
     });
 
-    const size = status.data?.size?.type === 'some' ? status.data.size.value : null;
-    const isOversized = size !== null && size > MAX_DOWNLOAD_SIZE;
+    const size = useMemo(() => status.data?.size?.type === 'some' ? status.data.size.value : null, [status.data]);
+    const isOversized = useMemo(() => size !== null && size > MAX_DOWNLOAD_SIZE, [size]);
 
     // Step 2: full data — only when status loaded and not oversized
     const data = useQuery({

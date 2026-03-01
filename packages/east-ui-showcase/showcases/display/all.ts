@@ -278,6 +278,149 @@ export default East.function(
             )
         );
 
+        // Badge - Border Styling
+        const badgeBorder = $.let(
+            ShowcaseCard(
+                "Badge Border Styling",
+                "Custom borders with width, style, and color",
+                Stack.HStack([
+                    Badge.Root("Outlined", {
+                        borderWidth: "thin",
+                        borderStyle: "solid",
+                        borderColor: "blue.400",
+                        colorPalette: "blue",
+                    }),
+                    Badge.Root("Dashed", {
+                        borderWidth: "medium",
+                        borderStyle: "dashed",
+                        borderColor: "red.400",
+                        variant: "subtle",
+                        colorPalette: "red",
+                    }),
+                    Badge.Root("Rounded", {
+                        borderWidth: "thin",
+                        borderStyle: "solid",
+                        borderColor: "green.400",
+                        borderRadius: "full",
+                        colorPalette: "green",
+                        variant: "solid",
+                    }),
+                ], { gap: "2" }),
+                some(`
+                    Badge.Root("Outlined", {
+                        borderWidth: "thin",
+                        borderStyle: "solid",
+                        borderColor: "blue.400",
+                        colorPalette: "blue",
+                    })
+                `)
+            )
+        );
+
+        // Badge - Padding & Dimensions
+        const badgeBoxModel = $.let(
+            ShowcaseCard(
+                "Badge Box Model",
+                "Padding, margin, and dimension controls",
+                Stack.HStack([
+                    Badge.Root("Padded", {
+                        padding: "3",
+                        colorPalette: "purple",
+                        variant: "subtle",
+                    }),
+                    Badge.Root("Wide", {
+                        width: "120px",
+                        colorPalette: "teal",
+                        variant: "solid",
+                    }),
+                    Badge.Root("Custom", {
+                        padding: "2",
+                        borderRadius: "lg",
+                        background: "#2d3748",
+                        color: "white",
+                    }),
+                ], { gap: "2" }),
+                some(`
+                    Badge.Root("Padded", {
+                        padding: "3",
+                        colorPalette: "purple",
+                        variant: "subtle",
+                    })
+                `)
+            )
+        );
+
+        // Tag - Border Styling
+        const tagBorder = $.let(
+            ShowcaseCard(
+                "Tag Border Styling",
+                "Custom borders and border radius",
+                Stack.HStack([
+                    Tag.Root("Bordered", {
+                        borderWidth: "thin",
+                        borderStyle: "solid",
+                        borderColor: "purple.400",
+                        colorPalette: "purple",
+                    }),
+                    Tag.Root("Pill", {
+                        borderRadius: "full",
+                        colorPalette: "cyan",
+                        variant: "solid",
+                        padding: "2",
+                    }),
+                    Tag.Root("Dashed", {
+                        borderWidth: "medium",
+                        borderStyle: "dashed",
+                        borderColor: "orange.400",
+                        colorPalette: "orange",
+                        variant: "subtle",
+                    }),
+                ], { gap: "2" }),
+                some(`
+                    Tag.Root("Bordered", {
+                        borderWidth: "thin",
+                        borderStyle: "solid",
+                        borderColor: "purple.400",
+                        colorPalette: "purple",
+                    })
+                `)
+            )
+        );
+
+        // Tag - Box Model
+        const tagBoxModel = $.let(
+            ShowcaseCard(
+                "Tag Box Model",
+                "Padding, width, and overflow",
+                Stack.HStack([
+                    Tag.Root("Extra Padding", {
+                        padding: "3",
+                        colorPalette: "blue",
+                        variant: "subtle",
+                    }),
+                    Tag.Root("Fixed Width Tag With Longer Text", {
+                        width: "120px",
+                        overflow: "hidden",
+                        colorPalette: "red",
+                        variant: "outline",
+                    }),
+                    Tag.Root("Rounded Tag", {
+                        borderRadius: "full",
+                        padding: "2",
+                        background: "#667eea",
+                        color: "white",
+                    }),
+                ], { gap: "2" }),
+                some(`
+                    Tag.Root("Extra Padding", {
+                        padding: "3",
+                        colorPalette: "blue",
+                        variant: "subtle",
+                    })
+                `)
+            )
+        );
+
         // Avatar - Basic
         const avatarBasic = $.let(
             ShowcaseCard(
@@ -495,6 +638,8 @@ export default East.function(
                     Grid.Item(badgeVariants),
                     Grid.Item(badgeColors),
                     Grid.Item(badgeCustom),
+                    Grid.Item(badgeBorder),
+                    Grid.Item(badgeBoxModel),
                 ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
             ]),
             Accordion.Item("tag", "Tag", [
@@ -503,6 +648,8 @@ export default East.function(
                     Grid.Item(tagClosable),
                     Grid.Item(tagVariants),
                     Grid.Item(tagCustom),
+                    Grid.Item(tagBorder),
+                    Grid.Item(tagBoxModel),
                     Grid.Item(tagDynamic, { colSpan: "2" }),
                 ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
             ]),

@@ -5,6 +5,7 @@
 
 import {
     type SubtypeExprOrValue,
+    FloatType,
     OptionType,
     StringType,
     StructType,
@@ -18,6 +19,7 @@ import {
     OverflowType,
     SizeType,
     TextAlignType,
+    TextDecorationType,
     TextOverflowType,
     TextTransformType,
     WhiteSpaceType,
@@ -30,10 +32,12 @@ import type {
     OverflowLiteral,
     SizeLiteral,
     TextAlignLiteral,
+    TextDecorationLiteral,
     TextOverflowLiteral,
     TextTransformLiteral,
     WhiteSpaceLiteral,
 } from "../../style.js";
+import { PaddingType, MarginType } from "../../layout/style.js";
 
 // ============================================================================
 // Text Type
@@ -67,11 +71,25 @@ export const TextType = StructType({
     textTransform: OptionType(TextTransformType),
     textAlign: OptionType(TextAlignType),
     textOverflow: OptionType(TextOverflowType),
+    textDecoration: OptionType(TextDecorationType),
     whiteSpace: OptionType(WhiteSpaceType),
     overflow: OptionType(OverflowType),
+    overflowX: OptionType(OverflowType),
+    overflowY: OptionType(OverflowType),
     borderWidth: OptionType(BorderWidthType),
     borderStyle: OptionType(BorderStyleType),
     borderColor: OptionType(StringType),
+    width: OptionType(StringType),
+    height: OptionType(StringType),
+    minWidth: OptionType(StringType),
+    minHeight: OptionType(StringType),
+    maxWidth: OptionType(StringType),
+    maxHeight: OptionType(StringType),
+    padding: OptionType(PaddingType),
+    margin: OptionType(MarginType),
+    lineHeight: OptionType(StringType),
+    letterSpacing: OptionType(StringType),
+    opacity: OptionType(FloatType),
 });
 
 /**
@@ -118,14 +136,42 @@ export type TextStyle = {
     textAlign?: SubtypeExprOrValue<TextAlignType> | TextAlignLiteral;
     /** Text overflow behavior (clip or ellipsis) */
     textOverflow?: SubtypeExprOrValue<TextOverflowType> | TextOverflowLiteral;
+    /** Text decoration (none, underline, line-through, overline) */
+    textDecoration?: SubtypeExprOrValue<TextDecorationType> | TextDecorationLiteral;
     /** White space handling (normal, nowrap, pre, etc.) */
     whiteSpace?: SubtypeExprOrValue<WhiteSpaceType> | WhiteSpaceLiteral;
     /** Overflow behavior (visible, hidden, scroll, auto) */
     overflow?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Horizontal overflow behavior */
+    overflowX?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Vertical overflow behavior */
+    overflowY?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
     /** Border width for all sides */
     borderWidth?: SubtypeExprOrValue<BorderWidthType> | BorderWidthLiteral;
     /** Border style for all sides */
     borderStyle?: SubtypeExprOrValue<BorderStyleType> | BorderStyleLiteral;
     /** Border color for all sides (Chakra UI color token or CSS color) */
     borderColor?: SubtypeExprOrValue<StringType>;
+    /** Width (Chakra UI size token or CSS value) */
+    width?: SubtypeExprOrValue<StringType>;
+    /** Height (Chakra UI size token or CSS value) */
+    height?: SubtypeExprOrValue<StringType>;
+    /** Min width */
+    minWidth?: SubtypeExprOrValue<StringType>;
+    /** Min height */
+    minHeight?: SubtypeExprOrValue<StringType>;
+    /** Max width */
+    maxWidth?: SubtypeExprOrValue<StringType>;
+    /** Max height */
+    maxHeight?: SubtypeExprOrValue<StringType>;
+    /** Padding configuration - use Padding() helper or string for uniform */
+    padding?: SubtypeExprOrValue<PaddingType> | string;
+    /** Margin configuration - use Margin() helper or string for uniform */
+    margin?: SubtypeExprOrValue<MarginType> | string;
+    /** Line height (Chakra token or CSS value, e.g., "tall", "1.5") */
+    lineHeight?: SubtypeExprOrValue<StringType>;
+    /** Letter spacing (Chakra token or CSS value, e.g., "tight", "wide") */
+    letterSpacing?: SubtypeExprOrValue<StringType>;
+    /** CSS opacity (0-1) */
+    opacity?: SubtypeExprOrValue<FloatType>;
 };

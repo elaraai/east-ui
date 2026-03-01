@@ -23,6 +23,9 @@ export type TextValue = ValueTypeOf<typeof Text.Types.Text>;
  * @returns Chakra Text props
  */
 export function toChakraText(value: TextValue): TextProps {
+    const padding = getSomeorUndefined(value.padding);
+    const margin = getSomeorUndefined(value.margin);
+
     return {
         color: getSomeorUndefined(value.color),
         background: getSomeorUndefined(value.background),
@@ -32,11 +35,31 @@ export function toChakraText(value: TextValue): TextProps {
         textTransform: getSomeorUndefined(value.textTransform)?.type,
         textAlign: getSomeorUndefined(value.textAlign)?.type,
         textOverflow: getSomeorUndefined(value.textOverflow)?.type,
+        textDecoration: getSomeorUndefined(value.textDecoration)?.type,
         whiteSpace: getSomeorUndefined(value.whiteSpace)?.type,
         overflow: getSomeorUndefined(value.overflow)?.type,
+        overflowX: getSomeorUndefined(value.overflowX)?.type,
+        overflowY: getSomeorUndefined(value.overflowY)?.type,
         borderWidth: getSomeorUndefined(value.borderWidth)?.type,
         borderStyle: getSomeorUndefined(value.borderStyle)?.type,
         borderColor: getSomeorUndefined(value.borderColor),
+        width: getSomeorUndefined(value.width),
+        height: getSomeorUndefined(value.height),
+        minWidth: getSomeorUndefined(value.minWidth),
+        minHeight: getSomeorUndefined(value.minHeight),
+        maxWidth: getSomeorUndefined(value.maxWidth),
+        maxHeight: getSomeorUndefined(value.maxHeight),
+        pt: padding ? getSomeorUndefined(padding.top) : undefined,
+        pr: padding ? getSomeorUndefined(padding.right) : undefined,
+        pb: padding ? getSomeorUndefined(padding.bottom) : undefined,
+        pl: padding ? getSomeorUndefined(padding.left) : undefined,
+        mt: margin ? getSomeorUndefined(margin.top) : undefined,
+        mr: margin ? getSomeorUndefined(margin.right) : undefined,
+        mb: margin ? getSomeorUndefined(margin.bottom) : undefined,
+        ml: margin ? getSomeorUndefined(margin.left) : undefined,
+        lineHeight: getSomeorUndefined(value.lineHeight),
+        letterSpacing: getSomeorUndefined(value.letterSpacing),
+        opacity: getSomeorUndefined(value.opacity),
     };
 }
 

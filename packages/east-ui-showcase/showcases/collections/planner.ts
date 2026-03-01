@@ -4,7 +4,7 @@
  */
 
 import { East, some, FloatType, StringType, NullType, variant } from "@elaraai/east";
-import { Planner, UIComponentType, Stack, Badge, Text } from "@elaraai/east-ui";
+import { Planner, UIComponentType, Stack, Badge, Text, Table } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
 /**
@@ -285,50 +285,64 @@ export default East.function(
         );
 
         // Complex column types with value function
+        const plannerComplexData = $.let(East.value([
+            { name: "Alice", skills: ["TypeScript", "React"], info: { dept: "Eng", level: 3n }, start: 1.0, end: 4.0 },
+            { name: "Bob", skills: ["Python"], info: { dept: "Data", level: 2n }, start: 2.0, end: 5.0 },
+            { name: "Charlie", skills: ["Go", "Rust", "C++"], info: { dept: "Infra", level: 4n }, start: 3.0, end: 7.0 },
+        ]));
         const complexColumns = $.let(
             ShowcaseCard(
                 "Complex Column Types",
-                "Array and struct fields with value functions for sorting",
+                "Array and struct fields with value functions and East render functions",
                 Planner.Root(
-                    [
-                        { name: "Alice", skills: ["TypeScript", "React"], info: { dept: "Eng", level: 3n }, start: 1.0, end: 4.0 },
-                        { name: "Bob", skills: ["Python"], info: { dept: "Data", level: 2n }, start: 2.0, end: 5.0 },
-                        { name: "Charlie", skills: ["Go", "Rust", "C++"], info: { dept: "Infra", level: 4n }, start: 3.0, end: 7.0 },
-                    ],
+                    plannerComplexData,
                     {
                         name: { header: "Name" },
                         skills: {
                             header: "Skills",
                             value: (skills) => skills.size(),
-                            render: (skills) => Text.Root(East.str`${skills.size()} skills`),
+                            render: East.function(
+                                [Table.Types.CellRenderContext],
+                                UIComponentType,
+                                ($, ctx) => {
+                                    const row = $.let(plannerComplexData.get(ctx.rowIndex));
+                                    return Text.Root(East.str`${row.skills.size()} skills`);
+                                }
+                            ),
                         },
                         info: {
                             header: "Level",
                             value: (info) => info.level,
-                            render: (info) => Text.Root(East.str`${info.dept} L${info.level}`),
+                            render: East.function(
+                                [Table.Types.CellRenderContext],
+                                UIComponentType,
+                                ($, ctx) => {
+                                    const row = $.let(plannerComplexData.get(ctx.rowIndex));
+                                    return Text.Root(East.str`${row.info.dept} L${row.info.level}`);
+                                }
+                            ),
                         },
                     },
                     row => [Planner.Event({ start: row.start, end: row.end, colorPalette: "purple" })],
                     { maxSlot: 8.0, striped: true }
                 ),
                 some(`
+                    const data = [...];
                     Planner.Root(
-                        [
-                            { name: "Alice", skills: ["TypeScript", "React"], info: { dept: "Eng", level: 3n }, start: 1.0, end: 4.0 },
-                            { name: "Bob", skills: ["Python"], info: { dept: "Data", level: 2n }, start: 2.0, end: 5.0 },
-                            { name: "Charlie", skills: ["Go", "Rust", "C++"], info: { dept: "Infra", level: 4n }, start: 3.0, end: 7.0 },
-                        ],
+                        data,
                         {
                             name: { header: "Name" },
                             skills: {
                                 header: "Skills",
                                 value: (skills) => skills.size(),
-                                render: (skills) => Text.Root(East.str\`\${skills.size()} skills\`),
-                            },
-                            info: {
-                                header: "Level",
-                                value: (info) => info.level,
-                                render: (info) => Text.Root(East.str\`\${info.dept} L\${info.level}\`),
+                                render: East.function(
+                                    [Table.Types.CellRenderContext],
+                                    UIComponentType,
+                                    ($, ctx) => {
+                                        const row = $.let(East.value(data).index(ctx.rowIndex));
+                                        return Text.Root(East.str\`\${row.skills.size()} skills\`);
+                                    }
+                                ),
                             },
                         },
                         row => [Planner.Event({ start: row.start, end: row.end, colorPalette: "purple" })],
@@ -338,31 +352,42 @@ export default East.function(
             )
         );
 
-        // Column render with row access
+        // Column render with row access (closing over data)
+        const plannerRowData = $.let(East.value([
+            { task: "Backend API", owner: "Alice", priority: "high", start: 1.0, end: 4.0 },
+            { task: "Frontend UI", owner: "Bob", priority: "medium", start: 2.0, end: 6.0 },
+            { task: "Integration", owner: "Charlie", priority: "high", start: 4.0, end: 8.0 },
+            { task: "Documentation", owner: "Diana", priority: "low", start: 5.0, end: 9.0 },
+        ]));
         const columnRenderWithRow = $.let(
             ShowcaseCard(
                 "Column Render with Row Access",
-                "Render function accesses other row fields for conditional styling",
+                "Render function closes over data to access other row fields",
                 Planner.Root(
-                    [
-                        { task: "Backend API", owner: "Alice", priority: "high", start: 1.0, end: 4.0 },
-                        { task: "Frontend UI", owner: "Bob", priority: "medium", start: 2.0, end: 6.0 },
-                        { task: "Integration", owner: "Charlie", priority: "high", start: 4.0, end: 8.0 },
-                        { task: "Documentation", owner: "Diana", priority: "low", start: 5.0, end: 9.0 },
-                    ],
+                    plannerRowData,
                     {
                         task: {
                             header: "Task",
-                            render: (value, row) => Text.Root(
-                                East.str`${value} (${row.owner})`,
+                            render: East.function(
+                                [Table.Types.CellRenderContext],
+                                UIComponentType,
+                                ($, ctx) => {
+                                    const row = $.let(plannerRowData.get(ctx.rowIndex));
+                                    return Text.Root(East.str`${row.task} (${row.owner})`);
+                                }
                             ),
                         },
                         priority: {
                             header: "Priority",
-                            render: (value, row) => Badge.Root(
-                                East.str`${value} (${row.owner})`,
-                                {
-                                    variant: "solid",
+                            render: East.function(
+                                [Table.Types.CellRenderContext],
+                                UIComponentType,
+                                ($, ctx) => {
+                                    const row = $.let(plannerRowData.get(ctx.rowIndex));
+                                    return Badge.Root(
+                                        East.str`${row.priority} (${row.owner})`,
+                                        { variant: "solid" }
+                                    );
                                 }
                             ),
                         },
@@ -371,28 +396,20 @@ export default East.function(
                     { maxSlot: 10.0, striped: true }
                 ),
                 some(`
+                    const data = [...];
                     Planner.Root(
-                        [
-                            { task: "Backend API", owner: "Alice", priority: "high", start: 1.0, end: 4.0 },
-                            { task: "Frontend UI", owner: "Bob", priority: "medium", start: 2.0, end: 6.0 },
-                            { task: "Integration", owner: "Charlie", priority: "high", start: 4.0, end: 8.0 },
-                            { task: "Documentation", owner: "Diana", priority: "low", start: 5.0, end: 9.0 },
-                        ],
+                        data,
                         {
                             task: {
                                 header: "Task",
-                                render: (value, row) => Text.Root(
-                                    East.str\`\${value} (\${row.owner})\`,
+                                render: East.function(
+                                    [Table.Types.CellRenderContext],
+                                    UIComponentType,
+                                    ($, ctx) => {
+                                        const row = $.let(East.value(data).index(ctx.rowIndex));
+                                        return Text.Root(East.str\`\${row.task} (\${row.owner})\`);
+                                    }
                                 ),
-                            },
-                            priority: {
-                                header: "Priority",
-                                render: (value, row) => Badge.Root(value, {
-                                    colorPalette: row.priority.equal("high").ifElse("red",
-                                        row.priority.equal("medium").ifElse("yellow", "green")
-                                    ),
-                                    variant: "solid",
-                                }),
                             },
                         },
                         row => [Planner.Event({ start: row.start, end: row.end })],

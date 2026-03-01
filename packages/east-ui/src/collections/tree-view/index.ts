@@ -226,6 +226,19 @@ function buildIndicatorValue(indicator?: TreeNodeIndicator) {
                         ? East.value(variant(indicator.colorPalette, null), ColorSchemeType)
                         : indicator.colorPalette)
                     : variant("none", null),
+                opacity: variant("none", null),
+                borderRadius: variant("none", null),
+                overflow: variant("none", null),
+                overflowX: variant("none", null),
+                overflowY: variant("none", null),
+                width: variant("none", null),
+                height: variant("none", null),
+                minWidth: variant("none", null),
+                minHeight: variant("none", null),
+                maxWidth: variant("none", null),
+                maxHeight: variant("none", null),
+                padding: variant("none", null),
+                margin: variant("none", null),
             }, IconStyleType))
             : variant("none", null),
     }, IconType));

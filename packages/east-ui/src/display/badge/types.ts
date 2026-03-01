@@ -11,8 +11,9 @@ import {
     FloatType,
 } from "@elaraai/east";
 
-import { SizeType, ColorSchemeType, StyleVariantType } from "../../style.js";
-import type { SizeLiteral, ColorSchemeLiteral, StyleVariantLiteral } from "../../style.js";
+import { BorderStyleType, BorderWidthType, OverflowType, SizeType, ColorSchemeType, StyleVariantType } from "../../style.js";
+import type { BorderStyleLiteral, BorderWidthLiteral, OverflowLiteral, SizeLiteral, ColorSchemeLiteral, StyleVariantLiteral } from "../../style.js";
+import { PaddingType, MarginType } from "../../layout/style.js";
 
 // ============================================================================
 // Badge Type
@@ -40,6 +41,21 @@ export const BadgeType = StructType({
     opacity: OptionType(FloatType),
     color: OptionType(StringType),
     background: OptionType(StringType),
+    borderRadius: OptionType(StringType),
+    borderWidth: OptionType(BorderWidthType),
+    borderStyle: OptionType(BorderStyleType),
+    borderColor: OptionType(StringType),
+    overflow: OptionType(OverflowType),
+    overflowX: OptionType(OverflowType),
+    overflowY: OptionType(OverflowType),
+    width: OptionType(StringType),
+    height: OptionType(StringType),
+    minWidth: OptionType(StringType),
+    minHeight: OptionType(StringType),
+    maxWidth: OptionType(StringType),
+    maxHeight: OptionType(StringType),
+    padding: OptionType(PaddingType),
+    margin: OptionType(MarginType),
 });
 
 /**
@@ -74,4 +90,34 @@ export interface BadgeStyle {
     color?: SubtypeExprOrValue<StringType>;
     /** Custom background color (overrides colorPalette) */
     background?: SubtypeExprOrValue<StringType>;
+    /** Border radius */
+    borderRadius?: SubtypeExprOrValue<StringType>;
+    /** Border width */
+    borderWidth?: SubtypeExprOrValue<BorderWidthType> | BorderWidthLiteral;
+    /** Border style */
+    borderStyle?: SubtypeExprOrValue<BorderStyleType> | BorderStyleLiteral;
+    /** Border color */
+    borderColor?: SubtypeExprOrValue<StringType>;
+    /** Overflow behavior */
+    overflow?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Horizontal overflow */
+    overflowX?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Vertical overflow */
+    overflowY?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Width */
+    width?: SubtypeExprOrValue<StringType>;
+    /** Height */
+    height?: SubtypeExprOrValue<StringType>;
+    /** Min width */
+    minWidth?: SubtypeExprOrValue<StringType>;
+    /** Min height */
+    minHeight?: SubtypeExprOrValue<StringType>;
+    /** Max width */
+    maxWidth?: SubtypeExprOrValue<StringType>;
+    /** Max height */
+    maxHeight?: SubtypeExprOrValue<StringType>;
+    /** Padding configuration */
+    padding?: SubtypeExprOrValue<PaddingType> | string;
+    /** Margin configuration */
+    margin?: SubtypeExprOrValue<MarginType> | string;
 }

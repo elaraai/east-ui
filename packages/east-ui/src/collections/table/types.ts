@@ -16,7 +16,6 @@ import {
     DateTimeType,
     ArrayType,
     FunctionType,
-    EastTypeType,
     LiteralValueType,
 } from "@elaraai/east";
 
@@ -99,6 +98,25 @@ export type TableSizeLiteral = "sm" | "md" | "lg";
  * because they can be directly converted to LiteralValueType.
  */
 export type PrimitiveEastType = BooleanType | IntegerType | FloatType | StringType | DateTimeType;
+
+// ============================================================================
+// Table Cell Render Context Type
+// ============================================================================
+
+/**
+ * Context passed to a column render function at render time.
+ *
+ * @property rowIndex - The row index (0-based)
+ * @property columnKey - The column key
+ * @property cellValue - The cell value as a LiteralValueType
+ */
+export const TableCellRenderContextType = StructType({
+    rowIndex: IntegerType,
+    columnKey: StringType,
+    cellValue: LiteralValueType,
+});
+
+export type TableCellRenderContextType = typeof TableCellRenderContextType;
 
 // ============================================================================
 // Table Callback Event Types
@@ -264,34 +282,3 @@ export interface TableStyle {
     onSortChange?: SubtypeExprOrValue<FunctionType<[TableSortEventType], NullType>>;
 }
 
-// ============================================================================
-// Table Column Type (for serialization)
-// ============================================================================
-
-/**
- * East type for a table column definition.
- *
- * @remarks
- * Defines the header text and key for a column.
- *
- * @property key - The column key (field name)
- * @property type - The column value type as an EastTypeValue (supports any East type)
- * @property header - Optional header text for the column
- * @property width - Optional fixed width (CSS value, e.g., "200px", "20%")
- * @property minWidth - Optional minimum width (CSS value)
- * @property maxWidth - Optional maximum width (CSS value)
- */
-export const TableColumnType = StructType({
-    key: StringType,
-    dataType: EastTypeType,
-    valueType: EastTypeType,
-    header: OptionType(StringType),
-    width: OptionType(StringType),
-    minWidth: OptionType(StringType),
-    maxWidth: OptionType(StringType),
-});
-
-/**
- * Type representing the table column structure.
- */
-export type TableColumnType = typeof TableColumnType;

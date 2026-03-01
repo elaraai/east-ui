@@ -32,7 +32,6 @@ export default East.function(
                         tags: {
                             header: "Tags",
                             value: tags => tags.size(),
-                            render: value => Stack.HStack(value.map(($, tag) => Badge.Root(tag)) as any, { gap: "1" })
                         },
                     }
                 ),
@@ -169,7 +168,17 @@ export default East.function(
                     {
                         name: { header: "Name" },
                         email: { header: "Email" },
-                        status: { header: "Status", render: value => Badge.Root(value, { variant: "solid", colorPalette: "blue" }) },
+                        status: {
+                            header: "Status",
+                            render: East.function(
+                                [Table.Types.CellRenderContext],
+                                UIComponentType,
+                                ($, ctx) => Badge.Root(
+                                    ctx.cellValue.match({ String: ($, v) => v }, $ => ""),
+                                    { variant: "solid", colorPalette: "blue" }
+                                )
+                            ),
+                        },
                     },
                     { variant: "line" }
                 ),
@@ -183,7 +192,17 @@ export default East.function(
                         {
                             name: { header: "Name" },
                             email: { header: "Email" },
-                            status: { header: "Status", render: value => Badge.Root(value, { variant: "solid", colorPalette: "blue" }) },
+                            status: {
+                                header: "Status",
+                                render: East.function(
+                                    [Table.Types.CellRenderContext],
+                                    UIComponentType,
+                                    ($, ctx) => Badge.Root(
+                                        ctx.cellValue.match({ String: ($, v) => v }, $ => ""),
+                                        { variant: "solid", colorPalette: "blue" }
+                                    )
+                                ),
+                            },
                         },
                         { variant: "line" }
                     )
@@ -238,53 +257,81 @@ export default East.function(
         );
 
         // Complex column types with value function
+        const complexData = $.let(East.value([
+            { name: "Alice", skills: ["TypeScript", "React", "Node"], metadata: { level: "Senior", years: 5n } },
+            { name: "Bob", skills: ["Python", "Django"], metadata: { level: "Mid", years: 3n } },
+            { name: "Charlie", skills: ["Go", "Rust", "C++", "Java"], metadata: { level: "Senior", years: 8n } },
+        ]));
         const complexColumns = $.let(
             ShowcaseCard(
                 "Complex Column Types",
                 "Array and struct fields with value functions for sorting",
                 Table.Root(
-                    [
-                        { name: "Alice", skills: ["TypeScript", "React", "Node"], metadata: { level: "Senior", years: 5n } },
-                        { name: "Bob", skills: ["Python", "Django"], metadata: { level: "Mid", years: 3n } },
-                        { name: "Charlie", skills: ["Go", "Rust", "C++", "Java"], metadata: { level: "Senior", years: 8n } },
-                    ],
+                    complexData,
                     {
                         name: { header: "Name" },
                         skills: {
                             header: "Skills",
-                            // value function extracts sortable value from array
                             value: (skills) => skills.size(),
-                            render: (skills) => Stack.HStack(skills.map(($, s) => Badge.Root(s, { variant: "subtle", colorPalette: "blue" })) as any, { gap: "1", wrap: "wrap" }),
+                            render: East.function(
+                                [Table.Types.CellRenderContext],
+                                UIComponentType,
+                                ($, ctx) => {
+                                    const row = $.let(complexData.get(ctx.rowIndex));
+                                    return Stack.HStack(
+                                        row.skills.map(($, s) => Badge.Root(s, { variant: "subtle", colorPalette: "blue" })),
+                                        { gap: "1", wrap: "wrap" }
+                                    );
+                                }
+                            ),
                         },
                         metadata: {
                             header: "Experience",
-                            // value function extracts sortable value from struct
                             value: (meta) => meta.years,
-                            render: (meta) => Text.Root(East.str`${meta.level} (${meta.years} yrs)`),
+                            render: East.function(
+                                [Table.Types.CellRenderContext],
+                                UIComponentType,
+                                ($, ctx) => {
+                                    const row = $.let(complexData.get(ctx.rowIndex));
+                                    return Text.Root(East.str`${row.metadata.level} (${row.metadata.years} yrs)`);
+                                }
+                            ),
                         },
                     },
                     { variant: "line", striped: true }
                 ),
                 some(`
+                    const data = $.let(East.value([...]));
                     Table.Root(
-                        [
-                            { name: "Alice", skills: ["TypeScript", "React", "Node"], metadata: { level: "Senior", years: 5n } },
-                            { name: "Bob", skills: ["Python", "Django"], metadata: { level: "Mid", years: 3n } },
-                            { name: "Charlie", skills: ["Go", "Rust", "C++", "Java"], metadata: { level: "Senior", years: 8n } },
-                        ],
+                        data,
                         {
                             name: { header: "Name" },
                             skills: {
                                 header: "Skills",
-                                // value function extracts sortable value from array
                                 value: (skills) => skills.size(),
-                                render: (skills) => Stack.HStack(skills.map(($, s) => Badge.Root(s)) as any, { gap: "1" }),
+                                render: East.function(
+                                    [Table.Types.CellRenderContext],
+                                    UIComponentType,
+                                    ($, ctx) => {
+                                        const row = $.let(data.get(ctx.rowIndex));
+                                        return Stack.HStack(
+                                            row.skills.map(($, s) => Badge.Root(s, { variant: "subtle", colorPalette: "blue" })),
+                                            { gap: "1", wrap: "wrap" }
+                                        );
+                                    }
+                                ),
                             },
                             metadata: {
                                 header: "Experience",
-                                // value function extracts sortable value from struct
                                 value: (meta) => meta.years,
-                                render: (meta) => Text.Root(East.str\`\${meta.level} (\${meta.years} yrs)\`),
+                                render: East.function(
+                                    [Table.Types.CellRenderContext],
+                                    UIComponentType,
+                                    ($, ctx) => {
+                                        const row = $.let(data.get(ctx.rowIndex));
+                                        return Text.Root(East.str\`\${row.metadata.level} (\${row.metadata.years} yrs)\`);
+                                    }
+                                ),
                             },
                         },
                         { variant: "line", striped: true }
@@ -293,11 +340,11 @@ export default East.function(
             )
         );
 
-        // Column render with row access
+        // Column render with context
         const columnRenderWithRow = $.let(
             ShowcaseCard(
-                "Column Render with Row Access",
-                "Render function accesses other row fields for conditional styling",
+                "Column Render with Context",
+                "East render function receives cell context at render time",
                 Table.Root(
                     [
                         { name: "Alice", role: "Admin", status: "Active", score: 95n },
@@ -306,60 +353,36 @@ export default East.function(
                         { name: "Diana", role: "User", status: "Pending", score: 65n },
                     ],
                     {
-                        name: {
-                            header: "Name",
-                            render: (value, row) => Text.Root(
-                                East.str`${value} (${row.role})`,
-                            ),
-                        },
+                        name: { header: "Name" },
                         status: {
                             header: "Status",
-                            render: (value) => Badge.Root(
-                                value,
-                                {
-                                    variant: "solid",
-                                }
+                            render: East.function(
+                                [Table.Types.CellRenderContext],
+                                UIComponentType,
+                                ($, ctx) => Badge.Root(
+                                    ctx.cellValue.match({ String: ($, v) => v }, $ => ""),
+                                    { variant: "solid" }
+                                )
                             ),
                         },
-                        score: {
-                            header: "Score",
-                            render: (value) => Text.Root(
-                                East.str`${value}`,
-                            ),
-                        },
+                        score: { header: "Score" },
                     },
                     { variant: "line", striped: true }
                 ),
                 some(`
                     Table.Root(
-                        [
-                            { name: "Alice", role: "Admin", status: "Active", score: 95n },
-                            { name: "Bob", role: "User", status: "Inactive", score: 72n },
-                            { name: "Charlie", role: "Manager", status: "Active", score: 88n },
-                            { name: "Diana", role: "User", status: "Pending", score: 65n },
-                        ],
+                        [...],
                         {
-                            name: {
-                                header: "Name",
-                                render: (value, row) => Text.Root(
-                                    East.str\`\${value} (\${row.role})\`,
-                                    { fontWeight: row.role.equal("Admin").ifElse("bold", "normal") }
-                                ),
-                            },
+                            name: { header: "Name" },
                             status: {
                                 header: "Status",
-                                render: (value, row) => Badge.Root(value, {
-                                    colorPalette: row.status.equal("Active").ifElse("green",
-                                        row.status.equal("Inactive").ifElse("red", "yellow")
-                                    ),
-                                    variant: "solid",
-                                }),
-                            },
-                            score: {
-                                header: "Score",
-                                render: (value, row) => Text.Root(
-                                    East.str\`\${value}\`,
-                                    { color: row.score.greaterEqual(80n).ifElse("green.500", "red.500") }
+                                render: East.function(
+                                    [Table.Types.CellRenderContext],
+                                    UIComponentType,
+                                    ($, ctx) => Badge.Root(
+                                        ctx.cellValue.match({ String: ($, v) => v }, $ => ""),
+                                        { variant: "solid" }
+                                    )
                                 ),
                             },
                         },
@@ -370,66 +393,70 @@ export default East.function(
         );
 
         // Wrapping tags in a column with Dict data
+        const metricsData = $.let(East.value([
+            {
+                name: "Server A",
+                metrics: new Map<string, number>([["cpu", 45.2], ["mem", 78.5], ["disk", 62.1], ["net", 23.4], ["io", 15.8], ["load", 2.3]]),
+            },
+            {
+                name: "Server B",
+                metrics: new Map<string, number>([["cpu", 82.1], ["mem", 91.2], ["disk", 45.0]]),
+            },
+            {
+                name: "Server C",
+                metrics: new Map<string, number>([["cpu", 12.5], ["mem", 34.2], ["disk", 88.9], ["net", 56.7], ["io", 78.3], ["load", 1.1], ["temp", 42.0], ["power", 320.5]]),
+            },
+        ]));
         const wrappingTags = $.let(
             ShowcaseCard(
                 "Wrapping Tags",
                 "Dict column rendered as tags that wrap within a fixed width",
                 Table.Root(
-                    [
-                        {
-                            name: "Server A",
-                            metrics: new Map<string, number>([["cpu", 45.2], ["mem", 78.5], ["disk", 62.1], ["net", 23.4], ["io", 15.8], ["load", 2.3]]),
-                        },
-                        {
-                            name: "Server B",
-                            metrics: new Map<string, number>([["cpu", 82.1], ["mem", 91.2], ["disk", 45.0]]),
-                        },
-                        {
-                            name: "Server C",
-                            metrics: new Map<string, number>([["cpu", 12.5], ["mem", 34.2], ["disk", 88.9], ["net", 56.7], ["io", 78.3], ["load", 1.1], ["temp", 42.0], ["power", 320.5]]),
-                        },
-                    ],
+                    metricsData,
                     {
                         name: { header: "Server", width: "120px" },
                         metrics: {
                             header: "Metrics",
                             width: "400px",
                             maxWidth: "400px",
-                            render: (val) => Stack.HStack(
-                                val.map(($, value, key) => Tag.Root(
-                                    East.str`${key.upperCase()}:${East.Float.roundTrunc(value)}`,
-                                    { background: "gray.500", color: "white" }
-                                )).toArray(),
-                                { gap: "1", width: "380px", wrap: "wrap" }
-                            ),
                             value: (val) => val.map(($, value) => value).mean(),
+                            render: East.function(
+                                [Table.Types.CellRenderContext],
+                                UIComponentType,
+                                ($, ctx) => {
+                                    const row = $.let(metricsData.get(ctx.rowIndex));
+                                    return Stack.HStack(
+                                        row.metrics.map(($, value, key) => Tag.Root(East.str`${key}: ${value}`)).toArray(),
+                                        { wrap: "wrap", gap: "1" }
+                                    );
+                                }
+                            ),
                         },
                     },
                     { variant: "line" }
                 ),
                 some(`
+                    const data = $.let(East.value([...]));
                     Table.Root(
-                        [
-                            {
-                                name: "Server A",
-                                metrics: new Map([["cpu", 45.2], ["mem", 78.5], ["disk", 62.1], ["net", 23.4], ["io", 15.8], ["load", 2.3]]),
-                            },
-                            // ...
-                        ],
+                        data,
                         {
                             name: { header: "Server", width: "120px" },
                             metrics: {
                                 header: "Metrics",
                                 width: "400px",
                                 maxWidth: "400px",
-                                render: (val) => Stack.HStack(
-                                    val.map(($, value, key) => Tag.Root(
-                                        East.str\`\${key.upperCase()}:\${East.Float.roundTrunc(value)}\`,
-                                        { background: "gray.500", color: "white" }
-                                    )).toArray(),
-                                    { gap: "1", width: "380px", wrap: "wrap" }
-                                ),
                                 value: (val) => val.map(($, value) => value).mean(),
+                                render: East.function(
+                                    [Table.Types.CellRenderContext],
+                                    UIComponentType,
+                                    ($, ctx) => {
+                                        const row = $.let(data.get(ctx.rowIndex));
+                                        return Stack.HStack(
+                                            row.metrics.map(($, value, key) => Tag.Root(East.str\`\${key}: \${value}\`)),
+                                            { wrap: "wrap", gap: "1" }
+                                        );
+                                    }
+                                ),
                             },
                         },
                         { variant: "line" }
