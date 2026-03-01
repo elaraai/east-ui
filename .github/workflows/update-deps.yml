@@ -34,12 +34,12 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        run: make install
+        run: npm ci
 
       - name: Update @elaraai dependencies
         id: update
         run: |
-          make update
+          npm update @elaraai/east @elaraai/east-node-std @elaraai/e3-api-client @elaraai/e3-api-server @elaraai/e3-types @elaraai/e3-core @elaraai/e3
 
           if git diff --quiet package-lock.json; then
             echo "has_updates=false" >> $GITHUB_OUTPUT
@@ -58,18 +58,18 @@ jobs:
 
       - name: Build
         if: steps.update.outputs.has_updates == 'true'
-        run: make build
+        run: npm run build
 
       - name: Run linter
         if: steps.update.outputs.has_updates == 'true'
         id: lint
-        run: make lint
+        run: npm run lint
         continue-on-error: true
 
       - name: Run tests
         if: steps.update.outputs.has_updates == 'true'
         id: test
-        run: make test
+        run: npm test
         continue-on-error: true
 
       - name: Determine test status
