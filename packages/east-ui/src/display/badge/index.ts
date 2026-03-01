@@ -12,7 +12,7 @@ import {
     some,
 } from "@elaraai/east";
 
-import { BorderStyleType, BorderWidthType, SizeType, ColorSchemeType, StyleVariantType, OverflowType } from "../../style.js";
+import { BorderStyleType, BorderWidthType, SizeType, ColorSchemeType, StyleVariantType, OverflowType, JustifyContentType, AlignItemsType } from "../../style.js";
 import { PaddingType, MarginType } from "../../layout/style.js";
 import { UIComponentType } from "../../component.js";
 import { BadgeType, type BadgeStyle } from "./types.js";
@@ -100,6 +100,18 @@ function createBadge(
             : style.overflowY)
         : undefined;
 
+    const justifyContentValue = style?.justifyContent
+        ? (typeof style.justifyContent === "string"
+            ? East.value(variant(style.justifyContent, null), JustifyContentType)
+            : style.justifyContent)
+        : undefined;
+
+    const alignItemsValue = style?.alignItems
+        ? (typeof style.alignItems === "string"
+            ? East.value(variant(style.alignItems, null), AlignItemsType)
+            : style.alignItems)
+        : undefined;
+
     const paddingValue = style?.padding
         ? (typeof style.padding === "string"
             ? East.value({
@@ -137,6 +149,8 @@ function createBadge(
         overflow: overflowValue ? variant("some", overflowValue) : variant("none", null),
         overflowX: overflowXValue ? variant("some", overflowXValue) : variant("none", null),
         overflowY: overflowYValue ? variant("some", overflowYValue) : variant("none", null),
+        justifyContent: justifyContentValue ? variant("some", justifyContentValue) : variant("none", null),
+        alignItems: alignItemsValue ? variant("some", alignItemsValue) : variant("none", null),
         width: style?.width ? variant("some", style.width) : variant("none", null),
         height: style?.height ? variant("some", style.height) : variant("none", null),
         minWidth: style?.minWidth ? variant("some", style.minWidth) : variant("none", null),

@@ -40,6 +40,9 @@ export { Input, Checkbox, Switch, Select, Combobox, Slider, Field, FileUpload, T
 // Feedback
 export { Progress, Alert } from "./feedback/index.js";
 
+// Navigation
+export { Breadcrumb } from "./navigation/index.js";
+
 // Display
 export { Badge, Tag, Avatar, Stat, Icon, type IconName } from "./display/index.js";
 

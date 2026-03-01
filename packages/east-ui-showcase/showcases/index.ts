@@ -67,6 +67,9 @@ export {
     tabsShowcase,
 } from "./disclosure";
 
+// Navigation
+export { navigationShowcase } from "./navigation";
+
 // Display
 export { displayShowcase } from "./display";
 

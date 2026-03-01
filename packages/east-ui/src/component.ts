@@ -59,6 +59,9 @@ import { TagsInputRootType } from "./forms/tags-input/types.js";
 import { ProgressType } from "./feedback/progress/types.js";
 import { AlertType } from "./feedback/alert/types.js";
 
+// Navigation
+import { BreadcrumbRootType } from "./navigation/breadcrumb/types.js";
+
 // Display
 import { BadgeType } from "./display/badge/types.js";
 import { TagType } from "./display/tag/types.js";
@@ -225,6 +228,9 @@ export const UIComponentType = RecursiveType(node => VariantType({
     // Feedback
     Progress: ProgressType,
     Alert: AlertType,
+
+    // Navigation
+    Breadcrumb: BreadcrumbRootType,
 
     // Display
     Badge: BadgeType,

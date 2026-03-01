@@ -43,6 +43,7 @@ import { EastChakraTable } from "./collections/table";
 import { EastChakraTreeView } from "./collections/tree-view";
 import { EastChakraGantt } from "./collections/gantt";
 import { EastChakraPlanner } from "./collections/planner";
+import { EastChakraBreadcrumb } from "./navigation/breadcrumb";
 import { EastChakraIcon } from "./display/icon";
 import { EastChakraBadge } from "./display/badge";
 import { EastChakraTag } from "./display/tag";
@@ -132,6 +133,9 @@ export const EastChakraComponent = memo(function EastChakraComponent({ value }: 
             // Feedback
             Progress: (v) => <EastChakraProgress value={v} />,
             Alert: (v) => <EastChakraAlert value={v} />,
+
+            // Navigation
+            Breadcrumb: (v) => <EastChakraBreadcrumb value={v} />,
 
             // Display
             Icon: (v) => <EastChakraIcon value={v} />,

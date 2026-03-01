@@ -11,8 +11,8 @@ import {
     FloatType,
 } from "@elaraai/east";
 
-import { BorderStyleType, BorderWidthType, OverflowType, SizeType, ColorSchemeType, StyleVariantType } from "../../style.js";
-import type { BorderStyleLiteral, BorderWidthLiteral, OverflowLiteral, SizeLiteral, ColorSchemeLiteral, StyleVariantLiteral } from "../../style.js";
+import { BorderStyleType, BorderWidthType, OverflowType, SizeType, ColorSchemeType, StyleVariantType, JustifyContentType, AlignItemsType } from "../../style.js";
+import type { BorderStyleLiteral, BorderWidthLiteral, OverflowLiteral, SizeLiteral, ColorSchemeLiteral, StyleVariantLiteral, JustifyContentLiteral, AlignItemsLiteral } from "../../style.js";
 import { PaddingType, MarginType } from "../../layout/style.js";
 
 // ============================================================================
@@ -48,6 +48,8 @@ export const BadgeType = StructType({
     overflow: OptionType(OverflowType),
     overflowX: OptionType(OverflowType),
     overflowY: OptionType(OverflowType),
+    justifyContent: OptionType(JustifyContentType),
+    alignItems: OptionType(AlignItemsType),
     width: OptionType(StringType),
     height: OptionType(StringType),
     minWidth: OptionType(StringType),
@@ -104,6 +106,10 @@ export interface BadgeStyle {
     overflowX?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
     /** Vertical overflow */
     overflowY?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Horizontal alignment (flex justify-content) */
+    justifyContent?: SubtypeExprOrValue<JustifyContentType> | JustifyContentLiteral;
+    /** Vertical alignment (flex align-items) */
+    alignItems?: SubtypeExprOrValue<AlignItemsType> | AlignItemsLiteral;
     /** Width */
     width?: SubtypeExprOrValue<StringType>;
     /** Height */
