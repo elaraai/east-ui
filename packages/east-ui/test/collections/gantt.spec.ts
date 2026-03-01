@@ -279,7 +279,7 @@ describeEast("Gantt", (test) => {
                 priority: {
                     header: "Priority",
                     render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) =>
-                        Badge.Root(ctx.cellValue.match({ String: ($, v) => v }, $ => ""))
+                        Badge.Root(ctx.cellValue.match({ String: (_$, v) => v }, _$ => ""))
                     ),
                 },
             },

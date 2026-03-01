@@ -102,7 +102,7 @@ describeEast("Table", (test) => {
             ],
             {
                 item: { header: "Item" },
-                price: { header: "Price", render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => Text.Root(ctx.cellValue.match({ String: ($, v) => v }, $ => ""), { textAlign: "right" })) },
+                price: { header: "Price", render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => Text.Root(ctx.cellValue.match({ String: (_$, v) => v }, _$ => ""), { textAlign: "right" })) },
             }
         ));
 
@@ -121,7 +121,7 @@ describeEast("Table", (test) => {
             ],
             {
                 name: { header: "Name" },
-                status: { header: "Status", render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => Badge.Root(ctx.cellValue.match({ String: ($, v) => v }, $ => ""), { variant: "solid" })) },
+                status: { header: "Status", render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => Badge.Root(ctx.cellValue.match({ String: (_$, v) => v }, _$ => ""), { variant: "solid" })) },
             }
         ));
 
@@ -222,7 +222,7 @@ describeEast("Table", (test) => {
                 price: {
                     header: "Price",
                     render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) =>
-                        Text.Root(ctx.cellValue.match({ Integer: ($, v) => East.str`$${v}` }, $ => ""))
+                        Text.Root(ctx.cellValue.match({ Integer: (_$, v) => East.str`$${v}` }, _$ => ""))
                     ),
                 },
             }
@@ -265,7 +265,7 @@ describeEast("Table", (test) => {
             {
                 name: { header: "Name" },
                 email: { header: "Email" },
-                role: { header: "Role", render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => Badge.Root(ctx.cellValue.match({ String: ($, v) => v }, $ => ""), { colorPalette: "blue" })) },
+                role: { header: "Role", render: East.function([Table.Types.CellRenderContext], UIComponentType, ($, ctx) => Badge.Root(ctx.cellValue.match({ String: (_$, v) => v }, _$ => ""), { colorPalette: "blue" })) },
             },
             { variant: "line", striped: true }
         ));

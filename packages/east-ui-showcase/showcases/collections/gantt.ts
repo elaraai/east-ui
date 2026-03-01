@@ -272,7 +272,7 @@ export default East.function(
                                 [Table.Types.CellRenderContext],
                                 UIComponentType,
                                 ($, ctx) => Text.Root(
-                                    ctx.cellValue.match({ Integer: ($, v) => East.str`${v} tags` }, $ => "")
+                                    ctx.cellValue.match({ Integer: (_$, v) => East.str`${v} tags` }, _$ => "")
                                 )
                             ),
                         },
@@ -283,7 +283,7 @@ export default East.function(
                                 [Table.Types.CellRenderContext],
                                 UIComponentType,
                                 ($, ctx) => Text.Root(
-                                    ctx.cellValue.match({ Integer: ($, v) => East.str`Team size: ${v}` }, $ => "")
+                                    ctx.cellValue.match({ Integer: (_$, v) => East.str`Team size: ${v}` }, _$ => "")
                                 )
                             ),
                         },

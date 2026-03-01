@@ -174,7 +174,7 @@ export default East.function(
                                 [Table.Types.CellRenderContext],
                                 UIComponentType,
                                 ($, ctx) => Badge.Root(
-                                    ctx.cellValue.match({ String: ($, v) => v }, $ => ""),
+                                    ctx.cellValue.match({ String: (_$, v) => v }, _$ => ""),
                                     { variant: "solid", colorPalette: "blue" }
                                 )
                             ),
@@ -360,7 +360,7 @@ export default East.function(
                                 [Table.Types.CellRenderContext],
                                 UIComponentType,
                                 ($, ctx) => Badge.Root(
-                                    ctx.cellValue.match({ String: ($, v) => v }, $ => ""),
+                                    ctx.cellValue.match({ String: (_$, v) => v }, _$ => ""),
                                     { variant: "solid" }
                                 )
                             ),

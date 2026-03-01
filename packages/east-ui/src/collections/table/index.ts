@@ -16,7 +16,7 @@ import {
     type TypeOf,
     some,
     none,
-    type ValueTypeOf,
+
     FunctionType,
     NullType,
     toEastTypeValue,
@@ -142,7 +142,7 @@ export type TableRootType = typeof TableRootType;
  * @typeParam FieldType - The East type of the field being rendered
  * @typeParam RowType - The East struct type of the entire row
  */
-interface TableColumnConfigBase<FieldType extends EastType = EastType, RowType extends StructType = StructType> {
+interface TableColumnConfigBase<_FieldType extends EastType = EastType, _RowType extends StructType = StructType> {
     /** Column header text (defaults to column key if not provided) */
     header?: SubtypeExprOrValue<StringType>;
     /** Optional East render function called at render time with cell context */

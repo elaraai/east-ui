@@ -16,7 +16,7 @@ import {
     OptionType,
     FunctionType,
     variant,
-    type ValueTypeOf,
+
     type TypeOf,
     some,
     none,

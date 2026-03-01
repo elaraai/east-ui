@@ -15,7 +15,7 @@ import {
     DateTimeType,
     FloatType,
     variant,
-    type ValueTypeOf,
+
     type TypeOf,
     some,
     none,
