@@ -132,6 +132,36 @@ export default East.function(
             )
         );
 
+        // Badge - Fixed Width with Centered Text
+        const badgeFixedWidth = $.let(
+            ShowcaseCard(
+                "Badge Fixed Width",
+                "Equal-width badges with centered text using justifyContent",
+                Stack.VStack([
+                    Stack.HStack([
+                        Badge.Root("3", { width: "48px", justifyContent: "center", variant: "solid", colorPalette: "blue" }),
+                        Badge.Root("12", { width: "48px", justifyContent: "center", variant: "solid", colorPalette: "blue" }),
+                        Badge.Root("0.9", { width: "48px", justifyContent: "center", variant: "solid", colorPalette: "blue" }),
+                        Badge.Root("128", { width: "48px", justifyContent: "center", variant: "solid", colorPalette: "blue" }),
+                    ], { gap: "1" }),
+                    Stack.HStack([
+                        Badge.Root("3", { width: "48px", justifyContent: "center", variant: "outline", colorPalette: "green" }),
+                        Badge.Root("12", { width: "48px", justifyContent: "center", variant: "outline", colorPalette: "green" }),
+                        Badge.Root("0.9", { width: "48px", justifyContent: "center", variant: "outline", colorPalette: "green" }),
+                        Badge.Root("128", { width: "48px", justifyContent: "center", variant: "outline", colorPalette: "green" }),
+                    ], { gap: "1" }),
+                ], { gap: "2", align: "flex-start" }),
+                some(`
+                    Stack.HStack([
+                        Badge.Root("3", { width: "48px", justifyContent: "center", variant: "solid", colorPalette: "blue" }),
+                        Badge.Root("12", { width: "48px", justifyContent: "center", variant: "solid", colorPalette: "blue" }),
+                        Badge.Root("0.9", { width: "48px", justifyContent: "center", variant: "solid", colorPalette: "blue" }),
+                        Badge.Root("128", { width: "48px", justifyContent: "center", variant: "solid", colorPalette: "blue" }),
+                    ], { gap: "1" })
+                `)
+            )
+        );
+
         // Tag - Basic
         const tagBasic = $.let(
             ShowcaseCard(
@@ -332,6 +362,8 @@ export default East.function(
                         width: "120px",
                         colorPalette: "teal",
                         variant: "solid",
+                        justifyContent: 'flex-start',
+                        alignItems: 'flex-start',
                     }),
                     Badge.Root("Custom", {
                         padding: "2",
@@ -640,6 +672,7 @@ export default East.function(
                     Grid.Item(badgeCustom),
                     Grid.Item(badgeBorder),
                     Grid.Item(badgeBoxModel),
+                    Grid.Item(badgeFixedWidth),
                 ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
             ]),
             Accordion.Item("tag", "Tag", [

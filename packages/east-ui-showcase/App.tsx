@@ -26,6 +26,7 @@ import {
     PlatformPage,
     ReactivePage,
     ContainerPage,
+    NavigationPage,
     OverlaysPage,
 } from "./pages";
 
@@ -39,6 +40,7 @@ const tabs = [
     { key: "forms", label: "Forms" },
     { key: "feedback", label: "Feedback" },
     { key: "display", label: "Display" },
+    { key: "navigation", label: "Navigation" },
     { key: "layout", label: "Layout" },
     { key: "container", label: "Container" },
     { key: "overlays", label: "Overlays" },
@@ -101,6 +103,9 @@ export function App() {
                             </Tabs.Content>
                             <Tabs.Content value="display">
                                 <DisplayPage />
+                            </Tabs.Content>
+                            <Tabs.Content value="navigation">
+                                <NavigationPage />
                             </Tabs.Content>
                             <Tabs.Content value="layout">
                                 <LayoutPage />

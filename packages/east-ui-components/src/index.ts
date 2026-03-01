@@ -117,6 +117,15 @@ export {
     type EastChakraPlannerProps,
 } from "./collections/index.js";
 
+// Navigation
+export {
+    EastChakraBreadcrumb,
+    type BreadcrumbRootValue,
+    type BreadcrumbItemValue,
+    type EastChakraBreadcrumbProps,
+    type EastChakraBreadcrumbItemProps,
+} from "./navigation/index.js";
+
 // Display
 export {
     EastChakraIcon,

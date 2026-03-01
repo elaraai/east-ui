@@ -25,8 +25,11 @@ export function toChakraBadge(value: BadgeValue): BadgeProps {
     const background = getSomeorUndefined(value.background);
     const padding = getSomeorUndefined(value.padding);
     const margin = getSomeorUndefined(value.margin);
+    const justifyContent = getSomeorUndefined(value.justifyContent)?.type;
+    const alignItems = getSomeorUndefined(value.alignItems)?.type;
 
     return {
+        display: "flex",
         variant: getSomeorUndefined(value.variant)?.type,
         colorPalette: getSomeorUndefined(value.colorPalette)?.type,
         size: getSomeorUndefined(value.size)?.type,
@@ -40,6 +43,8 @@ export function toChakraBadge(value: BadgeValue): BadgeProps {
         overflow: getSomeorUndefined(value.overflow)?.type,
         overflowX: getSomeorUndefined(value.overflowX)?.type,
         overflowY: getSomeorUndefined(value.overflowY)?.type,
+        justifyContent: justifyContent,
+        alignItems: alignItems,
         width: getSomeorUndefined(value.width),
         height: getSomeorUndefined(value.height),
         minWidth: getSomeorUndefined(value.minWidth),

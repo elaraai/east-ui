@@ -16,4 +16,5 @@ export { CollectionsPage } from "./CollectionsPage";
 export { PlatformPage } from "./PlatformPage";
 export { ReactivePage } from "./ReactivePage";
 export { ContainerPage } from "./ContainerPage";
+export { NavigationPage } from "./NavigationPage";
 export { OverlaysPage } from "./OverlaysPage";
