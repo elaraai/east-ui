@@ -5,7 +5,7 @@
 
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { East, OptionType, StringType, variant } from "@elaraai/east";
-import { DataList, Text, UIComponentType } from "../../src/index.js";
+import { DataList, Text } from "../../src/index.js";
 
 describeEast("DataList", (test) => {
     // =========================================================================
@@ -220,7 +220,7 @@ describeEast("DataList", (test) => {
                     { label: "Predicted", value: Text.Root(pred) },
                     { label: "Range", value: Text.Root("1-5") },
                 ]),
-                none: ($) => East.value([
+                none: (_$) => East.value([
                     { label: "Flag", value: Text.Root("A") },
                 ]),
             }),
@@ -240,7 +240,7 @@ describeEast("DataList", (test) => {
                     { label: "Predicted", value: Text.Root(pred) },
                     { label: "Range", value: Text.Root("1-5") },
                 ], { size: "sm", orientation: "horizontal" }),
-                none: ($) => DataList.Root([
+                none: (_$) => DataList.Root([
                     { label: "Flag", value: Text.Root("A") },
                 ], { size: "sm", orientation: "horizontal" }),
             })
