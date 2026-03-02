@@ -139,7 +139,7 @@ export interface EastChakraPlannerProps {
  */
 export const EastChakraPlanner = memo(function EastChakraPlanner({
     value,
-    height = "400px",
+    height = "100%",
     rowHeight = 48,
     overscan = 8,
     onSortChange,
@@ -151,6 +151,10 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
     tablePanelSize: tablePanelSizeProp,
 }: EastChakraPlannerProps) {
     const props = useMemo(() => toChakraTableRoot(value), [value]);
+    const styleHeight = useMemo(() => {
+        const style = getSomeorUndefined(value.style);
+        return style ? getSomeorUndefined(style.height) : undefined;
+    }, [value]);
     const headerHeight = 56;
 
     // Calculate total column width from column definitions
@@ -711,7 +715,7 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
     return (
         <Box
             width="100%"
-            height={height}
+            height={styleHeight ?? height}
             overflow="hidden"
             borderWidth="1px"
             borderColor="border.subtle"

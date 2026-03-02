@@ -396,6 +396,7 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
         rows: rows_mapped,
         columns: columns_expr,
         style: style ? some(East.value({
+            height: style.height ? some(style.height) : none,
             variant: variantValue ? some(variantValue) : none,
             size: sizeValue ? some(sizeValue) : none,
             striped: style.striped !== undefined ? some(style.striped) : none,

@@ -481,6 +481,7 @@ export interface PlannerBoundary {
  */
 export const PlannerStyleType = StructType({
     // Table styling (reused from Table)
+    height: OptionType(StringType),
     variant: OptionType(TableVariantType),
     size: OptionType(TableSizeType),
     striped: OptionType(BooleanType),
@@ -537,6 +538,8 @@ export type PlannerStyleType = typeof PlannerStyleType;
  * Accepts both static values and East expressions.
  */
 export interface PlannerStyle {
+    /** CSS height for the Planner container (e.g., "500px", "100%") */
+    height?: SubtypeExprOrValue<StringType>;
     /** Table variant (line or outline) */
     variant?: SubtypeExprOrValue<TableVariantType> | TableVariantLiteral;
     /** Table size (sm, md, lg) */

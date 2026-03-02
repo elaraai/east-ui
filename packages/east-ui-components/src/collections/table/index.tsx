@@ -129,7 +129,7 @@ export interface EastChakraTableProps {
  */
 export const EastChakraTable = memo(function EastChakraTable({
     value,
-    height = "400px",
+    height = "100%",
     rowHeight = 48,
     overscan = 8,
     onSortChange,
@@ -139,6 +139,10 @@ export const EastChakraTable = memo(function EastChakraTable({
     enableColumnResizing = true,
 }: EastChakraTableProps) {
     const props = useMemo(() => toChakraTableRoot(value), [value]);
+    const styleHeight = useMemo(() => {
+        const style = getSomeorUndefined(value.style);
+        return style ? getSomeorUndefined(style.height) : undefined;
+    }, [value]);
     const tableContainerRef = useRef<HTMLDivElement>(null);
 
     // Extract East-side callbacks from style
@@ -418,7 +422,7 @@ export const EastChakraTable = memo(function EastChakraTable({
     return (
         <Box
             ref={tableContainerRef}
-            height={height}
+            height={styleHeight ?? height}
             overflowY="auto"
             position="relative"
         >

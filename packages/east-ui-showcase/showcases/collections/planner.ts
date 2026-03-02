@@ -937,6 +937,34 @@ export default East.function(
             )
         );
 
+        // Custom height
+        const customHeight = $.let(
+            ShowcaseCard(
+                "Custom Height",
+                "Set height via style to control container size",
+                Planner.Root(
+                    [
+                        { resource: "Alice", task: "Development", start: 1.0, end: 3.0 },
+                        { resource: "Bob", task: "Testing", start: 2.0, end: 5.0 },
+                        { resource: "Charlie", task: "Review", start: 4.0, end: 6.0 },
+                        { resource: "Diana", task: "Deploy", start: 5.0, end: 8.0 },
+                        { resource: "Eve", task: "Monitor", start: 7.0, end: 10.0 },
+                    ],
+                    ["resource", "task"],
+                    row => [Planner.Event({ start: row.start, end: row.end, colorPalette: "blue" })],
+                    { height: "200px", variant: "line" }
+                ),
+                some(`
+                    Planner.Root(
+                        [...],
+                        ["resource", "task"],
+                        row => [Planner.Event({ start: row.start, end: row.end, colorPalette: "blue" })],
+                        { height: "200px", variant: "line" }
+                    )
+                `)
+            )
+        );
+
         return Stack.VStack([
             basic,
             withLabels,
@@ -957,6 +985,7 @@ export default East.function(
             overlappingEvents,
             withIcons,
             labelAlignment,
+            customHeight,
         ], { gap: "6", align: "stretch" });
     }
 );

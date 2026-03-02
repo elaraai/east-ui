@@ -103,6 +103,12 @@ export type FlexStyle = {
     borderColor?: SubtypeExprOrValue<StringType>;
     /** Border width (CSS value, e.g., "1px", "2px") */
     borderWidth?: SubtypeExprOrValue<StringType>;
+    /** Flex shorthand (CSS value, e.g., "1", "1 1 auto", "none") */
+    flex?: SubtypeExprOrValue<StringType>;
+    /** Flex grow factor (CSS value, e.g., "0", "1") */
+    flexGrow?: SubtypeExprOrValue<StringType>;
+    /** Flex shrink factor (CSS value, e.g., "0", "1") */
+    flexShrink?: SubtypeExprOrValue<StringType>;
 };
 
 /**
@@ -155,6 +161,9 @@ export const FlexStyleType = StructType({
     border: OptionType(StringType),
     borderColor: OptionType(StringType),
     borderWidth: OptionType(StringType),
+    flex: OptionType(StringType),
+    flexGrow: OptionType(StringType),
+    flexShrink: OptionType(StringType),
 });
 
 /**

@@ -276,6 +276,7 @@ export type GanttMilestoneDragEventType = typeof GanttMilestoneDragEventType;
  *
  */
 export const GanttStyleType = StructType({
+    height: OptionType(StringType),
     variant: OptionType(TableVariantType),
     size: OptionType(TableSizeType),
     striped: OptionType(BooleanType),
@@ -337,6 +338,8 @@ export type GanttStyleType = typeof GanttStyleType;
  * @property onMilestoneDrag - Callback triggered when a milestone is dragged
  */
 export interface GanttStyle {
+    /** CSS height for the Gantt container (e.g., "500px", "100%") */
+    height?: SubtypeExprOrValue<StringType>;
     /** Table variant (line or outline) */
     variant?: SubtypeExprOrValue<TableVariantType> | TableVariantLiteral;
     /** Table size (sm, md, lg) */

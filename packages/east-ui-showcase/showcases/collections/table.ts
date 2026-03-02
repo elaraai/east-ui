@@ -180,7 +180,7 @@ export default East.function(
                             ),
                         },
                     },
-                    { variant: "line" }
+                    { variant: "line", height: "400px" }
                 ),
                 some(`
                     Table.Root(
@@ -204,7 +204,7 @@ export default East.function(
                                 ),
                             },
                         },
-                        { variant: "line" }
+                        { variant: "line", height: "400px" }
                     )
                 `)
             )
@@ -654,6 +654,40 @@ export default East.function(
             )
         );
 
+        // Custom height
+        const customHeight = $.let(
+            ShowcaseCard(
+                "Custom Height",
+                "Set height via style to control container size",
+                Table.Root(
+                    [
+                        { name: "Alice", email: "alice@example.com", role: "Admin" },
+                        { name: "Bob", email: "bob@example.com", role: "User" },
+                        { name: "Charlie", email: "charlie@example.com", role: "User" },
+                        { name: "Diana", email: "diana@example.com", role: "Manager" },
+                        { name: "Eve", email: "eve@example.com", role: "User" },
+                    ],
+                    {
+                        name: { header: "Name" },
+                        email: { header: "Email" },
+                        role: { header: "Role" },
+                    },
+                    { height: "200px", variant: "line", striped: true }
+                ),
+                some(`
+                    Table.Root(
+                        [...],
+                        {
+                            name: { header: "Name" },
+                            email: { header: "Email" },
+                            role: { header: "Role" },
+                        },
+                        { height: "200px", variant: "line", striped: true }
+                    )
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -670,6 +704,8 @@ export default East.function(
                 Grid.Item(wrappingTags, { colSpan: "2" }),
                 // Interactive example with all callbacks
                 Grid.Item(interactiveCallbacks, { colSpan: "2" }),
+                // Custom height
+                Grid.Item(customHeight),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

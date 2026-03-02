@@ -213,6 +213,7 @@ export type TableSortEventType = typeof TableSortEventType;
  * @property onSortChange - Callback triggered when sort column/direction changes
  */
 export const TableStyleType = StructType({
+    height: OptionType(StringType),
     variant: OptionType(TableVariantType),
     size: OptionType(TableSizeType),
     striped: OptionType(BooleanType),
@@ -254,6 +255,8 @@ export type TableStyleType = typeof TableStyleType;
  * @property onSortChange - Callback triggered when sort column/direction changes
  */
 export interface TableStyle {
+    /** CSS height for the table container (e.g., "500px", "100%") */
+    height?: SubtypeExprOrValue<StringType>;
     /** Table variant (line or outline) */
     variant?: SubtypeExprOrValue<TableVariantType> | TableVariantLiteral;
     /** Table size (sm, md, lg) */

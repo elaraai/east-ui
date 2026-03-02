@@ -59,6 +59,9 @@ export function toChakraFlex(value: FlexValue): FlexProps {
         overflow: style ? getSomeorUndefined(style.overflow)?.type : undefined,
         overflowX: style ? getSomeorUndefined(style.overflowX)?.type : undefined,
         overflowY: style ? getSomeorUndefined(style.overflowY)?.type : undefined,
+        flex: style ? getSomeorUndefined(style.flex) : undefined,
+        flexGrow: style ? getSomeorUndefined(style.flexGrow) : undefined,
+        flexShrink: style ? getSomeorUndefined(style.flexShrink) : undefined,
     };
 }
 
