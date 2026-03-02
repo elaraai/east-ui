@@ -136,7 +136,7 @@ export interface EastChakraGanttProps {
  */
 export const EastChakraGantt = memo(function EastChakraGantt({
     value,
-    height = "400px",
+    height = "100%",
     rowHeight = 48,
     overscan = 8,
     onSortChange,
@@ -148,6 +148,10 @@ export const EastChakraGantt = memo(function EastChakraGantt({
     tablePanelSize: tablePanelSizeProp,
 }: EastChakraGanttProps) {
     const props = useMemo(() => toChakraTableRoot(value), [value]);
+    const styleHeight = useMemo(() => {
+        const style = getSomeorUndefined(value.style);
+        return style ? getSomeorUndefined(style.height) : undefined;
+    }, [value]);
     const headerHeight = 56;
 
     // Calculate total column width from column definitions
@@ -659,11 +663,16 @@ export const EastChakraGantt = memo(function EastChakraGantt({
     ], []);
 
     return (
+        <Box
+            width="100%"
+            height={styleHeight ?? height}
+            overflow="hidden"
+        >
         <Splitter.Root
             defaultSize={[tablePanelSize, 100 - tablePanelSize]}
             panels={panels}
             width="100%"
-            height={height}
+            height="100%"
         >
             {/* Table Panel */}
             <Splitter.Panel id="table">
@@ -1083,5 +1092,6 @@ export const EastChakraGantt = memo(function EastChakraGantt({
                 </Box>
             </Splitter.Panel>
         </Splitter.Root>
+        </Box>
     );
 }, (prev, next) => ganttRootEqual(prev.value, next.value));

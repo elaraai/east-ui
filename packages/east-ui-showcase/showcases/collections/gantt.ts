@@ -793,6 +793,34 @@ export default East.function(
             )
         );
 
+        // Custom height
+        const customHeight = $.let(
+            ShowcaseCard(
+                "Custom Height",
+                "Set height via style to control container size",
+                Gantt.Root(
+                    [
+                        { task: "Planning", owner: "Alice", start: new Date("2024-01-01"), end: new Date("2024-01-15") },
+                        { task: "Design", owner: "Bob", start: new Date("2024-01-10"), end: new Date("2024-02-01") },
+                        { task: "Development", owner: "Charlie", start: new Date("2024-01-20"), end: new Date("2024-03-15") },
+                        { task: "Testing", owner: "Diana", start: new Date("2024-03-01"), end: new Date("2024-03-30") },
+                        { task: "Deployment", owner: "Eve", start: new Date("2024-03-20"), end: new Date("2024-04-15") },
+                    ],
+                    ["task", "owner"],
+                    row => [Gantt.Task({ start: row.start, end: row.end })],
+                    { height: "200px", variant: "line" }
+                ),
+                some(`
+                    Gantt.Root(
+                        [...],
+                        ["task", "owner"],
+                        row => [Gantt.Task({ start: row.start, end: row.end })],
+                        { height: "200px", variant: "line" }
+                    )
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -809,6 +837,8 @@ export default East.function(
                 Grid.Item(interactiveCallbacks, { colSpan: "2" }),
                 // Reactive drag example
                 Grid.Item(reactiveDrag, { colSpan: "2" }),
+                // Custom height
+                Grid.Item(customHeight),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

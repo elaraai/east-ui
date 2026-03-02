@@ -173,6 +173,9 @@ function createFlex(
             border: style.border ? variant("some", style.border) : variant("none", null),
             borderColor: style.borderColor ? variant("some", style.borderColor) : variant("none", null),
             borderWidth: style.borderWidth ? variant("some", style.borderWidth) : variant("none", null),
+            flex: style.flex ? variant("some", style.flex) : variant("none", null),
+            flexGrow: style.flexGrow ? variant("some", style.flexGrow) : variant("none", null),
+            flexShrink: style.flexShrink ? variant("some", style.flexShrink) : variant("none", null),
         }, FlexStyleType)) : variant("none", null),
     }), UIComponentType);
 }
