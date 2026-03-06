@@ -113,15 +113,15 @@ export const TaskPreview = memo(function TaskPreview({
     // View mode state
     const [viewMode, setViewMode] = useState<ViewMode | null>(null);
 
-    // Set initial view mode once data loads
+    // Set initial view mode once output has loaded (wait for ir to be determined)
     useEffect(() => {
-        if (isLoading && stdout?.data === undefined && stderr?.data === undefined) return;
+        if (isLoading) return;
         setViewMode(prev => {
             if (prev !== null) return prev;
-            // Default to logs if no UI component, otherwise output
+            // Default to output if UIComponentType, otherwise logs
             return ir === null ? 'logs' : 'output';
         });
-    }, [isLoading, stdout?.data, stderr?.data, ir, taskInfo?.status.type]);
+    }, [isLoading, ir]);
 
     // Output panel content
     const outputPanel = useMemo(() => {
