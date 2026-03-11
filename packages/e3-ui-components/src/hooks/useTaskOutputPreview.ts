@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { QueryOverrides, DatasetPreview } from './types.js';
 import { datasetGetStatus, datasetGet } from '@elaraai/e3-api-client';
 import type { TaskStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
-import { variant } from '@elaraai/east';
+import { none, some, variant } from '@elaraai/east';
 
 const MAX_DOWNLOAD_SIZE = 50 * 1024 * 1024; // 50MB
 
@@ -55,7 +55,7 @@ export function useTaskOutputPreview(
             refType: status.data.refType,
             hash: status.data.hash,
             size: status.data.size,
-            value: data.data ? { type: 'some' as const, value: data.data } : { type: 'none' as const },
+            value: data.data ? some(data.data.data) : none,
         };
     }, [status.data, data.data]);
 

@@ -38,7 +38,7 @@ function AppContent() {
                 {/* Sidebar with workspace tree */}
                 {sidebarVisible && (
                     <Box
-                        width="250px"
+                        width="320px"
                         flexShrink={0}
                         borderRight="1px solid"
                         borderColor="gray.200"

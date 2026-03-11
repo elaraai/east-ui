@@ -324,7 +324,7 @@ export function WorkspaceTree() {
 
     if (isLoading) {
         return (
-            <Box p={4}>
+            <Box p={2}>
                 <HStack>
                     <Spinner size="sm" />
                     <Text fontSize="sm">Loading workspaces...</Text>

@@ -5,8 +5,16 @@
 
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
 import { Button, Style } from "../../src/index.js";
+import * as ex from "./button.examples.js";
 
 describeEast("Button", (test) => {
+    Assert.examples(test, {
+        buttonBasic: ex.buttonBasic,
+        buttonSolidVariant: ex.buttonSolidVariant,
+        buttonDangerOutline: ex.buttonDangerOutline,
+        buttonReactiveCounter: ex.buttonReactiveCounter,
+    });
+
     // =========================================================================
     // Basic Creation
     // =========================================================================
