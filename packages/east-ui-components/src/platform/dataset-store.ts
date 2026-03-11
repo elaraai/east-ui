@@ -317,13 +317,14 @@ export class ReactiveDatasetCache implements ReactiveDatasetCacheInterface {
      * Fetch a dataset from e3 using e3-api-client.
      */
     private async fetchDataset(workspace: string, path: DatasetPath): Promise<Uint8Array> {
-        return datasetGet(
+        const result = await datasetGet(
             this.config.apiUrl,
             this.config.repo,
             workspace,
             toTreePath(path),
             this.getRequestOptions()
         );
+        return result.data;
     }
 
     /**

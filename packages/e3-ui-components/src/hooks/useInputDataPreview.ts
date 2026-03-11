@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { QueryOverrides, DatasetPreview } from './types.js';
 import { datasetGetStatus, datasetGet } from '@elaraai/e3-api-client';
 import type { DatasetStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
-import { variant } from '@elaraai/east';
+import { variant, some, none } from '@elaraai/east';
 
 const MAX_DOWNLOAD_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -55,7 +55,7 @@ export function useInputDataPreview(
             refType: status.data.refType,
             hash: status.data.hash,
             size: status.data.size,
-            value: data.data ? { type: 'some' as const, value: data.data } : { type: 'none' as const },
+            value: data.data ? some(data.data.data) : none,
         };
     }, [status.data, data.data]);
 

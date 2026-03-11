@@ -4,6 +4,7 @@
  */
 
 import type { DatasetStatusDetail } from '@elaraai/e3-api-client';
+import type { BlobType, option, OptionType, ValueTypeOf } from '@elaraai/east';
 
 /**
  * Dataset preview combining status metadata with optional data.
@@ -11,7 +12,7 @@ import type { DatasetStatusDetail } from '@elaraai/e3-api-client';
  * When loaded, `value` is `{ type: 'some', value: Uint8Array }`.
  */
 export type DatasetPreview = DatasetStatusDetail & {
-    value: { type: 'some'; value: Uint8Array } | { type: 'none' };
+    value: option<Uint8Array>;
 };
 
 /**

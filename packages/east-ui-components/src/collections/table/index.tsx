@@ -575,7 +575,7 @@ export const EastChakraTable = memo(function EastChakraTable({
                         const rowState = rowStates.get(rowKey) || { status: 'unloaded' };
                         const isRowLoading = !rowStateManager.isRowLoaded(rowKey) || rowState.status === 'loading';
 
-                        const rowIndex = BigInt(virtualRow.index);
+                        const rowIndex = BigInt(row.index);
 
                         return (
                             <ChakraTable.Row
