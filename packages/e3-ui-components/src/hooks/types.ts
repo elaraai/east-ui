@@ -4,7 +4,7 @@
  */
 
 import type { DatasetStatusDetail } from '@elaraai/e3-api-client';
-import type { BlobType, option, OptionType, ValueTypeOf } from '@elaraai/east';
+import type { option } from '@elaraai/east';
 
 /**
  * Dataset preview combining status metadata with optional data.
