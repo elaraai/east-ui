@@ -5,7 +5,7 @@
 
 import { useMemo } from 'react';
 import { useE3Context } from '../context/E3Context';
-import { useWorkspaceStatus, TaskPreview as TaskPreviewInner, StatusDisplay } from '@elaraai/e3-ui-components';
+import { TaskPreview as TaskPreviewInner, StatusDisplay, useTaskGet } from '@elaraai/e3-ui-components';
 import { InputPreview } from './InputPreview';
 
 /**
@@ -17,25 +17,16 @@ export function TaskPreview() {
     const selectedWorkspace = selection.type !== 'none' ? selection.workspace : null;
     const selectedTask = selection.type === 'task' ? selection.task : null;
 
-    const { data: status } = useWorkspaceStatus(apiUrl, 'default', selectedWorkspace, undefined, {
-        refetchInterval: 1000,
+    const { data: taskDetails } = useTaskGet(apiUrl, 'default', selectedWorkspace, selectedTask, undefined, {
         staleTime: 0,
         gcTime: 0,
-        structuralSharing: false,
     });
 
-    // Find the selected task info
-    const taskInfo = useMemo(() => {
-        if (!status || !selectedTask) return null;
-        return status.tasks.find((t) => t.name === selectedTask) ?? null;
-    }, [status, selectedTask]);
-
-    // Find the output dataset's hash - this changes when task output changes
-    const outputHash = useMemo(() => {
-        if (!status || !taskInfo?.output) return null;
-        const outputDataset = status.datasets.find((d) => d.path === taskInfo.output);
-        return outputDataset?.hash?.type === 'some' ? outputDataset.hash.value : null;
-    }, [status, taskInfo?.output]);
+    // Convert TreePath to dot-path string
+    const outputPath = useMemo(() => {
+        if (!taskDetails) return null;
+        return taskDetails.output.map(s => '.' + s.value).join('');
+    }, [taskDetails]);
 
     // Input selected - render InputPreview
     if (selection.type === 'input') {
@@ -53,6 +44,16 @@ export function TaskPreview() {
         );
     }
 
+    // Task details not loaded yet
+    if (!outputPath) {
+        return (
+            <StatusDisplay
+                variant="loading"
+                title="Loading task..."
+            />
+        );
+    }
+
     return (
         <TaskPreviewInner
             key={`${selectedWorkspace}:${selectedTask}`}
@@ -60,8 +61,7 @@ export function TaskPreview() {
             repo="default"
             workspace={selectedWorkspace}
             task={selectedTask}
-            taskInfo={taskInfo}
-            outputHash={outputHash}
+            output={outputPath}
         />
     );
 }

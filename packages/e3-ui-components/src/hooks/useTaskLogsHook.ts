@@ -6,7 +6,7 @@
 import { useQuery } from '@tanstack/react-query';
 import type { QueryOverrides } from './types.js';
 import { taskLogs } from '@elaraai/e3-api-client';
-import type { TaskStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
+import type { RequestOptions } from '@elaraai/e3-api-client';
 
 // Beast2 decoder has stack overflow with large strings, so fetch in chunks
 const CHUNK_SIZE = 64 * 1024; // 64KB per chunk
@@ -66,21 +66,16 @@ export function useTaskLogs(
     apiUrl: string,
     repo: string,
     workspace: string | null,
-    task: TaskStatusInfo | null,
+    taskName: string | null,
     stream: 'stdout' | 'stderr' = 'stdout',
     requestOptions?: RequestOptions,
     queryOptions?: QueryOverrides
 ) {
-    // Only poll while task is actively running
-    const isTaskRunning = task?.status.type === 'in-progress' || task?.status.type === 'stale-running';
-
     return useQuery({
-        // Include task status in query key so we refetch when status changes
-        queryKey: ['taskLogs', apiUrl, repo, workspace, task?.name, task?.status.type, stream],
-        queryFn: () => fetchAllLogs(apiUrl, repo, workspace!, task!.name, stream, requestOptions),
-        enabled: !!workspace && !!task,
-        // Only refetch every second while task is running, otherwise stop polling
-        refetchInterval: isTaskRunning ? 1000 : false,
+        queryKey: ['taskLogs', apiUrl, repo, workspace, taskName, stream],
+        queryFn: () => fetchAllLogs(apiUrl, repo, workspace!, taskName!, stream, requestOptions),
+        enabled: !!workspace && !!taskName,
+        refetchInterval: 1000,
         ...queryOptions,
     });
 }
