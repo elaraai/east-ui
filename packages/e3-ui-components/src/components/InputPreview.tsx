@@ -28,7 +28,7 @@ import { useInputDataPreview } from '../hooks/useInputDataPreview.js';
 import { StatusDisplay } from './StatusDisplay.js';
 import { EastValueViewer } from './EastValueViewer.js';
 import { UIComponentType } from '@elaraai/east-ui';
-import type { DatasetStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
+import type { RequestOptions } from '@elaraai/e3-api-client';
 import { formatApiError, formatError } from '../errors.js';
 import { ErrorBoundary } from './ErrorBoundary.js';
 
@@ -40,7 +40,6 @@ export interface InputPreviewProps {
     repo: string;
     workspace: string;
     path: string;
-    inputInfo: DatasetStatusInfo | null;
     requestOptions?: RequestOptions;
 }
 
@@ -54,11 +53,10 @@ export const InputPreview = memo(function InputPreview({
     repo,
     workspace,
     path,
-    inputInfo,
     requestOptions,
 }: InputPreviewProps) {
-    // Fetch input data with size-gated preview
-    const { data: preview, isLoading, error } = useInputDataPreview(apiUrl, repo, workspace, inputInfo, requestOptions);
+    // Fetch input data with size-gated preview — polls datasetGetStatus to detect changes
+    const { data: preview, isLoading, error } = useInputDataPreview(apiUrl, repo, workspace, path, requestOptions);
 
     // Extract raw bytes (if loaded)
     const output = useMemo(() =>
@@ -90,14 +88,17 @@ export const InputPreview = memo(function InputPreview({
     // Get display name from path
     const displayName = path.replace(/^\.inputs\./, '');
 
+    // Whether the dataset has data
+    const hasData = useMemo(() => preview?.refType === 'value' && preview?.hash?.type === 'some', [preview]);
+
     // Content panel
     const content = useMemo(() => {
-        // Input not up-to-date - show status message
-        if (inputInfo?.status.type !== 'up-to-date') {
+        // No data available yet (input not set)
+        if (preview && !hasData) {
             return (
                 <StatusDisplay
                     variant="info"
-                    title={`Input is ${inputInfo?.status.type ?? 'unknown'}`}
+                    title="No data available"
                     message="Set the input value to see output"
                 />
             );
@@ -188,7 +189,7 @@ export const InputPreview = memo(function InputPreview({
                 title={`No data available for input "${displayName}"`}
             />
         );
-    }, [preview, decode, displayName, isLoading, output, inputInfo?.status.type]);
+    }, [preview, decode, displayName, isLoading, output, hasData]);
 
     // Error
     if (error) {
@@ -222,8 +223,4 @@ export const InputPreview = memo(function InputPreview({
             </Box>
         </EastStoreProvider>
     );
-}, (prev, next) => {
-    const prevHash = prev.inputInfo?.hash?.type === 'some' ? prev.inputInfo.hash.value : null;
-    const nextHash = next.inputInfo?.hash?.type === 'some' ? next.inputInfo.hash.value : null;
-    return prev.path === next.path && prev.workspace === next.workspace && prevHash === nextHash;
-});
+}, (prev, next) => prev.path === next.path && prev.workspace === next.workspace);

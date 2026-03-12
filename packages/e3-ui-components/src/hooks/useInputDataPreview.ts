@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { QueryOverrides, DatasetPreview } from './types.js';
 import { datasetGetStatus, datasetGet } from '@elaraai/e3-api-client';
-import type { DatasetStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
+import type { RequestOptions } from '@elaraai/e3-api-client';
 import { variant, some, none } from '@elaraai/east';
 
 const MAX_DOWNLOAD_SIZE = 10 * 1024 * 1024; // 10MB
@@ -16,33 +16,34 @@ export function useInputDataPreview(
     apiUrl: string,
     repo: string,
     workspace: string | null,
-    inputInfo: DatasetStatusInfo | null,
+    path: string | null,
     requestOptions?: RequestOptions,
     queryOptions?: QueryOverrides
 ) {
-    const isUpToDate = useMemo(() => inputInfo?.status.type === 'up-to-date', [inputInfo?.status.type]);
-    const hash = useMemo(() => inputInfo?.hash?.type === 'some' ? inputInfo.hash.value : null, [inputInfo?.hash]);
     const pathParts = useMemo(() =>
-        inputInfo?.path?.split('.').filter(Boolean).map((v) => variant('field', v)) ?? [],
-        [inputInfo?.path]
+        path?.split('.').filter(Boolean).map((v) => variant('field', v)) ?? [],
+        [path]
     );
 
-    // Step 1: lightweight status (type, size, hash)
+    // Step 1: lightweight status (type, size, hash) — polls to detect changes
     const status = useQuery({
-        queryKey: ['inputDataStatus', apiUrl, repo, workspace, inputInfo?.path, hash],
+        queryKey: ['inputDataStatus', apiUrl, repo, workspace, path],
         queryFn: () => datasetGetStatus(apiUrl, repo, workspace!, pathParts, requestOptions ?? { token: null }),
-        enabled: !!workspace && !!inputInfo && isUpToDate,
+        enabled: !!workspace && !!path,
+        refetchInterval: 1000,
         ...queryOptions,
     });
 
+    const hash = useMemo(() => status.data?.hash?.type === 'some' ? status.data.hash.value : null, [status.data]);
+    const hasData = useMemo(() => status.data?.refType === 'value' && hash !== null, [status.data, hash]);
     const size = useMemo(() => status.data?.size?.type === 'some' ? status.data.size.value : null, [status.data]);
     const isOversized = useMemo(() => size !== null && size > MAX_DOWNLOAD_SIZE, [size]);
 
-    // Step 2: full data — only when status loaded and not oversized
+    // Step 2: full data — only when status shows data exists and not oversized
     const data = useQuery({
-        queryKey: ['inputData', apiUrl, repo, workspace, inputInfo?.path, hash],
+        queryKey: ['inputData', apiUrl, repo, workspace, path, hash],
         queryFn: () => datasetGet(apiUrl, repo, workspace!, pathParts, requestOptions ?? { token: null }),
-        enabled: !!status.data && !isOversized,
+        enabled: hasData && !isOversized,
         ...queryOptions,
     });
 
@@ -61,7 +62,7 @@ export function useInputDataPreview(
 
     return {
         data: preview,
-        isLoading: status.isLoading || (status.isSuccess && !isOversized && data.isLoading),
+        isLoading: status.isLoading || (status.isSuccess && hasData && !isOversized && data.isLoading),
         error: status.error ?? data.error ?? null,
     };
 }

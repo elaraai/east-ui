@@ -34,7 +34,7 @@ import { useTaskOutputPreview } from '../hooks/useTaskOutputPreview.js';
 import { useTaskLogs as useTaskLogsHook } from '../hooks/useTaskLogsHook.js';
 import { StatusDisplay } from './StatusDisplay.js';
 import { UIComponentType } from '@elaraai/east-ui';
-import type { TaskStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
+import type { RequestOptions } from '@elaraai/e3-api-client';
 
 // Combined platform implementations for decoding Beast2 with Reactive components
 const platformImplementations = [...StateImpl, ...DatasetImpl, ...OverlayImpl];
@@ -46,8 +46,7 @@ export interface TaskPreviewProps {
     repo: string;
     workspace: string;
     task: string;
-    taskInfo: TaskStatusInfo | null;
-    outputHash: string | null;
+    output: string;
     requestOptions?: RequestOptions;
 }
 
@@ -61,33 +60,32 @@ export const TaskPreview = memo(function TaskPreview({
     repo,
     workspace,
     task,
-    taskInfo,
-    outputHash,
+    output,
     requestOptions,
 }: TaskPreviewProps) {
-    // Fetch task output with size-gated preview - pass outputHash so query refetches when data changes
-    const { data: preview, isLoading, error } = useTaskOutputPreview(apiUrl, repo, workspace, taskInfo, outputHash, requestOptions);
+    // Fetch task output with size-gated preview — polls datasetGetStatus to detect changes
+    const { data: preview, isLoading, error } = useTaskOutputPreview(apiUrl, repo, workspace, output, requestOptions);
 
     // Extract raw bytes (if loaded)
-    const output = useMemo(() =>
+    const rawOutput = useMemo(() =>
         preview?.value.type === 'some' ? preview.value.value : undefined,
         [preview]
     );
 
     // Fetch task logs (stdout and stderr)
-    const { data: stdout } = useTaskLogsHook(apiUrl, repo, workspace, taskInfo, 'stdout', requestOptions);
-    const { data: stderr } = useTaskLogsHook(apiUrl, repo, workspace, taskInfo, 'stderr', requestOptions);
+    const { data: stdout } = useTaskLogsHook(apiUrl, repo, workspace, task, 'stdout', requestOptions);
+    const { data: stderr } = useTaskLogsHook(apiUrl, repo, workspace, task, 'stderr', requestOptions);
 
     // Decode the output as IR
     const ir = useMemo(() => {
-        if (!output) return null;
+        if (!rawOutput) return null;
         try {
             // First check the type without platform (to see if it's UIComponentType)
-            const { type } = decodeBeast2(output);
+            const { type } = decodeBeast2(rawOutput);
             if (isTypeValueEqual(type, toEastTypeValue(UIComponentType))) {
                 // Decode with platform implementations for Reactive components
                 const decoder = decodeBeast2For(UIComponentType, { platform: platformImplementations });
-                const value = decoder(output);
+                const value = decoder(rawOutput);
                 return value as ValueTypeOf<UIComponentType>;
             } else {
                 return null;
@@ -95,7 +93,7 @@ export const TaskPreview = memo(function TaskPreview({
         } catch {
             return null;
         }
-    }, [output]);
+    }, [rawOutput]);
 
     // Create store - recreate when IR changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -123,14 +121,17 @@ export const TaskPreview = memo(function TaskPreview({
         });
     }, [isLoading, ir]);
 
+    // Whether the dataset has data
+    const hasData = useMemo(() => preview?.refType === 'value' && preview?.hash?.type === 'some', [preview]);
+
     // Output panel content
     const outputPanel = useMemo(() => {
-        // Task not up-to-date - show status message
-        if (taskInfo?.status.type !== 'up-to-date') {
+        // No data available yet (task not run, or dataset unassigned)
+        if (preview && !hasData) {
             return (
                 <StatusDisplay
                     variant="info"
-                    title={`Task is ${taskInfo?.status.type ?? 'unknown'}`}
+                    title="No output available"
                     message="Run the task to see output"
                 />
             );
@@ -178,29 +179,9 @@ export const TaskPreview = memo(function TaskPreview({
 
         // Not a UIComponent - output exists but couldn't decode as UIComponent
         // Render using the type-aware EastValueViewer
-        if (output && ir === null) {
-            // Check output size - if too large, show warning instead of rendering
-            // const MAX_RENDER_SIZE = 512 * 1024 * 10; // 512KB
-            // const outputSize = output instanceof Uint8Array ? output.length : 0;
-
-            // if (outputSize > MAX_RENDER_SIZE) {
-            //     return (
-            //         <StatusDisplay
-            //             variant="warning"
-            //             title="Output too large to display"
-            //             message={`The task output is ${(outputSize / 1024 / 1024).toFixed(2)} MB, which exceeds the ${(MAX_RENDER_SIZE / 1024).toFixed(0)} KB display limit. Consider using a smaller dataset or accessing the output programmatically.`}
-            //         />
-            //     );
-            // }
-
+        if (rawOutput && ir === null) {
             try {
-                const decoded = decodeBeast2(output);
-                // return (
-                //     <Box height="100%" overflow="auto" p="4">
-                //         <Text fontSize="xs" color="gray.500" mb={2}>Raw Output ({(outputSize / 1024).toFixed(1)} KB)</Text>
-                //         <EastValueViewer type={decoded.type} value={decoded.value} />
-                //     </Box>
-                // );
+                const decoded = decodeBeast2(rawOutput);
                 return (
                     <Box height="100%" overflow="auto" p="4">
                         <EastValueViewer type={decoded.type} value={decoded.value} />
@@ -219,7 +200,7 @@ export const TaskPreview = memo(function TaskPreview({
                 title={`No output available for task "${task}"`}
             />
         );
-    }, [preview, ir, task, isLoading, output, taskInfo?.status.type]);
+    }, [preview, ir, task, isLoading, rawOutput, hasData]);
 
     // Get active tab content
     const activeLogContent = useMemo(() => tabs.value === 'stderr' ? stderrContent : stdoutContent, [tabs.value, stderrContent, stdoutContent]);
@@ -295,4 +276,4 @@ export const TaskPreview = memo(function TaskPreview({
             </Box>
         </EastStoreProvider>
     );
-}, (prev, next) => prev.task === next.task && prev.repo === next.repo && prev.workspace === next.workspace && prev.outputHash === next.outputHash && prev.taskInfo?.status.type === next.taskInfo?.status.type);
+}, (prev, next) => prev.task === next.task && prev.repo === next.repo && prev.workspace === next.workspace && prev.output === next.output);
