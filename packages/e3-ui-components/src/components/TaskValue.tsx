@@ -8,8 +8,6 @@ import { Box } from '@chakra-ui/react';
 import { EastValueViewer } from './EastValueViewer.js';
 import {
     decodeBeast2For,
-    isTypeValueEqual,
-    toEastTypeValue,
 } from '@elaraai/east';
 import { useTaskOutputPreview } from '../hooks/useTaskOutputPreview.js';
 import { StatusDisplay } from './StatusDisplay.js';
@@ -49,7 +47,6 @@ export const TaskValue = memo(function TaskValue({
     apiUrl,
     repo,
     workspace,
-    task,
     output,
     requestOptions,
 }: TaskValueProps) {

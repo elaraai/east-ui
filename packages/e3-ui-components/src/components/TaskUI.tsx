@@ -118,7 +118,7 @@ export const TaskUI = memo(function TaskUI({
         }
     }, [preview, isLoading]);
 
-    const store = useMemo(() => createEastStore(), [previewState]);
+    const store = useMemo(() => createEastStore(), []);
 
     if (error) {
         return <StatusDisplay variant="error" title="Failed to load task output" details={error instanceof Error ? error.message : String(error)} />;
