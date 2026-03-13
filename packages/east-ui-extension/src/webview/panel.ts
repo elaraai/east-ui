@@ -7,6 +7,15 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { generateWebviewHtml } from './html.js';
 
+let _outputChannel: vscode.OutputChannel | null = null;
+
+function getOutputChannel(): vscode.OutputChannel {
+    if (!_outputChannel) {
+        _outputChannel = vscode.window.createOutputChannel('East UI');
+    }
+    return _outputChannel;
+}
+
 export function createPreviewPanel(
     context: vscode.ExtensionContext,
     serverUrl: string,
@@ -32,8 +41,17 @@ export function createPreviewPanel(
         vscode.Uri.joinPath(context.extensionUri, 'dist', 'webview')
     );
 
+    // Forward webview console logs to the output channel
+    const output = getOutputChannel();
+    panel.webview.onDidReceiveMessage((msg) => {
+        if (msg.type === 'log') {
+            const prefix = msg.level === 'info' ? '' : `[${msg.level}] `;
+            output.appendLine(`${prefix}${msg.message}`);
+        }
+    });
+
     // Generate HTML with the server config embedded
-    panel.webview.html = generateWebviewHtml(webviewUri, serverUrl, repoPath);
+    panel.webview.html = generateWebviewHtml(panel.webview, webviewUri, serverUrl, repoPath);
 
     return panel;
 }

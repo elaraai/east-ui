@@ -14,7 +14,7 @@ export default defineConfig({
       fileName: (format) => `index.${format === 'es' ? 'js' : 'cjs'}`,
     },
     rollupOptions: {
-      external: [
+      external: (id) => [
         'react',
         'react-dom',
         'react/jsx-runtime',
@@ -22,7 +22,7 @@ export default defineConfig({
         '@elaraai/east',
         '@elaraai/east-ui',
         'shiki',
-      ],
+      ].includes(id) || id.startsWith('node:'),
       output: {
         globals: {
           react: 'React',

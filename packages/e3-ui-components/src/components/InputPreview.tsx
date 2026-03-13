@@ -64,22 +64,30 @@ export const InputPreview = memo(function InputPreview({
         [preview]
     );
 
-    // Decode the output, checking if it's a UIComponentType
+    // Check if the output type is UIComponentType using the status metadata (no decode needed)
+    const isUIComponent = useMemo(() => {
+        if (!preview) return false;
+        try {
+            return isTypeValueEqual(preview.type, toEastTypeValue(UIComponentType));
+        } catch {
+            return false;
+        }
+    }, [preview]);
+
+    // Decode the output, only doing full decode when type is known
     const decode = useMemo((): { type: 'none' } | { type: 'ui'; value: ValueTypeOf<UIComponentType> } | { type: 'ui-error'; error: Error } | { type: 'other' } => {
         if (!output) return { type: 'none' };
+        if (!isUIComponent) return { type: 'other' };
         try {
-            const { type } = decodeBeast2(output);
-            if (!isTypeValueEqual(type, toEastTypeValue(UIComponentType))) return { type: 'other' };
-            try {
-                const decoder = decodeBeast2For(UIComponentType, { platform: platformImplementations });
-                return { type: 'ui', value: decoder(output) as ValueTypeOf<UIComponentType> };
-            } catch (e) {
-                return { type: 'ui-error', error: e instanceof Error ? e : new Error(String(e)) };
-            }
-        } catch {
-            return { type: 'other' };
+            const decoder = decodeBeast2For(UIComponentType, { 
+                platform: platformImplementations,
+                skipTypeCheck: true,
+            });
+            return { type: 'ui', value: decoder(output) as ValueTypeOf<UIComponentType> };
+        } catch (e) {
+            return { type: 'ui-error', error: e instanceof Error ? e : new Error(String(e)) };
         }
-    }, [output]);
+    }, [output, isUIComponent]);
 
     // Create store - recreate when decode changes
     // eslint-disable-next-line react-hooks/exhaustive-deps

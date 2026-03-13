@@ -11,7 +11,7 @@ install:
 
 # Update @elaraai dependencies (including transitive)
 update:
-	$(NVM) npm update @elaraai/east @elaraai/east-node-std @elaraai/e3-api-client @elaraai/e3-api-server @elaraai/e3-types @elaraai/e3-core @elaraai/e3
+	$(NVM) npm update @elaraai/east @elaraai/east-node-std @elaraai/e3-api-client @elaraai/e3-api-server @elaraai/e3-types @elaraai/e3-core @elaraai/e3 @elaraai/east-c-wasm
 
 # Build all packages (in dependency order)
 build:

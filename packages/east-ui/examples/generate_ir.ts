@@ -6,9 +6,13 @@
  */
 
 import { writeFileSync } from "fs";
-import { East, IntegerType, NullType, IRType } from "@elaraai/east";
+import { East, IntegerType, NullType, StringType, OptionType, IRType, some, variant } from "@elaraai/east";
 import { encodeBeast2For } from "@elaraai/east/internal";
-import { UIComponentType, Stack, Text, Reactive, Button } from "../src/index.js";
+import {
+    UIComponentType, Stack, Text, Reactive, Button,
+    Grid, Badge, Tag, Avatar, Stat, Icon, Accordion,
+    Style, Box, HoverCard, Highlight, CodeBlock,
+} from "../src/index.js";
 
 // Static: Text inside a VStack
 const staticUI = East.function([], UIComponentType, ($) => {
@@ -60,6 +64,23 @@ const interactiveUI = East.function([], UIComponentType, ($) => {
     ], { gap: "3" });
 });
 
+
+const dedent = East.function([StringType], StringType, ($, str) => {
+    const lines = $.let(str.split("\n"));
+    $.if(East.greater(lines.size(), 0n).and(() => East.equal(lines.get(0n).trim().length(), 0n)), $ => {
+        $(lines.popFirst());
+    });
+    $.if(East.greater(lines.size(), 0n).and(() => East.equal(lines.get(lines.size().subtract(1n)).trim().length(), 0n)), $ => {
+        $(lines.popLast());
+    });
+    const nonEmpty = $.let(lines.filter((_, line) => East.greater(line.trim().length(), 0n)));
+    const indents = $.let(nonEmpty.map((_, line) => line.length().subtract(line.trimStart().length())));
+    const minIndent = $.let(0n);
+    $.if(East.greater(indents.size(), 0n), $ => {
+        $.assign(minIndent, indents.minimum());
+    });
+    $.return(lines.map((_, line) => line.substring(minIndent, line.length())).stringJoin("\n"));
+});
 
 const ShowcaseCard = East.function(
     [StringType, StringType, UIComponentType, OptionType(StringType)],

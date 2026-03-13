@@ -15,6 +15,7 @@ export default defineConfig({
         outDir: '../dist/webview',
         emptyOutDir: true,
         rollupOptions: {
+            external: (id: string) => id.startsWith('node:'),
             input: resolve(__dirname, 'src/main.tsx'),
             output: {
                 entryFileNames: 'index.js',
