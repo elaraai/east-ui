@@ -239,7 +239,7 @@ export interface EastFunctionProps {
  * ```
  */
 export function EastFunction({ ir }: EastFunctionProps) {
-    // Compile IR with StateImpl and OverlayImpl once on mount, with error handling
+    // Compile IR via JS
     const result = useMemo(() => {
         try {
             return { compiled: ir.compile([...StateImpl, ...OverlayImpl]), error: null };

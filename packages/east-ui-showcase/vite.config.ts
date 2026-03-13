@@ -15,6 +15,9 @@ export default defineConfig({
       defaultIsModuleExports: true,
       include: [/sorted-btree/, /node_modules/],
     },
+    rollupOptions: {
+      external: (id: string) => id.startsWith('node:'),
+    },
   },
   optimizeDeps: {
     include: ['sorted-btree', '@elaraai/east', '@elaraai/east-ui', 'react-dom/client', '@chakra-ui/react'],
