@@ -8,23 +8,18 @@ import { usePersistedState } from "../../hooks/usePersistedState";
 import {
     Table as ChakraTable,
     Box,
-    HStack,
     Text,
     Skeleton,
-    IconButton,
     Splitter,
     useToken,
     type TableRootProps,
 } from "@chakra-ui/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronUp, faChevronDown, faAnglesDown } from "@fortawesome/free-solid-svg-icons";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import {
     useReactTable,
     getCoreRowModel,
     getSortedRowModel,
     createColumnHelper,
-    flexRender,
     type SortingState,
     type ColumnResizeMode,
     type ColumnDef,
@@ -34,6 +29,7 @@ import { Planner, Table, type UIComponentType } from "@elaraai/east-ui";
 import { getSomeorUndefined } from "../../utils";
 import { EastChakraComponent } from "../../component";
 import { RowStateManager, type RowKey, type RowState } from "../../utils/RowStateManager";
+import { useColumnPinning, HeaderControls, getHeaderCellStyle, getCellStyle, createGetSortIndex } from "../shared/column-pinning";
 import { PlannerEventRow, type PlannerEventValue } from "./PlannerEventRow";
 import { PlannerAxis } from "./PlannerAxis";
 
@@ -134,6 +130,7 @@ export interface EastChakraPlannerProps {
 interface PlannerPersistedState {
     sorting: SortingState;
     columnSizing: Record<string, number>;
+    pinnedColumns: string[];
     tablePanelSize: number | null;
 }
 
@@ -167,20 +164,18 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
     }, [value]);
     const headerHeight = 56;
 
-    // Calculate total column width from column definitions
-    const totalColumnWidth = useMemo(() => {
-        return value.columns.reduce((total, col) => {
-            const width = getSomeorUndefined(col.width);
-            return total + parseSize(width, 150);
-        }, 0);
-    }, [value.columns]);
-
-    // Calculate table panel size based on column widths if not specified
-    // Assume a reasonable container width of 1200px for calculation
-    const tablePanelSize = useMemo(() =>
-        tablePanelSizeProp ?? Math.min(Math.max((totalColumnWidth / 1200) * 100, 20), 60),
-        [tablePanelSizeProp, totalColumnWidth]
-    );
+    // Track root container width for accurate splitter sizing
+    const rootRef = useRef<HTMLDivElement>(null);
+    const [containerWidth, setContainerWidth] = useState(0);
+    useEffect(() => {
+        const el = rootRef.current;
+        if (!el) return;
+        const ro = new ResizeObserver(([entry]) => {
+            if (entry) setContainerWidth(entry.contentRect.width);
+        });
+        ro.observe(el);
+        return () => ro.disconnect();
+    }, []);
 
     // Extract style options
     const style = useMemo(() => getSomeorUndefined(value.style), [value.style]);
@@ -347,9 +342,20 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
     // Consolidated persisted state (sorting + column sizing + splitter)
     const { state: persistedState, setState: setPersistedState } = usePersistedState<PlannerPersistedState>(
         storageKey,
-        { sorting: [], columnSizing: {}, tablePanelSize: null },
+        { sorting: [], columnSizing: {}, pinnedColumns: [...value.frozen], tablePanelSize: null },
     );
     const sorting = useMemo(() => persistedState.sorting, [persistedState.sorting]);
+
+    // Column pinning
+    const { columnPinning, hasFrozen, toggleColumnPin } = useColumnPinning({
+        frozenFromValue: value.frozen,
+        persistedPinnedColumns: persistedState.pinnedColumns,
+        setPersistedPinnedColumns: (updater) => setPersistedState(prev => ({
+            ...prev,
+            pinnedColumns: updater(prev.pinnedColumns ?? [...value.frozen]),
+        })),
+    });
+    const getSortIndex = createGetSortIndex(sorting);
     const setSorting = useCallback((updater: SortingState | ((prev: SortingState) => SortingState)) => {
         setPersistedState(prev => ({
             ...prev,
@@ -366,17 +372,19 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
         }));
     }, [setPersistedState]);
 
-    // Effective table panel size: persisted > prop > calculated
-    const effectiveTablePanelSize = useMemo(
-        () => persistedState.tablePanelSize ?? tablePanelSize,
-        [persistedState.tablePanelSize, tablePanelSize],
-    );
-
     // Persist splitter resize
+    // Splitter drag state: tracks live size during drag, persists on end
+    const [dragSize, setDragSize] = useState<number | null>(null);
     const handleSplitterResize = useCallback((details: { size: number[] }) => {
+        if (details.size[0] !== undefined) {
+            setDragSize(details.size[0]!);
+        }
+    }, []);
+    const handleSplitterResizeEnd = useCallback((details: { size: number[] }) => {
         if (details.size[0] !== undefined) {
             setPersistedState(prev => ({ ...prev, tablePanelSize: details.size[0]! }));
         }
+        setDragSize(null);
     }, [setPersistedState]);
 
     // TanStack Table instance
@@ -389,11 +397,12 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
         enableMultiSort,
         maxMultiSortColCount: maxSortColumns,
         isMultiSortEvent: () => enableMultiSort,
-        state: { sorting, columnSizing },
+        state: { sorting, columnSizing, columnPinning },
         onSortingChange: setSorting,
         onColumnSizingChange: setColumnSizing,
         columnResizeMode: "onChange" as ColumnResizeMode,
         enableColumnResizing,
+        enableColumnPinning: true,
     });
 
     // Calculate column size CSS variables for performance
@@ -410,14 +419,25 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [table.getState().columnSizingInfo, table.getState().columnSizing]);
 
-    // Get sort index for a column (1-based)
-    const getSortIndex = useCallback(
-        (columnId: string) => {
-            const idx = sorting.findIndex((s) => s.id === columnId);
-            return idx >= 0 ? idx + 1 : undefined;
-        },
-        [sorting]
-    );
+    // Compute table panel % from actual column widths and container width
+    const columnTotalWidth = table.getCenterTotalSize();
+    const computedTablePanelSize = useMemo(() => {
+        if (tablePanelSizeProp != null) return tablePanelSizeProp;
+        if (containerWidth <= 0) return 50; // fallback before measurement
+        return Math.min(Math.max((columnTotalWidth / containerWidth) * 100, 15), 75);
+    }, [tablePanelSizeProp, columnTotalWidth, containerWidth]);
+
+    // Effective: dragging > persisted (user-dragged) > computed from column widths
+    const effectiveTablePanelSize = dragSize ?? persistedState.tablePanelSize ?? computedTablePanelSize;
+
+    // Last unpinned column stretches to fill remaining panel space
+    const lastUnpinnedColumnId = useMemo(() => {
+        const headers = table.getFlatHeaders();
+        for (let i = headers.length - 1; i >= 0; i--) {
+            if (!headers[i]!.column.getIsPinned()) return headers[i]!.id;
+        }
+        return null;
+    }, [table]);
 
     // Handle sort change callback
     useEffect(() => {
@@ -753,6 +773,7 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
 
     return (
         <Box
+            ref={rootRef}
             width="100%"
             height={styleHeight ?? height}
             overflow="hidden"
@@ -761,11 +782,12 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
             borderRadius="md"
         >
             <Splitter.Root
-                defaultSize={[effectiveTablePanelSize, 100 - effectiveTablePanelSize]}
+                size={[effectiveTablePanelSize, 100 - effectiveTablePanelSize]}
                 panels={panels}
                 width="100%"
                 height="100%"
-                onResizeEnd={handleSplitterResize}
+                onResize={handleSplitterResize}
+                onResizeEnd={handleSplitterResizeEnd}
             >
                 {/* Table Panel */}
                 <Splitter.Panel id="table">
@@ -798,142 +820,20 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
                                         style={{ display: "flex", width: "100%", height: `${headerHeight}px` }}
                                     >
                                         {headerGroup.headers.map((header) => {
-                                            const sortIndex = getSortIndex(header.id);
-                                            const isSorted = header.column.getIsSorted();
-                                            const sortDirection = isSorted || null;
-
-                                            const icon = !isSorted
-                                                ? faAnglesDown
-                                                : sortDirection === "asc"
-                                                  ? faChevronUp
-                                                  : faChevronDown;
-
                                             return (
                                                 <ChakraTable.ColumnHeader
                                                     key={header.id}
-                                                    cursor={
-                                                        header.column.getCanSort() ? "pointer" : "default"
-                                                    }
-                                                    _hover={
-                                                        header.column.getCanSort() ? { bg: "bg.muted" } : {}
-                                                    }
-                                                    onClick={header.column.getToggleSortingHandler()}
+                                                    _hover={{ bg: "bg.muted" }}
                                                     transition="background 0.2s"
-                                                    style={{
-                                                        width: `var(--header-${header.id}-size)`,
-                                                        flex: (columnSizing[header.id] || header.column.columnDef.meta?.width) ? "none" : 1,
-                                                    }}
-                                                    position="relative"
+                                                    style={getHeaderCellStyle(header, hasFrozen, columnSizing, header.id === lastUnpinnedColumnId)}
                                                 >
-                                                    <HStack
-                                                        justify="space-between"
-                                                        width="100%"
-                                                        pr={enableColumnResizing ? "8px" : "0"}
-                                                    >
-                                                        <Text
-                                                            fontSize="sm"
-                                                            fontWeight="semibold"
-                                                            overflow="hidden"
-                                                            textOverflow="ellipsis"
-                                                            whiteSpace="nowrap"
-                                                            flex="1"
-                                                        >
-                                                            {header.isPlaceholder
-                                                                ? null
-                                                                : flexRender(
-                                                                      header.column.columnDef.header,
-                                                                      header.getContext()
-                                                                  )}
-                                                        </Text>
-                                                        <HStack gap={1} flexShrink={0}>
-                                                            {header.column.getCanSort() && (
-                                                                <IconButton
-                                                                    aria-label={`Sort by ${header.id}`}
-                                                                    size="xs"
-                                                                    variant="ghost"
-                                                                    color={
-                                                                        isSorted ? "fg.default" : "fg.muted"
-                                                                    }
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        header.column.toggleSorting(
-                                                                            undefined,
-                                                                            enableMultiSort
-                                                                        );
-                                                                    }}
-                                                                    _hover={{
-                                                                        bg: "bg.muted",
-                                                                        color: "fg.default",
-                                                                    }}
-                                                                    position="relative"
-                                                                >
-                                                                    <FontAwesomeIcon
-                                                                        icon={icon}
-                                                                        style={{
-                                                                            width: "12px",
-                                                                            height: "12px",
-                                                                        }}
-                                                                    />
-                                                                    {isSorted && sortIndex && (
-                                                                        <Box
-                                                                            position="absolute"
-                                                                            top="-2px"
-                                                                            right="-2px"
-                                                                            bg="fg.muted"
-                                                                            color="bg.panel"
-                                                                            borderRadius="full"
-                                                                            width="12px"
-                                                                            height="12px"
-                                                                            display="flex"
-                                                                            alignItems="center"
-                                                                            justifyContent="center"
-                                                                            fontSize="8px"
-                                                                            fontWeight="bold"
-                                                                        >
-                                                                            {sortIndex}
-                                                                        </Box>
-                                                                    )}
-                                                                </IconButton>
-                                                            )}
-                                                        </HStack>
-                                                    </HStack>
-
-                                                    {/* Column Resize Handle */}
-                                                    {enableColumnResizing &&
-                                                        header.column.getCanResize() && (
-                                                            <Box
-                                                                position="absolute"
-                                                                right="0"
-                                                                top="0"
-                                                                bottom="0"
-                                                                width="8px"
-                                                                cursor="col-resize"
-                                                                bg="transparent"
-                                                                _hover={{
-                                                                    _before: {
-                                                                        opacity: 1,
-                                                                        bg: "fg.muted",
-                                                                    },
-                                                                }}
-                                                                transition="all 0.2s"
-                                                                zIndex={10}
-                                                                onMouseDown={header.getResizeHandler()}
-                                                                onTouchStart={header.getResizeHandler()}
-                                                                _before={{
-                                                                    content: '""',
-                                                                    position: "absolute",
-                                                                    right: "2px",
-                                                                    top: "50%",
-                                                                    transform: "translateY(-50%)",
-                                                                    width: "2px",
-                                                                    height: "16px",
-                                                                    bg: "gray.300",
-                                                                    borderRadius: "1px",
-                                                                    opacity: 0.4,
-                                                                    transition: "opacity 0.2s",
-                                                                }}
-                                                            />
-                                                        )}
+                                                    <HeaderControls
+                                                        header={header}
+                                                        toggleColumnPin={toggleColumnPin}
+                                                        getSortIndex={getSortIndex}
+                                                        enableMultiSort={enableMultiSort}
+                                                        enableColumnResizing={enableColumnResizing}
+                                                    />
                                                 </ChakraTable.ColumnHeader>
                                             );
                                         })}
@@ -981,10 +881,7 @@ export const EastChakraPlanner = memo(function EastChakraPlanner({
                                                 const meta = cell.column.columnDef.meta;
                                                 const columnKey = meta?.columnKey ?? cell.column.id;
 
-                                                const cellStyle = {
-                                                    width: `var(--col-${cell.column.id}-size)`,
-                                                    flex: (columnSizing[cell.column.id] || meta?.width) ? "none" : 1,
-                                                };
+                                                const cellStyle = getCellStyle(cell, hasFrozen, columnSizing, cell.column.id === lastUnpinnedColumnId);
 
                                                 const cellClickHandler = onCellClickFn ? (e: React.MouseEvent) => {
                                                     e.stopPropagation();

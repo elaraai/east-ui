@@ -532,7 +532,7 @@ export const EastChakraTable = memo(function EastChakraTable({
                                         }}
                                         position={isPinned ? "sticky" : "relative"}
                                     >
-                                        <HStack justify="space-between" width="100%" pr={enableColumnResizing ? "8px" : "0"}>
+                                        <HStack justify="space-between" width="100%" pr={enableColumnResizing ? "4px" : "0"}>
                                             <Text fontSize="sm" fontWeight="semibold" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap" flex="1">
                                                 {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                             </Text>

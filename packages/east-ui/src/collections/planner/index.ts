@@ -132,6 +132,7 @@ export type PlannerRowType = typeof PlannerRowType;
 export const PlannerRootType = StructType({
     rows: ArrayType(PlannerRowType),
     columns: ArrayType(TableColumnType),
+    frozen: ArrayType(StringType),
     style: OptionType(PlannerStyleType),
     eventPopover: OptionType(FunctionType([EventPopoverContextType], UIComponentType)),
 });
