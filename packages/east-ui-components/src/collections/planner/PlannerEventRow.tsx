@@ -19,6 +19,7 @@ export type { PlannerEventValue as PlannerEventValueExport } from "./PlannerEven
 
 export interface PlannerEventRowProps {
     events: PlannerEventValue[];
+    storageKey: string;
     rowIndex: number;
     y: number;
     width: number;
@@ -44,6 +45,7 @@ export interface PlannerEventRowProps {
 
 export const PlannerEventRow = ({
     events,
+    storageKey,
     rowIndex,
     y,
     height,
@@ -121,6 +123,7 @@ export const PlannerEventRow = ({
                 <PlannerEvent
                     key={`${rowIndex}-${eventIndex}`}
                     value={event}
+                    storageKey={`${storageKey}.${rowIndex}.${eventIndex}`}
                     rowIndex={rowIndex}
                     eventIndex={eventIndex}
                     y={eventY}
@@ -146,7 +149,7 @@ export const PlannerEventRow = ({
                 />
             );
         }).filter(Boolean);
-    }, [events, rowIndex, y, height, slotWidth, slotRangeStart, slotMode, slotCount, minSlot, maxSlot, stepSize, readOnly, eventPopoverFn, eventPopoverTrigger, hoveredEventIndex, handleEventHoverStart, handleEventHoverEnd, onEventClick, onEventDoubleClick, onEventDrag, onEventResize, onEventEdit, onEventDelete]);
+    }, [events, storageKey, rowIndex, y, height, slotWidth, slotRangeStart, slotMode, slotCount, minSlot, maxSlot, stepSize, readOnly, eventPopoverFn, eventPopoverTrigger, hoveredEventIndex, handleEventHoverStart, handleEventHoverEnd, onEventClick, onEventDoubleClick, onEventDrag, onEventResize, onEventEdit, onEventDelete]);
     return (
         <g>
             {renderedSlotCells}

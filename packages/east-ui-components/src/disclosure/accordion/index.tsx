@@ -4,6 +4,7 @@
  */
 
 import { memo, useMemo, useCallback } from "react";
+import { usePersistedState } from "../../hooks/usePersistedState";
 import {
     Accordion as ChakraAccordion,
     type AccordionRootProps,
@@ -51,12 +52,13 @@ export function toChakraAccordionItem(value: AccordionItemValue): AccordionItemP
 
 export interface EastChakraAccordionItemProps {
     value: AccordionItemValue;
+    storageKey: string;
 }
 
 /**
  * Renders an East UI Accordion Item value using Chakra UI Accordion components.
  */
-export const EastChakraAccordionItem = memo(function EastChakraAccordionItem({ value }: EastChakraAccordionItemProps) {
+export const EastChakraAccordionItem = memo(function EastChakraAccordionItem({ value, storageKey }: EastChakraAccordionItemProps) {
     const props = useMemo(() => toChakraAccordionItem(value), [value]);
 
     return (
@@ -67,38 +69,59 @@ export const EastChakraAccordionItem = memo(function EastChakraAccordionItem({ v
             </ChakraAccordion.ItemTrigger>
             <ChakraAccordion.ItemContent>
                 {value.content.map((child, index) => (
-                    <EastChakraComponent key={index} value={child} />
+                    <EastChakraComponent key={index} value={child} storageKey={`${storageKey}.${index}`} />
                 ))}
             </ChakraAccordion.ItemContent>
         </ChakraAccordion.Item>
     );
-}, (prev, next) => accordionItemEqual(prev.value, next.value));
+}, (prev, next) => accordionItemEqual(prev.value, next.value) && prev.storageKey === next.storageKey);
+
+interface AccordionPersistedState {
+    expandedValues: string[];
+}
 
 export interface EastChakraAccordionProps {
     value: AccordionRootValue;
+    /** Storage key for persisting expanded items in localStorage. Omit for ephemeral state. */
+    storageKey: string;
 }
 
 /**
  * Renders an East UI Accordion value using Chakra UI Accordion components.
  */
-export const EastChakraAccordion = memo(function EastChakraAccordion({ value }: EastChakraAccordionProps) {
+export const EastChakraAccordion = memo(function EastChakraAccordion({ value, storageKey }: EastChakraAccordionProps) {
     const props = useMemo(() => toChakraAccordionRoot(value), [value]);
     const onValueChangeFn = useMemo(() => {
         const style = getSomeorUndefined(value.style);
         return style ? getSomeorUndefined(style.onValueChange) : undefined;
     }, [value.style]);
 
+    const { state: persistedState, setState: setPersistedState } = usePersistedState<AccordionPersistedState>(
+        storageKey,
+        { expandedValues: [] },
+    );
+
     const handleValueChange = useCallback((details: { value: string[] }) => {
+        setPersistedState(prev => ({ ...prev, expandedValues: details.value }));
         if (onValueChangeFn) {
             queueMicrotask(() => onValueChangeFn(details.value));
         }
-    }, [onValueChangeFn]);
+    }, [onValueChangeFn, setPersistedState]);
+
+    const effectiveValue = useMemo(
+        () => persistedState.expandedValues,
+        [persistedState.expandedValues],
+    );
 
     return (
-        <ChakraAccordion.Root {...props} onValueChange={onValueChangeFn ? handleValueChange : undefined}>
+        <ChakraAccordion.Root
+            {...props}
+            value={effectiveValue}
+            onValueChange={handleValueChange}
+        >
             {value.items.map((item, index) => (
-                <EastChakraAccordionItem key={item.value || index} value={item} />
+                <EastChakraAccordionItem key={item.value || index} value={item} storageKey={`${storageKey}.${index}`} />
             ))}
         </ChakraAccordion.Root>
     );
-}, (prev, next) => accordionRootEqual(prev.value, next.value));
+}, (prev, next) => accordionRootEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

@@ -537,7 +537,9 @@ export type PlannerStyleType = typeof PlannerStyleType;
  * @remarks
  * Accepts both static values and East expressions.
  */
-export interface PlannerStyle {
+export interface PlannerStyle<ColumnKeys extends string = string> {
+    /** Column keys to freeze (pin left). Frozen columns appear first and stay visible during horizontal scroll. */
+    frozen?: ColumnKeys[];
     /** CSS height for the Planner container (e.g., "500px", "100%") */
     height?: SubtypeExprOrValue<StringType>;
     /** Table variant (line or outline) */

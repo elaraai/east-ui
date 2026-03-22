@@ -10,5 +10,5 @@ import disclosureShowcase from "../showcases/disclosure/all";
 const disclosureIR = disclosureShowcase.toIR();
 
 export function DisclosurePage() {
-    return <EastFunction ir={disclosureIR} />;
+    return <EastFunction ir={disclosureIR} storageKey="disclosure" />;
 }

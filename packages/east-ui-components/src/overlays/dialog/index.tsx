@@ -21,6 +21,7 @@ export type DialogOpenInputValue = ValueTypeOf<typeof Dialog.Types.OpenInput>;
 
 export interface EastChakraDialogProps {
     value: DialogValue;
+    storageKey: string;
 }
 
 // ============================================================================
@@ -54,6 +55,8 @@ export function toChakraDialog(value: DialogOpenInputValue): Partial<ChakraDialo
 export interface DialogContentProps {
     /** Dialog open input value containing body, title, description, style */
     value: DialogOpenInputValue;
+    /** Storage key prefix for persisting component state */
+    storageKey: string;
     /** Optional trigger element (for trigger-based dialogs) */
     trigger?: ReactNode;
     /** Whether dialog is controlled open (for programmatic dialogs) */
@@ -65,7 +68,7 @@ export interface DialogContentProps {
 /**
  * Shared dialog content component used by both trigger-based and programmatic dialogs.
  */
-export function DialogContent({ value, trigger, open, onClose }: DialogContentProps) {
+export function DialogContent({ value, storageKey, trigger, open, onClose }: DialogContentProps) {
     const props = useMemo(() => toChakraDialog(value), [value]);
 
     // Extract title and description from value
@@ -141,7 +144,7 @@ export function DialogContent({ value, trigger, open, onClose }: DialogContentPr
                                 <ChakraDialog.Description mb="4">{description}</ChakraDialog.Description>
                             )}
                             {value.body.map((child, index) => (
-                                <EastChakraComponent key={index} value={child} />
+                                <EastChakraComponent key={index} value={child} storageKey={`${storageKey}.${index}`} />
                             ))}
                         </ChakraDialog.Body>
                     </ChakraDialog.Content>
@@ -158,7 +161,7 @@ export function DialogContent({ value, trigger, open, onClose }: DialogContentPr
 /**
  * Renders an East UI Dialog value using Chakra UI Dialog component.
  */
-export const EastChakraDialog = memo(function EastChakraDialog({ value }: EastChakraDialogProps) {
+export const EastChakraDialog = memo(function EastChakraDialog({ value, storageKey }: EastChakraDialogProps) {
     // Convert DialogValue to DialogOpenInputValue format (without trigger)
     const openInputValue = useMemo((): DialogOpenInputValue => ({
         body: value.body,
@@ -170,7 +173,8 @@ export const EastChakraDialog = memo(function EastChakraDialog({ value }: EastCh
     return (
         <DialogContent
             value={openInputValue}
-            trigger={<EastChakraComponent value={value.trigger} />}
+            storageKey={storageKey}
+            trigger={<EastChakraComponent value={value.trigger} storageKey={`${storageKey}.trigger`} />}
         />
     );
-}, (prev, next) => dialogEqual(prev.value, next.value));
+}, (prev, next) => dialogEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

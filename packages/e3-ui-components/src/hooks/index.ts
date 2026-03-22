@@ -10,3 +10,4 @@ export * from './workspaces.js';
 export * from './datasets.js';
 export * from './tasks.js';
 export * from './executions.js';
+export { useDatasetPreview, useDatasetDownload, type DatasetPreviewState, type DatasetStatus, type UseDatasetPreviewOptions } from './useDatasetPreview.js';

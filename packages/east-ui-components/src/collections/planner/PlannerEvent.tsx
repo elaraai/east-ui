@@ -19,6 +19,7 @@ export type EventPopoverFn = ((ctx: EventPopoverContext) => ValueTypeOf<UICompon
 
 export interface PlannerEventProps {
     value: PlannerEventValue;
+    storageKey: string;
     rowIndex: number;
     eventIndex: number;
     y: number;
@@ -70,6 +71,7 @@ interface OverlayState {
 
 export const PlannerEvent = ({
     value,
+    storageKey,
     rowIndex,
     eventIndex,
     y,
@@ -580,7 +582,7 @@ export const PlannerEvent = ({
                         <Popover.Positioner>
                             <Popover.Content>
                                 <Popover.Body p="1">
-                                    {popoverContent && <EastChakraComponent value={popoverContent} />}
+                                    {popoverContent && <EastChakraComponent value={popoverContent} storageKey={`${storageKey}.popover`} />}
                                 </Popover.Body>
                             </Popover.Content>
                         </Popover.Positioner>

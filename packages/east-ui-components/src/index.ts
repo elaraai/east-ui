@@ -274,6 +274,9 @@ export {
     OverlayImpl,
 } from "./overlays/index.js";
 
+// Hooks
+export { usePersistedState, type PersistedStateResult } from "./hooks/usePersistedState.js";
+
 // Platform (State Management)
 export {
     // State namespace (main API)

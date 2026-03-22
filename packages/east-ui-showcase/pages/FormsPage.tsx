@@ -10,5 +10,5 @@ import formsShowcase from "../showcases/forms/all";
 const formsIR = formsShowcase.toIR();
 
 export function FormsPage() {
-    return <EastFunction ir={formsIR} />;
+    return <EastFunction ir={formsIR} storageKey="forms" />;
 }

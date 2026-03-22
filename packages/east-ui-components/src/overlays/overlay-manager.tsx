@@ -139,6 +139,7 @@ function ProgrammaticDialog({ value, onClose }: ProgrammaticDialogProps) {
     return (
         <DialogContent
             value={value}
+            storageKey="programmatic-dialog"
             open={true}
             onClose={onClose}
         />
@@ -158,6 +159,7 @@ function ProgrammaticDrawer({ value, onClose }: ProgrammaticDrawerProps) {
     return (
         <DrawerContent
             value={value}
+            storageKey="programmatic-drawer"
             open={true}
             onClose={onClose}
         />

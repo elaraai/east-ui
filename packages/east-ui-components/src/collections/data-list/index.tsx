@@ -36,12 +36,13 @@ export function toChakraDataListRoot(value: DataListRootValue): DataListRootProp
 
 export interface EastChakraDataListProps {
     value: DataListRootValue;
+    storageKey: string;
 }
 
 /**
  * Renders an East UI DataList value using Chakra UI DataList components.
  */
-export const EastChakraDataList = memo(function EastChakraDataList({ value }: EastChakraDataListProps) {
+export const EastChakraDataList = memo(function EastChakraDataList({ value, storageKey }: EastChakraDataListProps) {
     const props = useMemo(() => toChakraDataListRoot(value), [value]);
 
     return (
@@ -49,9 +50,9 @@ export const EastChakraDataList = memo(function EastChakraDataList({ value }: Ea
             {value.items.map((item, index) => (
                 <ChakraDataList.Item key={index}>
                     <ChakraDataList.ItemLabel>{item.label}</ChakraDataList.ItemLabel>
-                    <ChakraDataList.ItemValue><EastChakraComponent value={item.value} /></ChakraDataList.ItemValue>
+                    <ChakraDataList.ItemValue><EastChakraComponent value={item.value} storageKey={`${storageKey}.${index}`} /></ChakraDataList.ItemValue>
                 </ChakraDataList.Item>
             ))}
         </ChakraDataList.Root>
     );
-}, (prev, next) => dataListRootEqual(prev.value, next.value));
+}, (prev, next) => dataListRootEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

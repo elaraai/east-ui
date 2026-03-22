@@ -18,13 +18,14 @@ export type ToggleTipValue = ValueTypeOf<typeof ToggleTip.Types.ToggleTip>;
 
 export interface EastChakraToggleTipProps {
     value: ToggleTipValue;
+    storageKey: string;
 }
 
 /**
  * Renders an East UI ToggleTip value using Chakra UI Popover component.
  * ToggleTip is a click-activated tooltip for better accessibility.
  */
-export const EastChakraToggleTip = memo(function EastChakraToggleTip({ value }: EastChakraToggleTipProps) {
+export const EastChakraToggleTip = memo(function EastChakraToggleTip({ value, storageKey }: EastChakraToggleTipProps) {
     const style = useMemo(() => getSomeorUndefined(value.style), [value.style]);
     const placement = useMemo(() => style ? getSomeorUndefined(style.placement)?.type : undefined, [style]);
     const hasArrow = useMemo(() => style ? getSomeorUndefined(style.hasArrow) : undefined, [style]);
@@ -45,7 +46,7 @@ export const EastChakraToggleTip = memo(function EastChakraToggleTip({ value }: 
         >
             <ChakraPopover.Trigger asChild>
                 <span>
-                    <EastChakraComponent value={value.trigger} />
+                    <EastChakraComponent value={value.trigger} storageKey={`${storageKey}.trigger`} />
                 </span>
             </ChakraPopover.Trigger>
             <Portal>
@@ -58,4 +59,4 @@ export const EastChakraToggleTip = memo(function EastChakraToggleTip({ value }: 
             </Portal>
         </ChakraPopover.Root>
     );
-}, (prev, next) => toggleTipEqual(prev.value, next.value));
+}, (prev, next) => toggleTipEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

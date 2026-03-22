@@ -10,5 +10,5 @@ import chartsShowcase from "../showcases/charts/all";
 const chartsIR = chartsShowcase.toIR();
 
 export function ChartsPage() {
-    return <EastFunction ir={chartsIR} />;
+    return <EastFunction ir={chartsIR} storageKey="charts" />;
 }

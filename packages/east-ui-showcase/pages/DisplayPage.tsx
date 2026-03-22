@@ -10,5 +10,5 @@ import displayShowcase from "../showcases/display/all";
 const displayIR = displayShowcase.toIR();
 
 export function DisplayPage() {
-    return <EastFunction ir={displayIR} />;
+    return <EastFunction ir={displayIR} storageKey="display" />;
 }

@@ -122,6 +122,7 @@ export const TableCellType: StructType<{
 export const TableRootType = StructType({
     rows: ArrayType(DictType(StringType, TableCellType)),
     columns: ArrayType(TableColumnType),
+    frozen: ArrayType(StringType),
     style: OptionType(TableStyleType),
 });
 
@@ -262,10 +263,17 @@ type ColumnSpec<T extends SubtypeExprOrValue<ArrayType<StructType>>> =
     | PrimitiveFieldKeys<DataFields<NoInfer<T>>>[]
     | { [K in keyof DataFields<NoInfer<T>>]?: TableColumnConfig<DataFields<NoInfer<T>>[K], DataRowType<NoInfer<T>>> };
 
-export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
+// Extract column key strings from a ColumnSpec value
+type ColumnKeys<T extends SubtypeExprOrValue<ArrayType<StructType>>, C extends ColumnSpec<T>> =
+    C extends (infer K)[] ? K & string : C extends object ? Extract<keyof C, string> : string;
+
+export function createTable<
+    T extends SubtypeExprOrValue<ArrayType<StructType>>,
+    C extends ColumnSpec<T> = ColumnSpec<T>,
+>(
     data: T,
-    columns: ColumnSpec<T>,
-    style?: TableStyle
+    columns: C,
+    style?: TableStyle<ColumnKeys<T, NoInfer<C>>>
 ): ExprType<UIComponentType> {
     const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
     const field_types = Expr.type(data_expr).value.fields;
@@ -372,7 +380,18 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
         });
     }
 
-    const columns_expr = East.value(columns_mapped, ArrayType(TableColumnType));
+    // Reorder columns: frozen first, then the rest
+    const frozenKeys = (style?.frozen ?? []) as string[];
+    const frozenSet = new Set(frozenKeys);
+    const columnsByKey = new Map(columns_mapped.map(c => [(c as any).key as string, c]));
+    const orderedColumns: typeof columns_mapped = [
+        ...frozenKeys.filter(key => columnsByKey.has(key)).map(key => columnsByKey.get(key)!),
+        ...columns_mapped.filter(c => !frozenSet.has((c as any).key as string)),
+    ];
+
+    const columns_expr = East.value(orderedColumns, ArrayType(TableColumnType));
+    const frozen_expr = East.value(frozenKeys, ArrayType(StringType));
+
     // Build the style object
     const variantValue = style?.variant
         ? (typeof style.variant === "string"
@@ -395,6 +414,7 @@ export function createTable<T extends SubtypeExprOrValue<ArrayType<StructType>>>
     return East.value(variant("Table", {
         rows: rows_mapped,
         columns: columns_expr,
+        frozen: frozen_expr,
         style: style ? some(East.value({
             height: style.height ? some(style.height) : none,
             variant: variantValue ? some(variantValue) : none,

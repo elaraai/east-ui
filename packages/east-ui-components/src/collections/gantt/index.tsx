@@ -4,6 +4,7 @@
  */
 
 import { memo, useMemo, useRef, useState, useEffect, useCallback } from "react";
+import { usePersistedState } from "../../hooks/usePersistedState";
 import {
     Table as ChakraTable,
     Box,
@@ -123,6 +124,14 @@ export interface EastChakraGanttProps {
     onEventClick?: (event: GanttEventValue, rowIndex: number, eventIndex: number) => void;
     /** Initial size of the table panel (0-100) */
     tablePanelSize?: number;
+    /** Storage key for persisting sort/column/splitter state in localStorage. Omit for ephemeral state. */
+    storageKey: string;
+}
+
+interface GanttPersistedState {
+    sorting: SortingState;
+    columnSizing: Record<string, number>;
+    tablePanelSize: number | null;
 }
 
 /**
@@ -146,6 +155,7 @@ export const EastChakraGantt = memo(function EastChakraGantt({
     enableColumnResizing = true,
     onEventClick,
     tablePanelSize: tablePanelSizeProp,
+    storageKey,
 }: EastChakraGanttProps) {
     const props = useMemo(() => toChakraTableRoot(value), [value]);
     const styleHeight = useMemo(() => {
@@ -315,8 +325,18 @@ export const EastChakraGantt = memo(function EastChakraGantt({
         });
     }, [value.columns, columnHelper]);
 
-    // Sorting state
-    const [sorting, setSorting] = useState<SortingState>([]);
+    // Consolidated persisted state (sorting + column sizing + splitter)
+    const { state: persistedState, setState: setPersistedState } = usePersistedState<GanttPersistedState>(
+        storageKey,
+        { sorting: [], columnSizing: {}, tablePanelSize: null },
+    );
+    const sorting = useMemo(() => persistedState.sorting, [persistedState.sorting]);
+    const setSorting = useCallback((updater: SortingState | ((prev: SortingState) => SortingState)) => {
+        setPersistedState(prev => ({
+            ...prev,
+            sorting: typeof updater === 'function' ? updater(prev.sorting) : updater,
+        }));
+    }, [setPersistedState]);
 
     // Handle sorting changes and notify parent
     const handleSortingChange = useCallback(
@@ -345,7 +365,7 @@ export const EastChakraGantt = memo(function EastChakraGantt({
                 return newSorting;
             });
         },
-        [onSortChange, onSortChangeFn]
+        [onSortChange, onSortChangeFn, setSorting]
     );
 
     // Handle cell click
@@ -546,8 +566,27 @@ export const EastChakraGantt = memo(function EastChakraGantt({
         return { type: durationStepValue.type as "minutes" | "hours" | "days" | "weeks" | "months", value: durationStepValue.value };
     }, [durationStepValue]);
 
-    // Column sizing state
-    const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
+    // Column sizing (derived from persisted state)
+    const columnSizing = useMemo(() => persistedState.columnSizing, [persistedState.columnSizing]);
+    const setColumnSizing = useCallback((updater: Record<string, number> | ((prev: Record<string, number>) => Record<string, number>)) => {
+        setPersistedState(prev => ({
+            ...prev,
+            columnSizing: typeof updater === 'function' ? updater(prev.columnSizing) : updater,
+        }));
+    }, [setPersistedState]);
+
+    // Effective table panel size: persisted > prop > calculated
+    const effectiveTablePanelSize = useMemo(
+        () => persistedState.tablePanelSize ?? tablePanelSize,
+        [persistedState.tablePanelSize, tablePanelSize],
+    );
+
+    // Persist splitter resize
+    const handleSplitterResize = useCallback((details: { size: number[] }) => {
+        if (details.size[0] !== undefined) {
+            setPersistedState(prev => ({ ...prev, tablePanelSize: details.size[0]! }));
+        }
+    }, [setPersistedState]);
 
     // Create table instance
     const table = useReactTable({
@@ -669,10 +708,11 @@ export const EastChakraGantt = memo(function EastChakraGantt({
             overflow="hidden"
         >
         <Splitter.Root
-            defaultSize={[tablePanelSize, 100 - tablePanelSize]}
+            defaultSize={[effectiveTablePanelSize, 100 - effectiveTablePanelSize]}
             panels={panels}
             width="100%"
             height="100%"
+            onResizeEnd={handleSplitterResize}
         >
             {/* Table Panel */}
             <Splitter.Panel id="table">
@@ -937,7 +977,7 @@ export const EastChakraGantt = memo(function EastChakraGantt({
                                                         onClick={cellClickHandler}
                                                         onDoubleClick={cellDoubleClickHandler}
                                                     >
-                                                        <EastChakraComponent value={rendered} />
+                                                        <EastChakraComponent value={rendered} storageKey={`${storageKey}.render.${cell.column.id}`} />
                                                     </ChakraTable.Cell>
                                                 );
                                             }
@@ -951,7 +991,7 @@ export const EastChakraGantt = memo(function EastChakraGantt({
                                                         onClick={cellClickHandler}
                                                         onDoubleClick={cellDoubleClickHandler}
                                                     >
-                                                        <EastChakraComponent value={cellContent} />
+                                                        <EastChakraComponent value={cellContent} storageKey={`${storageKey}.cell.${cell.column.id}`} />
                                                     </ChakraTable.Cell>
                                                 );
                                             }

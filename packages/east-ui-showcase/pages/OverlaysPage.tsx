@@ -10,5 +10,5 @@ import overlaysShowcase from "../showcases/overlays/all";
 const overlaysIR = overlaysShowcase.toIR();
 
 export function OverlaysPage() {
-    return <EastFunction ir={overlaysIR} />;
+    return <EastFunction ir={overlaysIR} storageKey="overlays" />;
 }

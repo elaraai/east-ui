@@ -62,19 +62,20 @@ export function toChakraStack(value: StackValue): StackProps {
 
 export interface EastChakraStackProps {
     value: StackValue;
+    storageKey: string;
 }
 
 /**
  * Renders an East UI Stack value using Chakra UI Stack component.
  */
-export const EastChakraStack = memo(function EastChakraStack({ value }: EastChakraStackProps) {
+export const EastChakraStack = memo(function EastChakraStack({ value, storageKey }: EastChakraStackProps) {
     const props = useMemo(() => toChakraStack(value), [value]);
 
     return (
         <ChakraStack {...props}>
             {value.children.map((child, index) => (
-                <EastChakraComponent key={index} value={child} />
+                <EastChakraComponent key={index} value={child} storageKey={`${storageKey}.${index}`} />
             ))}
         </ChakraStack>
     );
-}, (prev, next) => stackEqual(prev.value, next.value));
+}, (prev, next) => stackEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

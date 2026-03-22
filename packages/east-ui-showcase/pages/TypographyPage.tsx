@@ -10,5 +10,5 @@ import typographyShowcase from "../showcases/typography/all";
 const typographyIR = typographyShowcase.toIR();
 
 export function TypographyPage() {
-    return <EastFunction ir={typographyIR} />;
+    return <EastFunction ir={typographyIR} storageKey="typography" />;
 }

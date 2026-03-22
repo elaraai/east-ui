@@ -39,12 +39,13 @@ export function toChakraCard(value: CardValue): CardRootProps {
 
 export interface EastChakraCardProps {
     value: CardValue;
+    storageKey: string;
 }
 
 /**
  * Renders an East UI Card value using Chakra UI Card component.
  */
-export const EastChakraCard = memo(function EastChakraCard({ value }: EastChakraCardProps) {
+export const EastChakraCard = memo(function EastChakraCard({ value, storageKey }: EastChakraCardProps) {
     const props = useMemo(() => toChakraCard(value), [value]);
     const header = useMemo(() => getSomeorUndefined(value.header), [value.header]);
     const footer = useMemo(() => getSomeorUndefined(value.footer), [value.footer]);
@@ -53,19 +54,19 @@ export const EastChakraCard = memo(function EastChakraCard({ value }: EastChakra
         <ChakraCard.Root {...props}>
             {header && (
                 <ChakraCard.Header>
-                    <EastChakraComponent value={header} />
+                    <EastChakraComponent value={header} storageKey={`${storageKey}.header`} />
                 </ChakraCard.Header>
             )}
             <ChakraCard.Body>
                 {value.body.map((child, index) => (
-                    <EastChakraComponent key={index} value={child} />
+                    <EastChakraComponent key={index} value={child} storageKey={`${storageKey}.${index}`} />
                 ))}
             </ChakraCard.Body>
             {footer && (
                 <ChakraCard.Footer>
-                    <EastChakraComponent value={footer} />
+                    <EastChakraComponent value={footer} storageKey={`${storageKey}.footer`} />
                 </ChakraCard.Footer>
             )}
         </ChakraCard.Root>
     );
-}, (prev, next) => cardEqual(prev.value, next.value));
+}, (prev, next) => cardEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

@@ -4,6 +4,7 @@
  */
 
 import { memo, useMemo, useCallback } from "react";
+import { usePersistedState } from "../../hooks/usePersistedState";
 import {
     Carousel as ChakraCarousel,
     type CarouselRootProps,
@@ -48,14 +49,20 @@ export function toChakraCarousel(value: CarouselValue): CarouselRootProps {
     };
 }
 
+interface CarouselPersistedState {
+    currentPage: number;
+}
+
 export interface EastChakraCarouselProps {
     value: CarouselValue;
+    /** Storage key for persisting current slide in localStorage. Omit for ephemeral state. */
+    storageKey: string;
 }
 
 /**
  * Renders an East UI Carousel value using Chakra UI Carousel components.
  */
-export const EastChakraCarousel = memo(function EastChakraCarousel({ value }: EastChakraCarouselProps) {
+export const EastChakraCarousel = memo(function EastChakraCarousel({ value, storageKey }: EastChakraCarouselProps) {
     const props = useMemo(() => toChakraCarousel(value), [value]);
     const showControls = getSomeorUndefined(value.showControls) ?? true;
     const showIndicators = getSomeorUndefined(value.showIndicators) ?? true;
@@ -64,18 +71,34 @@ export const EastChakraCarousel = memo(function EastChakraCarousel({ value }: Ea
         return style ? getSomeorUndefined(style.onIndexChange) : undefined;
     }, [value.style]);
 
+    const defaultPage = useMemo(() => {
+        const idx = getSomeorUndefined(value.defaultIndex);
+        return idx !== undefined ? Number(idx) : 0;
+    }, [value.defaultIndex]);
+
+    const { state: persistedState, setState: setPersistedState } = usePersistedState<CarouselPersistedState>(
+        storageKey,
+        { currentPage: defaultPage },
+    );
+
     const handlePageChange = useCallback((details: { page: number }) => {
+        setPersistedState(prev => ({ ...prev, currentPage: details.page }));
         if (onIndexChangeFn) {
             queueMicrotask(() => onIndexChangeFn(BigInt(details.page)));
         }
-    }, [onIndexChangeFn]);
+    }, [onIndexChangeFn, setPersistedState]);
+
+    const effectivePage = useMemo(
+        () => persistedState.currentPage,
+        [persistedState.currentPage],
+    );
 
     return (
-        <ChakraCarousel.Root {...props} onPageChange={onIndexChangeFn ? handlePageChange : undefined}>
+        <ChakraCarousel.Root {...props} page={effectivePage} onPageChange={handlePageChange}>
             <ChakraCarousel.ItemGroup>
                 {value.items.map((item, index) => (
                     <ChakraCarousel.Item key={index} index={index}>
-                        <EastChakraComponent value={item} />
+                        <EastChakraComponent value={item} storageKey={`${storageKey}.${index}`} />
                     </ChakraCarousel.Item>
                 ))}
             </ChakraCarousel.ItemGroup>
@@ -112,4 +135,4 @@ export const EastChakraCarousel = memo(function EastChakraCarousel({ value }: Ea
             )}
         </ChakraCarousel.Root>
     );
-}, (prev, next) => carouselRootEqual(prev.value, next.value));
+}, (prev, next) => carouselRootEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

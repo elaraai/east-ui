@@ -10,5 +10,5 @@ import stateShowcase from "../showcases/platform/state";
 const stateIR = stateShowcase.toIR();
 
 export function PlatformPage() {
-    return <EastFunction ir={stateIR} />;
+    return <EastFunction ir={stateIR} storageKey="platform" />;
 }

@@ -10,5 +10,5 @@ import feedbackShowcase from "../showcases/feedback/all";
 const feedbackIR = feedbackShowcase.toIR();
 
 export function FeedbackPage() {
-    return <EastFunction ir={feedbackIR} />;
+    return <EastFunction ir={feedbackIR} storageKey="feedback" />;
 }
