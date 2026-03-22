@@ -3,18 +3,18 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo, useRef, useState, useEffect, useCallback } from "react";
+import { memo, useMemo, useRef, useState, useEffect, useCallback, type CSSProperties } from "react";
+import { usePersistedState } from "../../hooks/usePersistedState";
 import {
     Table as ChakraTable,
     Box,
     HStack,
     Text,
-    IconButton,
     Skeleton,
     type TableRootProps,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronUp, faChevronDown, faAnglesDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronUp, faChevronDown, faAnglesDown, faThumbtack } from "@fortawesome/free-solid-svg-icons";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import {
     useReactTable,
@@ -117,6 +117,14 @@ export interface EastChakraTableProps {
     loadingDelay?: number;
     /** Enable column resizing */
     enableColumnResizing?: boolean;
+    /** Storage key for persisting sort/column state in localStorage. Omit for ephemeral state. */
+    storageKey: string;
+}
+
+interface TablePersistedState {
+    sorting: SortingState;
+    columnSizing: Record<string, number>;
+    pinnedColumns: string[];
 }
 
 /**
@@ -137,6 +145,7 @@ export const EastChakraTable = memo(function EastChakraTable({
     maxSortColumns = 5,
     loadingDelay = 200,
     enableColumnResizing = true,
+    storageKey,
 }: EastChakraTableProps) {
     const props = useMemo(() => toChakraTableRoot(value), [value]);
     const styleHeight = useMemo(() => {
@@ -218,8 +227,18 @@ export const EastChakraTable = memo(function EastChakraTable({
         });
     }, [value.columns, columnHelper]);
 
-    // Sorting state
-    const [sorting, setSorting] = useState<SortingState>([]);
+    // Consolidated persisted state (sorting + column sizing)
+    const { state: persistedState, setState: setPersistedState } = usePersistedState<TablePersistedState>(
+        storageKey,
+        { sorting: [], columnSizing: {}, pinnedColumns: [...value.frozen] },
+    );
+    const sorting = useMemo(() => persistedState.sorting, [persistedState.sorting]);
+    const setSorting = useCallback((updater: SortingState | ((prev: SortingState) => SortingState)) => {
+        setPersistedState(prev => ({
+            ...prev,
+            sorting: typeof updater === 'function' ? updater(prev.sorting) : updater,
+        }));
+    }, [setPersistedState]);
 
     // Row selection state
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -291,7 +310,7 @@ export const EastChakraTable = memo(function EastChakraTable({
 
             return newSorting;
         });
-    }, [onSortChange, onSortChangeFn]);
+    }, [onSortChange, onSortChangeFn, setSorting]);
 
     // Handle cell click
     const handleCellClick = useCallback((rowIndex: bigint, columnKey: string, cellValue: TableCellValue | undefined) => {
@@ -321,8 +340,35 @@ export const EastChakraTable = memo(function EastChakraTable({
         }
     }, [onRowDoubleClickFn]);
 
-    // Column sizing state
-    const [columnSizing, setColumnSizing] = useState<Record<string, number>>({});
+    // Column sizing (derived from persisted state)
+    const columnSizing = useMemo(() => persistedState.columnSizing, [persistedState.columnSizing]);
+    const setColumnSizing = useCallback((updater: Record<string, number> | ((prev: Record<string, number>) => Record<string, number>)) => {
+        setPersistedState(prev => ({
+            ...prev,
+            columnSizing: typeof updater === 'function' ? updater(prev.columnSizing) : updater,
+        }));
+    }, [setPersistedState]);
+
+    // Column pinning: merge East-defined frozen with user-persisted pins
+    const pinnedColumns = useMemo(() => persistedState.pinnedColumns ?? [...value.frozen], [persistedState.pinnedColumns, value.frozen]);
+    const columnPinning = useMemo(() => ({
+        left: pinnedColumns,
+        right: [] as string[],
+    }), [pinnedColumns]);
+    const hasFrozen = pinnedColumns.length > 0;
+
+    const toggleColumnPin = useCallback((columnId: string) => {
+        setPersistedState(prev => {
+            const current = prev.pinnedColumns ?? [...value.frozen];
+            const isPinned = current.includes(columnId);
+            return {
+                ...prev,
+                pinnedColumns: isPinned
+                    ? current.filter(id => id !== columnId)
+                    : [...current, columnId],
+            };
+        });
+    }, [setPersistedState, value.frozen]);
 
     // Create table instance
     const table = useReactTable({
@@ -332,6 +378,7 @@ export const EastChakraTable = memo(function EastChakraTable({
             sorting,
             columnSizing,
             rowSelection,
+            columnPinning,
         },
         onSortingChange: handleSortingChange,
         onColumnSizingChange: setColumnSizing,
@@ -344,6 +391,7 @@ export const EastChakraTable = memo(function EastChakraTable({
         enableColumnResizing,
         columnResizeMode: 'onChange' as ColumnResizeMode,
         enableRowSelection: true,
+        enableColumnPinning: true,
     });
 
     // Get sorted rows from table
@@ -419,138 +467,126 @@ export const EastChakraTable = memo(function EastChakraTable({
         return idx >= 0 ? idx + 1 : undefined;
     }, [sorting]);
 
+    // Total width of pinned columns (for table min-width when frozen)
+    const frozenPanelWidth = useMemo(() => {
+        if (!hasFrozen) return 0;
+        return table.getLeftLeafColumns().reduce((sum, col) => sum + col.getSize(), 0);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [hasFrozen, table.getState().columnSizing, table.getState().columnSizingInfo]);
+
+    // ── TanStack pinning styles (applied per-cell) ────────────────────
+
+    const getCommonPinningStyles = (column: ReturnType<typeof table.getAllColumns>[number]): CSSProperties => {
+        const isPinned = column.getIsPinned();
+        const isLastLeftPinnedColumn = isPinned === 'left' && column.getIsLastColumn('left');
+
+        return {
+            borderRight: isLastLeftPinnedColumn ? '2px solid var(--chakra-colors-border, #e2e8f0)' : undefined,
+            left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
+            right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
+            position: isPinned ? 'sticky' : 'relative',
+            width: column.getSize(),
+            zIndex: isPinned ? 1 : 0,
+            backgroundColor: isPinned ? 'var(--chakra-colors-bg-panel, white)' : undefined,
+        };
+    };
+
     return (
         <Box
             ref={tableContainerRef}
             height={styleHeight ?? height}
             overflowY="auto"
+            overflowX={hasFrozen ? 'auto' : undefined}
             position="relative"
         >
             <ChakraTable.Root
                 {...props}
                 style={{
                     ...columnSizeVars,
-                    width: '100%',
-                    minWidth: table.getCenterTotalSize(),
+                    width: hasFrozen ? table.getCenterTotalSize() + frozenPanelWidth : '100%',
+                    minWidth: hasFrozen ? table.getCenterTotalSize() + frozenPanelWidth : table.getCenterTotalSize(),
                     tableLayout: 'fixed',
                 }}
             >
-                <ChakraTable.Header style={{ display: 'block' }} position="sticky" top={0} zIndex={1} bg="bg.panel">
+                <ChakraTable.Header style={{ display: 'block' }} position="sticky" top={0} zIndex={2} bg="bg.panel">
                     {table.getHeaderGroups().map(headerGroup => (
                         <ChakraTable.Row key={headerGroup.id} style={{ display: 'flex', width: '100%' }}>
                             {headerGroup.headers.map((header) => {
                                 const sortIndex = getSortIndex(header.id);
                                 const isSorted = header.column.getIsSorted();
                                 const sortDirection = isSorted || null;
-
-                                const icon = !isSorted ? faAnglesDown
-                                    : sortDirection === 'asc' ? faChevronUp
-                                        : faChevronDown;
+                                const icon = !isSorted ? faAnglesDown : sortDirection === 'asc' ? faChevronUp : faChevronDown;
+                                const pinningStyles = hasFrozen ? getCommonPinningStyles(header.column) : {};
+                                const isPinned = header.column.getIsPinned();
 
                                 return (
                                     <ChakraTable.ColumnHeader
                                         key={header.id}
-                                        cursor={header.column.getCanSort() ? "pointer" : "default"}
-                                        _hover={header.column.getCanSort() ? { bg: 'bg.muted' } : {}}
-                                        onClick={header.column.getToggleSortingHandler()}
+                                        _hover={{ bg: 'bg.muted' }}
                                         transition="background 0.2s"
                                         style={{
                                             width: `var(--header-${header.id}-size)`,
-                                            flex: (columnSizing[header.id] || header.column.columnDef.meta?.width) ? 'none' : 1,
+                                            flex: hasFrozen ? 'none' : (columnSizing[header.id] || header.column.columnDef.meta?.width) ? 'none' : 1,
+                                            ...pinningStyles,
+                                            zIndex: isPinned ? 3 : undefined,
                                         }}
-                                        position="relative"
+                                        position={isPinned ? "sticky" : "relative"}
                                     >
-                                        <HStack justify="space-between" width="100%" pr={enableColumnResizing ? "8px" : "0"}>
-                                            <Text
-                                                fontSize="sm"
-                                                fontWeight="semibold"
-                                                overflow="hidden"
-                                                textOverflow="ellipsis"
-                                                whiteSpace="nowrap"
-                                                flex="1"
-                                            >
-                                                {header.isPlaceholder ? null : flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext()
-                                                )}
+                                        <HStack justify="space-between" width="100%" pr={enableColumnResizing ? "4px" : "0"}>
+                                            <Text fontSize="sm" fontWeight="semibold" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap" flex="1">
+                                                {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                             </Text>
-                                            <HStack gap={1} flexShrink={0}>
+                                            <HStack gap={0} flexShrink={0} alignItems="center">
+                                                {/* Pin toggle — always visible */}
+                                                <Box
+                                                    as="button"
+                                                    aria-label={isPinned ? `Unpin ${header.id}` : `Pin ${header.id}`}
+                                                    onClick={(e: React.MouseEvent) => { e.stopPropagation(); toggleColumnPin(header.id); }}
+                                                    color={isPinned ? "fg.default" : "fg.muted"}
+                                                    _hover={{ color: "fg.default", bg: "bg.emphasized" }}
+                                                    transition="color 0.15s"
+                                                    cursor="pointer"
+                                                    display="flex"
+                                                    alignItems="center"
+                                                    justifyContent="center"
+                                                    w="24px" h="24px"
+                                                    borderRadius="sm"
+                                                >
+                                                    <FontAwesomeIcon icon={faThumbtack} style={{ width: '10px', height: '10px', transform: isPinned ? undefined : 'rotate(45deg)' }} />
+                                                </Box>
+                                                {/* Sort button */}
                                                 {header.column.getCanSort() && (
-                                                    <IconButton
+                                                    <Box
+                                                        as="button"
                                                         aria-label={`Sort by ${header.id}`}
-                                                        size="xs"
-                                                        variant="ghost"
+                                                        onClick={(e: React.MouseEvent) => { e.stopPropagation(); header.column.toggleSorting(undefined, enableMultiSort); }}
                                                         color={isSorted ? "fg.default" : "fg.muted"}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            header.column.toggleSorting(undefined, enableMultiSort);
-                                                        }}
-                                                        _hover={{
-                                                            bg: 'bg.muted',
-                                                            color: "fg.default"
-                                                        }}
+                                                        _hover={{ color: "fg.default", bg: "bg.emphasized" }}
+                                                        cursor="pointer"
+                                                        display="flex"
+                                                        alignItems="center"
+                                                        justifyContent="center"
+                                                        w="24px" h="24px"
+                                                        borderRadius="sm"
                                                         position="relative"
-                                                        px="0"
-                                                        minW="auto"
                                                     >
-                                                        <FontAwesomeIcon icon={icon} style={{ width: '12px', height: '12px' }} />
-                                                        {isSorted && sortIndex && (
-                                                            <Box
-                                                                position="absolute"
-                                                                top="-2px"
-                                                                right="-2px"
-                                                                bg="fg.muted"
-                                                                color="bg.panel"
-                                                                borderRadius="full"
-                                                                width="12px"
-                                                                height="12px"
-                                                                display="flex"
-                                                                alignItems="center"
-                                                                justifyContent="center"
-                                                                fontSize="8px"
-                                                                fontWeight="bold"
-                                                            >
+                                                        <FontAwesomeIcon icon={icon} style={{ width: '10px', height: '10px' }} />
+                                                        {isSorted && sortIndex && enableMultiSort && (
+                                                            <Text fontSize="7px" fontWeight="bold" color="fg.muted" lineHeight="1" position="absolute" top="4px" right="4px">
                                                                 {sortIndex}
-                                                            </Box>
+                                                            </Text>
                                                         )}
-                                                    </IconButton>
+                                                    </Box>
                                                 )}
                                             </HStack>
                                         </HStack>
-
-                                        {/* Column Resize Handle */}
                                         {enableColumnResizing && header.column.getCanResize() && (
                                             <Box
-                                                position="absolute"
-                                                right="0"
-                                                top="0"
-                                                bottom="0"
-                                                width="8px"
-                                                cursor="col-resize"
-                                                bg="transparent"
-                                                _hover={{
-                                                    _before: {
-                                                        opacity: 1,
-                                                        bg: 'fg.muted'
-                                                    }
-                                                }}
-                                                transition="all 0.2s"
-                                                zIndex={10}
-                                                onMouseDown={header.getResizeHandler()}
-                                                onTouchStart={header.getResizeHandler()}
-                                                _before={{
-                                                    content: '""',
-                                                    position: 'absolute',
-                                                    right: '2px',
-                                                    top: '50%',
-                                                    transform: 'translateY(-50%)',
-                                                    width: '2px',
-                                                    height: '16px',
-                                                    bg: 'gray.300',
-                                                    borderRadius: '1px',
-                                                    opacity: 0.4,
-                                                    transition: 'opacity 0.2s'
-                                                }}
+                                                position="absolute" right="0" top="0" bottom="0" width="8px" cursor="col-resize" bg="transparent"
+                                                _hover={{ _before: { opacity: 1, bg: 'fg.muted' } }}
+                                                transition="all 0.2s" zIndex={10}
+                                                onMouseDown={header.getResizeHandler()} onTouchStart={header.getResizeHandler()}
+                                                _before={{ content: '""', position: 'absolute', right: '2px', top: '50%', transform: 'translateY(-50%)', width: '2px', height: '16px', bg: 'gray.300', borderRadius: '1px', opacity: 0.4, transition: 'opacity 0.2s' }}
                                             />
                                         )}
                                     </ChakraTable.ColumnHeader>
@@ -574,7 +610,6 @@ export const EastChakraTable = memo(function EastChakraTable({
                         const rowKey = virtualRow.index;
                         const rowState = rowStates.get(rowKey) || { status: 'unloaded' };
                         const isRowLoading = !rowStateManager.isRowLoaded(rowKey) || rowState.status === 'loading';
-
                         const rowIndex = BigInt(row.index);
 
                         return (
@@ -597,13 +632,15 @@ export const EastChakraTable = memo(function EastChakraTable({
                                     const cellValue = cell.getValue() as TableCellValue | undefined;
                                     const meta = cell.column.columnDef.meta;
                                     const columnKey = meta?.columnKey ?? cell.column.id;
+                                    const pinningStyles = hasFrozen ? getCommonPinningStyles(cell.column) : {};
 
                                     const cellStyle: React.CSSProperties = {
                                         width: `var(--col-${cell.column.id}-size)`,
-                                        flex: (columnSizing[cell.column.id] || meta?.width) ? 'none' : 1,
+                                        flex: hasFrozen ? 'none' : (columnSizing[cell.column.id] || meta?.width) ? 'none' : 1,
                                         display: 'flex',
                                         alignItems: 'center',
                                         overflow: 'hidden',
+                                        ...pinningStyles,
                                     };
 
                                     const cellClickHandler = onCellClickFn ? (e: React.MouseEvent) => {
@@ -649,7 +686,7 @@ export const EastChakraTable = memo(function EastChakraTable({
                                                 onClick={cellClickHandler}
                                                 onDoubleClick={cellDoubleClickHandler}
                                             >
-                                                <EastChakraComponent value={rendered} />
+                                                <EastChakraComponent value={rendered} storageKey={`${storageKey}.render.${cell.column.id}`} />
                                             </ChakraTable.Cell>
                                         );
                                     }
@@ -664,7 +701,7 @@ export const EastChakraTable = memo(function EastChakraTable({
                                                 onClick={cellClickHandler}
                                                 onDoubleClick={cellDoubleClickHandler}
                                             >
-                                                <EastChakraComponent value={cellContent} />
+                                                <EastChakraComponent value={cellContent} storageKey={`${storageKey}.cell.${cell.column.id}`} />
                                             </ChakraTable.Cell>
                                         );
                                     }

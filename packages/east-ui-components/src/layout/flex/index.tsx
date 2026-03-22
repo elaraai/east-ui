@@ -67,19 +67,20 @@ export function toChakraFlex(value: FlexValue): FlexProps {
 
 export interface EastChakraFlexProps {
     value: FlexValue;
+    storageKey: string;
 }
 
 /**
  * Renders an East UI Flex value using Chakra UI Flex component.
  */
-export const EastChakraFlex = memo(function EastChakraFlex({ value }: EastChakraFlexProps) {
+export const EastChakraFlex = memo(function EastChakraFlex({ value, storageKey }: EastChakraFlexProps) {
     const props = useMemo(() => toChakraFlex(value), [value]);
 
     return (
         <ChakraFlex {...props}>
             {value.children.map((child, index) => (
-                <EastChakraComponent key={index} value={child} />
+                <EastChakraComponent key={index} value={child} storageKey={`${storageKey}.${index}`} />
             ))}
         </ChakraFlex>
     );
-}, (prev, next) => flexEqual(prev.value, next.value));
+}, (prev, next) => flexEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

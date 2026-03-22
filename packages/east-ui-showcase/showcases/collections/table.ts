@@ -4,7 +4,7 @@
  */
 
 import { East, some, StringType, NullType } from "@elaraai/east";
-import { Table, UIComponentType, Grid, Badge, State, Reactive, Stack, Text, Tag } from "@elaraai/east-ui";
+import { Table, UIComponentType, Grid, Badge, State, Reactive, Stack, Text, Tag, Box } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
 /**
@@ -160,7 +160,7 @@ export default East.function(
                 "Custom Render",
                 "Using Badge for status column",
                 Table.Root(
-                    East.Array.range(0n, 1000n).map(($, i) => ({
+                    East.Array.range(0n, 1000n).map((_$, i) => ({
                         name: East.str`User ${i}`,
                         email: East.str`user${i}@example.com`,
                         status: "Active",
@@ -173,8 +173,8 @@ export default East.function(
                             render: East.function(
                                 [Table.Types.CellRenderContext],
                                 UIComponentType,
-                                ($, ctx) => Badge.Root(
-                                    ctx.cellValue.match({ String: (_$, v) => v }, _$ => ""),
+                                (_$, ctx) => Badge.Root(
+                                    ctx.cellValue.match({ String: (_$2, v) => v }, _$2 => ""),
                                     { variant: "solid", colorPalette: "blue" }
                                 )
                             ),
@@ -279,7 +279,7 @@ export default East.function(
                                 ($, ctx) => {
                                     const row = $.let(complexData.get(ctx.rowIndex));
                                     return Stack.HStack(
-                                        row.skills.map(($, s) => Badge.Root(s, { variant: "subtle", colorPalette: "blue" })),
+                                        row.skills.map((_$, s) => Badge.Root(s, { variant: "subtle", colorPalette: "blue" })),
                                         { gap: "1", wrap: "wrap" }
                                     );
                                 }
@@ -315,7 +315,7 @@ export default East.function(
                                     ($, ctx) => {
                                         const row = $.let(data.get(ctx.rowIndex));
                                         return Stack.HStack(
-                                            row.skills.map(($, s) => Badge.Root(s, { variant: "subtle", colorPalette: "blue" })),
+                                            row.skills.map((_$, s) => Badge.Root(s, { variant: "subtle", colorPalette: "blue" })),
                                             { gap: "1", wrap: "wrap" }
                                         );
                                     }
@@ -359,8 +359,8 @@ export default East.function(
                             render: East.function(
                                 [Table.Types.CellRenderContext],
                                 UIComponentType,
-                                ($, ctx) => Badge.Root(
-                                    ctx.cellValue.match({ String: (_$, v) => v }, _$ => ""),
+                                (_$, ctx) => Badge.Root(
+                                    ctx.cellValue.match({ String: (_$2, v) => v }, _$2 => ""),
                                     { variant: "solid" }
                                 )
                             ),
@@ -419,14 +419,14 @@ export default East.function(
                             header: "Metrics",
                             width: "400px",
                             maxWidth: "400px",
-                            value: (val) => val.map(($, value) => value).mean(),
+                            value: (val) => val.map((_$, value) => value).mean(),
                             render: East.function(
                                 [Table.Types.CellRenderContext],
                                 UIComponentType,
                                 ($, ctx) => {
                                     const row = $.let(metricsData.get(ctx.rowIndex));
                                     return Stack.HStack(
-                                        row.metrics.map(($, value, key) => Tag.Root(East.str`${key}: ${value}`)).toArray(),
+                                        row.metrics.map((_$, value, key) => Tag.Root(East.str`${key}: ${value}`)).toArray(),
                                         { wrap: "wrap", gap: "1" }
                                     );
                                 }
@@ -688,6 +688,63 @@ export default East.function(
             )
         );
 
+        // Frozen Columns
+        const frozenColumns = $.let(
+            ShowcaseCard(
+                "Frozen Columns",
+                "Pin columns left so they stay visible during horizontal scroll. Container is 600px wide to force horizontal scroll.",
+                Box.Root([Table.Root(
+                    East.Array.range(0n, 20n).map((_$, i) => ({
+                        id: East.str`#${i}`,
+                        name: East.str`User ${i}`,
+                        email: East.str`user${i}@example.com`,
+                        dept: "Engineering",
+                        role: "Developer",
+                        location: "Remote",
+                        status: "Active",
+                        score: i.multiply(7n),
+                    })),
+                    {
+                        id: { header: "ID", width: "80px" },
+                        name: { header: "Name", width: "150px" },
+                        email: { header: "Email", width: "250px" },
+                        dept: { header: "Department", width: "150px" },
+                        role: { header: "Role", width: "150px" },
+                        location: { header: "Location", width: "150px" },
+                        status: { header: "Status", width: "120px" },
+                        score: { header: "Score", width: "100px" },
+                    },
+                    {
+                        frozen: ["id", "name"],
+                        variant: "line",
+                        striped: true,
+                        height: "400px",
+                    }
+                )], { width: "600px", overflow: "hidden" }),
+                some(`
+                    Table.Root(
+                        data,
+                        {
+                            id: { header: "ID", width: "80px" },
+                            name: { header: "Name", width: "150px" },
+                            email: { header: "Email", width: "250px" },
+                            dept: { header: "Department", width: "150px" },
+                            role: { header: "Role", width: "150px" },
+                            location: { header: "Location", width: "150px" },
+                            status: { header: "Status", width: "120px" },
+                            score: { header: "Score", width: "100px" },
+                        },
+                        {
+                            frozen: ["id", "name"],
+                            variant: "line",
+                            striped: true,
+                            height: "400px",
+                        }
+                    )
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -702,6 +759,8 @@ export default East.function(
                 Grid.Item(columnRenderWithRow, { colSpan: "2" }),
                 // Wrapping tags example
                 Grid.Item(wrappingTags, { colSpan: "2" }),
+                // Frozen columns
+                Grid.Item(frozenColumns, { colSpan: "2" }),
                 // Interactive example with all callbacks
                 Grid.Item(interactiveCallbacks, { colSpan: "2" }),
                 // Custom height

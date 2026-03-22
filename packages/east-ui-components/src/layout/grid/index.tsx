@@ -75,12 +75,13 @@ export function toChakraGrid(value: GridValue): GridProps {
 
 export interface EastChakraGridProps {
     value: GridValue;
+    storageKey: string;
 }
 
 /**
  * Renders an East UI Grid value using Chakra UI Grid component.
  */
-export const EastChakraGrid = memo(function EastChakraGrid({ value }: EastChakraGridProps) {
+export const EastChakraGrid = memo(function EastChakraGrid({ value, storageKey }: EastChakraGridProps) {
     const props = useMemo(() => toChakraGrid(value), [value]);
 
     return (
@@ -95,9 +96,9 @@ export const EastChakraGrid = memo(function EastChakraGrid({ value }: EastChakra
                     rowStart={parseGridPosition(getSomeorUndefined(item.rowStart))}
                     rowEnd={parseGridPosition(getSomeorUndefined(item.rowEnd))}
                 >
-                    <EastChakraComponent value={item.content} />
+                    <EastChakraComponent value={item.content} storageKey={`${storageKey}.${index}`} />
                 </ChakraGridItem>
             ))}
         </ChakraGrid>
     );
-}, (prev, next) => gridEqual(prev.value, next.value));
+}, (prev, next) => gridEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

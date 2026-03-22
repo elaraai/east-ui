@@ -18,18 +18,19 @@ export type StatValue = ValueTypeOf<typeof Stat.Types.Stat>;
 
 export interface EastChakraStatProps {
     value: StatValue;
+    storageKey: string;
 }
 
 /**
  * Renders an East UI Stat value using Chakra UI Stat component.
  */
-export const EastChakraStat = memo(function EastChakraStat({ value }: EastChakraStatProps) {
+export const EastChakraStat = memo(function EastChakraStat({ value, storageKey }: EastChakraStatProps) {
     const helpText = useMemo(() => getSomeorUndefined(value.helpText), [value.helpText]);
     const indicator = useMemo(() => getSomeorUndefined(value.indicator)?.type, [value.indicator]);
     return (
         <ChakraStat.Root>
             <ChakraStat.Label>{value.label}</ChakraStat.Label>
-            <ChakraStat.ValueText><EastChakraComponent value={value.value} /></ChakraStat.ValueText>
+            <ChakraStat.ValueText><EastChakraComponent value={value.value} storageKey={`${storageKey}.value`} /></ChakraStat.ValueText>
             {helpText && (
                 <ChakraStat.HelpText>
                     {indicator && <ChakraStat.UpIndicator />}
@@ -38,4 +39,4 @@ export const EastChakraStat = memo(function EastChakraStat({ value }: EastChakra
             )}
         </ChakraStat.Root>
     );
-}, (prev, next) => statEqual(prev.value, next.value));
+}, (prev, next) => statEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

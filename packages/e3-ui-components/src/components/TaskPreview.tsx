@@ -3,7 +3,8 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useState } from 'react';
+import { memo, useEffect, useRef } from 'react';
+import { usePersistedState } from '@elaraai/east-ui-components';
 import {
     Box,
     Text,
@@ -13,10 +14,15 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCode, faTerminal } from '@fortawesome/free-solid-svg-icons';
 import { TaskLogs } from './TaskLogs.js';
-import { TaskUI } from './TaskUI.js';
+import { DatasetContent } from './DatasetRenderer.js';
+import { useDatasetPreview, useDatasetDownload } from '../hooks/useDatasetPreview.js';
 import type { RequestOptions } from '@elaraai/e3-api-client';
 
 type ViewMode = 'output' | 'logs';
+
+interface TaskPreviewPersistedState {
+    viewMode: ViewMode;
+}
 
 export interface TaskPreviewProps {
     apiUrl: string;
@@ -25,12 +31,10 @@ export interface TaskPreviewProps {
     task: string;
     output: string;
     requestOptions?: RequestOptions;
+    /** Storage key for persisting view mode in localStorage. Defaults to task name. */
+    storageKey?: string;
 }
 
-/**
- * Renders a preview of a task's output and logs.
- * Composes TaskUI/TaskValue for output and TaskLogs for stdout/stderr.
- */
 export const TaskPreview = memo(function TaskPreview({
     apiUrl,
     repo,
@@ -38,12 +42,35 @@ export const TaskPreview = memo(function TaskPreview({
     task,
     output,
     requestOptions,
+    storageKey,
 }: TaskPreviewProps) {
-    const [viewMode, setViewMode] = useState<ViewMode>('output');
+    const preview = useDatasetPreview(apiUrl, repo, workspace, output, {
+        ...(requestOptions != null && { requestOptions }),
+    });
+    const download = useDatasetDownload(apiUrl, repo, workspace, output, requestOptions);
+
+    const { state: persistedState, setState: setPersistedState } = usePersistedState<TaskPreviewPersistedState>(
+        storageKey ?? task,
+        { viewMode: 'output' },
+    );
+    const viewMode = persistedState.viewMode;
+    const setViewMode = (mode: ViewMode) => setPersistedState(prev => ({ ...prev, viewMode: mode }));
+
+    // Auto-select tab on first data load: UI → output, non-UI → logs
+    const hasAutoSelected = useRef(false);
+    useEffect(() => {
+        if (hasAutoSelected.current) return;
+        if (preview.state === 'ui') {
+            hasAutoSelected.current = true;
+            setViewMode('output');
+        } else if (preview.state === 'value' || preview.state === 'oversized' || preview.state === 'error') {
+            hasAutoSelected.current = true;
+            setViewMode('logs');
+        }
+    }, [preview.state]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <Box height="100%" display="flex" flexDirection="column" overflow="hidden">
-            {/* Toolbar with view toggle */}
             <Flex
                 px={4}
                 py={2}
@@ -77,18 +104,11 @@ export const TaskPreview = memo(function TaskPreview({
                     </SegmentGroup.Item>
                 </SegmentGroup.Root>
             </Flex>
-
-            {/* Panel content */}
             <Box flex={1} overflow="hidden" minHeight={0}>
                 {viewMode === 'output' ? (
-                    <TaskUI
-                        apiUrl={apiUrl}
-                        repo={repo}
-                        workspace={workspace}
-                        task={task}
-                        output={output}
-                        {...(requestOptions != null && { requestOptions })}
-                    />
+                    <Box height="100%" overflow="hidden" minHeight={0}>
+                        <DatasetContent preview={preview} download={download} datasetPath={output} />
+                    </Box>
                 ) : (
                     <TaskLogs
                         apiUrl={apiUrl}
@@ -101,4 +121,4 @@ export const TaskPreview = memo(function TaskPreview({
             </Box>
         </Box>
     );
-}, (prev, next) => prev.task === next.task && prev.repo === next.repo && prev.workspace === next.workspace && prev.output === next.output);
+}, (prev, next) => prev.task === next.task && prev.repo === next.repo && prev.workspace === next.workspace && prev.output === next.output && prev.storageKey === next.storageKey);

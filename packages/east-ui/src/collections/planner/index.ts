@@ -132,6 +132,7 @@ export type PlannerRowType = typeof PlannerRowType;
 export const PlannerRootType = StructType({
     rows: ArrayType(PlannerRowType),
     columns: ArrayType(TableColumnType),
+    frozen: ArrayType(StringType),
     style: OptionType(PlannerStyleType),
     eventPopover: OptionType(FunctionType([EventPopoverContextType], UIComponentType)),
 });
@@ -335,6 +336,10 @@ type ColumnSpec<T extends SubtypeExprOrValue<ArrayType<StructType>>> =
     | (keyof DataFields<NoInfer<T>>)[]
     | { [K in keyof DataFields<NoInfer<T>>]?: TableColumnConfig<DataFields<NoInfer<T>>[K], DataRowType<NoInfer<T>>> };
 
+// Extract column key strings from a ColumnSpec value
+type ColumnKeys<T extends SubtypeExprOrValue<ArrayType<StructType>>, C extends ColumnSpec<T>> =
+    C extends (infer K)[] ? K & string : C extends object ? Extract<keyof C, string> : string;
+
 // ============================================================================
 // Main Planner Factory
 // ============================================================================
@@ -371,11 +376,14 @@ type ColumnSpec<T extends SubtypeExprOrValue<ArrayType<StructType>>> =
  * });
  * ```
  */
-function createPlanner<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
+function createPlanner<
+    T extends SubtypeExprOrValue<ArrayType<StructType>>,
+    C extends ColumnSpec<T> = ColumnSpec<T>,
+>(
     data: T,
-    columns: ColumnSpec<T>,
+    columns: C,
     events: (row: ExprType<RowElement<T>>) => SubtypeExprOrValue<ArrayType<PlannerEventType>>,
-    style?: PlannerStyle,
+    style?: PlannerStyle<ColumnKeys<T, NoInfer<C>>>,
     eventPopover?: SubtypeExprOrValue<FunctionType<[EventPopoverContextType], UIComponentType>>
 ): ExprType<UIComponentType> {
     const data_expr = East.value(data) as ExprType<ArrayType<StructType>>;
@@ -484,7 +492,17 @@ function createPlanner<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
         });
     }
 
-    const columns_expr = East.value(columns_mapped, ArrayType(TableColumnType));
+    // Reorder columns: frozen first, then the rest
+    const frozenKeys = (style?.frozen ?? []) as string[];
+    const frozenSet = new Set(frozenKeys);
+    const columnsByKey = new Map(columns_mapped.map(c => [(c as any).key as string, c]));
+    const orderedColumns: typeof columns_mapped = [
+        ...frozenKeys.filter(key => columnsByKey.has(key)).map(key => columnsByKey.get(key)!),
+        ...columns_mapped.filter(c => !frozenSet.has((c as any).key as string)),
+    ];
+
+    const columns_expr = East.value(orderedColumns, ArrayType(TableColumnType));
+    const frozen_expr = East.value(frozenKeys, ArrayType(StringType));
 
     // Build style value
     const variantValue = style?.variant
@@ -566,6 +584,7 @@ function createPlanner<T extends SubtypeExprOrValue<ArrayType<StructType>>>(
     return East.value(variant("Planner", {
         rows: rows_mapped,
         columns: columns_expr,
+        frozen: frozen_expr,
         style: styleValue ? some(styleValue) : none,
         eventPopover: eventPopoverExpr,
     }), UIComponentType);

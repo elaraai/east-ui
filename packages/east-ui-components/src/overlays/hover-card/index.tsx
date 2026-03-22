@@ -18,12 +18,13 @@ export type HoverCardValue = ValueTypeOf<typeof HoverCard.Types.HoverCard>;
 
 export interface EastChakraHoverCardProps {
     value: HoverCardValue;
+    storageKey: string;
 }
 
 /**
  * Renders an East UI HoverCard value using Chakra UI HoverCard component.
  */
-export const EastChakraHoverCard = memo(function EastChakraHoverCard({ value }: EastChakraHoverCardProps) {
+export const EastChakraHoverCard = memo(function EastChakraHoverCard({ value, storageKey }: EastChakraHoverCardProps) {
     const style = useMemo(() => getSomeorUndefined(value.style), [value.style]);
     const placement = useMemo(() => style ? getSomeorUndefined(style.placement)?.type : undefined, [style]);
     const size = useMemo(() => style ? getSomeorUndefined(style.size)?.type : undefined, [style]);
@@ -56,7 +57,7 @@ export const EastChakraHoverCard = memo(function EastChakraHoverCard({ value }: 
         >
             <ChakraHoverCard.Trigger asChild>
                 <span>
-                    <EastChakraComponent value={value.trigger} />
+                    <EastChakraComponent value={value.trigger} storageKey={`${storageKey}.trigger`} />
                 </span>
             </ChakraHoverCard.Trigger>
             <Portal>
@@ -64,11 +65,11 @@ export const EastChakraHoverCard = memo(function EastChakraHoverCard({ value }: 
                     <ChakraHoverCard.Content width="fit-content" maxWidth="unset">
                         {hasArrow && <ChakraHoverCard.Arrow />}
                         {value.body.map((child, index) => (
-                            <EastChakraComponent key={index} value={child} />
+                            <EastChakraComponent key={index} value={child} storageKey={`${storageKey}.${index}`} />
                         ))}
                     </ChakraHoverCard.Content>
                 </ChakraHoverCard.Positioner>
             </Portal>
         </ChakraHoverCard.Root>
     );
-}, (prev, next) => hoverCardEqual(prev.value, next.value));
+}, (prev, next) => hoverCardEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

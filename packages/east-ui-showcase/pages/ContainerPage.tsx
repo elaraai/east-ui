@@ -10,5 +10,5 @@ import containerShowcase from "../showcases/container/all";
 const containerIR = containerShowcase.toIR();
 
 export function ContainerPage() {
-    return <EastFunction ir={containerIR} />;
+    return <EastFunction ir={containerIR} storageKey="container" />;
 }

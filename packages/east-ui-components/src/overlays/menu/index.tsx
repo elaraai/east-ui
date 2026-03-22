@@ -21,12 +21,13 @@ export type MenuItemValue = ValueTypeOf<typeof Menu.Types.Item>;
 
 export interface EastChakraMenuProps {
     value: MenuValue;
+    storageKey: string;
 }
 
 /**
  * Renders an East UI Menu value using Chakra UI Menu component.
  */
-export const EastChakraMenu = memo(function EastChakraMenu({ value }: EastChakraMenuProps) {
+export const EastChakraMenu = memo(function EastChakraMenu({ value, storageKey }: EastChakraMenuProps) {
     const placement = useMemo(() => getSomeorUndefined(value.placement)?.type, [value.placement]);
 
     // Note: Menu callbacks (onSelect, onOpenChange) are defined in east-ui MenuStyleType
@@ -37,7 +38,7 @@ export const EastChakraMenu = memo(function EastChakraMenu({ value }: EastChakra
         <ChakraMenu.Root positioning={placement ? { placement } : undefined}>
             <ChakraMenu.Trigger asChild>
                 <span>
-                    <EastChakraComponent value={value.trigger} />
+                    <EastChakraComponent value={value.trigger} storageKey={`${storageKey}.trigger`} />
                 </span>
             </ChakraMenu.Trigger>
             <Portal>
@@ -62,4 +63,4 @@ export const EastChakraMenu = memo(function EastChakraMenu({ value }: EastChakra
             </Portal>
         </ChakraMenu.Root>
     );
-}, (prev, next) => menuEqual(prev.value, next.value));
+}, (prev, next) => menuEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

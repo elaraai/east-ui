@@ -4,6 +4,7 @@
  */
 
 import { memo, useMemo, useCallback } from "react";
+import { usePersistedState } from "../../hooks/usePersistedState";
 import {
     TreeView as ChakraTreeView,
     createTreeCollection,
@@ -61,18 +62,31 @@ function convertNodes(nodes: TreeVariantNodeValue[]): TreeNode[] {
     }));
 }
 
+interface TreeViewPersistedState {
+    expandedValues: string[];
+    selectedValues: string[];
+}
+
 export interface EastChakraTreeViewProps {
     value: TreeViewRootValue;
+    /** Storage key for persisting expanded/selected state in localStorage. Omit for ephemeral state. */
+    storageKey: string;
 }
 
 /**
  * Renders an East UI TreeView value using Chakra UI TreeView components.
  */
-export const EastChakraTreeView = memo(function EastChakraTreeView({ value }: EastChakraTreeViewProps) {
+export const EastChakraTreeView = memo(function EastChakraTreeView({ value, storageKey }: EastChakraTreeViewProps) {
     const style = getSomeorUndefined(value.style);
     const label = getSomeorUndefined(value.label);
     const defaultExpandedValue = getSomeorUndefined(value.defaultExpandedValue);
     const defaultSelectedValue = getSomeorUndefined(value.defaultSelectedValue);
+
+    // Persisted state for expanded/selected
+    const { state: persistedState, setState: setPersistedState } = usePersistedState<TreeViewPersistedState>(
+        storageKey,
+        { expandedValues: defaultExpandedValue ?? [], selectedValues: defaultSelectedValue ?? [] },
+    );
 
     // Extract callbacks
     const onExpandedChangeFn = useMemo(() => style ? getSomeorUndefined(style.onExpandedChange) : undefined, [style]);
@@ -80,16 +94,18 @@ export const EastChakraTreeView = memo(function EastChakraTreeView({ value }: Ea
     const onFocusChangeFn = useMemo(() => style ? getSomeorUndefined(style.onFocusChange) : undefined, [style]);
 
     const handleExpandedChange = useCallback((details: { expandedValue: string[] }) => {
+        setPersistedState(prev => ({ ...prev, expandedValues: details.expandedValue }));
         if (onExpandedChangeFn) {
             queueMicrotask(() => onExpandedChangeFn(details.expandedValue));
         }
-    }, [onExpandedChangeFn]);
+    }, [onExpandedChangeFn, setPersistedState]);
 
     const handleSelectionChange = useCallback((details: { selectedValue: string[] }) => {
+        setPersistedState(prev => ({ ...prev, selectedValues: details.selectedValue }));
         if (onSelectionChangeFn) {
             queueMicrotask(() => onSelectionChangeFn(details.selectedValue));
         }
-    }, [onSelectionChangeFn]);
+    }, [onSelectionChangeFn, setPersistedState]);
 
     const handleFocusChange = useCallback((details: { focusedValue: string | null }) => {
         if (onFocusChangeFn) {
@@ -121,11 +137,11 @@ export const EastChakraTreeView = memo(function EastChakraTreeView({ value }: Ea
             size={style ? getSomeorUndefined(style.size)?.type : undefined}
             variant={style ? getSomeorUndefined(style.variant)?.type : undefined}
             selectionMode={style ? getSomeorUndefined(style.selectionMode)?.type : undefined}
-            defaultExpandedValue={defaultExpandedValue}
-            defaultSelectedValue={defaultSelectedValue}
+            expandedValue={persistedState.expandedValues}
+            selectedValue={persistedState.selectedValues}
             aria-label={label}
-            onExpandedChange={onExpandedChangeFn ? handleExpandedChange : undefined}
-            onSelectionChange={onSelectionChangeFn ? handleSelectionChange : undefined}
+            onExpandedChange={handleExpandedChange}
+            onSelectionChange={handleSelectionChange}
             onFocusChange={onFocusChangeFn ? handleFocusChange : undefined}
         >
             <ChakraTreeView.Tree>
@@ -135,7 +151,7 @@ export const EastChakraTreeView = memo(function EastChakraTreeView({ value }: Ea
             </ChakraTreeView.Tree>
         </ChakraTreeView.Root>
     );
-}, (prev, next) => treeViewRootEqual(prev.value, next.value));
+}, (prev, next) => treeViewRootEqual(prev.value, next.value) && prev.storageKey === next.storageKey);
 
 interface TreeNodeRendererProps {
     node: TreeNode;

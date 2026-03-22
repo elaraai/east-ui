@@ -64,19 +64,20 @@ export function toChakraBox(value: BoxValue): BoxProps {
 
 export interface EastChakraBoxProps {
     value: BoxValue;
+    storageKey: string;
 }
 
 /**
  * Renders an East UI Box value using Chakra UI Box component.
  */
-export const EastChakraBox = memo(function EastChakraBox({ value }: EastChakraBoxProps) {
+export const EastChakraBox = memo(function EastChakraBox({ value, storageKey }: EastChakraBoxProps) {
     const props = useMemo(() => toChakraBox(value), [value]);
 
     return (
         <ChakraBox {...props}>
             {value.children.map((child, index) => (
-                <EastChakraComponent key={index} value={child} />
+                <EastChakraComponent key={index} value={child} storageKey={`${storageKey}.${index}`} />
             ))}
         </ChakraBox>
     );
-}, (prev, next) => boxEqual(prev.value, next.value));
+}, (prev, next) => boxEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

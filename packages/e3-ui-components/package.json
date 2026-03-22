@@ -41,7 +41,8 @@
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@fortawesome/react-fontawesome": "^3.1.1",
-    "@tanstack/react-virtual": "^3.11.2"
+    "@tanstack/react-virtual": "^3.11.2",
+    "use-local-storage-state": "^19.5.0"
   },
   "devDependencies": {
     "@chakra-ui/react": "^3.0.0",

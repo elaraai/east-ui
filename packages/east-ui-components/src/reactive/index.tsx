@@ -58,7 +58,7 @@ function tryGetDatasetStore() {
  * <EastReactiveComponent value={{ render: compiledRenderFn }} />
  * ```
  */
-export function EastReactiveComponent({ value }: { value: ReactiveValue }) {
+export function EastReactiveComponent({ value, storageKey }: { value: ReactiveValue; storageKey: string }) {
     const stateStore = getStore();
     const datasetStore = tryGetDatasetStore();
 
@@ -132,5 +132,5 @@ export function EastReactiveComponent({ value }: { value: ReactiveValue }) {
         return null;
     }
 
-    return <EastChakraComponent value={result} />;
+    return <EastChakraComponent value={result} storageKey={storageKey} />;
 }

@@ -10,5 +10,5 @@ import navigationShowcase from "../showcases/navigation/all";
 const navigationIR = navigationShowcase.toIR();
 
 export function NavigationPage() {
-    return <EastFunction ir={navigationIR} />;
+    return <EastFunction ir={navigationIR} storageKey="navigation" />;
 }

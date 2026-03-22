@@ -337,7 +337,9 @@ export type GanttStyleType = typeof GanttStyleType;
  * @property onMilestoneDoubleClick - Callback triggered when a milestone is double-clicked
  * @property onMilestoneDrag - Callback triggered when a milestone is dragged
  */
-export interface GanttStyle {
+export interface GanttStyle<ColumnKeys extends string = string> {
+    /** Column keys to freeze (pin left). Frozen columns appear first and stay visible during horizontal scroll. */
+    frozen?: ColumnKeys[];
     /** CSS height for the Gantt container (e.g., "500px", "100%") */
     height?: SubtypeExprOrValue<StringType>;
     /** Table variant (line or outline) */

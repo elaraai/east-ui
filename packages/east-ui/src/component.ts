@@ -310,6 +310,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
             maxWidth: OptionType(StringType),
             render: OptionType(FunctionType([TableCellRenderContextType], node)),
         })),
+        frozen: ArrayType(StringType),
         style: OptionType(TableStyleType),
     }),
 
@@ -331,6 +332,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
             maxWidth: OptionType(StringType),
             render: OptionType(FunctionType([TableCellRenderContextType], node)),
         })),
+        frozen: ArrayType(StringType),
         style: OptionType(GanttStyleType),
     }),
 
@@ -352,6 +354,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
             maxWidth: OptionType(StringType),
             render: OptionType(FunctionType([TableCellRenderContextType], node)),
         })),
+        frozen: ArrayType(StringType),
         style: OptionType(PlannerStyleType),
         eventPopover: OptionType(FunctionType([EventPopoverContextType], node)),
     }),

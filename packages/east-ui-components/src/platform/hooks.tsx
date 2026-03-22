@@ -141,6 +141,8 @@ export function useUIStoreSubscription(store: UIStoreInterface): number {
 export interface EastComponentProps {
     /** The compiled East function that returns UI component data */
     render: () => ValueTypeOf<UIComponentType>;
+    /** Storage key prefix for persisting component state */
+    storageKey: string;
 }
 
 /**
@@ -183,7 +185,7 @@ export interface EastComponentProps {
  * }
  * ```
  */
-export function EastComponent({ render }: EastComponentProps) {
+export function EastComponent({ render, storageKey }: EastComponentProps) {
     // Render once - no state subscription
     // For reactivity, use Reactive.Root within the East function
     const result = useMemo(() => render(), [render]);
@@ -193,7 +195,7 @@ export function EastComponent({ render }: EastComponentProps) {
     }
 
     // Result should be UI component data - render it
-    return <EastChakraComponent value={result} />;
+    return <EastChakraComponent value={result} storageKey={storageKey} />;
 }
 
 /**
@@ -204,6 +206,8 @@ export interface EastFunctionProps {
      * The IR (intermediate representation) from calling `.toIR()` on an East function.
      */
     ir: EastIR<[], UIComponentType>;
+    /** Storage key prefix for persisting component state */
+    storageKey: string;
 }
 
 /**
@@ -238,7 +242,7 @@ export interface EastFunctionProps {
  * }
  * ```
  */
-export function EastFunction({ ir }: EastFunctionProps) {
+export function EastFunction({ ir, storageKey }: EastFunctionProps) {
     // Compile IR via JS
     const result = useMemo(() => {
         try {
@@ -283,7 +287,7 @@ export function EastFunction({ ir }: EastFunctionProps) {
         );
     }
 
-    return <EastComponent render={result.compiled!} />;
+    return <EastComponent render={result.compiled!} storageKey={storageKey} />;
 }
 
 /**

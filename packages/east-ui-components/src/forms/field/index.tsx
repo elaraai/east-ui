@@ -31,12 +31,13 @@ export function toChakraField(value: FieldValue): FieldRootProps {
 
 export interface EastChakraFieldProps {
     value: FieldValue;
+    storageKey: string;
 }
 
 /**
  * Renders an East UI Field value using Chakra UI Field component.
  */
-export const EastChakraField = memo(function EastChakraField({ value }: EastChakraFieldProps) {
+export const EastChakraField = memo(function EastChakraField({ value, storageKey }: EastChakraFieldProps) {
     const props = useMemo(() => toChakraField(value), [value]);
     const helperText = useMemo(() => getSomeorUndefined(value.helperText), [value.helperText]);
     const errorText = useMemo(() => getSomeorUndefined(value.errorText), [value.errorText]);
@@ -44,9 +45,9 @@ export const EastChakraField = memo(function EastChakraField({ value }: EastChak
     return (
         <ChakraField.Root {...props}>
             <ChakraField.Label>{value.label}</ChakraField.Label>
-            <EastChakraComponent value={value.control} />
+            <EastChakraComponent value={value.control} storageKey={`${storageKey}.control`} />
             {helperText && <ChakraField.HelperText>{helperText}</ChakraField.HelperText>}
             {errorText && <ChakraField.ErrorText>{errorText}</ChakraField.ErrorText>}
         </ChakraField.Root>
     );
-}, (prev, next) => fieldEqual(prev.value, next.value));
+}, (prev, next) => fieldEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

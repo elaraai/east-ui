@@ -4,6 +4,7 @@
  */
 
 import { memo, useMemo, useCallback } from "react";
+import { usePersistedState } from "../../hooks/usePersistedState";
 import {
     Tabs as ChakraTabs,
     type TabsRootProps,
@@ -70,6 +71,7 @@ export function toChakraTabsContent(value: TabsItemValue): TabsContentProps {
 
 export interface EastChakraTabsItemProps {
     value: TabsItemValue;
+    storageKey: string;
 }
 
 /**
@@ -88,48 +90,73 @@ export const EastChakraTabsTrigger = memo(function EastChakraTabsTrigger({ value
 /**
  * Renders an East UI Tabs Item content using Chakra UI Tabs components.
  */
-export const EastChakraTabsContent = memo(function EastChakraTabsContent({ value }: EastChakraTabsItemProps) {
+export const EastChakraTabsContent = memo(function EastChakraTabsContent({ value, storageKey }: EastChakraTabsItemProps) {
     const props = useMemo(() => toChakraTabsContent(value), [value]);
 
     return (
         <ChakraTabs.Content {...props}>
             {value.content.map((child, index) => (
-                <EastChakraComponent key={index} value={child} />
+                <EastChakraComponent key={index} value={child} storageKey={`${storageKey}.${index}`} />
             ))}
         </ChakraTabs.Content>
     );
-}, (prev, next) => tabsItemEqual(prev.value, next.value));
+}, (prev, next) => tabsItemEqual(prev.value, next.value) && prev.storageKey === next.storageKey);
+
+interface TabsPersistedState {
+    selectedValue: string | undefined;
+}
 
 export interface EastChakraTabsProps {
     value: TabsRootValue;
+    /** Storage key for persisting selected tab in localStorage. Omit for ephemeral state. */
+    storageKey: string;
 }
 
 /**
  * Renders an East UI Tabs value using Chakra UI Tabs components.
  */
-export const EastChakraTabs = memo(function EastChakraTabs({ value }: EastChakraTabsProps) {
+export const EastChakraTabs = memo(function EastChakraTabs({ value, storageKey }: EastChakraTabsProps) {
     const props = useMemo(() => toChakraTabsRoot(value), [value]);
     const onValueChangeFn = useMemo(() => {
         const style = getSomeorUndefined(value.style);
         return style ? getSomeorUndefined(style.onValueChange) : undefined;
     }, [value.style]);
 
+    const defaultValue = useMemo(() => getSomeorUndefined(value.defaultValue), [value.defaultValue]);
+    const controlledValue = useMemo(() => getSomeorUndefined(value.value), [value.value]);
+
+    const { state: persistedState, setState: setPersistedState } = usePersistedState<TabsPersistedState>(
+        storageKey,
+        { selectedValue: defaultValue },
+    );
+
     const handleValueChange = useCallback((details: { value: string }) => {
+        setPersistedState(prev => ({ ...prev, selectedValue: details.value }));
         if (onValueChangeFn) {
             queueMicrotask(() => onValueChangeFn(details.value));
         }
-    }, [onValueChangeFn]);
+    }, [onValueChangeFn, setPersistedState]);
+
+    // Persisted value takes priority, then controlled prop
+    const effectiveValue = useMemo(
+        () => persistedState.selectedValue ?? controlledValue,
+        [persistedState.selectedValue, controlledValue],
+    );
 
     return (
-        <ChakraTabs.Root {...props} onValueChange={onValueChangeFn ? handleValueChange : undefined}>
+        <ChakraTabs.Root
+            {...props}
+            value={effectiveValue}
+            onValueChange={handleValueChange}
+        >
             <ChakraTabs.List>
-                {value.items.map((item) => (
-                    <EastChakraTabsTrigger key={item.value} value={item} />
+                {value.items.map((item, index) => (
+                    <EastChakraTabsTrigger key={item.value} value={item} storageKey={`${storageKey}.${index}`} />
                 ))}
             </ChakraTabs.List>
-            {value.items.map((item) => (
-                <EastChakraTabsContent key={item.value} value={item} />
+            {value.items.map((item, index) => (
+                <EastChakraTabsContent key={item.value} value={item} storageKey={`${storageKey}.${index}`} />
             ))}
         </ChakraTabs.Root>
     );
-}, (prev, next) => tabsRootEqual(prev.value, next.value));
+}, (prev, next) => tabsRootEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

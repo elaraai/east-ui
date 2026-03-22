@@ -254,7 +254,9 @@ export type TableStyleType = typeof TableStyleType;
  * @property onSelectionChange - Callback triggered when row selection changes
  * @property onSortChange - Callback triggered when sort column/direction changes
  */
-export interface TableStyle {
+export interface TableStyle<ColumnKeys extends string = string> {
+    /** Column keys to freeze (pin left). Frozen columns appear first and stay visible during horizontal scroll. */
+    frozen?: ColumnKeys[];
     /** CSS height for the table container (e.g., "500px", "100%") */
     height?: SubtypeExprOrValue<StringType>;
     /** Table variant (line or outline) */

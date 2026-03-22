@@ -821,6 +821,56 @@ export default East.function(
             )
         );
 
+        // Frozen Columns
+        const frozenColumns = $.let(
+            ShowcaseCard(
+                "Frozen Columns",
+                "Pin columns left so they stay visible while scrolling the timeline",
+                Gantt.Root(
+                    [
+                        { id: "#1", task: "Planning", owner: "Alice", dept: "PM", priority: "High", start: new Date("2024-01-01"), end: new Date("2024-01-15") },
+                        { id: "#2", task: "Design", owner: "Bob", dept: "Design", priority: "Medium", start: new Date("2024-01-10"), end: new Date("2024-02-01") },
+                        { id: "#3", task: "Development", owner: "Charlie", dept: "Engineering", priority: "High", start: new Date("2024-01-20"), end: new Date("2024-03-15") },
+                        { id: "#4", task: "Testing", owner: "Diana", dept: "QA", priority: "Low", start: new Date("2024-03-01"), end: new Date("2024-03-30") },
+                        { id: "#5", task: "Deployment", owner: "Eve", dept: "DevOps", priority: "Medium", start: new Date("2024-03-20"), end: new Date("2024-04-15") },
+                    ],
+                    {
+                        id: { header: "ID", width: "80px" },
+                        task: { header: "Task", width: "150px" },
+                        owner: { header: "Owner", width: "120px" },
+                        dept: { header: "Department", width: "150px" },
+                        priority: { header: "Priority", width: "120px" },
+                    },
+                    row => [Gantt.Task({ start: row.start, end: row.end })],
+                    {
+                        frozen: ["id", "task"],
+                        variant: "line",
+                        striped: true,
+                        height: "300px",
+                    }
+                ),
+                some(`
+                    Gantt.Root(
+                        data,
+                        {
+                            id: { header: "ID", width: "80px" },
+                            task: { header: "Task", width: "150px" },
+                            owner: { header: "Owner", width: "120px" },
+                            dept: { header: "Department", width: "150px" },
+                            priority: { header: "Priority", width: "120px" },
+                        },
+                        row => [Gantt.Task({ start: row.start, end: row.end })],
+                        {
+                            frozen: ["id", "task"],
+                            variant: "line",
+                            striped: true,
+                            height: "300px",
+                        }
+                    )
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -833,6 +883,8 @@ export default East.function(
                 Grid.Item(complexColumns, { colSpan: "2" }),
                 // Column render with row access
                 Grid.Item(columnRenderWithRow, { colSpan: "2" }),
+                // Frozen columns
+                Grid.Item(frozenColumns, { colSpan: "2" }),
                 // Interactive example with all callbacks
                 Grid.Item(interactiveCallbacks, { colSpan: "2" }),
                 // Reactive drag example

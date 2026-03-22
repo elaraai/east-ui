@@ -23,6 +23,7 @@ export type DrawerOpenInputValue = ValueTypeOf<typeof Drawer.Types.OpenInput>;
 
 export interface EastChakraDrawerProps {
     value: DrawerValue;
+    storageKey: string;
 }
 
 // ============================================================================
@@ -53,6 +54,8 @@ export function toChakraDrawer(value: DrawerOpenInputValue): Partial<DrawerRootP
 export interface DrawerContentProps {
     /** Drawer open input value containing body, title, description, style */
     value: DrawerOpenInputValue;
+    /** Storage key prefix for persisting component state */
+    storageKey: string;
     /** Optional trigger element (for trigger-based drawers) */
     trigger?: ReactNode;
     /** Whether drawer is controlled open (for programmatic drawers) */
@@ -64,7 +67,7 @@ export interface DrawerContentProps {
 /**
  * Shared drawer content component used by both trigger-based and programmatic drawers.
  */
-export function DrawerContent({ value, trigger, open, onClose }: DrawerContentProps) {
+export function DrawerContent({ value, storageKey, trigger, open, onClose }: DrawerContentProps) {
     const props = useMemo(() => toChakraDrawer(value), [value]);
     const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -144,7 +147,7 @@ export function DrawerContent({ value, trigger, open, onClose }: DrawerContentPr
                                 <ChakraDrawer.Description mb="4">{description}</ChakraDrawer.Description>
                             )}
                             {value.body.map((child, index) => (
-                                <EastChakraComponent key={index} value={child} />
+                                <EastChakraComponent key={index} value={child} storageKey={`${storageKey}.${index}`} />
                             ))}
                         </ChakraDrawer.Body>
                     </ChakraDrawer.Content>
@@ -161,7 +164,7 @@ export function DrawerContent({ value, trigger, open, onClose }: DrawerContentPr
 /**
  * Renders an East UI Drawer value using Chakra UI Drawer component.
  */
-export const EastChakraDrawer = memo(function EastChakraDrawer({ value }: EastChakraDrawerProps) {
+export const EastChakraDrawer = memo(function EastChakraDrawer({ value, storageKey }: EastChakraDrawerProps) {
     // Convert DrawerValue to DrawerOpenInputValue format (without trigger)
     const openInputValue = useMemo((): DrawerOpenInputValue => ({
         body: value.body,
@@ -173,7 +176,8 @@ export const EastChakraDrawer = memo(function EastChakraDrawer({ value }: EastCh
     return (
         <DrawerContent
             value={openInputValue}
-            trigger={<EastChakraComponent value={value.trigger} />}
+            storageKey={storageKey}
+            trigger={<EastChakraComponent value={value.trigger} storageKey={`${storageKey}.trigger`} />}
         />
     );
-}, (prev, next) => drawerEqual(prev.value, next.value));
+}, (prev, next) => drawerEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

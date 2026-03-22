@@ -10,5 +10,5 @@ import collectionsShowcase from "../showcases/collections/all";
 const collectionsIR = collectionsShowcase.toIR();
 
 export function CollectionsPage() {
-    return <EastFunction ir={collectionsIR} />;
+    return <EastFunction ir={collectionsIR} storageKey="collections" />;
 }

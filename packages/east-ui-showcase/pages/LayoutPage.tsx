@@ -10,5 +10,5 @@ import layoutShowcase from "../showcases/layout/all";
 const layoutIR = layoutShowcase.toIR();
 
 export function LayoutPage() {
-    return <EastFunction ir={layoutIR} />;
+    return <EastFunction ir={layoutIR} storageKey="layout" />;
 }

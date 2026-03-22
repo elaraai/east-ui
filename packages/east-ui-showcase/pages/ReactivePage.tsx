@@ -10,5 +10,5 @@ import reactiveShowcase from "../showcases/reactive/reactive";
 const reactiveIR = reactiveShowcase.toIR();
 
 export function ReactivePage() {
-    return <EastFunction ir={reactiveIR} />;
+    return <EastFunction ir={reactiveIR} storageKey="reactive" />;
 }

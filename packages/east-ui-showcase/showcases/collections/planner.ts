@@ -965,6 +965,56 @@ export default East.function(
             )
         );
 
+        // Frozen Columns
+        const frozenColumns = $.let(
+            ShowcaseCard(
+                "Frozen Columns",
+                "Pin columns left so they stay visible while scrolling the timeline",
+                Planner.Root(
+                    [
+                        { id: "#1", resource: "Alice", dept: "Engineering", role: "Lead", priority: "High", start: 1.0, end: 4.0 },
+                        { id: "#2", resource: "Bob", dept: "Design", role: "Senior", priority: "Medium", start: 2.0, end: 6.0 },
+                        { id: "#3", resource: "Charlie", dept: "Engineering", role: "Junior", priority: "Low", start: 3.0, end: 7.0 },
+                        { id: "#4", resource: "Diana", dept: "QA", role: "Senior", priority: "High", start: 5.0, end: 9.0 },
+                        { id: "#5", resource: "Eve", dept: "DevOps", role: "Lead", priority: "Medium", start: 7.0, end: 10.0 },
+                    ],
+                    {
+                        id: { header: "ID", width: "80px" },
+                        resource: { header: "Resource", width: "150px" },
+                        dept: { header: "Department", width: "150px" },
+                        role: { header: "Role", width: "120px" },
+                        priority: { header: "Priority", width: "120px" },
+                    },
+                    row => [Planner.Event({ start: row.start, end: row.end })],
+                    {
+                        frozen: ["id", "resource"],
+                        variant: "line",
+                        striped: true,
+                        height: "300px",
+                    }
+                ),
+                some(`
+                    Planner.Root(
+                        data,
+                        {
+                            id: { header: "ID", width: "80px" },
+                            resource: { header: "Resource", width: "150px" },
+                            dept: { header: "Department", width: "150px" },
+                            role: { header: "Role", width: "120px" },
+                            priority: { header: "Priority", width: "120px" },
+                        },
+                        row => [Planner.Event({ start: row.start, end: row.end })],
+                        {
+                            frozen: ["id", "resource"],
+                            variant: "line",
+                            striped: true,
+                            height: "300px",
+                        }
+                    )
+                `)
+            )
+        );
+
         return Stack.VStack([
             basic,
             withLabels,
@@ -975,6 +1025,7 @@ export default East.function(
             styled,
             complexColumns,
             columnRenderWithRow,
+            frozenColumns,
             withBoundaries,
             withContextMenu,
             popoverClick,

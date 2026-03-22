@@ -211,7 +211,7 @@ export function OverviewPage() {
 
             {/* Interactive Example */}
             <Box width="100%">
-                <EastFunction ir={interactiveDemoShowcaseIR} />
+                <EastFunction ir={interactiveDemoShowcaseIR} storageKey="overview-demo" />
             </Box>
         </Stack>
     );

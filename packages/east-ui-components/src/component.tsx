@@ -83,13 +83,20 @@ const uiComponentEqual = equalFor(UIComponentType);
 
 export interface EastChakraComponentProps {
     value: ValueTypeOf<UIComponentType>;
+    /** Storage key prefix for persisting component state. Built up as the tree renders. */
+    storageKey: string;
+}
+
+/** Build a child storage key by appending a segment to the parent key. */
+function childKey(parentKey: string, segment: string): string {
+    return parentKey ? `${parentKey}.${segment}` : segment;
 }
 
 /**
  * Top-level component that renders any East UI component.
  * Matches on the variant type and delegates to the appropriate React component.
  */
-export const EastChakraComponent = memo(function EastChakraComponent({ value }: EastChakraComponentProps) {
+export const EastChakraComponent = memo(function EastChakraComponent({ value, storageKey }: EastChakraComponentProps) {
     const rendered = useMemo(() => {
         return match(value, {
             // Typography
@@ -108,12 +115,12 @@ export const EastChakraComponent = memo(function EastChakraComponent({ value }: 
             CopyButton: (v) => <EastChakraCopyButton value={v} />,
 
             // Layout
-            Box: (v) => <EastChakraBox value={v} />,
-            Flex: (v) => <EastChakraFlex value={v} />,
-            Stack: (v) => <EastChakraStack value={v} />,
+            Box: (v) => <EastChakraBox value={v} storageKey={storageKey} />,
+            Flex: (v) => <EastChakraFlex value={v} storageKey={storageKey} />,
+            Stack: (v) => <EastChakraStack value={v} storageKey={storageKey} />,
             Separator: (v) => <EastChakraSeparator value={v} />,
-            Grid: (v) => <EastChakraGrid value={v} />,
-            Splitter: (v) => <EastChakraSplitter value={v} />,
+            Grid: (v) => <EastChakraGrid value={v} storageKey={storageKey} />,
+            Splitter: (v) => <EastChakraSplitter value={v} storageKey={childKey(storageKey, "Splitter")} />,
 
             // Forms
             StringInput: (v) => <EastChakraStringInput value={v} />,
@@ -126,7 +133,7 @@ export const EastChakraComponent = memo(function EastChakraComponent({ value }: 
             Combobox: (v) => <EastChakraCombobox value={v} />,
             Slider: (v) => <EastChakraSlider value={v} />,
             FileUpload: (v) => <EastChakraFileUpload value={v} />,
-            Field: (v) => <EastChakraField value={v} />,
+            Field: (v) => <EastChakraField value={v} storageKey={childKey(storageKey, "Field")} />,
             Textarea: (v) => <EastChakraTextarea value={v} />,
             TagsInput: (v) => <EastChakraTagsInput value={v} />,
 
@@ -142,16 +149,16 @@ export const EastChakraComponent = memo(function EastChakraComponent({ value }: 
             Badge: (v) => <EastChakraBadge value={v} />,
             Tag: (v) => <EastChakraTag value={v} />,
             Avatar: (v) => <EastChakraAvatar value={v} />,
-            Stat: (v) => <EastChakraStat value={v} />,
+            Stat: (v) => <EastChakraStat value={v} storageKey={childKey(storageKey, "Stat")} />,
 
             // Container
-            Card: (v) => <EastChakraCard value={v} />,
+            Card: (v) => <EastChakraCard value={v} storageKey={storageKey} />,
 
             // Collections
-            DataList: (v) => <EastChakraDataList value={v} />,
-            Table: (v) => <EastChakraTable value={v} />,
-            Gantt: (v) => <EastChakraGantt value={v} />,
-            Planner: (v) => <EastChakraPlanner value={v} />,
+            DataList: (v) => <EastChakraDataList value={v} storageKey={childKey(storageKey, "DataList")} />,
+            Table: (v) => <EastChakraTable value={v} storageKey={childKey(storageKey, "Table")} />,
+            Gantt: (v) => <EastChakraGantt value={v} storageKey={childKey(storageKey, "Gantt")} />,
+            Planner: (v) => <EastChakraPlanner value={v} storageKey={childKey(storageKey, "Planner")} />,
 
             // Charts
             Sparkline: (v) => <EastChakraSparkline value={v} />,
@@ -166,27 +173,27 @@ export const EastChakraComponent = memo(function EastChakraComponent({ value }: 
             BarSegment: (v) => <EastChakraBarSegment value={v} />,
             ComposedChart: (v) => <EastChakraComposedChart value={v} />,
 
-            TreeView: (v) => <EastChakraTreeView value={v} />,
+            TreeView: (v) => <EastChakraTreeView value={v} storageKey={childKey(storageKey, "TreeView")} />,
 
             // Disclosure
-            Accordion: (v) => <EastChakraAccordion value={v} />,
-            Carousel: (v) => <EastChakraCarousel value={v} />,
-            Tabs: (v) => <EastChakraTabs value={v} />,
+            Accordion: (v) => <EastChakraAccordion value={v} storageKey={childKey(storageKey, "Accordion")} />,
+            Carousel: (v) => <EastChakraCarousel value={v} storageKey={childKey(storageKey, "Carousel")} />,
+            Tabs: (v) => <EastChakraTabs value={v} storageKey={childKey(storageKey, "Tabs")} />,
 
             // Overlays
-            Tooltip: (v) => <EastChakraTooltip value={v} />,
-            Menu: (v) => <EastChakraMenu value={v} />,
-            Popover: (v) => <EastChakraPopover value={v} />,
-            HoverCard: (v) => <EastChakraHoverCard value={v} />,
-            Dialog: (v) => <EastChakraDialog value={v} />,
-            Drawer: (v) => <EastChakraDrawer value={v} />,
+            Tooltip: (v) => <EastChakraTooltip value={v} storageKey={childKey(storageKey, "Tooltip")} />,
+            Menu: (v) => <EastChakraMenu value={v} storageKey={childKey(storageKey, "Menu")} />,
+            Popover: (v) => <EastChakraPopover value={v} storageKey={childKey(storageKey, "Popover")} />,
+            HoverCard: (v) => <EastChakraHoverCard value={v} storageKey={childKey(storageKey, "HoverCard")} />,
+            Dialog: (v) => <EastChakraDialog value={v} storageKey={childKey(storageKey, "Dialog")} />,
+            Drawer: (v) => <EastChakraDrawer value={v} storageKey={childKey(storageKey, "Drawer")} />,
             ActionBar: (v) => <EastChakraActionBar value={v} />,
-            ToggleTip: (v) => <EastChakraToggleTip value={v} />,
+            ToggleTip: (v) => <EastChakraToggleTip value={v} storageKey={childKey(storageKey, "ToggleTip")} />,
 
             // Reactive
-            ReactiveComponent: (v) => <EastReactiveComponent value={v} />,
+            ReactiveComponent: (v) => <EastReactiveComponent value={v} storageKey={childKey(storageKey, "ReactiveComponent")} />,
         });
-    }, [value]);
+    }, [value, storageKey]);
 
     return <>{rendered}</>;
-}, (prev, next) => uiComponentEqual(prev.value, next.value));
+}, (prev, next) => uiComponentEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

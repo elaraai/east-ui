@@ -18,12 +18,13 @@ export type PopoverValue = ValueTypeOf<typeof Popover.Types.Popover>;
 
 export interface EastChakraPopoverProps {
     value: PopoverValue;
+    storageKey: string;
 }
 
 /**
  * Renders an East UI Popover value using Chakra UI Popover component.
  */
-export const EastChakraPopover = memo(function EastChakraPopover({ value }: EastChakraPopoverProps) {
+export const EastChakraPopover = memo(function EastChakraPopover({ value, storageKey }: EastChakraPopoverProps) {
     const style = useMemo(() => getSomeorUndefined(value.style), [value.style]);
     const placement = useMemo(() => style ? getSomeorUndefined(style.placement)?.type : undefined, [style]);
     const size = useMemo(() => style ? getSomeorUndefined(style.size)?.type : undefined, [style]);
@@ -48,7 +49,7 @@ export const EastChakraPopover = memo(function EastChakraPopover({ value }: East
         >
             <ChakraPopover.Trigger asChild>
                 <span>
-                    <EastChakraComponent value={value.trigger} />
+                    <EastChakraComponent value={value.trigger} storageKey={`${storageKey}.trigger`} />
                 </span>
             </ChakraPopover.Trigger>
             <Portal>
@@ -59,7 +60,7 @@ export const EastChakraPopover = memo(function EastChakraPopover({ value }: East
                             {title && <ChakraPopover.Title fontWeight="medium">{title}</ChakraPopover.Title>}
                             {description && <ChakraPopover.Description>{description}</ChakraPopover.Description>}
                             {value.body.map((child, index) => (
-                                <EastChakraComponent key={index} value={child} />
+                                <EastChakraComponent key={index} value={child} storageKey={`${storageKey}.${index}`} />
                             ))}
                         </ChakraPopover.Body>
                     </ChakraPopover.Content>
@@ -67,4 +68,4 @@ export const EastChakraPopover = memo(function EastChakraPopover({ value }: East
             </Portal>
         </ChakraPopover.Root>
     );
-}, (prev, next) => popoverEqual(prev.value, next.value));
+}, (prev, next) => popoverEqual(prev.value, next.value) && prev.storageKey === next.storageKey);

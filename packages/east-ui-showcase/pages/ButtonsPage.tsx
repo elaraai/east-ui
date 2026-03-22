@@ -10,5 +10,5 @@ import buttonShowcase from "../showcases/buttons/button";
 const buttonIR = buttonShowcase.toIR();
 
 export function ButtonsPage() {
-    return <EastFunction ir={buttonIR} />;
+    return <EastFunction ir={buttonIR} storageKey="buttons" />;
 }
