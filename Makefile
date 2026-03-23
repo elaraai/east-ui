@@ -1,4 +1,4 @@
-.PHONY: install update build test lint dev clean extension extension-install version-prerelease version-patch version-minor version-major
+.PHONY: install update build test lint dev clean extension extension-install version-prerelease version-patch version-minor version-major link unlink
 
 # Use nvm locally, skip in CI where node is already on PATH
 ifdef NVM_DIR
@@ -54,6 +54,14 @@ version-minor:
 
 version-major:
 	$(NVM) npm run version:all:major
+
+# Register all workspace packages globally so sibling repos can npm link them
+link:
+	npm link --workspaces
+
+# Unregister
+unlink:
+	npm unlink --workspaces
 
 # Link local east package for development/testing
 # Usage: make link-local-east EAST_PATH=../east
