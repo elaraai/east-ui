@@ -6,6 +6,7 @@
 import {
     type SubtypeExprOrValue,
     FloatType,
+    FunctionType,
     OptionType,
     StringType,
     StructType,
@@ -69,6 +70,7 @@ export const CodeType = StructType({
     lineHeight: OptionType(StringType),
     letterSpacing: OptionType(StringType),
     opacity: OptionType(FloatType),
+    onClick: OptionType(FunctionType([], NullType)),
 });
 
 export type CodeType = typeof CodeType;
@@ -117,4 +119,6 @@ export type CodeStyle = {
     letterSpacing?: SubtypeExprOrValue<StringType>;
     /** CSS opacity (0-1) */
     opacity?: SubtypeExprOrValue<FloatType>;
+    /** Callback triggered when clicked */
+    onClick?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 };

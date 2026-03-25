@@ -4,9 +4,16 @@
  */
 
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
+import { East, NullType } from "@elaraai/east";
 import { Stack, Text, Style } from "../../src/index.js";
+import * as ex from "./stack.examples.js";
 
 describeEast("Stack", (test) => {
+    Assert.examples(test, {
+        stackBasic: ex.stackBasic,
+        stackOnClick: ex.stackOnClick,
+    });
+
     // =========================================================================
     // Basic Creation
     // =========================================================================
@@ -323,5 +330,25 @@ describeEast("Stack", (test) => {
         $(Assert.equal(style.direction.unwrap("some").hasTag("column"), true));
         $(Assert.equal(style.align.unwrap("some").hasTag("stretch"), true));
         $(Assert.equal(style.width.unwrap("some"), "100%"));
+    });
+    // =========================================================================
+    // onClick
+    // =========================================================================
+
+    test("creates stack without onClick by default", $ => {
+        const stack = $.let(Stack.Root([Text.Root("Content")]));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.hasTag("none"), true));
+    });
+
+    test("creates stack with onClick callback", $ => {
+        const handler = $.const(East.function([], NullType, $ => {
+            $(East.value(null));
+        }));
+        const stack = $.let(Stack.Root([Text.Root("Content")], {
+            onClick: handler,
+        }));
+
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.hasTag("some"), true));
+        $(Assert.equal(stack.unwrap().unwrap("Stack").style.unwrap("some").onClick.hasTag("some"), true));
     });
 }, {   platformFns: TestImpl,});

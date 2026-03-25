@@ -130,6 +130,7 @@ function createTag(
         size: sizeValue ? some(sizeValue) : none,
         closable: style?.closable !== undefined ? some(style.closable) : none,
         onClose: style?.onClose ? some(style.onClose) : none,
+        onClick: style?.onClick ? some(style.onClick) : none,
         opacity: style?.opacity !== undefined ? some(style.opacity) : none,
         color: style?.color ? some(style.color) : none,
         background: style?.background ? some(style.background) : none,

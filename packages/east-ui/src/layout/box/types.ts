@@ -5,6 +5,8 @@
 
 import {
     type SubtypeExprOrValue,
+    FunctionType,
+    NullType,
     OptionType,
     StringType,
     StructType,
@@ -102,6 +104,8 @@ export type BoxStyle = {
     alignItems?: SubtypeExprOrValue<AlignItemsType> | AlignItemsLiteral;
     /** Gap between children (Chakra UI spacing token or CSS value) */
     gap?: SubtypeExprOrValue<StringType>;
+    /** Callback triggered when clicked */
+    onClick?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 };
 
 /**
@@ -153,6 +157,7 @@ export const BoxStyleType = StructType({
     justifyContent: OptionType(JustifyContentType),
     alignItems: OptionType(AlignItemsType),
     gap: OptionType(StringType),
+    onClick: OptionType(FunctionType([], NullType)),
 });
 
 /**

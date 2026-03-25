@@ -87,6 +87,7 @@ function createAlert(
         title: toStringOption(style?.title),
         description: toStringOption(style?.description),
         variant: variantValue ? variant("some", variantValue) : variant("none", null),
+        onClick: style?.onClick ? variant("some", style.onClick) : variant("none", null),
     }), UIComponentType);
 }
 

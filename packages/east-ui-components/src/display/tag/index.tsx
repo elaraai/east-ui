@@ -68,6 +68,13 @@ export const EastChakraTag = memo(function EastChakraTag({ value }: EastChakraTa
     const props = useMemo(() => toChakraTag(value), [value]);
     const closable = useMemo(() => getSomeorUndefined(value.closable), [value.closable]);
     const onCloseFn = useMemo(() => getSomeorUndefined(value.onClose), [value.onClose]);
+    const onClickFn = useMemo(() => getSomeorUndefined(value.onClick), [value.onClick]);
+
+    const handleClick = useCallback(() => {
+        if (onClickFn) {
+            queueMicrotask(() => onClickFn());
+        }
+    }, [onClickFn]);
 
     const handleClose = useCallback(() => {
         if (onCloseFn) {
@@ -76,7 +83,7 @@ export const EastChakraTag = memo(function EastChakraTag({ value }: EastChakraTa
     }, [onCloseFn]);
 
     return (
-        <ChakraTag.Root {...props}>
+        <ChakraTag.Root {...props} onClick={onClickFn ? handleClick : undefined} cursor={onClickFn ? "pointer" : undefined}>
             <ChakraTag.Label>{value.label}</ChakraTag.Label>
             {closable && (
                 <ChakraTag.CloseTrigger onClick={onCloseFn ? handleClose : undefined} />

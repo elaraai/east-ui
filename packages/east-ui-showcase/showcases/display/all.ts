@@ -3,7 +3,7 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East, some, variant } from "@elaraai/east";
+import { East, IntegerType, NullType, some, variant } from "@elaraai/east";
 import {
     UIComponentType,
     Grid,
@@ -18,6 +18,8 @@ import {
     Text,
     HoverCard,
     Highlight,
+    Reactive,
+    State,
 } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -158,6 +160,41 @@ export default East.function(
                         Badge.Root("0.9", { width: "48px", justifyContent: "center", variant: "solid", colorPalette: "blue" }),
                         Badge.Root("128", { width: "48px", justifyContent: "center", variant: "solid", colorPalette: "blue" }),
                     ], { gap: "1" })
+                `)
+            )
+        );
+
+        // Badge - Interactive
+        const badgeInteractive = $.let(
+            ShowcaseCard(
+                "Interactive Badge",
+                "Click badges to increment counter",
+                Reactive.Root(East.function([], UIComponentType, $ => {
+                    $.if(State.has("badge_clicks").not(), $ => {
+                        $(State.write([IntegerType], "badge_clicks", 0n));
+                    });
+                    const count = $.let(State.read([IntegerType], "badge_clicks"), IntegerType);
+                    const increment = $.const(East.function([], NullType, $ => {
+                        const current = $.let(State.read([IntegerType], "badge_clicks"), IntegerType);
+                        $(State.write([IntegerType], "badge_clicks", current.add(1n)));
+                    }));
+                    return Stack.VStack([
+                        Badge.Root("Click me!", { onClick: increment, colorPalette: "blue", variant: "solid" }),
+                        Text.Root(East.str`Clicked ${count} times`),
+                    ], { gap: "2", align: "flex-start" });
+                })),
+                some(`
+                    Reactive.Root(East.function([], UIComponentType, $ => {
+                        $.if(State.has("badge_clicks").not(), $ => {
+                            $(State.write([IntegerType], "badge_clicks", 0n));
+                        });
+                        const count = $.let(State.read([IntegerType], "badge_clicks"), IntegerType);
+                        const increment = $.const(East.function([], NullType, $ => {
+                            const current = $.let(State.read([IntegerType], "badge_clicks"), IntegerType);
+                            $(State.write([IntegerType], "badge_clicks", current.add(1n)));
+                        }));
+                        Badge.Root("Click me!", { onClick: increment, colorPalette: "blue", variant: "solid" })
+                    }))
                 `)
             )
         );
@@ -304,6 +341,45 @@ export default East.function(
                         ),
                         colorPalette: "blue",
                     })
+                `)
+            )
+        );
+
+        // Tag - Interactive
+        const tagInteractive = $.let(
+            ShowcaseCard(
+                "Interactive Tag",
+                "Click tag to track count",
+                Reactive.Root(East.function([], UIComponentType, $ => {
+                    $.if(State.has("tag_clicks").not(), $ => {
+                        $(State.write([IntegerType], "tag_clicks", 0n));
+                    });
+                    const count = $.let(State.read([IntegerType], "tag_clicks"), IntegerType);
+                    const increment = $.const(East.function([], NullType, $ => {
+                        const current = $.let(State.read([IntegerType], "tag_clicks"), IntegerType);
+                        $(State.write([IntegerType], "tag_clicks", current.add(1n)));
+                    }));
+                    return Stack.VStack([
+                        Tag.Root("Click me!", {
+                            onClick: increment,
+                            colorPalette: "teal",
+                            variant: "solid",
+                        }),
+                        Text.Root(East.str`Clicked ${count} times`),
+                    ], { gap: "2", align: "flex-start" });
+                })),
+                some(`
+                    Reactive.Root(East.function([], UIComponentType, $ => {
+                        $.if(State.has("tag_clicks").not(), $ => {
+                            $(State.write([IntegerType], "tag_clicks", 0n));
+                        });
+                        const count = $.let(State.read([IntegerType], "tag_clicks"), IntegerType);
+                        const increment = $.const(East.function([], NullType, $ => {
+                            const current = $.let(State.read([IntegerType], "tag_clicks"), IntegerType);
+                            $(State.write([IntegerType], "tag_clicks", current.add(1n)));
+                        }));
+                        Tag.Root("Click me!", { onClick: increment, colorPalette: "teal", variant: "solid" })
+                    }))
                 `)
             )
         );
@@ -673,6 +749,7 @@ export default East.function(
                     Grid.Item(badgeBorder),
                     Grid.Item(badgeBoxModel),
                     Grid.Item(badgeFixedWidth),
+                    Grid.Item(badgeInteractive),
                 ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
             ]),
             Accordion.Item("tag", "Tag", [
@@ -684,6 +761,7 @@ export default East.function(
                     Grid.Item(tagBorder),
                     Grid.Item(tagBoxModel),
                     Grid.Item(tagDynamic, { colSpan: "2" }),
+                    Grid.Item(tagInteractive),
                 ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
             ]),
             Accordion.Item("avatar", "Avatar", [

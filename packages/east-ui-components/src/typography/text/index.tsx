@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Text as ChakraText, type TextProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Text } from "@elaraai/east-ui";
@@ -73,8 +73,16 @@ export interface EastChakraTextProps {
 export const EastChakraText = memo(function EastChakraText({ value }: EastChakraTextProps) {
     const props = useMemo(() => toChakraText(value), [value]);
 
+    const onClickFn = useMemo(() => getSomeorUndefined(value.onClick), [value.onClick]);
+
+    const handleClick = useCallback(() => {
+        if (onClickFn) {
+            queueMicrotask(() => onClickFn());
+        }
+    }, [onClickFn]);
+
     return (
-        <ChakraText {...props}>
+        <ChakraText {...props} onClick={onClickFn ? handleClick : undefined} cursor={onClickFn ? "pointer" : undefined}>
             {value.value}
         </ChakraText>
     );

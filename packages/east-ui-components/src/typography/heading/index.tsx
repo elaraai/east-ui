@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Heading as ChakraHeading, type HeadingProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Heading } from "@elaraai/east-ui";
@@ -62,5 +62,13 @@ export interface EastChakraHeadingProps {
 export const EastChakraHeading = memo(function EastChakraHeading({ value }: EastChakraHeadingProps) {
     const props = useMemo(() => toChakraHeading(value), [value]);
 
-    return <ChakraHeading {...props}>{value.value}</ChakraHeading>;
+    const onClickFn = useMemo(() => getSomeorUndefined(value.onClick), [value.onClick]);
+
+    const handleClick = useCallback(() => {
+        if (onClickFn) {
+            queueMicrotask(() => onClickFn());
+        }
+    }, [onClickFn]);
+
+    return <ChakraHeading {...props} onClick={onClickFn ? handleClick : undefined} cursor={onClickFn ? "pointer" : undefined}>{value.value}</ChakraHeading>;
 }, (prev, next) => headingEqual(prev.value, next.value));

@@ -4,9 +4,16 @@
  */
 
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
+import { East, NullType } from "@elaraai/east";
 import { Card, Text, Heading, Button, Stack, Style } from "../../src/index.js";
+import * as ex from "./card.examples.js";
 
 describeEast("Card", (test) => {
+    Assert.examples(test, {
+        cardBasic: ex.cardBasic,
+        cardOnClick: ex.cardOnClick,
+    });
+
     // =========================================================================
     // Basic Creation
     // =========================================================================
@@ -312,5 +319,25 @@ describeEast("Card", (test) => {
         $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").height.unwrap("some"), "100%"));
         $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").flex.unwrap("some"), "1"));
         $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").overflow.unwrap("some").hasTag("auto"), true));
+    });
+    // =========================================================================
+    // onClick
+    // =========================================================================
+
+    test("creates card without onClick by default", $ => {
+        const card = $.let(Card.Root([Text.Root("Content")]));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.hasTag("none"), true));
+    });
+
+    test("creates card with onClick callback", $ => {
+        const handler = $.const(East.function([], NullType, $ => {
+            $(East.value(null));
+        }));
+        const card = $.let(Card.Root([Text.Root("Content")], {
+            onClick: handler,
+        }));
+
+        $(Assert.equal(card.unwrap().unwrap("Card").style.hasTag("some"), true));
+        $(Assert.equal(card.unwrap().unwrap("Card").style.unwrap("some").onClick.hasTag("some"), true));
     });
 }, {   platformFns: TestImpl,});

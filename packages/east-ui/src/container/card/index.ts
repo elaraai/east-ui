@@ -144,7 +144,8 @@ function createCard(
         options?.minWidth !== undefined ||
         options?.maxWidth !== undefined ||
         options?.flex !== undefined ||
-        options?.overflow !== undefined;
+        options?.overflow !== undefined ||
+        options?.onClick !== undefined;
 
     return East.value(variant("Card", {
         header: options?.header ? variant("some", options.header) : variant("none", null),
@@ -161,6 +162,7 @@ function createCard(
             maxWidth: toStringOption(options?.maxWidth),
             flex: toStringOption(options?.flex),
             overflow: overflowValue ? variant("some", overflowValue) : variant("none", null),
+            onClick: options?.onClick ? variant("some", options.onClick) : variant("none", null),
         }, CardStyleType)) : variant("none", null),
     }), UIComponentType);
 }

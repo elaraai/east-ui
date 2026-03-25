@@ -3,7 +3,7 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East, some } from "@elaraai/east";
+import { East, IntegerType, NullType, some } from "@elaraai/east";
 import {
     UIComponentType,
     Grid,
@@ -14,6 +14,8 @@ import {
     Badge,
     Heading,
     Accordion,
+    Reactive,
+    State,
 } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -311,6 +313,44 @@ export default East.function(
             )
         );
 
+        // Card - Clickable
+        const cardClickable = $.let(
+            ShowcaseCard(
+                "Clickable Card",
+                "Card with onClick handler",
+                Reactive.Root(East.function([], UIComponentType, $ => {
+                    $.if(State.has("card_clicks").not(), $ => {
+                        $(State.write([IntegerType], "card_clicks", 0n));
+                    });
+                    const count = $.let(State.read([IntegerType], "card_clicks"), IntegerType);
+                    const increment = $.const(East.function([], NullType, $ => {
+                        const current = $.let(State.read([IntegerType], "card_clicks"), IntegerType);
+                        $(State.write([IntegerType], "card_clicks", current.add(1n)));
+                    }));
+                    return Card.Root([
+                        Text.Root(East.str`Clicked ${count} times`),
+                    ], {
+                        header: Heading.Root("Click this card"),
+                        variant: "outline",
+                        onClick: increment,
+                    });
+                })),
+                some(`
+                    Reactive.Root(East.function([], UIComponentType, $ => {
+                        $.if(State.has("card_clicks").not(), $ => {
+                            $(State.write([IntegerType], "card_clicks", 0n));
+                        });
+                        const count = $.let(State.read([IntegerType], "card_clicks"), IntegerType);
+                        const increment = $.const(East.function([], NullType, $ => {
+                            const current = $.let(State.read([IntegerType], "card_clicks"), IntegerType);
+                            $(State.write([IntegerType], "card_clicks", current.add(1n)));
+                        }));
+                        Card.Root([...], { onClick: increment, variant: "outline" })
+                    }))
+                `)
+            )
+        );
+
         return Accordion.Root([
             Accordion.Item("basic", "Basic Cards", [
                 Grid.Root([
@@ -333,6 +373,7 @@ export default East.function(
                     Grid.Item(cardFlexible, { colSpan: "2" }),
                     Grid.Item(cardMultiple, { colSpan: "2" }),
                     Grid.Item(cardSizes, { colSpan: "2" }),
+                    Grid.Item(cardClickable, { colSpan: "2" }),
                 ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
             ]),
         ], { multiple: true, collapsible: true });

@@ -4,9 +4,16 @@
  */
 
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
+import { East, NullType } from "@elaraai/east";
 import { Text, Style } from "../../src/index.js";
+import * as ex from "./text.examples.js";
 
 describeEast("Text", (test) => {
+    Assert.examples(test, {
+        textBasic: ex.textBasic,
+        textOnClick: ex.textOnClick,
+    });
+
     // =========================================================================
     // Basic Creation
     // =========================================================================
@@ -250,5 +257,24 @@ describeEast("Text", (test) => {
         $(Assert.equal(text.unwrap().unwrap("Text").borderWidth.unwrap("some").hasTag("medium"), true));
         $(Assert.equal(text.unwrap().unwrap("Text").borderStyle.unwrap("some").hasTag("solid"), true));
         $(Assert.equal(text.unwrap().unwrap("Text").borderColor.unwrap("some"), "gray.300"));
+    });
+    // =========================================================================
+    // onClick
+    // =========================================================================
+
+    test("creates text without onClick by default", $ => {
+        const text = $.let(Text.Root("Hello"));
+        $(Assert.equal(text.unwrap().unwrap("Text").onClick.hasTag("none"), true));
+    });
+
+    test("creates text with onClick callback", $ => {
+        const handler = $.const(East.function([], NullType, $ => {
+            $(East.value(null));
+        }));
+        const text = $.let(Text.Root("Click me", {
+            onClick: handler,
+        }));
+
+        $(Assert.equal(text.unwrap().unwrap("Text").onClick.hasTag("some"), true));
     });
 }, {   platformFns: TestImpl,});

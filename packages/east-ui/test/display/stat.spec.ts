@@ -4,9 +4,16 @@
  */
 
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
+import { East, NullType } from "@elaraai/east";
 import { Stat, Text } from "../../src/index.js";
+import * as ex from "./stat.examples.js";
 
 describeEast("Stat", (test) => {
+    Assert.examples(test, {
+        statBasic: ex.statBasic,
+        statOnClick: ex.statOnClick,
+    });
+
     // =========================================================================
     // Basic Creation
     // =========================================================================
@@ -147,5 +154,24 @@ describeEast("Stat", (test) => {
 
         $(Assert.equal(stat.unwrap().unwrap("Stat").value.unwrap().unwrap("Text").value, "98.5%"));
         $(Assert.equal(stat.unwrap().unwrap("Stat").indicator.unwrap("some").hasTag("up"), true));
+    });
+    // =========================================================================
+    // onClick
+    // =========================================================================
+
+    test("creates stat without onClick by default", $ => {
+        const stat = $.let(Stat.Root("Revenue", Text.Root("$45,231")));
+        $(Assert.equal(stat.unwrap().unwrap("Stat").onClick.hasTag("none"), true));
+    });
+
+    test("creates stat with onClick callback", $ => {
+        const handler = $.const(East.function([], NullType, $ => {
+            $(East.value(null));
+        }));
+        const stat = $.let(Stat.Root("Revenue", Text.Root("$45,231"), {
+            onClick: handler,
+        }));
+
+        $(Assert.equal(stat.unwrap().unwrap("Stat").onClick.hasTag("some"), true));
     });
 }, {   platformFns: TestImpl,});

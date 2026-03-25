@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Flex as ChakraFlex, type FlexProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Flex } from "@elaraai/east-ui";
@@ -76,8 +76,19 @@ export interface EastChakraFlexProps {
 export const EastChakraFlex = memo(function EastChakraFlex({ value, storageKey }: EastChakraFlexProps) {
     const props = useMemo(() => toChakraFlex(value), [value]);
 
+    const onClickFn = useMemo(() => {
+        const style = getSomeorUndefined(value.style);
+        return style ? getSomeorUndefined(style.onClick) : undefined;
+    }, [value.style]);
+
+    const handleClick = useCallback(() => {
+        if (onClickFn) {
+            queueMicrotask(() => onClickFn());
+        }
+    }, [onClickFn]);
+
     return (
-        <ChakraFlex {...props}>
+        <ChakraFlex {...props} onClick={onClickFn ? handleClick : undefined} cursor={onClickFn ? "pointer" : undefined}>
             {value.children.map((child, index) => (
                 <EastChakraComponent key={index} value={child} storageKey={`${storageKey}.${index}`} />
             ))}

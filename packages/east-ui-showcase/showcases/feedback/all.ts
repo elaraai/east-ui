@@ -3,7 +3,7 @@
  * Licensed under AGPL-3.0. See LICENSE file for details.
  */
 
-import { East, some } from "@elaraai/east";
+import { East, IntegerType, NullType, some } from "@elaraai/east";
 import {
     UIComponentType,
     Grid,
@@ -11,6 +11,9 @@ import {
     Alert,
     Progress,
     Accordion,
+    Text,
+    Reactive,
+    State,
 } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
@@ -245,6 +248,44 @@ export default East.function(
             )
         );
 
+        // Alert - Clickable
+        const alertClickable = $.let(
+            ShowcaseCard(
+                "Clickable Alert",
+                "Alert with onClick handler",
+                Reactive.Root(East.function([], UIComponentType, $ => {
+                    $.if(State.has("alert_clicks").not(), $ => {
+                        $(State.write([IntegerType], "alert_clicks", 0n));
+                    });
+                    const count = $.let(State.read([IntegerType], "alert_clicks"), IntegerType);
+                    const increment = $.const(East.function([], NullType, $ => {
+                        const current = $.let(State.read([IntegerType], "alert_clicks"), IntegerType);
+                        $(State.write([IntegerType], "alert_clicks", current.add(1n)));
+                    }));
+                    return Stack.VStack([
+                        Alert.Root("info", {
+                            title: "Click this alert",
+                            description: East.str`Clicked ${count} times`,
+                            onClick: increment,
+                        }),
+                    ], { gap: "2", align: "stretch", width: "100%" });
+                })),
+                some(`
+                    Reactive.Root(East.function([], UIComponentType, $ => {
+                        $.if(State.has("alert_clicks").not(), $ => {
+                            $(State.write([IntegerType], "alert_clicks", 0n));
+                        });
+                        const count = $.let(State.read([IntegerType], "alert_clicks"), IntegerType);
+                        const increment = $.const(East.function([], NullType, $ => {
+                            const current = $.let(State.read([IntegerType], "alert_clicks"), IntegerType);
+                            $(State.write([IntegerType], "alert_clicks", current.add(1n)));
+                        }));
+                        Alert.Root("info", { title: "Click this alert", onClick: increment })
+                    }))
+                `)
+            )
+        );
+
         return Accordion.Root([
             Accordion.Item("alert", "Alert", [
                 Grid.Root([
@@ -254,6 +295,7 @@ export default East.function(
                     Grid.Item(alertError),
                     Grid.Item(alertVariants),
                     Grid.Item(alertTitleOnly),
+                    Grid.Item(alertClickable),
                 ], { templateColumns: "repeat(2, 1fr)", gap: "4" }),
             ]),
             Accordion.Item("progress", "Progress", [

@@ -239,6 +239,7 @@ function buildIndicatorValue(indicator?: TreeNodeIndicator) {
                 maxHeight: variant("none", null),
                 padding: variant("none", null),
                 margin: variant("none", null),
+                onClick: variant("none", null),
             }, IconStyleType))
             : variant("none", null),
     }, IconType));
