@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Avatar as ChakraAvatar, type AvatarRootProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Avatar } from "@elaraai/east-ui";
@@ -61,8 +61,16 @@ export const EastChakraAvatar = memo(function EastChakraAvatar({ value }: EastCh
     const src = useMemo(() => getSomeorUndefined(value.src), [value.src]);
     const name = useMemo(() => getSomeorUndefined(value.name), [value.name]);
 
+    const onClickFn = useMemo(() => getSomeorUndefined(value.onClick), [value.onClick]);
+
+    const handleClick = useCallback(() => {
+        if (onClickFn) {
+            queueMicrotask(() => onClickFn());
+        }
+    }, [onClickFn]);
+
     return (
-        <ChakraAvatar.Root {...props}>
+        <ChakraAvatar.Root {...props} onClick={onClickFn ? handleClick : undefined} cursor={onClickFn ? "pointer" : undefined}>
             <ChakraAvatar.Fallback name={name} />
             {src && <ChakraAvatar.Image src={src} />}
         </ChakraAvatar.Root>

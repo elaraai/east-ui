@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Box as ChakraBox, type BoxProps } from "@chakra-ui/react";
 import { FontAwesomeIcon, type FontAwesomeIconProps } from "@fortawesome/react-fontawesome";
 import { library, type IconName, type IconPrefix } from "@fortawesome/fontawesome-svg-core";
@@ -129,11 +129,28 @@ export const EastChakraIcon = memo(function EastChakraIcon({ value }: EastChakra
     const props = useMemo(() => toFontAwesomeIcon(value), [value]);
     const wrapperProps = useMemo(() => toIconWrapperProps(value), [value]);
 
+    const style = useMemo(() => getSomeorUndefined(value.style), [value.style]);
+    const onClickFn = useMemo(() => style ? getSomeorUndefined(style.onClick) : undefined, [style]);
+
+    const handleClick = useCallback(() => {
+        if (onClickFn) {
+            queueMicrotask(() => onClickFn());
+        }
+    }, [onClickFn]);
+
     if (wrapperProps) {
         return (
-            <ChakraBox {...wrapperProps}>
+            <ChakraBox {...wrapperProps} onClick={onClickFn ? handleClick : undefined} cursor={onClickFn ? "pointer" : undefined}>
                 <FontAwesomeIcon {...props} />
             </ChakraBox>
+        );
+    }
+
+    if (onClickFn) {
+        return (
+            <span onClick={handleClick} style={{ cursor: "pointer" }}>
+                <FontAwesomeIcon {...props} />
+            </span>
         );
     }
 

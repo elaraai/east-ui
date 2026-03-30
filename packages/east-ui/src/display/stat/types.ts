@@ -8,6 +8,7 @@ import {
     type ExprType,
     StringType,
     NullType,
+    FunctionType,
     VariantType,
     East,
     variant,
@@ -81,4 +82,6 @@ export interface StatStyle {
     helpText?: SubtypeExprOrValue<StringType>;
     /** Optional trend indicator (up/down) */
     indicator?: SubtypeExprOrValue<StatIndicatorType> | StatIndicatorLiteral;
+    /** Callback triggered when clicked */
+    onClick?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 }

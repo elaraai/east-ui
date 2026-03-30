@@ -6,6 +6,7 @@
 import {
     type SubtypeExprOrValue,
     FloatType,
+    FunctionType,
     OptionType,
     StringType,
     StructType,
@@ -111,6 +112,7 @@ export const HeadingType = StructType({
     lineHeight: OptionType(StringType),
     letterSpacing: OptionType(StringType),
     opacity: OptionType(FloatType),
+    onClick: OptionType(FunctionType([], NullType)),
 });
 
 export type HeadingType = typeof HeadingType;
@@ -161,4 +163,6 @@ export type HeadingStyle = {
     letterSpacing?: SubtypeExprOrValue<StringType>;
     /** CSS opacity (0-1) */
     opacity?: SubtypeExprOrValue<FloatType>;
+    /** Callback triggered when clicked */
+    onClick?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 };

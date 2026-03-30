@@ -4,9 +4,16 @@
  */
 
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
+import { East, NullType } from "@elaraai/east";
 import { Alert } from "../../src/index.js";
+import * as ex from "./alert.examples.js";
 
 describeEast("Alert", (test) => {
+    Assert.examples(test, {
+        alertBasic: ex.alertBasic,
+        alertOnClick: ex.alertOnClick,
+    });
+
     // =========================================================================
     // Basic Creation with Status
     // =========================================================================
@@ -204,5 +211,25 @@ describeEast("Alert", (test) => {
 
         $(Assert.equal(alert.unwrap().unwrap("Alert").status.hasTag("warning"), true));
         $(Assert.equal(alert.unwrap().unwrap("Alert").variant.unwrap("some").hasTag("outline"), true));
+    });
+    // =========================================================================
+    // onClick
+    // =========================================================================
+
+    test("creates alert without onClick by default", $ => {
+        const alert = $.let(Alert.Root("info", { title: "Test" }));
+        $(Assert.equal(alert.unwrap().unwrap("Alert").onClick.hasTag("none"), true));
+    });
+
+    test("creates alert with onClick callback", $ => {
+        const handler = $.const(East.function([], NullType, $ => {
+            $(East.value(null));
+        }));
+        const alert = $.let(Alert.Root("info", {
+            title: "Clickable Alert",
+            onClick: handler,
+        }));
+
+        $(Assert.equal(alert.unwrap().unwrap("Alert").onClick.hasTag("some"), true));
     });
 }, {   platformFns: TestImpl,});

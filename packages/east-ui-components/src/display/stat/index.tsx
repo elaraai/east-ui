@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { Stat as ChakraStat } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Stat } from "@elaraai/east-ui";
@@ -27,8 +27,16 @@ export interface EastChakraStatProps {
 export const EastChakraStat = memo(function EastChakraStat({ value, storageKey }: EastChakraStatProps) {
     const helpText = useMemo(() => getSomeorUndefined(value.helpText), [value.helpText]);
     const indicator = useMemo(() => getSomeorUndefined(value.indicator)?.type, [value.indicator]);
+    const onClickFn = useMemo(() => getSomeorUndefined(value.onClick), [value.onClick]);
+
+    const handleClick = useCallback(() => {
+        if (onClickFn) {
+            queueMicrotask(() => onClickFn());
+        }
+    }, [onClickFn]);
+
     return (
-        <ChakraStat.Root>
+        <ChakraStat.Root onClick={onClickFn ? handleClick : undefined} cursor={onClickFn ? "pointer" : undefined}>
             <ChakraStat.Label>{value.label}</ChakraStat.Label>
             <ChakraStat.ValueText><EastChakraComponent value={value.value} storageKey={`${storageKey}.value`} /></ChakraStat.ValueText>
             {helpText && (

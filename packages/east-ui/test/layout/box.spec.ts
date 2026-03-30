@@ -4,9 +4,16 @@
  */
 
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
+import { East, NullType } from "@elaraai/east";
 import { Box, Text, Style } from "../../src/index.js";
+import * as ex from "./box.examples.js";
 
 describeEast("Box", (test) => {
+    Assert.examples(test, {
+        boxBasic: ex.boxBasic,
+        boxOnClick: ex.boxOnClick,
+    });
+
     // =========================================================================
     // Basic Creation
     // =========================================================================
@@ -322,5 +329,25 @@ describeEast("Box", (test) => {
         $(Assert.equal(outerBox.unwrap().unwrap("Box").children.size(), 1n));
         $(Assert.equal(outerBox.unwrap().unwrap("Box").style.unwrap("some").padding.unwrap("some").top.unwrap("some"), "4"));
         $(Assert.equal(outerBox.unwrap().unwrap("Box").style.unwrap("some").background.unwrap("some"), "gray.100"));
+    });
+    // =========================================================================
+    // onClick
+    // =========================================================================
+
+    test("creates box without onClick by default", $ => {
+        const box = $.let(Box.Root([Text.Root("Content")]));
+        $(Assert.equal(box.unwrap().unwrap("Box").style.hasTag("none"), true));
+    });
+
+    test("creates box with onClick callback", $ => {
+        const handler = $.const(East.function([], NullType, $ => {
+            $(East.value(null));
+        }));
+        const box = $.let(Box.Root([Text.Root("Content")], {
+            onClick: handler,
+        }));
+
+        $(Assert.equal(box.unwrap().unwrap("Box").style.hasTag("some"), true));
+        $(Assert.equal(box.unwrap().unwrap("Box").style.unwrap("some").onClick.hasTag("some"), true));
     });
 }, {   platformFns: TestImpl,});

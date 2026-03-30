@@ -4,9 +4,16 @@
  */
 
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
+import { East, NullType } from "@elaraai/east";
 import { Avatar, Style } from "../../src/index.js";
+import * as ex from "./avatar.examples.js";
 
 describeEast("Avatar", (test) => {
+    Assert.examples(test, {
+        avatarBasic: ex.avatarBasic,
+        avatarOnClick: ex.avatarOnClick,
+    });
+
     // =========================================================================
     // Basic Creation
     // =========================================================================
@@ -219,5 +226,24 @@ describeEast("Avatar", (test) => {
         }));
 
         $(Assert.equal(avatar.unwrap().unwrap("Avatar").size.unwrap("some").hasTag("lg"), true));
+    });
+    // =========================================================================
+    // onClick
+    // =========================================================================
+
+    test("creates avatar without onClick by default", $ => {
+        const avatar = $.let(Avatar.Root());
+        $(Assert.equal(avatar.unwrap().unwrap("Avatar").onClick.hasTag("none"), true));
+    });
+
+    test("creates avatar with onClick callback", $ => {
+        const handler = $.const(East.function([], NullType, $ => {
+            $(East.value(null));
+        }));
+        const avatar = $.let(Avatar.Root({
+            onClick: handler,
+        }));
+
+        $(Assert.equal(avatar.unwrap().unwrap("Avatar").onClick.hasTag("some"), true));
     });
 }, {   platformFns: TestImpl,});

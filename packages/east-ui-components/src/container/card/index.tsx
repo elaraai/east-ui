@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Card as ChakraCard, type CardRootProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Card } from "@elaraai/east-ui";
@@ -50,8 +50,19 @@ export const EastChakraCard = memo(function EastChakraCard({ value, storageKey }
     const header = useMemo(() => getSomeorUndefined(value.header), [value.header]);
     const footer = useMemo(() => getSomeorUndefined(value.footer), [value.footer]);
 
+    const onClickFn = useMemo(() => {
+        const style = getSomeorUndefined(value.style);
+        return style ? getSomeorUndefined(style.onClick) : undefined;
+    }, [value.style]);
+
+    const handleClick = useCallback(() => {
+        if (onClickFn) {
+            queueMicrotask(() => onClickFn());
+        }
+    }, [onClickFn]);
+
     return (
-        <ChakraCard.Root {...props}>
+        <ChakraCard.Root {...props} onClick={onClickFn ? handleClick : undefined} cursor={onClickFn ? "pointer" : undefined}>
             {header && (
                 <ChakraCard.Header>
                     <EastChakraComponent value={header} storageKey={`${storageKey}.header`} />

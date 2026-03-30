@@ -79,6 +79,7 @@ export const TagType = StructType({
     size: OptionType(TagSizeType),
     closable: OptionType(BooleanType),
     onClose: OptionType(FunctionType([], NullType)),
+    onClick: OptionType(FunctionType([], NullType)),
     opacity: OptionType(FloatType),
     color: OptionType(StringType),
     background: OptionType(StringType),
@@ -131,6 +132,8 @@ export interface TagStyle {
     closable?: SubtypeExprOrValue<BooleanType>;
     /** Callback triggered when close button is clicked */
     onClose?: SubtypeExprOrValue<FunctionType<[], NullType>>;
+    /** Callback triggered when clicked */
+    onClick?: SubtypeExprOrValue<FunctionType<[], NullType>>;
     /** CSS opacity (0-1) */
     opacity?: SubtypeExprOrValue<FloatType>;
     /** Custom text color (overrides colorPalette) */

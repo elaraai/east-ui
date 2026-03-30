@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Code as ChakraCode, type CodeProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Code } from "@elaraai/east-ui";
@@ -61,5 +61,13 @@ export interface EastChakraCodeProps {
 export const EastChakraCode = memo(function EastChakraCode({ value }: EastChakraCodeProps) {
     const props = useMemo(() => toChakraCode(value), [value]);
 
-    return <ChakraCode {...props}>{value.value}</ChakraCode>;
+    const onClickFn = useMemo(() => getSomeorUndefined(value.onClick), [value.onClick]);
+
+    const handleClick = useCallback(() => {
+        if (onClickFn) {
+            queueMicrotask(() => onClickFn());
+        }
+    }, [onClickFn]);
+
+    return <ChakraCode {...props} onClick={onClickFn ? handleClick : undefined} cursor={onClickFn ? "pointer" : undefined}>{value.value}</ChakraCode>;
 }, (prev, next) => codeEqual(prev.value, next.value));

@@ -5,8 +5,15 @@
 
 import { Icon } from "../../src/display/icon/index.js";
 import { describeEast as describe, Assert, TestImpl } from "@elaraai/east-node-std";
+import { East, NullType } from "@elaraai/east";
+import * as ex from "./icon.examples.js";
 
 describe("Icon", (test) => {
+    Assert.examples(test, {
+        iconBasic: ex.iconBasic,
+        iconOnClick: ex.iconOnClick,
+    });
+
     // =========================================================================
     // Icon.Root - Basic with prefix
     // =========================================================================
@@ -159,5 +166,24 @@ describe("Icon", (test) => {
 
         $(Assert.equal(icon.unwrap().unwrap("Icon").name, "file-code"));
         $(Assert.equal(icon.unwrap().unwrap("Icon").style.unwrap("some").color.unwrap("some"), "blue.500"));
+    });
+    // =========================================================================
+    // onClick
+    // =========================================================================
+
+    test("creates icon without onClick by default", $ => {
+        const icon = $.let(Icon.Root("fas", "user"));
+        $(Assert.equal(icon.unwrap().unwrap("Icon").style.hasTag("none"), true));
+    });
+
+    test("creates icon with onClick callback", $ => {
+        const handler = $.const(East.function([], NullType, $ => {
+            $(East.value(null));
+        }));
+        const icon = $.let(Icon.Root("fas", "user", {
+            onClick: handler,
+        }));
+
+        $(Assert.equal(icon.unwrap().unwrap("Icon").style.unwrap("some").onClick.hasTag("some"), true));
     });
 }, {   platformFns: TestImpl,});

@@ -4,9 +4,16 @@
  */
 
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
+import { East, NullType } from "@elaraai/east";
 import { Code, Style } from "../../src/index.js";
+import * as ex from "./code.examples.js";
 
 describeEast("Code", (test) => {
+    Assert.examples(test, {
+        codeBasic: ex.codeBasic,
+        codeOnClick: ex.codeOnClick,
+    });
+
     // =========================================================================
     // Basic Creation
     // =========================================================================
@@ -138,5 +145,24 @@ describeEast("Code", (test) => {
 
         $(Assert.equal(code.unwrap().unwrap("Code").value, "console.log()"));
         $(Assert.equal(code.unwrap().unwrap("Code").variant.unwrap("some").hasTag("surface"), true));
+    });
+    // =========================================================================
+    // onClick
+    // =========================================================================
+
+    test("creates code without onClick by default", $ => {
+        const code = $.let(Code.Root("const x = 1"));
+        $(Assert.equal(code.unwrap().unwrap("Code").onClick.hasTag("none"), true));
+    });
+
+    test("creates code with onClick callback", $ => {
+        const handler = $.const(East.function([], NullType, $ => {
+            $(East.value(null));
+        }));
+        const code = $.let(Code.Root("click me", {
+            onClick: handler,
+        }));
+
+        $(Assert.equal(code.unwrap().unwrap("Code").onClick.hasTag("some"), true));
     });
 }, {   platformFns: TestImpl,});

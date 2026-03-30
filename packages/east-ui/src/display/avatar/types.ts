@@ -9,6 +9,8 @@ import {
     StringType,
     OptionType,
     StructType,
+    FunctionType,
+    NullType,
 } from "@elaraai/east";
 
 import { ColorSchemeType, OverflowType, StyleVariantType, SizeType } from "../../style.js";
@@ -50,6 +52,7 @@ export const AvatarType = StructType({
     maxHeight: OptionType(StringType),
     padding: OptionType(PaddingType),
     margin: OptionType(MarginType),
+    onClick: OptionType(FunctionType([], NullType)),
 });
 
 /**
@@ -107,4 +110,6 @@ export interface AvatarStyle {
     padding?: SubtypeExprOrValue<PaddingType> | string;
     /** Margin configuration */
     margin?: SubtypeExprOrValue<MarginType> | string;
+    /** Callback triggered when clicked */
+    onClick?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 }

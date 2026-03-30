@@ -7,6 +7,7 @@ import {
     type ExprType,
     type SubtypeExprOrValue,
     East,
+    FunctionType,
     NullType,
     OptionType,
     StructType,
@@ -87,6 +88,7 @@ export const CardStyleType = StructType({
     maxWidth: OptionType(StringType),
     flex: OptionType(StringType),
     overflow: OptionType(OverflowType),
+    onClick: OptionType(FunctionType([], NullType)),
 });
 
 /**
@@ -133,4 +135,6 @@ export interface CardStyle {
     flex?: SubtypeExprOrValue<StringType>;
     /** Overflow behavior (visible, hidden, scroll, auto) */
     overflow?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Callback triggered when card is clicked */
+    onClick?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 }

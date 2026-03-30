@@ -131,6 +131,7 @@ function createAvatar(style?: AvatarStyle): ExprType<UIComponentType> {
         maxHeight: style?.maxHeight ? variant("some", style.maxHeight) : variant("none", null),
         padding: paddingValue ? variant("some", paddingValue) : variant("none", null),
         margin: marginValue ? variant("some", marginValue) : variant("none", null),
+        onClick: style?.onClick ? variant("some", style.onClick) : variant("none", null),
     }), UIComponentType);
 }
 

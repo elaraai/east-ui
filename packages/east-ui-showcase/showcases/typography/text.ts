@@ -1,5 +1,5 @@
-import { East, some } from "@elaraai/east";
-import { Text, UIComponentType, Stack, Grid, Style } from "@elaraai/east-ui";
+import { East, IntegerType, NullType, some } from "@elaraai/east";
+import { Text, UIComponentType, Stack, Grid, Style, Reactive, State } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
 /**
@@ -279,6 +279,41 @@ export default East.function(
             )
         );
 
+        // Clickable Text
+        const clickableText = $.let(
+            ShowcaseCard(
+                "Clickable Text",
+                "Text with onClick handler",
+                Reactive.Root(East.function([], UIComponentType, $ => {
+                    $.if(State.has("text_clicks").not(), $ => {
+                        $(State.write([IntegerType], "text_clicks", 0n));
+                    });
+                    const count = $.let(State.read([IntegerType], "text_clicks"), IntegerType);
+                    const increment = $.const(East.function([], NullType, $ => {
+                        const current = $.let(State.read([IntegerType], "text_clicks"), IntegerType);
+                        $(State.write([IntegerType], "text_clicks", current.add(1n)));
+                    }));
+                    return Stack.VStack([
+                        Text.Root("Click me!", { color: "blue.500", onClick: increment }),
+                        Text.Root(East.str`Clicked ${count} times`),
+                    ], { gap: "2", align: "flex-start" });
+                })),
+                some(`
+                    Reactive.Root(East.function([], UIComponentType, $ => {
+                        $.if(State.has("text_clicks").not(), $ => {
+                            $(State.write([IntegerType], "text_clicks", 0n));
+                        });
+                        const count = $.let(State.read([IntegerType], "text_clicks"), IntegerType);
+                        const increment = $.const(East.function([], NullType, $ => {
+                            const current = $.let(State.read([IntegerType], "text_clicks"), IntegerType);
+                            $(State.write([IntegerType], "text_clicks", current.add(1n)));
+                        }));
+                        Text.Root("Click me!", { color: "blue.500", onClick: increment })
+                    }))
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -296,6 +331,7 @@ export default East.function(
                 Grid.Item(opacity),
                 Grid.Item(paddingMargin),
                 Grid.Item(overflow),
+                Grid.Item(clickableText),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import { Alert as ChakraAlert, type AlertRootProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Alert } from "@elaraai/east-ui";
@@ -37,9 +37,16 @@ export const EastChakraAlert = memo(function EastChakraAlert({ value }: EastChak
     const props = useMemo(() => toChakraAlert(value), [value]);
     const title = useMemo(() => getSomeorUndefined(value.title), [value.title]);
     const description = useMemo(() => getSomeorUndefined(value.description), [value.description]);
+    const onClickFn = useMemo(() => getSomeorUndefined(value.onClick), [value.onClick]);
+
+    const handleClick = useCallback(() => {
+        if (onClickFn) {
+            queueMicrotask(() => onClickFn());
+        }
+    }, [onClickFn]);
 
     return (
-        <ChakraAlert.Root {...props}>
+        <ChakraAlert.Root {...props} onClick={onClickFn ? handleClick : undefined} cursor={onClickFn ? "pointer" : undefined}>
             <ChakraAlert.Indicator />
             <ChakraAlert.Content>
                 {title && <ChakraAlert.Title>{title}</ChakraAlert.Title>}

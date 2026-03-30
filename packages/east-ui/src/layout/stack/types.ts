@@ -5,6 +5,8 @@
 
 import {
     type SubtypeExprOrValue,
+    FunctionType,
+    NullType,
     OptionType,
     StringType,
     StructType,
@@ -94,6 +96,8 @@ export type StackStyle = {
     overflowX?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
     /** Vertical overflow behavior (visible, hidden, scroll, auto) */
     overflowY?: SubtypeExprOrValue<OverflowType> | OverflowLiteral;
+    /** Callback triggered when clicked */
+    onClick?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 };
 
 /**
@@ -142,6 +146,7 @@ export const StackStyleType = StructType({
     overflow: OptionType(OverflowType),
     overflowX: OptionType(OverflowType),
     overflowY: OptionType(OverflowType),
+    onClick: OptionType(FunctionType([], NullType)),
 });
 
 /**
