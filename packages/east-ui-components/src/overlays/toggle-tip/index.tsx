@@ -42,6 +42,8 @@ export const EastChakraToggleTip = memo(function EastChakraToggleTip({ value, st
     return (
         <ChakraPopover.Root
             positioning={placement ? { placement } : undefined}
+            lazyMount
+            unmountOnExit
             onOpenChange={onOpenChangeFn ? handleOpenChange : undefined}
         >
             <ChakraPopover.Trigger asChild>

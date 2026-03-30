@@ -117,6 +117,8 @@ export function DialogContent({ value, storageKey, trigger, open, onClose }: Dia
             scrollBehavior={props.scrollBehavior}
             motionPreset={props.motionPreset}
             role={props.role}
+            lazyMount
+            unmountOnExit
             onOpenChange={onOpenChangeFn || onClose ? handleOpenChange : undefined}
             onExitComplete={onExitCompleteFn ? handleExitComplete : undefined}
             onEscapeKeyDown={onEscapeKeyDownFn ? handleEscapeKeyDown : undefined}

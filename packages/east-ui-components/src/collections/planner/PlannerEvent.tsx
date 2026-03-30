@@ -417,6 +417,21 @@ export const PlannerEvent = ({
         }
     }, [hasPopover, eventPopoverTrigger, interaction.type, onHoverEnd]);
 
+    // Dismiss handler for overlays (escape key, etc.) - we manage open/close ourselves
+    const handleOverlayDismiss = useCallback((e: { open: boolean }) => {
+        if (!e.open) {
+            setOverlay(prev => ({ ...prev, active: "none" }));
+        }
+    }, []);
+
+    // Get anchor rect for context menu positioning
+    const getContextMenuAnchorRect = useCallback(() => ({
+        x: overlay.contextMenuPosition.x,
+        y: overlay.contextMenuPosition.y,
+        width: 0,
+        height: 0,
+    }), [overlay.contextMenuPosition]);
+
     // Get anchor rect for popover positioning
     const getPopoverAnchorRect = useCallback(() => {
         if (eventRectRef.current) {
@@ -532,19 +547,14 @@ export const PlannerEvent = ({
                 </>
             )}
 
-            {/* Context menu for Edit/Delete */}
-            {hasContextMenu && (
+            {/* Context menu for Edit/Delete - only mount when active to avoid idle Portals */}
+            {hasContextMenu && overlay.active === "contextMenu" && (
                 <Menu.Root
-                    open={overlay.active === "contextMenu"}
-                    onOpenChange={(e) => setOverlay(prev => ({ ...prev, active: e.open ? "contextMenu" : "none" }))}
+                    open
+                    onOpenChange={handleOverlayDismiss}
                     positioning={{
                         placement: "bottom-start",
-                        getAnchorRect: () => ({
-                            x: overlay.contextMenuPosition.x,
-                            y: overlay.contextMenuPosition.y,
-                            width: 0,
-                            height: 0,
-                        }),
+                        getAnchorRect: getContextMenuAnchorRect,
                     }}
                 >
                     <Portal>
@@ -568,11 +578,12 @@ export const PlannerEvent = ({
                 </Menu.Root>
             )}
 
-            {/* Event popover */}
-            {hasPopover && (
+            {/* Event popover - only mount when active to avoid idle Portals and Zag dismiss races */}
+            {hasPopover && overlay.active === "popover" && (
                 <Popover.Root
-                    open={overlay.active === "popover"}
-                    onOpenChange={(e) => setOverlay(prev => ({ ...prev, active: e.open ? "popover" : "none" }))}
+                    open
+                    onOpenChange={handleOverlayDismiss}
+                    closeOnInteractOutside={eventPopoverTrigger !== "hover"}
                     positioning={{
                         placement: "top",
                         getAnchorRect: getPopoverAnchorRect,
