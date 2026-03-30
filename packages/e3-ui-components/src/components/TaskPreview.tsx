@@ -22,6 +22,8 @@ import {
     toEastTypeValue,
     type ValueTypeOf,
 } from '@elaraai/east';
+import { compile_internal, analyzeIR } from '@elaraai/east/internal';
+import type { IR } from '@elaraai/east/internal';
 import {
     EastStoreProvider,
     createEastStore,
@@ -33,7 +35,7 @@ import {
 import { useTaskOutput } from '../hooks/useTaskOutput.js';
 import { useTaskLogs as useTaskLogsHook } from '../hooks/useTaskLogsHook.js';
 import { StatusDisplay } from './StatusDisplay.js';
-import { UIComponentType } from '@elaraai/east-ui';
+import { UIComponentType, UIPageType } from '@elaraai/east-ui';
 import type { TaskStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
 
 // Combined platform implementations for decoding Beast2 with Reactive components
@@ -72,20 +74,50 @@ export const TaskPreview = memo(function TaskPreview({
     const { data: stdout } = useTaskLogsHook(apiUrl, repo, workspace, taskInfo, 'stdout', requestOptions);
     const { data: stderr } = useTaskLogsHook(apiUrl, repo, workspace, taskInfo, 'stderr', requestOptions);
 
-    // Decode the output as IR
+    // Decode the output as a UI component (with optional module support)
     const ir = useMemo(() => {
         if (!output) return null;
         try {
-            // First check the type without platform (to see if it's UIComponentType)
             const { type } = decodeBeast2(output);
+
+            // UIPageType: component tree with module dependencies
+            if (isTypeValueEqual(type, toEastTypeValue(UIPageType))) {
+                // Late-binding: create empty symbol map, decode with reference to it,
+                // then compile module IRs to populate the map before React renders
+                const symbolValues = new Map<string, any>();
+                const decoder = decodeBeast2For(UIPageType, {
+                    platform: platformImplementations,
+                    symbols: symbolValues,
+                });
+                const page = decoder(output);
+
+                // Compile module symbols into the shared map
+                const platformFns = Object.fromEntries(platformImplementations.map(fn => [fn.name, fn.fn]));
+                const asyncPlatformFns = new Set(
+                    platformImplementations.filter(fn => fn.type === 'async').map(fn => fn.name)
+                );
+                for (const [name, symbolIR] of page.modules as Map<string, ValueTypeOf<IR>>) {
+                    if (!symbolValues.has(name)) {
+                        const analyzed = analyzeIR(symbolIR, platformImplementations);
+                        const compiled = compile_internal(
+                            analyzed, {}, new Map(), symbolValues,
+                            platformFns, asyncPlatformFns, platformImplementations
+                        );
+                        symbolValues.set(name, compiled({}));
+                    }
+                }
+
+                return page.root as ValueTypeOf<UIComponentType>;
+            }
+
+            // UIComponentType: legacy, no modules
             if (isTypeValueEqual(type, toEastTypeValue(UIComponentType))) {
-                // Decode with platform implementations for Reactive components
                 const decoder = decodeBeast2For(UIComponentType, { platform: platformImplementations });
                 const value = decoder(output);
                 return value as ValueTypeOf<UIComponentType>;
-            } else {
-                return null;
             }
+
+            return null;
         } catch {
             return null;
         }

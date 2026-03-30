@@ -242,7 +242,7 @@ export function EastFunction({ ir }: EastFunctionProps) {
     // Compile IR with StateImpl and OverlayImpl once on mount, with error handling
     const result = useMemo(() => {
         try {
-            return { compiled: ir.compile([...StateImpl, ...OverlayImpl]), error: null };
+            return { compiled: ir.compile(new Map(), new Map(), [...StateImpl, ...OverlayImpl]), error: null };
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : String(err);
             const errorStack = err instanceof Error ? err.stack : undefined;

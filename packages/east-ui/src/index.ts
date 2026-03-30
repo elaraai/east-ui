@@ -63,6 +63,7 @@ export { Reactive } from "./reactive/index.js";
 
 // Component Types
 export { UIComponentType } from "./component.js";
+export { UIPageType } from "./page.js";
 
 // Platform (state and dataset management - signatures only)
 export {

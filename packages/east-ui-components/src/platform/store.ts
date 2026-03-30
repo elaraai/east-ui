@@ -246,7 +246,7 @@ export class UIStore implements UIStoreInterface {
      * @param platform - Platform functions to use for compilation
      */
     register(id: string, ir: EastIR<[Map<string, Uint8Array>], unknown>, platform: PlatformFunction[]): void {
-        const compiled = ir.compile(platform);
+        const compiled = ir.compile(new Map(), new Map(), platform);
         const result = compiled(this.state);
         this.registrations.set(id, { compiled, lastResult: result });
     }

@@ -16,6 +16,8 @@ import {
     toEastTypeValue,
     type ValueTypeOf,
 } from '@elaraai/east';
+import { compile_internal, analyzeIR } from '@elaraai/east/internal';
+import type { IR } from '@elaraai/east/internal';
 import {
     EastStoreProvider,
     createEastStore,
@@ -27,7 +29,7 @@ import {
 import { useInputData } from '../hooks/useInputData.js';
 import { StatusDisplay } from './StatusDisplay.js';
 import { EastValueViewer } from './EastValueViewer.js';
-import { UIComponentType } from '@elaraai/east-ui';
+import { UIComponentType, UIPageType } from '@elaraai/east-ui';
 import type { DatasetStatusInfo, RequestOptions } from '@elaraai/e3-api-client';
 import { formatApiError, formatError } from '../errors.js';
 import { ErrorBoundary } from './ErrorBoundary.js';
@@ -60,11 +62,45 @@ export const InputPreview = memo(function InputPreview({
     // Fetch input data
     const { data: output, isLoading, error } = useInputData(apiUrl, repo, workspace, inputInfo, requestOptions);
 
-    // Decode the output, checking if it's a UIComponentType
+    // Decode the output, checking if it's a UIComponentType or UIPageType
     const decode = useMemo((): { type: 'none' } | { type: 'ui'; value: ValueTypeOf<UIComponentType> } | { type: 'ui-error'; error: Error } | { type: 'other' } => {
         if (!output) return { type: 'none' };
         try {
             const { type } = decodeBeast2(output);
+
+            // UIPageType: component tree with modules
+            if (isTypeValueEqual(type, toEastTypeValue(UIPageType))) {
+                try {
+                    const symbolValues = new Map<string, any>();
+                    const decoder = decodeBeast2For(UIPageType, {
+                        platform: platformImplementations,
+                        symbols: symbolValues,
+                    });
+                    const page = decoder(output);
+
+                    // Compile module symbols into the shared map
+                    const platformFns = Object.fromEntries(platformImplementations.map(fn => [fn.name, fn.fn]));
+                    const asyncPlatformFns = new Set(
+                        platformImplementations.filter(fn => fn.type === 'async').map(fn => fn.name)
+                    );
+                    for (const [name, symbolIR] of page.modules as Map<string, ValueTypeOf<IR>>) {
+                        if (!symbolValues.has(name)) {
+                            const analyzed = analyzeIR(symbolIR, platformImplementations);
+                            const compiled = compile_internal(
+                                analyzed, {}, new Map(), symbolValues,
+                                platformFns, asyncPlatformFns, platformImplementations
+                            );
+                            symbolValues.set(name, compiled({}));
+                        }
+                    }
+
+                    return { type: 'ui', value: page.root as ValueTypeOf<UIComponentType> };
+                } catch (e) {
+                    return { type: 'ui-error', error: e instanceof Error ? e : new Error(String(e)) };
+                }
+            }
+
+            // UIComponentType: legacy, no modules
             if (!isTypeValueEqual(type, toEastTypeValue(UIComponentType))) return { type: 'other' };
             try {
                 const decoder = decodeBeast2For(UIComponentType, { platform: platformImplementations });
