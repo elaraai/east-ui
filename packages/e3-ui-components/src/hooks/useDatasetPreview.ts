@@ -121,6 +121,7 @@ export function useDatasetPreview(
             isOversized,
             shouldFetchValue,
         });
+        console.log(`${LOG_PREFIX} raw type`, datasetPath, raw.type);
 
         return { status, isUI, hasValue, isOversized, shouldFetchValue };
     }, [statusQuery.data, datasetPath]);

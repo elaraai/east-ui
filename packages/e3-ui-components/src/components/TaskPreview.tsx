@@ -56,11 +56,13 @@ export const TaskPreview = memo(function TaskPreview({
     const viewMode = persistedState.viewMode;
     const setViewMode = (mode: ViewMode) => setPersistedState(prev => ({ ...prev, viewMode: mode }));
 
+    const isUI = preview.state === 'ui';
+
     // Auto-select tab on first data load: UI → output, non-UI → logs
     const hasAutoSelected = useRef(false);
     useEffect(() => {
         if (hasAutoSelected.current) return;
-        if (preview.state === 'ui') {
+        if (isUI) {
             hasAutoSelected.current = true;
             setViewMode('output');
         } else if (preview.state === 'value' || preview.state === 'oversized' || preview.state === 'error') {
@@ -68,6 +70,36 @@ export const TaskPreview = memo(function TaskPreview({
             setViewMode('logs');
         }
     }, [preview.state]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Non-UI tasks: just show logs, no output tab
+    if (!isUI) {
+        return (
+            <Box height="100%" display="flex" flexDirection="column" overflow="hidden">
+                <Flex
+                    px={4}
+                    py={2}
+                    borderBottom="1px solid"
+                    borderColor="gray.200"
+                    bg="white"
+                    align="center"
+                    flexShrink={0}
+                >
+                    <Text fontSize="sm" fontWeight="medium" color="gray.700">
+                        {task}
+                    </Text>
+                </Flex>
+                <Box flex={1} overflow="hidden" minHeight={0}>
+                    <TaskLogs
+                        apiUrl={apiUrl}
+                        repo={repo}
+                        workspace={workspace}
+                        task={task}
+                        {...(requestOptions != null && { requestOptions })}
+                    />
+                </Box>
+            </Box>
+        );
+    }
 
     return (
         <Box height="100%" display="flex" flexDirection="column" overflow="hidden">
