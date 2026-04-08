@@ -15,6 +15,7 @@ import {
     BooleanType,
     DictType,
     FunctionType,
+    NullType,
     LiteralValueType,
     EastTypeType,
 } from "@elaraai/east";
@@ -241,6 +242,7 @@ export const UIComponentType = RecursiveType(node => VariantType({
         value: node,
         helpText: OptionType(StringType),
         indicator: OptionType(StatIndicatorType),
+        onClick: OptionType(FunctionType([], NullType)),
     }),
     Icon: IconType,
 

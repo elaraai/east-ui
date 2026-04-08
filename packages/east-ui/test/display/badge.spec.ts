@@ -4,9 +4,16 @@
  */
 
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
+import { East, NullType } from "@elaraai/east";
 import { Badge, Style } from "../../src/index.js";
+import * as ex from "./badge.examples.js";
 
 describeEast("Badge", (test) => {
+    Assert.examples(test, {
+        badgeBasic: ex.badgeBasic,
+        badgeOnClick: ex.badgeOnClick,
+    });
+
     // =========================================================================
     // Basic Creation
     // =========================================================================
@@ -208,5 +215,24 @@ describeEast("Badge", (test) => {
 
         $(Assert.equal(badge.unwrap().unwrap("Badge").value, "PRO"));
         $(Assert.equal(badge.unwrap().unwrap("Badge").variant.unwrap("some").hasTag("outline"), true));
+    });
+    // =========================================================================
+    // onClick
+    // =========================================================================
+
+    test("creates badge without onClick by default", $ => {
+        const badge = $.let(Badge.Root("New"));
+        $(Assert.equal(badge.unwrap().unwrap("Badge").onClick.hasTag("none"), true));
+    });
+
+    test("creates badge with onClick callback", $ => {
+        const handler = $.const(East.function([], NullType, $ => {
+            $(East.value(null));
+        }));
+        const badge = $.let(Badge.Root("Click me", {
+            onClick: handler,
+        }));
+
+        $(Assert.equal(badge.unwrap().unwrap("Badge").onClick.hasTag("some"), true));
     });
 }, {   platformFns: TestImpl,});

@@ -4,9 +4,16 @@
  */
 
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
+import { East, NullType } from "@elaraai/east";
 import { Heading, Style } from "../../src/index.js";
+import * as ex from "./heading.examples.js";
 
 describeEast("Heading", (test) => {
+    Assert.examples(test, {
+        headingBasic: ex.headingBasic,
+        headingOnClick: ex.headingOnClick,
+    });
+
     // =========================================================================
     // Basic Creation
     // =========================================================================
@@ -207,5 +214,24 @@ describeEast("Heading", (test) => {
         $(Assert.equal(heading.unwrap().unwrap("Heading").value, "Features"));
         $(Assert.equal(heading.unwrap().unwrap("Heading").size.unwrap("some").hasTag("2xl"), true));
         $(Assert.equal(heading.unwrap().unwrap("Heading").as.unwrap("some").hasTag("h2"), true));
+    });
+    // =========================================================================
+    // onClick
+    // =========================================================================
+
+    test("creates heading without onClick by default", $ => {
+        const heading = $.let(Heading.Root("Hello World"));
+        $(Assert.equal(heading.unwrap().unwrap("Heading").onClick.hasTag("none"), true));
+    });
+
+    test("creates heading with onClick callback", $ => {
+        const handler = $.const(East.function([], NullType, $ => {
+            $(East.value(null));
+        }));
+        const heading = $.let(Heading.Root("Click me", {
+            onClick: handler,
+        }));
+
+        $(Assert.equal(heading.unwrap().unwrap("Heading").onClick.hasTag("some"), true));
     });
 }, {   platformFns: TestImpl,});

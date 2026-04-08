@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Box as ChakraBox, type BoxProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Box } from "@elaraai/east-ui";
@@ -73,8 +73,19 @@ export interface EastChakraBoxProps {
 export const EastChakraBox = memo(function EastChakraBox({ value, storageKey }: EastChakraBoxProps) {
     const props = useMemo(() => toChakraBox(value), [value]);
 
+    const onClickFn = useMemo(() => {
+        const style = getSomeorUndefined(value.style);
+        return style ? getSomeorUndefined(style.onClick) : undefined;
+    }, [value.style]);
+
+    const handleClick = useCallback(() => {
+        if (onClickFn) {
+            queueMicrotask(() => onClickFn());
+        }
+    }, [onClickFn]);
+
     return (
-        <ChakraBox {...props}>
+        <ChakraBox {...props} onClick={onClickFn ? handleClick : undefined} cursor={onClickFn ? "pointer" : undefined}>
             {value.children.map((child, index) => (
                 <EastChakraComponent key={index} value={child} storageKey={`${storageKey}.${index}`} />
             ))}

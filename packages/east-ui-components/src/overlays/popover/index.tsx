@@ -45,6 +45,8 @@ export const EastChakraPopover = memo(function EastChakraPopover({ value, storag
         <ChakraPopover.Root
             positioning={placement ? { placement } : undefined}
             size={size}
+            lazyMount
+            unmountOnExit
             onOpenChange={onOpenChangeFn ? handleOpenChange : undefined}
         >
             <ChakraPopover.Trigger asChild>

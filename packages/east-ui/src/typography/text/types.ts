@@ -6,6 +6,8 @@
 import {
     type SubtypeExprOrValue,
     FloatType,
+    FunctionType,
+    NullType,
     OptionType,
     StringType,
     StructType,
@@ -90,6 +92,7 @@ export const TextType = StructType({
     lineHeight: OptionType(StringType),
     letterSpacing: OptionType(StringType),
     opacity: OptionType(FloatType),
+    onClick: OptionType(FunctionType([], NullType)),
 });
 
 /**
@@ -174,4 +177,6 @@ export type TextStyle = {
     letterSpacing?: SubtypeExprOrValue<StringType>;
     /** CSS opacity (0-1) */
     opacity?: SubtypeExprOrValue<FloatType>;
+    /** Callback triggered when clicked */
+    onClick?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 };

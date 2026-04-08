@@ -4,9 +4,16 @@
  */
 
 import { describeEast, Assert, TestImpl } from "@elaraai/east-node-std";
+import { East, NullType } from "@elaraai/east";
 import { Flex, Text, Style } from "../../src/index.js";
+import * as ex from "./flex.examples.js";
 
 describeEast("Flex", (test) => {
+    Assert.examples(test, {
+        flexBasic: ex.flexBasic,
+        flexOnClick: ex.flexOnClick,
+    });
+
     // =========================================================================
     // Basic Creation
     // =========================================================================
@@ -348,5 +355,25 @@ describeEast("Flex", (test) => {
         $(Assert.equal(outerFlex.unwrap().unwrap("Flex").children.size(), 1n));
         $(Assert.equal(outerFlex.unwrap().unwrap("Flex").style.unwrap("some").padding.unwrap("some").top.unwrap("some"), "4"));
         $(Assert.equal(outerFlex.unwrap().unwrap("Flex").style.unwrap("some").background.unwrap("some"), "gray.100"));
+    });
+    // =========================================================================
+    // onClick
+    // =========================================================================
+
+    test("creates flex without onClick by default", $ => {
+        const flex = $.let(Flex.Root([Text.Root("Content")]));
+        $(Assert.equal(flex.unwrap().unwrap("Flex").style.hasTag("none"), true));
+    });
+
+    test("creates flex with onClick callback", $ => {
+        const handler = $.const(East.function([], NullType, $ => {
+            $(East.value(null));
+        }));
+        const flex = $.let(Flex.Root([Text.Root("Content")], {
+            onClick: handler,
+        }));
+
+        $(Assert.equal(flex.unwrap().unwrap("Flex").style.hasTag("some"), true));
+        $(Assert.equal(flex.unwrap().unwrap("Flex").style.unwrap("some").onClick.hasTag("some"), true));
     });
 }, {   platformFns: TestImpl,});

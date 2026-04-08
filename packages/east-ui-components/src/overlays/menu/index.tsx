@@ -35,7 +35,7 @@ export const EastChakraMenu = memo(function EastChakraMenu({ value, storageKey }
     // The Menu.Root factory would need to be updated to include style.
 
     return (
-        <ChakraMenu.Root positioning={placement ? { placement } : undefined}>
+        <ChakraMenu.Root positioning={placement ? { placement } : undefined} lazyMount unmountOnExit>
             <ChakraMenu.Trigger asChild>
                 <span>
                     <EastChakraComponent value={value.trigger} storageKey={`${storageKey}.trigger`} />

@@ -113,6 +113,7 @@ function createCode(
         lineHeight: style?.lineHeight ? variant("some", style.lineHeight) : variant("none", null),
         letterSpacing: style?.letterSpacing ? variant("some", style.letterSpacing) : variant("none", null),
         opacity: style?.opacity !== undefined ? variant("some", style.opacity) : variant("none", null),
+        onClick: style?.onClick ? variant("some", style.onClick) : variant("none", null),
     }), UIComponentType);
 }
 

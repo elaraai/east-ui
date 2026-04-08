@@ -83,6 +83,8 @@ export const EastChakraSelect = memo(function EastChakraSelect({ value }: EastCh
         <ChakraSelect.Root
             collection={collection}
             {...props}
+            lazyMount
+            unmountOnExit
             onValueChange={(onChangeFn || onChangeMultipleFn) ? handleValueChange : undefined}
             onOpenChange={onOpenChangeFn ? handleOpenChange : undefined}
         >

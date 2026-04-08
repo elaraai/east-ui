@@ -52,6 +52,8 @@ export const EastChakraActionBar = memo(function EastChakraActionBar({ value }: 
     return (
         <ChakraActionBar.Root
             open={open}
+            lazyMount
+            unmountOnExit
             onOpenChange={onOpenChangeFn ? handleOpenChange : undefined}
         >
             <Portal>

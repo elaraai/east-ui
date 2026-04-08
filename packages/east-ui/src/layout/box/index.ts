@@ -170,6 +170,7 @@ function createBox(
             justifyContent: justifyContentValue ? variant("some", justifyContentValue) : variant("none", null),
             alignItems: alignItemsValue ? variant("some", alignItemsValue) : variant("none", null),
             gap: style.gap ? variant("some", style.gap) : variant("none", null),
+            onClick: style?.onClick ? variant("some", style.onClick) : variant("none", null),
         }, BoxStyleType)) : variant("none", null),
     }), UIComponentType);
 }

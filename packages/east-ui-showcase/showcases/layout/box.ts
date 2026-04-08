@@ -1,5 +1,5 @@
-import { East, some } from "@elaraai/east";
-import { Box, Text, UIComponentType, Grid, Style } from "@elaraai/east-ui";
+import { East, IntegerType, NullType, some } from "@elaraai/east";
+import { Box, Text, UIComponentType, Grid, Style, Reactive, State, Stack } from "@elaraai/east-ui";
 import { ShowcaseCard } from "../components";
 
 /**
@@ -313,6 +313,46 @@ export default East.function(
             )
         );
 
+        // Clickable Box
+        const clickableBox = $.let(
+            ShowcaseCard(
+                "Clickable Box",
+                "Box with onClick handler",
+                Reactive.Root(East.function([], UIComponentType, $ => {
+                    $.if(State.has("box_clicks").not(), $ => {
+                        $(State.write([IntegerType], "box_clicks", 0n));
+                    });
+                    const count = $.let(State.read([IntegerType], "box_clicks"), IntegerType);
+                    const increment = $.const(East.function([], NullType, $ => {
+                        const current = $.let(State.read([IntegerType], "box_clicks"), IntegerType);
+                        $(State.write([IntegerType], "box_clicks", current.add(1n)));
+                    }));
+                    return Box.Root([
+                        Text.Root(East.str`Clicked ${count} times`),
+                    ], {
+                        padding: "4",
+                        background: "teal.50",
+                        color: "teal.800",
+                        borderRadius: "md",
+                        onClick: increment,
+                    });
+                })),
+                some(`
+                    Reactive.Root(East.function([], UIComponentType, $ => {
+                        $.if(State.has("box_clicks").not(), $ => {
+                            $(State.write([IntegerType], "box_clicks", 0n));
+                        });
+                        const count = $.let(State.read([IntegerType], "box_clicks"), IntegerType);
+                        const increment = $.const(East.function([], NullType, $ => {
+                            const current = $.let(State.read([IntegerType], "box_clicks"), IntegerType);
+                            $(State.write([IntegerType], "box_clicks", current.add(1n)));
+                        }));
+                        Box.Root([...], { padding: "4", background: "teal.50", onClick: increment })
+                    }))
+                `)
+            )
+        );
+
         return Grid.Root(
             [
                 Grid.Item(basic),
@@ -323,6 +363,7 @@ export default East.function(
                 Grid.Item(nested),
                 Grid.Item(borders, { colSpan: "2" }),
                 Grid.Item(justify),
+                Grid.Item(clickableBox),
             ],
             {
                 templateColumns: "repeat(2, 1fr)",

@@ -53,6 +53,8 @@ export const EastChakraHoverCard = memo(function EastChakraHoverCard({ value, st
             size={size}
             openDelay={openDelay}
             closeDelay={closeDelay}
+            lazyMount
+            unmountOnExit
             onOpenChange={onOpenChangeFn ? handleOpenChange : undefined}
         >
             <ChakraHoverCard.Trigger asChild>

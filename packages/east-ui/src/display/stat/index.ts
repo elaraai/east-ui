@@ -8,6 +8,8 @@ import {
     type SubtypeExprOrValue,
     East,
     StringType,
+    FunctionType,
+    NullType,
     OptionType,
     StructType,
     variant,
@@ -37,6 +39,7 @@ const StatType = StructType({
     value: UIComponentType,
     helpText: OptionType(StringType),
     indicator: OptionType(StatIndicatorType),
+    onClick: OptionType(FunctionType([], NullType)),
 });
 type StatType = typeof StatType;
 
@@ -93,6 +96,7 @@ function createStat(
         value: value,
         helpText: toStringOption(style?.helpText),
         indicator: indicatorValue ? variant("some", indicatorValue) : variant("none", null),
+        onClick: style?.onClick ? variant("some", style.onClick) : variant("none", null),
     }), UIComponentType);
 }
 

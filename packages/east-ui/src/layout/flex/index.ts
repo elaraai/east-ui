@@ -176,6 +176,7 @@ function createFlex(
             flex: style.flex ? variant("some", style.flex) : variant("none", null),
             flexGrow: style.flexGrow ? variant("some", style.flexGrow) : variant("none", null),
             flexShrink: style.flexShrink ? variant("some", style.flexShrink) : variant("none", null),
+            onClick: style?.onClick ? variant("some", style.onClick) : variant("none", null),
         }, FlexStyleType)) : variant("none", null),
     }), UIComponentType);
 }

@@ -170,6 +170,7 @@ function createStack(
             overflow: overflowValue ? variant("some", overflowValue) : variant("none", null),
             overflowX: overflowXValue ? variant("some", overflowXValue) : variant("none", null),
             overflowY: overflowYValue ? variant("some", overflowYValue) : variant("none", null),
+            onClick: style?.onClick ? variant("some", style.onClick) : variant("none", null),
         }, StackStyleType)) : variant("none", null),
     }), UIComponentType);
 }

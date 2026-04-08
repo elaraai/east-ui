@@ -3,7 +3,7 @@
  * Dual-licensed under AGPL-3.0 and commercial license. See LICENSE for details.
  */
 
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 import { Badge as ChakraBadge, type BadgeProps } from "@chakra-ui/react";
 import { equalFor, type ValueTypeOf } from "@elaraai/east";
 import { Badge } from "@elaraai/east-ui";
@@ -72,5 +72,13 @@ export interface EastChakraBadgeProps {
 export const EastChakraBadge = memo(function EastChakraBadge({ value }: EastChakraBadgeProps) {
     const props = useMemo(() => toChakraBadge(value), [value]);
 
-    return <ChakraBadge {...props}>{value.value}</ChakraBadge>;
+    const onClickFn = useMemo(() => getSomeorUndefined(value.onClick), [value.onClick]);
+
+    const handleClick = useCallback(() => {
+        if (onClickFn) {
+            queueMicrotask(() => onClickFn());
+        }
+    }, [onClickFn]);
+
+    return <ChakraBadge {...props} onClick={onClickFn ? handleClick : undefined} cursor={onClickFn ? "pointer" : undefined}>{value.value}</ChakraBadge>;
 }, (prev, next) => badgeEqual(prev.value, next.value));

@@ -98,6 +98,8 @@ export const EastChakraCombobox = memo(function EastChakraCombobox({ value }: Ea
             size={props.size}
             allowCustomValue={props.allowCustomValue}
             inputValue={inputValue}
+            lazyMount
+            unmountOnExit
             onValueChange={(onChangeFn || onChangeMultipleFn) ? handleValueChange : undefined}
             onInputValueChange={handleInputValueChange}
             onOpenChange={onOpenChangeFn ? handleOpenChange : undefined}

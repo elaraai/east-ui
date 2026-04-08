@@ -108,6 +108,8 @@ export function DrawerContent({ value, storageKey, trigger, open, onClose }: Dra
             size={effectiveSize}
             placement={props.placement}
             contained={props.contained}
+            lazyMount
+            unmountOnExit
             onOpenChange={handleOpenChange}
             onExitComplete={onExitCompleteFn ? handleExitComplete : undefined}
         >

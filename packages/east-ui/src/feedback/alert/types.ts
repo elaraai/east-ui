@@ -7,6 +7,7 @@ import {
     type ExprType,
     type SubtypeExprOrValue,
     East,
+    FunctionType,
     OptionType,
     StructType,
     StringType,
@@ -150,6 +151,7 @@ export const AlertType = StructType({
     title: OptionType(StringType),
     description: OptionType(StringType),
     variant: OptionType(AlertVariantType),
+    onClick: OptionType(FunctionType([], NullType)),
 });
 
 /**
@@ -175,4 +177,6 @@ export interface AlertStyle {
     description?: SubtypeExprOrValue<StringType>;
     /** Visual variant (solid, subtle, outline) */
     variant?: SubtypeExprOrValue<AlertVariantType> | AlertVariantLiteral;
+    /** Callback triggered when clicked */
+    onClick?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 }

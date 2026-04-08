@@ -5,6 +5,8 @@
 
 import {
     type SubtypeExprOrValue,
+    FunctionType,
+    NullType,
     OptionType,
     StringType,
     StructType,
@@ -109,6 +111,8 @@ export type FlexStyle = {
     flexGrow?: SubtypeExprOrValue<StringType>;
     /** Flex shrink factor (CSS value, e.g., "0", "1") */
     flexShrink?: SubtypeExprOrValue<StringType>;
+    /** Callback triggered when clicked */
+    onClick?: SubtypeExprOrValue<FunctionType<[], NullType>>;
 };
 
 /**
@@ -164,6 +168,7 @@ export const FlexStyleType = StructType({
     flex: OptionType(StringType),
     flexGrow: OptionType(StringType),
     flexShrink: OptionType(StringType),
+    onClick: OptionType(FunctionType([], NullType)),
 });
 
 /**
